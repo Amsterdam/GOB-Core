@@ -1,6 +1,5 @@
 # flake8: noqa
 # todo: check if this file can be simplified
-# todo: also, this should be shared amongst gob-components
 """Asynchronous Message Broker
 
 Implementation of an asynchronous message broker.

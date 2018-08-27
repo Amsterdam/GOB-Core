@@ -3,7 +3,7 @@ version: "3.0"
 services:
   test:
     build:
-      context: ../..
+      context: .
       dockerfile: Dockerfile
     command: >
-      bash -c "cd gobcore && sh ./test.sh"
+      bash -c "./test.sh"

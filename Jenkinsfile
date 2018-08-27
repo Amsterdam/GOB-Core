@@ -24,11 +24,11 @@ node {
 
     stage('Test') {
         tryStep "test", {
-            sh "docker-compose -p gobcore -f gobcore/.jenkins/test/docker-compose.yml build && " +
-               "docker-compose -p gobcore -f gobcore/.jenkins/test/docker-compose.yml run -u root --rm test"
+            sh "docker-compose -p gobcore build && " +
+               "docker-compose -p gobcore run -u root --rm test"
 
         }, {
-            sh "docker-compose -p gobcore -f gobcore/.jenkins/test/docker-compose.yml down"
+            sh "docker-compose -p gobcore down"
         }
     }
 
