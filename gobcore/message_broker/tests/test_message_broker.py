@@ -158,6 +158,7 @@ def test_connection_constructor():
     # Test if a connection can be initialized
     connection = AsyncConnection(connection_params)
     assert(connection is not None)
+    assert(connection._connection_params == connection_params)
 
 
 def test_disconnect():
