@@ -46,11 +46,6 @@
       },
       "ligt_in": {
         "type": "GOB.String",
-        "description": "Het bouwblok waarbinnen de meetbout ligt",
-        "ref": "bouwblok"
-      },
-      "ligt_in": {
-        "type": "GOB.String",
         "description": "Het stadsdeel waarbinnen de meetbout ligt",
         "ref": "stadsdeel"
       },
