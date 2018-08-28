@@ -4,7 +4,6 @@ import string
 import mock
 import unittest
 
-
 from gobcore.message_broker.async_message_broker import AsyncConnection
 from gobcore.message_broker.config import WORKFLOW_EXCHANGE, CONNECTION_PARAMS
 from gobcore.message_broker import messagedriven_service
@@ -39,17 +38,6 @@ def mock_get_on_message(service):
 
     global return_method
     return return_method
-
-
-class AnyOf:
-    def __init__(self, list):
-        self.list = list
-
-    def __eq__(self, other):
-        for item in list:
-            if other.__eq__(item):
-                return True
-        return False
 
 
 class TestMessagedrivenService(unittest.TestCase):

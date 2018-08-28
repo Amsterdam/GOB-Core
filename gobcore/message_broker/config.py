@@ -18,6 +18,7 @@ MESSAGE_BROKER_PASSWORD = os.getenv("MESSAGE_BROKER_PASSWORD", "guest")
 
 CONNECTION_PARAMS = pika.ConnectionParameters(
     host=MESSAGE_BROKER,
+    virtual_host="gob",
     credentials=pika.PlainCredentials(username=MESSAGE_BROKER_USER,
                                       password=MESSAGE_BROKER_PASSWORD)
 )

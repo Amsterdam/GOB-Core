@@ -9,10 +9,10 @@ keep_running = True
 def messagedriven_service(service_defenition):
     """Start a connection with a the message broker and the given definition
 
-    SERVICE_DEFINITION is a dict of dicts:
+    servicedefenition is a dict of dicts:
 
     ```
-    servicedefenition = {
+    SERVICEDEFINITION = {
         'message_to_listen_to': {
             'queue': 'name_of_the_queue_to_listen_to',
             'handler': 'method_to_invoke_on_message',
@@ -27,7 +27,7 @@ def messagedriven_service(service_defenition):
     ```
     from gobcore.message_broker.messagedriven_service import messagedriven_service
 
-    messagedriven_services(servicedefenition)
+    messagedriven_services(SERVICEDEFINITION)
 
     """
 
