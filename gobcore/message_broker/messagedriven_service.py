@@ -6,14 +6,14 @@ from gobcore.message_broker.config import WORKFLOW_EXCHANGE, CONNECTION_PARAMS
 keep_running = True
 
 
-def messagedriven_service(service_defenition):
+def messagedriven_service(service_definition):
     """Start a connection with a the message broker and the given definition
 
     servicedefenition is a dict of dicts:
 
     ```
     SERVICEDEFINITION = {
-        'message_to_listen_to': {
+        'key_of_the_message_to_listen_to': {
             'queue': 'name_of_the_queue_to_listen_to',
             'handler': 'method_to_invoke_on_message',
             'report_back': 'key_of_the_return_message',
@@ -31,18 +31,19 @@ def messagedriven_service(service_defenition):
 
     """
 
+    on_message = _get_on_message(service_definition)
+
     with AsyncConnection(CONNECTION_PARAMS) as connection:
         # Subscribe to the queues, handle messages in the on_message function (runs in another thread)
-        for key, service in service_defenition.items():
-            queue = {
+        for key, service in service_definition.items():
+
+            queue_in = {
                 "exchange": WORKFLOW_EXCHANGE,
                 "name": service['queue'],
                 "key": key
             }
 
-            on_message = _get_on_message(service)
-
-            connection.subscribe([queue], on_message)
+            connection.subscribe([queue_in], on_message)
             print(f"Listening to messages {key} on {service['queue']}")
 
         # Repeat forever
@@ -53,9 +54,8 @@ def messagedriven_service(service_defenition):
             print(".")
 
 
-def _get_on_message(single_service):
-    """Prepare the generic on_message method with single_service specific handler, report_back_queue and
-    report back message"""
+def _get_on_message(service_definition):
+    """Create the on_message message-handler for this service_defintion """
 
     def on_message(connection, queue, key, msg):
         """Called on every message receipt
@@ -64,27 +64,27 @@ def _get_on_message(single_service):
         :param queue: the message broker queue
         :param key: the identification of the message (e.g. fullimport.proposal)
         :param msg: the contents of the message
+
         :return:
         """
 
-        print(f"{key} accepted from {queue['name']}, start handling")
-
-        # Get the handler for the specific workflow
-        handle = single_service['handler']
-
-        try:
-            result_msg = handle(msg)
-        except RuntimeError:
-            return False
-
-        # Get the key to report back the results
-        report_back = single_service['report_back']
+        service_impl = service_definition[key]
+        handler = service_impl['handler']
 
         report_queque = {
             "exchange": WORKFLOW_EXCHANGE,
-            "name": single_service['report_queue'],
-            "key": single_service['report_back']
+            "name": service_impl['report_queue'],
+            "key": service_impl['report_back']
         }
+
+        report_back = service_impl['report_back']
+
+        print(f"{key} accepted from {queue['name']}, start handling")
+
+        try:
+            result_msg = handler(msg)
+        except RuntimeError:
+            return False
 
         connection.publish(report_queque, report_back, result_msg)
         return True

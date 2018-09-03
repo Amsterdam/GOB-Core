@@ -1,0 +1,2 @@
+class GOBException(Exception):
+    pass

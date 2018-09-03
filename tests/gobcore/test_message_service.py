@@ -1,31 +1,11 @@
-import random
-import string
-
 import mock
 import unittest
+
+from tests.gobcore import fixtures
 
 from gobcore.message_broker.async_message_broker import AsyncConnection
 from gobcore.message_broker.config import WORKFLOW_EXCHANGE, CONNECTION_PARAMS
 from gobcore.message_broker import messagedriven_service
-
-
-def random_string(length=12, source=None):
-
-    if source is None:
-        source = string.ascii_letters
-
-    return ''.join(random.choice(source) for x in range(length))
-
-
-def get_service_fixture(handler):
-    return {
-        random_string(): {
-            'queue': random_string(),
-            'handler': handler,
-            'report_back': random_string(),
-            'report_queue': random_string()
-        }
-    }
 
 
 def handler(msg):
@@ -48,16 +28,16 @@ class TestMessagedrivenService(unittest.TestCase):
 
         # setup mocks and fixtures
         mocked_handler = mock.Mock(wraps=handler)
-        service = get_service_fixture(mocked_handler)
+        service = fixtures.get_service_fixture(mocked_handler)
         key = [k for k in service.keys()][0]
         single_service = [v for v in service.values()][0]
 
-        message = random_string()
+        message = fixtures.random_string()
         queue = {'name': single_service['queue']}
         connection = AsyncConnection({})
 
         # setup expectations
-        return_message = random_string()
+        return_message = fixtures.random_string()
         return_key = single_service['report_back']
         return_queue = {
             "exchange": WORKFLOW_EXCHANGE,
@@ -67,7 +47,7 @@ class TestMessagedrivenService(unittest.TestCase):
 
         with mock.patch.object(connection, "publish") as mocked_publish:
 
-            on_message = messagedriven_service._get_on_message(single_service)
+            on_message = messagedriven_service._get_on_message(service)
             result = on_message(connection, queue, key, message)
 
             # The result should be True
@@ -85,9 +65,9 @@ class TestMessagedrivenService(unittest.TestCase):
     def test_messagedriven_service(self, get_on_message, mocked_connection):
 
         global return_method
-        return_method = random_string()
+        return_method = fixtures.random_string()
 
-        service_definition = get_service_fixture(handler)
+        service_definition = fixtures.get_service_fixture(handler)
         expected_key = [k for k in service_definition.keys()][0]
         single_service = [v for v in service_definition.values()][0]
         expected_queue = single_service['queue']

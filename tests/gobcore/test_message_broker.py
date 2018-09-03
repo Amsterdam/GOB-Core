@@ -33,6 +33,7 @@ class MockDeliver:
     def __init__(self, key):
         self.routing_key = key
 
+
 class MockChannel:
 
     connection_success = True
@@ -133,6 +134,7 @@ published_message = None
 on_connect_called = False
 connection_params = {'host': "host", 'credentials': {'username': "username", 'password': "password"}}
 
+
 def mock_connection(monkeypatch, connection_success):
     _pika = MockPika()
     _pika.selectConnectionOK = connection_success
@@ -179,17 +181,17 @@ def test_connect_failure(monkeypatch):
     mock_connection(monkeypatch, connection_success=False)
 
     connection = AsyncConnection(connection_params)
-    assert(connection.connect() == False)
+    assert(connection.connect() is False)
 
 
 def test_connect_context_manager(monkeypatch):
     # Test if context manager calls disconnect on exit with statement
     mock_connection(monkeypatch, connection_success=True)
 
-    org_connection=None
+    org_connection = None
     with patch.object(AsyncConnection, 'disconnect') as mocked_disconnect:
         with AsyncConnection(connection_params) as connection:
-            org_connection = connection # save to call the real disconnect afterwards
+            org_connection = connection  # save to call the real disconnect afterwards
             pass
         assert(mocked_disconnect.called)
     org_connection.disconnect()    # Call the real disconnect
@@ -200,7 +202,7 @@ def test_connect_success(monkeypatch):
     mock_connection(monkeypatch, connection_success=True)
 
     connection = AsyncConnection(connection_params)
-    assert(connection.connect() == True)
+    assert(connection.connect() is True)
     connection.disconnect()
 
 
@@ -259,8 +261,6 @@ def test_publish_failure(monkeypatch):
 def test_subscribe(monkeypatch):
     # Test subscription and message receipt
     mock_connection(monkeypatch, connection_success=True)
-
-    result = None
 
     def on_message(self, queue, key, body):
         assert(key == "mykey")
