@@ -44,12 +44,12 @@
         "description": "Een adres in de nabijheid van de meetbout",
         "ref": "nummeraanduiding"
       },
-      "ligt_in": {
+      "ligt_in_bouwblok": {
         "type": "GOB.String",
         "description": "Het bouwblok waarbinnen de meetbout ligt",
         "ref": "bouwblok"
       },
-      "ligt_in": {
+      "ligt_in_stadsdeel": {
         "type": "GOB.String",
         "description": "Het stadsdeel waarbinnen de meetbout ligt",
         "ref": "stadsdeel"
