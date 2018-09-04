@@ -10,6 +10,7 @@ setup(
     license='MPL-2.0',
     install_requires=[
         'pika',
+        'sqlalchemy'
     ],
     packages=find_packages(exclude=['tests*'])
 )

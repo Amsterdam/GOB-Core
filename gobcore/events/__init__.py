@@ -55,7 +55,7 @@ def get_event_for(entity, data, metadata, modifications):
 
     gob_event = _get_event_class_for(has_old_state, has_new_state, has_modifications)
 
-    # get relevenant id's from either entity of data
+    # get relevenant id's from either entity or data
     if has_old_state:
         source_id = entity._source_id
         entity_id = getattr(entity, metadata.id_column)

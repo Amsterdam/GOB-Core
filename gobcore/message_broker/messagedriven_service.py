@@ -67,6 +67,9 @@ def _get_on_message(service_definition):
 
         :return:
         """
+        if key not in service_definition:
+            print(f"no workflow for message {key} on queue {queue['name']}")
+            return False
 
         service_impl = service_definition[key]
         handler = service_impl['handler']

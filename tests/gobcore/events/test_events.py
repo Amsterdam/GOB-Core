@@ -10,7 +10,7 @@ class TestEvents(unittest.TestCase):
 
     def test_get_event(self):
         for event in events.GOB_EVENTS:
-            self.assertEquals(events._get_event(f"{event.name}"), event)
+            self.assertEqual(events._get_event(f"{event.name}"), event)
 
         with self.assertRaises(GOBException):
             events._get_event(fixtures.random_string())
@@ -20,10 +20,10 @@ class TestEvents(unittest.TestCase):
             events._get_event_class_for(has_old_state=False, has_new_state=False,
                                         has_modifications=fixtures.random_bool())
 
-        self.assertEquals(events._get_event_class_for(has_old_state=True, has_new_state=False,
-                                                      has_modifications=fixtures.random_bool()), GOB.DELETE)
-        self.assertEquals(events._get_event_class_for(has_old_state=False, has_new_state=True,
-                                                      has_modifications=fixtures.random_bool()), GOB.ADD)
+        self.assertEqual(events._get_event_class_for(has_old_state=True, has_new_state=False,
+                                                     has_modifications=fixtures.random_bool()), GOB.DELETE)
+        self.assertEqual(events._get_event_class_for(has_old_state=False, has_new_state=True,
+                                                     has_modifications=fixtures.random_bool()), GOB.ADD)
 
         self.assertEqual(events._get_event_class_for(has_old_state=True, has_new_state=True, has_modifications=False),
                          GOB.CONFIRM)

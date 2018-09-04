@@ -14,6 +14,7 @@ todo: The delete and confirm actions contain too much data. Contents can be left
 from abc import ABCMeta, abstractmethod
 
 from gobcore.exceptions import GOBException
+from gobcore.typesystem import get_gob_type
 
 modifications_key = 'modifications'
 
@@ -28,8 +29,9 @@ class ImportEvent(metaclass=ABCMeta):
     def create_event(cls, _source_id, _id_column, _entity_id, data):
         """Creates the event dict for the given parameters
 
-        :param entity: the entity to create the event against
-        :param metadata: the metadata for the import event
+        :param _source_id: the source id of the data this event is based on
+        :param _id_column: the key or attribute which holds the id
+        :param _entity_id: the actual id of the entity
         :param data: the data for the event
 
         :return: a dict representing the event
@@ -46,7 +48,9 @@ class ImportEvent(metaclass=ABCMeta):
     def pop_ids(self):
         """Removes and returns relevent ids
 
-        :param metadata: metadata, required to locate id columns in data
+        Todo: decide if putting them in (see abstract class-method `create_event`)
+              and popping them off is the right way
+              Given the metadata, these could be derived
 
         :return: entity_id, source_id: ids of this event
         """
@@ -62,33 +66,28 @@ class ImportEvent(metaclass=ABCMeta):
         :param metadata: the metadata of the import message
         :return:
         """
-        entity[self.timestamp_field] = self._metadata.timestamp
+        setattr(entity, self.timestamp_field, self._metadata.timestamp)
 
         model = self._metadata.model
         for key, value in self._data.items():
-            # todo make this more generic (this should not be read from sqlalchemy model, but from GOB-model
-            # todo: other data types (like date) require similar conversions
-            if isinstance(getattr(model, key).prop.columns[0].type, bool):
-                # Except for None values, all new values are string values
-                # A boolean string value has to be converted to a boolean
-                # Note: Do not use bool(value); bool('False') evaluates to True !
-                setattr(entity, key, value == str(True))
-            else:
-                setattr(entity, key, value)
+            gob_type = get_gob_type(model[key]['type'])
+            setattr(entity, key, gob_type.to_db(value))
 
 
 class ADD(ImportEvent):
     """
     Example:
+    {
         ADD
         entity: meetbout
         source: meetboutengis
         source_id: 12881429
         data: {
             meetboutid: "12881429",
-            indicatie_beveiligd: "True",
+            indicatie_beveiligd: True,
             ....
         }
+    }
     """
     name = "ADD"
     is_add_new = True
@@ -106,6 +105,7 @@ class ADD(ImportEvent):
 class MODIFY(ImportEvent):
     """
     Example:
+    {
         MODIFY
         entity: meetbouten
         source: meetboutengis
@@ -113,28 +113,30 @@ class MODIFY(ImportEvent):
         data: {
             modifications: [{
                 key: "indicatie_beveiligd",
-                new_value: "False"
+                new_value: False
                 old_value: True,
             }]
         }
+    }
     """
     name = "MODIFY"
     timestamp_field = "_date_modified"
 
-    def apply_to(self, entity, metadata):
+    def apply_to(self, entity):
         # extract modifications from the data, before applying the event to the entity
 
-        modifications = self.__data.pop(self.modifications_key)
+        modifications = self._data.pop(modifications_key)
         attribute_set = self._extract_modifications(entity, modifications)
         self._data = {**self._data, **attribute_set}
 
-        super().apply_to(entity, metadata)
+        super().apply_to(entity)
 
     def _extract_modifications(self, entity, modifications):
         """extracts attributes to modify, and checks if old values are indeed present on entity
 
         :param entity: the instance to be modified
         :param modifications: a collection of mutations of attributes to be interpretated
+
         :return: a dict with extracted and verified mutations
         """
         modified_attributes = {}
@@ -145,7 +147,7 @@ class MODIFY(ImportEvent):
             if current_val != expected_val:
                 msg = f"Trying to modify data that is not in sync: entity id {entity._id}, " \
                       f"attribute {mutation['key']} had value '{current_val}', but expected was '{expected_val}'"
-                raise RuntimeError(msg)
+                raise GOBException(msg)
             else:
                 modified_attributes[mutation['key']] = mutation['new_value']
         return modified_attributes
@@ -163,11 +165,13 @@ class MODIFY(ImportEvent):
 class DELETE(ImportEvent):
     """
     Example:
+    {
         DELETE
         entity: meetbouten
         source: meetboutengis
         source_id: 12881429
         data: {}
+    }
     """
     name = "DELETE"
     timestamp_field = "_date_deleted"
@@ -181,11 +185,13 @@ class DELETE(ImportEvent):
 class CONFIRM(ImportEvent):
     """
     Example:
+    {
         CONFIRM
         entity: meetbouten
         source: meetboutengis
         source_id: 12881429
         data: {}
+    }
     """
     name = "CONFIRM"
     timestamp_field = "_date_confirmed"
