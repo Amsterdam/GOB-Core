@@ -80,7 +80,7 @@ def _get_event_class_for(has_old_state, has_new_state, has_modifications):
 
     :return: the event class
     """
-    if not has_old_state and not has_new_state:
+    if not (has_old_state or has_new_state):
         raise GOBException("Undetermined class, there should always be at least an old "
                            "or a new state to a change")
 
