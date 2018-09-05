@@ -27,7 +27,15 @@ class Point(GEOType):
         return sqlalchemy.Column(column_name, geoalchemy2.Geometry(geometry_type='POINT', srid=srid))
 
     @classmethod
-    def to_db(cls, **values):
+    def to_db(cls, value, srid=None):
+        """ The value is """
+        if srid is None:
+            srid = cls._srid
+
+        return geoalchemy2.WKTElement(value, srid=srid)
+
+    @classmethod
+    def to_str_or_none(cls, **values):
         required_keys = ['x', 'y']
         for key in required_keys:
             if key not in values:
@@ -37,10 +45,6 @@ class Point(GEOType):
         y = values['y']
         srid = values['srid'] if 'srid' in values else cls._srid
 
-        return geoalchemy2.WKTElement(f'POINT({x} {y})', srid=srid)
-
-    @classmethod
-    def to_str_or_none(cls, **values):
-        geo_element = cls.to_db(**values)
+        geo_element = geoalchemy2.WKTElement(f'POINT({x} {y})', srid=srid)
 
         return super().to_str_or_none(geo_element)
