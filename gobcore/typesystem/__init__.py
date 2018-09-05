@@ -5,10 +5,11 @@ The possible types for each attribute are defined in this module.
 The definition and characteristics of each type is in the gob_types module
 
 """
-from gobcore.typesystem import gob_types
+from gobcore.typesystem import gob_types, gob_geotypes
 
 # The possible type definitions are imported from the gob_types module
 GOB = gob_types
+GEO = gob_geotypes
 
 # The actual types that are used within GOB
 GOB_TYPES = [
@@ -24,12 +25,14 @@ GOB_TYPES = [
     GOB.Boolean
 ]
 
-# Convert GOB_TYPES to a dictionary indexed by the name of the type, prefixed by GOB.
-_gob_types_dict = {f'GOB.{gob_type.__name__}': gob_type for gob_type in GOB_TYPES}
+GEO_TYPES = [
+    GEO.Point
+]
 
-# no geo implemented yet. We pass wkt strings around for now.
-# todo: Implement geo
-_gob_types_dict['GOB.Geo.Point'] = GOB.String
+# Convert GOB_TYPES to a dictionary indexed by the name of the type, prefixed by GOB.
+_gob_types = {f'GOB.{gob_type.__name__}': gob_type for gob_type in GOB_TYPES}
+_gob_geotypes = {f'GOB.GEO.{gob_type.__name__}': gob_type for gob_type in GEO_TYPES}
+_gob_types_dict = {**_gob_types, **_gob_geotypes}
 
 
 def get_gob_type(name):

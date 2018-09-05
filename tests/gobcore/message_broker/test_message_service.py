@@ -20,7 +20,7 @@ def mock_get_on_message(service):
     return return_method
 
 
-class TestMessagedrivenService(unittest.TestCase):
+class TestMessageDrivenService(unittest.TestCase):
 
     def test_get_on_message(self):
 

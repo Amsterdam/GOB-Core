@@ -12,7 +12,7 @@ class MessageMetaData():
 
     source_id_column = '_source_id'
 
-    def __init__(self, header):
+    def __init__(self, **header):
         self._header = header
 
         if self.source is None or \
@@ -63,7 +63,7 @@ class MessageMetaData():
 class ImportMessage():
 
     def __init__(self, msg):
-        self._metadata = MessageMetaData(msg["header"])
+        self._metadata = MessageMetaData(**msg["header"])
 
         self._summary = msg["summary"]
         self._contents = msg["contents"]

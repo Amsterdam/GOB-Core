@@ -9,7 +9,6 @@ Two main queues are defined:
 
 """
 import os
-
 import pika
 
 MESSAGE_BROKER = os.getenv("MESSAGE_BROKER_ADDRESS", "localhost")
@@ -43,3 +42,11 @@ QUEUES = [
         "key": "#"
     }
 ]
+
+
+def get_queue(queue_name):
+    for queue in QUEUES:
+        if queue['name'] == queue_name:
+            return queue
+
+    return None

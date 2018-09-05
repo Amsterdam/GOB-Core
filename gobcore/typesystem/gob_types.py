@@ -18,20 +18,33 @@ todo:
 
 """
 import sqlalchemy
+import datetime
+
+from pandas import pandas
 
 
 class GOBType():
     is_pk = False
+    is_composite = True
     name = "type"
     sql_type = sqlalchemy.Column
 
     @classmethod
     def equals(cls, one, other):
-        return str(one) == str(other)
+        return cls.to_db(one) == cls.to_db(other)
 
     @classmethod
     def to_db(cls, value):
         return value
+
+    @classmethod
+    def to_str_or_none(cls, value):
+        """
+        Returns value as a string
+        :param value:
+        :return: the string that holds the value or None
+        """
+        return str(value) if not pandas.isnull(value) else None
 
     @classmethod
     def get_column_definition(cls, column_name):
@@ -47,6 +60,16 @@ class Character(GOBType):
     name = "character"
     sql_type = sqlalchemy.CHAR
 
+    @classmethod
+    def to_str_or_none(cls, value):
+        """
+        Returns value as a string containing a single character value
+        :param value:
+        :return: the string that holds the value in single character format or None
+        """
+        to_str = super().to_str_or_none(value)
+        return to_str[0] if to_str is not None else None
+
 
 class Integer(GOBType):
     name = "integer"
@@ -61,15 +84,46 @@ class Decimal(GOBType):
     name = "decimal"
     sql_type = sqlalchemy.DECIMAL
 
+    @classmethod
+    def to_str_or_none(cls, value):
+        """
+        Returns value as a string containing a decimal value
+        :param value:
+        :return: the string that holds the value in decimal format or None
+        """
+        to_str = super().to_str_or_none(value)
+        return to_str.strip().replace(",", ".") if to_str is not None else None
+
 
 class Number(GOBType):
     name = "number"
     sql_type = sqlalchemy.NUMERIC
 
+    @classmethod
+    def to_str_or_none(cls, value):
+        """
+        Returns value as a string containing an integer value
+        :param value:
+        :return: the string that holds the value in integer format or None
+        """
+        decimal_str = Decimal.to_str_or_none(value)
+        return str.split(decimal_str, ".")[0] if decimal_str is not None else None
+
 
 class Date(GOBType):
     name = "date"
     sql_type = sqlalchemy.Date
+
+    @classmethod
+    def to_str_or_none(cls, value):
+        """
+        Returns value as a string containing a date value in ISO 8601 format
+        :param value:
+        :return: the string that holds the value in data or None
+        """
+        to_str = super().to_str_or_none(value)
+        return datetime.datetime.strptime(to_str, "%Y%m%d").date().strftime("%Y-%m-%d") \
+            if to_str is not None else None
 
 
 class DateTime(GOBType):
@@ -89,3 +143,16 @@ class Boolean(GOBType):
     @classmethod
     def to_db(cls, value):
         return value == str(True)
+
+    @classmethod
+    def to_str_or_none(cls, value):
+        """
+        Returns value as a string containing a boolean value, default "True"
+
+        Todo:
+            Determine if the default value True is OK
+
+        :param value:
+        :return: the string that holds the boolean value
+        """
+        return str(False) if value == 'N' else str(True)

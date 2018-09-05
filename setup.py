@@ -10,7 +10,9 @@ setup(
     license='MPL-2.0',
     install_requires=[
         'pika',
-        'sqlalchemy'
+        'sqlalchemy',
+        'geoalchemy2',
+        'pandas'
     ],
     packages=find_packages(exclude=['tests*'])
 )
