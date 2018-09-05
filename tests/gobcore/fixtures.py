@@ -33,7 +33,7 @@ def random_gob_event():
 
 
 def get_event_data_fixture(gob_event):
-    if gob_event.name is 'MODIFY':
+    if gob_event.name == 'MODIFY':
         return {import_events.modifications_key: {}}
     return {}
 
