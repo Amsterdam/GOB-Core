@@ -11,10 +11,10 @@ Todo:
 import logging
 import datetime
 
+from gobcore.message_broker.config import LOG_QUEUE
 from gobcore.message_broker import publish
 
 
-LOG_QUEUE = "gob.log"
 LOGFORMAT = "%(asctime)s %(name)-12s %(levelname)-8s %(message)s"
 LOGLEVEL = logging.INFO
 

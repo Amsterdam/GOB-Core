@@ -25,20 +25,24 @@ CONNECTION_PARAMS = pika.ConnectionParameters(
 WORKFLOW_EXCHANGE = "gob.workflow"
 LOG_EXCHANGE = "gob.log"
 
+PROPOSAL_QUEUE = WORKFLOW_EXCHANGE + '.proposal'
+REQUEST_QUEUE = WORKFLOW_EXCHANGE + '.request'
+LOG_QUEUE = LOG_EXCHANGE + '.all'
+
 QUEUES = [
     {
         "exchange": WORKFLOW_EXCHANGE,
-        "name": WORKFLOW_EXCHANGE + '.proposal',
+        "name": PROPOSAL_QUEUE,
         "key": "*.proposal"
     },
     {
         "exchange": WORKFLOW_EXCHANGE,
-        "name": WORKFLOW_EXCHANGE + '.request',
+        "name": REQUEST_QUEUE,
         "key": "*.request"
     },
     {
         "exchange": LOG_EXCHANGE,
-        "name": LOG_EXCHANGE + '.all',
+        "name": LOG_QUEUE,
         "key": "#"
     }
 ]
