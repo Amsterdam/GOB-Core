@@ -53,10 +53,10 @@ class MessageMetaData():
         return {
             "source": self.source,
             "timestamp": self.timestamp,
-            "entity_id": self.id_column,
+            "id_column": self.id_column,
             "entity": self.entity,
             "version": self.version,
-            "gob_model": self.model
+            "model": self.model
         }
 
 

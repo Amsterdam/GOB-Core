@@ -31,7 +31,7 @@ GEO_TYPES = [
 
 # Convert GOB_TYPES to a dictionary indexed by the name of the type, prefixed by GOB.
 _gob_types = {f'GOB.{gob_type.__name__}': gob_type for gob_type in GOB_TYPES}
-_gob_geotypes = {f'GOB.GEO.{gob_type.__name__}': gob_type for gob_type in GEO_TYPES}
+_gob_geotypes = {f'GOB.Geo.{gob_type.__name__}': gob_type for gob_type in GEO_TYPES}
 _gob_types_dict = {**_gob_types, **_gob_geotypes}
 
 

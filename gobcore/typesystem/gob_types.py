@@ -25,7 +25,7 @@ from pandas import pandas
 
 class GOBType():
     is_pk = False
-    is_composite = True
+    is_composite = False
     name = "type"
     sql_type = sqlalchemy.Column
 
