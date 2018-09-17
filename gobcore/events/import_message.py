@@ -46,7 +46,7 @@ class MessageMetaData():
 
     @property
     def model(self):
-        return self._header['gob_model']
+        return self._header['model']
 
     @property
     def as_header(self):
