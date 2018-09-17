@@ -34,7 +34,7 @@ class MessageMetaData():
 
     @property
     def id_column(self):
-        return self._header['entity_id']
+        return self._header['id_column']
 
     @property
     def entity(self):
