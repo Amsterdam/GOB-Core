@@ -64,7 +64,7 @@ class GOBType(metaclass=ABCMeta):
 
         :return: String representation of the GOBType instance
         """
-        return self._string
+        return str(self._string)
 
     def __eq__(self, other):
         """Internal representation is string, that is what we compare
@@ -153,6 +153,8 @@ class Integer(String):
     sql_type = sqlalchemy.Integer
 
     def __init__(self, value):
+        if value == 'nan':
+            value = None
         if value is not None:
             try:
                 value = str(int(value))

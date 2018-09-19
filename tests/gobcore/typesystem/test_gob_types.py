@@ -13,6 +13,8 @@ class TestGobTypes(unittest.TestCase):
         GobType = get_gob_type("GOB.String")
         self.assertEqual(GobType.name, "String")
 
+        self.assertEqual('None', str(GobType(None)))
+
         fixture = fixtures.random_string()
 
         # Gobtype can be instantiated with a string
@@ -71,6 +73,7 @@ class TestGobTypes(unittest.TestCase):
         GobType = get_gob_type("GOB.Integer")
         self.assertEqual(GobType.name, "Integer")
         self.assertEqual('null', GobType.from_value(None).json)
+        self.assertEqual('null', GobType.from_value("nan").json)
         self.assertEqual('123', GobType.from_value(123).json)
         self.assertEqual('123', GobType.from_value("123").json)
 
@@ -112,6 +115,7 @@ class TestGobTypes(unittest.TestCase):
 
         self.assertEqual(GobType.name, "Boolean")
         self.assertEqual('null', GobType.from_value(None).json)
+
         self.assertEqual('true', GobType.from_value(True).json)
         self.assertEqual("False", str(GobType.from_value(False)))
         self.assertEqual('false', GobType.from_value(False).json)

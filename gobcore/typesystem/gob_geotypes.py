@@ -8,7 +8,7 @@ import geoalchemy2
 from geomet import wkt
 
 from gobcore.exceptions import GOBException
-from gobcore.typesystem.gob_types import GOBType
+from gobcore.typesystem.gob_types import GOBType, Decimal
 
 # todo: define here? Or in model? (Or both)?
 DEFAULT_SRID = int(os.getenv("DEFAULT_SRID", "28992"))
@@ -99,18 +99,17 @@ class Point(GEOType):
             point = Point.from_values(x=1, y=2, srid=28992)
         """
         required_keys = ['x', 'y']
+        optional_keys = ['srid']
         for key in required_keys:
             if key not in values:
                 raise GOBException(f"Missing required key {key}")
 
-        x = values['x']
-        y = values['y']
+        kwargs = {k: v for k, v in values.items() if k not in required_keys+optional_keys}
 
-        x = int(x) if str(int(x)) == str(x) else float(x)
-        y = int(y) if str(int(y)) == str(y) else float(y)
+        x = str(Decimal.from_value(values['x'], **kwargs))
+        y = str(Decimal.from_value(values['y'], **kwargs))
 
         srid = values['srid'] if 'srid' in values else cls._srid
-
         return cls(f'POINT({x} {y})', srid=srid)
 
     @classmethod
