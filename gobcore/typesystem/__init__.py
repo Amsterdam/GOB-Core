@@ -17,12 +17,11 @@ GOB_TYPES = [
     GOB.Character,
     GOB.Integer,
     GOB.PKInteger,
-    GOB.Number,
     GOB.Decimal,
+    GOB.Boolean,
     GOB.Date,
     GOB.DateTime,
     GOB.JSON,
-    GOB.Boolean
 ]
 
 GEO_TYPES = [
@@ -30,8 +29,8 @@ GEO_TYPES = [
 ]
 
 # Convert GOB_TYPES to a dictionary indexed by the name of the type, prefixed by GOB.
-_gob_types = {f'GOB.{gob_type.__name__}': gob_type for gob_type in GOB_TYPES}
-_gob_geotypes = {f'GOB.Geo.{gob_type.__name__}': gob_type for gob_type in GEO_TYPES}
+_gob_types = {f'GOB.{gob_type.name}': gob_type for gob_type in GOB_TYPES}
+_gob_geotypes = {f'GOB.Geo.{gob_type.name}': gob_type for gob_type in GEO_TYPES}
 _gob_types_dict = {**_gob_types, **_gob_geotypes}
 
 
@@ -64,10 +63,10 @@ def get_modifications(entity, data, model):
 
     for field_name, field in model.items():
         gob_type = get_gob_type(field['type'])
-        old_value = getattr(entity, field_name)
-        new_value = data[field_name]
+        old_value = gob_type.from_value(getattr(entity, field_name))
+        new_value = gob_type.from_value(data[field_name])
 
-        if not gob_type.equals(old_value, new_value):
+        if old_value != new_value:
             modifications.append({'key': field_name, 'old_value': old_value, 'new_value': new_value})
 
     return modifications

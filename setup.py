@@ -12,7 +12,7 @@ setup(
         'pika',
         'sqlalchemy',
         'geoalchemy2',
-        'pandas'
+        'geomet'
     ],
     packages=find_packages(exclude=['tests*'])
 )
