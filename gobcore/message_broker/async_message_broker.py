@@ -14,6 +14,8 @@ import threading
 
 import pika
 
+from gobcore.typesystem.json import GobTypeJSONEncoder
+
 
 def progress(*args):
     """Utility function to facilitate debugging
@@ -203,7 +205,7 @@ class AsyncConnection(object):
             raise Exception("Connection with message broker not available")
 
         # Convert the message to json
-        json_msg = json.dumps(msg)
+        json_msg = json.dumps(msg, cls=GobTypeJSONEncoder)
 
         # Publish the message as a persistent message on the queue
         self._channel.basic_publish(

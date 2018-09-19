@@ -58,6 +58,3 @@ class TestJsonEncoding(unittest.TestCase):
             gob_type = JSON.from_value(json_string)
             to_json = json.dumps(gob_type, cls=GobTypeJSONEncoder)
             self.assertEqual(json_string, to_json)
-
-
-
