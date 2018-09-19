@@ -27,7 +27,7 @@ class GEOType(GOBType):
     gob_type4 = Point.from_values(x=1, y=2, srid=28992)
 
     # gob type store internal representation as a wkt string, the `str()` method exposes that
-    $ 'POINT(112 22)' == str(Point.from_values(x=112, y=22)
+    $ 'POINT(112.0 22.0)' == str(Point.from_values(x=112, y=22)
     True
 
     # use comparison like this:
