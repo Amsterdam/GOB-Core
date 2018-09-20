@@ -93,6 +93,7 @@ class TestGobTypes(unittest.TestCase):
         GobType = get_gob_type("GOB.Decimal")
         self.assertEqual(GobType.name, "Decimal")
         self.assertEqual('null', GobType.from_value(None).json)
+        self.assertEqual('null', GobType.from_value("nan").json)
         self.assertEqual('123.0', GobType.from_value(123).json)
         self.assertEqual('123.123', GobType.from_value(123.123).json)
 

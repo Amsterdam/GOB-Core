@@ -180,7 +180,9 @@ class Decimal(GOBType):
     name = "Decimal"
     sql_type = sqlalchemy.DECIMAL
 
-    def __init__(self, value, **kwargs):
+    def __init__(self, value, **kwargs):  # noqa: C901
+        if value == 'nan':
+            value = None
         if value is not None:
             try:
                 if 'precision' in kwargs:
