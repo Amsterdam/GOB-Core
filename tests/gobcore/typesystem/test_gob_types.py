@@ -54,6 +54,7 @@ class TestGobTypes(unittest.TestCase):
 
         self.assertEqual('null', GobType.from_value(None).json)
         self.assertEqual('"None"', GobType.from_value("None").json)
+        self.assertEqual('null', GobType.from_value(float('nan')).json)
 
     def test_char(self):
         GobType = get_gob_type("GOB.Character")

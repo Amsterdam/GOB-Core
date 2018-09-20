@@ -17,6 +17,8 @@ todo:
 from abc import ABCMeta, abstractmethod
 import datetime
 import json
+import numbers
+from math import isnan
 
 import sqlalchemy
 
@@ -118,6 +120,8 @@ class String(GOBType):
 
     @classmethod
     def from_value(cls, value) -> GOBType:
+        if isinstance(value, numbers.Number) and isnan(value):
+            value = None
         return cls(str(value)) if value is not None else cls(value)
 
     @property
