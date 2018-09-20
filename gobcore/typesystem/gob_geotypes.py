@@ -77,7 +77,7 @@ class Point(GEOType):
     name = "Point"
     sql_type = geoalchemy2.Geometry('POINT')
 
-    @classmethod
+    @classmethod  # noqa: C901
     def from_value(cls, value, **kwargs):
         """Instantiates the GOBType Point, with either a database value, a geojson or WKT string"""
 
@@ -89,13 +89,6 @@ class Point(GEOType):
             value = json.dumps(value)
 
         # if is geojson dump to wkt string
-        value = cls._wkt_from_geojson(kwargs, value)
-
-        # is wkt string
-        return cls(value)
-
-    @classmethod
-    def _wkt_from_geojson(cls, kwargs, value):
         try:
             precision = kwargs['precision'] if 'precision' in kwargs else cls._precision
             wkt_string = wkt.dumps(json.loads(value), decimals=precision)
@@ -106,7 +99,9 @@ class Point(GEOType):
             pass
         except TypeError:
             pass
-        return value
+
+        # is wkt string
+        return cls(value)
 
     @classmethod
     def from_values(cls, **values):
