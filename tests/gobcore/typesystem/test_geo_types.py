@@ -25,6 +25,9 @@ class TestGobGeoTypes(unittest.TestCase):
         self.assertEqual('POINT(112.0 22.0)', str(GobType.from_value('POINT(112.0 22.0)')))
         self.assertEqual('POINT(52.3063972 4.9627873)', str(GobType.from_value('POINT(52.3063972 4.9627873)')))
 
+        empty_point = GobType('')
+        self.assertEqual('null', empty_point.json)
+
         mock_db_field = MagicMock(spec=geoalchemy2.Geometry)
         mock_db_field.srid = 28992
         mock_db_field.desc = 'POINT(112.0 22.0)'

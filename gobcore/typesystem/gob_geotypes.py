@@ -66,6 +66,8 @@ class GEOType(GOBType):
 
     @property
     def json(self):
+        if self._string is None or self._string == '':
+            return json.dumps(None)
         return json.dumps(wkt.loads(self._string))
 
 
