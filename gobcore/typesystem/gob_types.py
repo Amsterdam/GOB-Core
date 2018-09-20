@@ -172,6 +172,8 @@ class Integer(String):
 
     @property
     def to_db(self):
+        if self._string is None:
+            return None
         return int(self._string)
 
 
@@ -221,6 +223,8 @@ class Decimal(GOBType):
 
     @property
     def to_db(self):
+        if self._string is None:
+            return None
         return float(self._string)
 
 
@@ -307,6 +311,8 @@ class Date(String):
 
     @property
     def to_db(self):
+        if self._string is None:
+            return None
         return datetime.datetime.strptime(self._string, self.internal_format)
 
 
@@ -353,6 +359,8 @@ class JSON(GOBType):
 
     @property
     def to_db(self):
+        if self._string is None:
+            return None
         return json.loads(self._string)
 
     @property

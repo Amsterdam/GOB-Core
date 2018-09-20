@@ -62,6 +62,8 @@ class GEOType(GOBType):
 
     @property
     def to_db(self):
+        if self._string is None:
+            return None
         return self._to_wkt_elem(self._string, self._srid)
 
     @property

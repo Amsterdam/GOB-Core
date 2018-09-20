@@ -3,7 +3,7 @@ import random
 import unittest
 
 from gobcore.exceptions import GOBException
-from gobcore.typesystem import get_gob_type
+from gobcore.typesystem import get_gob_type, GOB_TYPES, GEO_TYPES
 from tests.gobcore import fixtures
 
 
@@ -197,3 +197,7 @@ class TestGobTypes(unittest.TestCase):
 
         self.assertEqual(in_order, GobType(out_of_order))
         self.assertEqual(in_order, GobType.from_value(GobType(out_of_order)))
+
+    def test_None_to_db(self):
+        for gob_type in GOB_TYPES+GEO_TYPES:
+            self.assertIsNone(gob_type(None).to_db)
