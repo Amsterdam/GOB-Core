@@ -71,7 +71,7 @@ class ImportEvent(metaclass=ABCMeta):
         model = self._metadata.model
         for key, value in self._data.items():
             gob_type = get_gob_type(model[key]['type'])
-            setattr(entity, key, gob_type.to_db(value))
+            setattr(entity, key, gob_type.from_value(value).to_db)
 
 
 class ADD(ImportEvent):
