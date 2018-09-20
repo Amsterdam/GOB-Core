@@ -102,6 +102,9 @@ class TestGobTypes(unittest.TestCase):
         with self.assertRaises(GOBException):
             GobType.from_value("123,123")
         self.assertEqual('123.123', GobType.from_value("123,123", decimal_separator=',').json)
+        self.assertEqual('123.1', GobType.from_value("123.123", precision=1).json)
+        self.assertEqual('123.1000', str(GobType.from_value("123.1", precision=4)))
+        self.assertEqual('123.1', GobType.from_value("123.1", precision=4).json)
 
         with self.assertRaises(GOBException):
             GobType.from_value('N')

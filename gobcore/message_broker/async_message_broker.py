@@ -205,7 +205,7 @@ class AsyncConnection(object):
             raise Exception("Connection with message broker not available")
 
         # Convert the message to json
-        json_msg = json.dumps(msg, cls=GobTypeJSONEncoder)
+        json_msg = json.dumps(msg, cls=GobTypeJSONEncoder, allow_nan=False)
 
         # Publish the message as a persistent message on the queue
         self._channel.basic_publish(

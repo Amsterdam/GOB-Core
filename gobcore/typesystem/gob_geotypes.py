@@ -12,6 +12,7 @@ from gobcore.typesystem.gob_types import GOBType, Decimal
 
 # todo: define here? Or in model? (Or both)?
 DEFAULT_SRID = int(os.getenv("DEFAULT_SRID", "28992"))
+DEFAULT_PRECISION = 2
 
 
 class GEOType(GOBType):
@@ -39,6 +40,7 @@ class GEOType(GOBType):
     # Geotypes are composite and have an srid
     is_composite = True
     _srid = DEFAULT_SRID
+    _precision = DEFAULT_PRECISION
 
     def __init__(self, value, **kwargs):
         if 'srid' in kwargs:
@@ -72,15 +74,27 @@ class Point(GEOType):
     sql_type = geoalchemy2.Geometry('POINT')
 
     @classmethod
-    def from_value(cls, value):
+    def from_value(cls, value, **kwargs):
         """Instantiates the GOBType Point, with either a database value, a geojson or WKT string"""
 
         if isinstance(value, geoalchemy2.Geometry):
             return cls(value.desc, srid=value.srid)
 
+        if isinstance(value, dict):
+            # serialize possible geojson
+            value = json.dumps(value)
+
         # if is geojson dump to wkt string
+        value = cls._wkt_from_geojson(kwargs, value)
+
+        # is wkt string
+        return cls(value)
+
+    @classmethod
+    def _wkt_from_geojson(cls, kwargs, value):
         try:
-            wkt_string = wkt.dumps(json.loads(value))
+            precision = kwargs['precision'] if 'precision' in kwargs else cls._precision
+            wkt_string = wkt.dumps(json.loads(value), decimals=precision)
             value = wkt_string
 
             # it is not a to wkt_string dumpable json, let it pass:
@@ -88,9 +102,7 @@ class Point(GEOType):
             pass
         except TypeError:
             pass
-
-        # is wkt string
-        return cls(value)
+        return value
 
     @classmethod
     def from_values(cls, **values):
@@ -105,6 +117,8 @@ class Point(GEOType):
                 raise GOBException(f"Missing required key {key}")
 
         kwargs = {k: v for k, v in values.items() if k not in required_keys+optional_keys}
+        if 'precision' not in kwargs:
+            kwargs['precision'] = cls._precision
 
         x = str(Decimal.from_value(values['x'], **kwargs))
         y = str(Decimal.from_value(values['y'], **kwargs))

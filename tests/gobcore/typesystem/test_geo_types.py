@@ -12,14 +12,15 @@ class TestGobGeoTypes(unittest.TestCase):
         GobType = get_gob_type("GOB.Geo.Point")
         self.assertEqual(GobType.name, "Point")
 
-        self.assertEqual('POINT(112.0 22.0)', str(GobType.from_values(x=112, y=22)))
-        self.assertEqual('POINT(52.3063972 4.9627873)', str(GobType.from_values(x=52.3063972, y=4.9627873)))
+        self.assertEqual('POINT(112.0 22.0)', str(GobType.from_values(x=112, y=22, precision=1)))
+        self.assertEqual('POINT(112.00 22.00)', str(GobType.from_values(x=112, y=22)))
+        self.assertEqual('POINT(52.3063972 4.9627873)', str(GobType.from_values(x=52.3063972, y=4.9627873, precision=7)))
         self.assertEqual('POINT(52.3063972 4.9627873)',
-                         str(GobType.from_values(x="52,3063972", y="4,9627873", decimal_separator=",")))
+                         str(GobType.from_values(x="52,3063972", y="4,9627873", precision=7, decimal_separator=",")))
 
         self.assertEqual('{"type": "Point", "coordinates": [112.0, 22.0]}', GobType.from_values(x=112, y=22).json)
         self.assertEqual('{"type": "Point", "coordinates": [52.3063972, 4.9627873]}',
-                         GobType.from_values(x=52.3063972, y=4.9627873).json)
+                         GobType.from_values(x=52.3063972, y=4.9627873, precision=7).json)
 
         self.assertEqual('POINT(112.0 22.0)', str(GobType.from_value('POINT(112.0 22.0)')))
         self.assertEqual('POINT(52.3063972 4.9627873)', str(GobType.from_value('POINT(52.3063972 4.9627873)')))

@@ -172,6 +172,7 @@ class Integer(String):
 
 
 class PKInteger(Integer):
+    name = "PKInteger"
     is_pk = True
 
 
@@ -179,10 +180,14 @@ class Decimal(GOBType):
     name = "Decimal"
     sql_type = sqlalchemy.DECIMAL
 
-    def __init__(self, value):
+    def __init__(self, value, **kwargs):
         if value is not None:
             try:
-                value = str(float(value))
+                if 'precision' in kwargs:
+                    fmt = f".{kwargs['precision']}f"
+                    value = format(float(value), fmt)
+                else:
+                    value = str(float(value))
             except ValueError:
                 raise GOBTypeException(f"value '{value}' cannot be interpreted as Decimal")
         super().__init__(value)
@@ -202,7 +207,7 @@ class Decimal(GOBType):
         if value is None:
             return cls(None)
         string_value = str(value).strip().replace(input_decimal_separator, decimal_separator_internal)
-        return cls(string_value)
+        return cls(string_value, **kwargs)
 
     @property
     def json(self):
