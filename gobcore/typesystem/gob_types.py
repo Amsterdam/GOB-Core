@@ -76,8 +76,8 @@ class GOBType(metaclass=ABCMeta):
         """
         # todo: same type?
         # When string is a NoneType, compare it as a string to other
-        if self._string is None:
-            return str(self._string) == str(other) if isinstance(other, GOBType) else str(self._string) == other
+        if self._string is None and isinstance(other, GOBType):
+            return self.json == other.json
 
         return self._string == str(other) if isinstance(other, GOBType) else self._string == other
 
