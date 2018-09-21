@@ -17,4 +17,5 @@ pyflakes==1.6.0
 pytest==3.7.2
 pytest-cov==2.6.0
 six==1.11.0
+Shapely==1.6.4.post2
 SQLAlchemy==1.2.11

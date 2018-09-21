@@ -5,6 +5,7 @@ from json import JSONDecodeError
 
 import sqlalchemy
 import geoalchemy2
+from geoalchemy2.shape import to_shape
 from geomet import wkt
 
 from gobcore.exceptions import GOBException
@@ -81,8 +82,9 @@ class Point(GEOType):
     def from_value(cls, value, **kwargs):
         """Instantiates the GOBType Point, with either a database value, a geojson or WKT string"""
 
-        if isinstance(value, geoalchemy2.Geometry):
-            return cls(value.desc, srid=value.srid)
+        if isinstance(value, geoalchemy2.elements.WKBElement):
+            # Use shapely to construct wkt string and use wkt load to get correct precision
+            value = wkt.loads(to_shape(value).wkt)
 
         if isinstance(value, dict):
             # serialize possible geojson
