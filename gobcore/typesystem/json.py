@@ -22,6 +22,6 @@ class GobTypeJSONEncoder(json.JSONEncoder):
             return json.loads(obj.json)
 
         if isinstance(obj, decimal.Decimal):
-+           return json.loads(str(obj))
+            return json.loads(str(obj))
 
         return super().default(self, obj)
