@@ -75,6 +75,10 @@ class GOBType(metaclass=ABCMeta):
         :return: True or False
         """
         # todo: same type?
+        # When string is a NoneType, compare it as a string to other
+        if self._string is None:
+            return str(self._string) == str(other) if isinstance(other, GOBType) else str(self._string) == other
+
         return self._string == str(other) if isinstance(other, GOBType) else self._string == other
 
     @classmethod
