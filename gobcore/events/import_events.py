@@ -93,6 +93,12 @@ class ADD(ImportEvent):
     is_add_new = True
     timestamp_field = "_date_created"
 
+    def apply_to(self, entity):
+        # Clear the _date_deleted field to re-enable deleted records
+        setattr(entity, '_date_deleted', None)
+
+        super().apply_to(entity)
+
     @classmethod
     def create_event(cls, _source_id, _id_column, _entity_id, data):
         #   ADD has no modifications, only data
