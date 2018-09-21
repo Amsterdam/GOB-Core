@@ -10,6 +10,7 @@ from geomet import wkt
 
 from gobcore.exceptions import GOBException
 from gobcore.typesystem.gob_types import GOBType, Decimal
+from gobcore.typesystem.json import GobTypeJSONEncoder
 
 # todo: define here? Or in model? (Or both)?
 DEFAULT_SRID = int(os.getenv("DEFAULT_SRID", "28992"))
@@ -88,7 +89,7 @@ class Point(GEOType):
 
         if isinstance(value, dict):
             # serialize possible geojson
-            value = json.dumps(value)
+            value = json.dumps(value, cls=GobTypeJSONEncoder)
 
         # if is geojson dump to wkt string
         try:

@@ -1,3 +1,4 @@
+import decimal
 import json
 
 from gobcore.typesystem.gob_types import GOBType
@@ -19,4 +20,8 @@ class GobTypeJSONEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, GOBType):
             return json.loads(obj.json)
+
+        if isinstance(obj, decimal.Decimal):
++           return json.loads(str(obj))
+
         return super().default(self, obj)

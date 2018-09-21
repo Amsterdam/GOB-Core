@@ -9,6 +9,7 @@ The code is modified to allow for asynchronous send and receive in parallel
 
 """
 
+import decimal
 import json
 import threading
 
@@ -252,7 +253,7 @@ class AsyncConnection(object):
                 # Try to parse body as json message, else pass it as it is received
                 msg = body
                 try:
-                    msg = json.loads(body)
+                    msg = json.loads(body, parse_float=decimal.Decimal)
                 except json.decoder.JSONDecodeError:
                     pass
 
