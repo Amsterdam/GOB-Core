@@ -52,6 +52,7 @@ class TestGobTypes(unittest.TestCase):
         # Gobtype can be constructed from None
         self.assertNotEqual(GobType.from_value(None), GobType.from_value("None"))
 
+        self.assertEqual(GobType.from_value(None), GobType.from_value(None))
         self.assertEqual('null', GobType.from_value(None).json)
         self.assertEqual('"None"', GobType.from_value("None").json)
         self.assertEqual('null', GobType.from_value(float('nan')).json)
