@@ -97,7 +97,7 @@
         "type": "GOB.Geo.Point",
         "srid": "RD",
         "decimal_separator": ",",
-        "description": "Datum waarop de meting heeft plaatsgevonden",
+        "description": "Geometrische ligging van de meetbout",
         "source_mapping": {
           "x": "BOUT_XCOORD",
           "y": "BOUT_YCOORD"
