@@ -5,91 +5,75 @@
     "attributes": {
       "meetboutid": {
         "type": "GOB.String",
-        "source_mapping": "BOUT_NR",
         "description": "Unieke identificatie van de meetbout"
       },
       "xcoordinaat": {
         "type": "GOB.Decimal",
-        "source_mapping": "BOUT_XCOORD",
         "decimal_separator": ",",
         "description": "Xcoördinaat van de locatie van de meetbout"
       },
       "ycoordinaat": {
         "type": "GOB.Decimal",
-        "source_mapping": "BOUT_YCOORD",
         "decimal_separator": ",",
         "description": "Ycoördinaat van de locatie van de meetbout"
       },
       "locatie": {
         "type": "GOB.String",
-        "source_mapping": "BOUT_LOCATIE",
         "description": "Beschrijving van de locatie van de meetbout, bijvoorbeeld 'in gemeenschappelijke muur'"
       },
       "bouwblokzijde": {
         "type": "GOB.String",
-        "source_mapping": "BOUT_BLOKZIJDE",
         "description": "Zijde van het bouwblok, waarop de meetbout geplaatst is"
       },
       "blokeenheid": {
         "type": "GOB.String",
-        "source_mapping": "BOUT_BLOKEENH",
         "description": "Blokeenheid, waarbinnen de meetbout zich bevindt"
       },
       "status": {
         "type": "GOB.Character",
-        "source_mapping": "BOUT_STATUS",
         "description": "Status van de meetbout (A=actueel, V=vervallen)"
       },
       "indicatie_beveiligd": {
         "type": "GOB.Boolean",
-        "source_mapping": "BOUT_BEVEILIGD",
         "format": "JN",
         "description": "Indicatie of meetbout is beveiligd (ja of nee)"
       },
       "eigenaar": {
         "type": "GOB.String",
-        "source_mapping": "BOUT_EIGENAAR",
         "description": "Eigenaar van de meetbout, aangeduid met een code"
       },
       "nabij_ref_adressen": {
         "type": "GOB.String",
-        "source_mapping": "BOUT_ADRES",
         "description": "Een adres in de nabijheid van de meetbout",
         "ref": "nummeraanduiding"
       },
       "ligt_in_ref_bouwblokken": {
         "type": "GOB.String",
-        "source_mapping": "BOUT_BLOKNR",
         "description": "Het bouwblok waarbinnen de meetbout ligt",
         "ref": "bouwblok"
       },
       "ligt_in_ref_stadsdelen": {
         "type": "GOB.String",
-        "source_mapping": "BOUT_DEELRAAD",
         "description": "Het stadsdeel waarbinnen de meetbout ligt",
         "ref": "stadsdeel"
       },
       "hoogte_tov_nap": {
         "type": "GOB.Decimal",
-        "source_mapping": "BOUT_HOOGTENAP",
         "decimal_separator": ",",
         "description": "Gemeten hoogte van de meetbout tov NAP"
       },
       "zakking_cumulatief": {
         "type": "GOB.Decimal",
-        "source_mapping": "BOUT_ZAKKINGCUM",
         "decimal_separator": ",",
         "description": "Cumulatieve zakking sinds de plaatsing van de meetbout"
       },
       "zakkingssnelheid": {
         "type": "GOB.Decimal",
         "description": "Zakkingssnelheid van de meetbout (mm/​jaar) sinds de meting",
-        "source_mapping": "BOUT_ZAKSNELH",
         "decimal_separator": ","
       },
       "datum": {
         "type": "GOB.Date",
-        "source_mapping": "BOUT_DATUM",
         "description": "Datum waarop de meting heeft plaatsgevonden",
         "format": "%Y%m%d"
       },
@@ -97,11 +81,7 @@
         "type": "GOB.Geo.Point",
         "srid": "RD",
         "decimal_separator": ",",
-        "description": "Geometrische ligging van de meetbout",
-        "source_mapping": {
-          "x": "BOUT_XCOORD",
-          "y": "BOUT_YCOORD"
-        }
+        "description": "Geometrische ligging van de meetbout"
       }
     }
   },
