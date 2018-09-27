@@ -9,12 +9,10 @@
       },
       "xcoordinaat": {
         "type": "GOB.Decimal",
-        "decimal_separator": ",",
         "description": "Xcoördinaat van de locatie van de meetbout"
       },
       "ycoordinaat": {
         "type": "GOB.Decimal",
-        "decimal_separator": ",",
         "description": "Ycoördinaat van de locatie van de meetbout"
       },
       "locatie": {
@@ -35,7 +33,6 @@
       },
       "indicatie_beveiligd": {
         "type": "GOB.Boolean",
-        "format": "JN",
         "description": "Indicatie of meetbout is beveiligd (ja of nee)"
       },
       "eigenaar": {
@@ -59,28 +56,23 @@
       },
       "hoogte_tov_nap": {
         "type": "GOB.Decimal",
-        "decimal_separator": ",",
         "description": "Gemeten hoogte van de meetbout tov NAP"
       },
       "zakking_cumulatief": {
         "type": "GOB.Decimal",
-        "decimal_separator": ",",
         "description": "Cumulatieve zakking sinds de plaatsing van de meetbout"
       },
       "zakkingssnelheid": {
         "type": "GOB.Decimal",
-        "description": "Zakkingssnelheid van de meetbout (mm/​jaar) sinds de meting",
-        "decimal_separator": ","
+        "description": "Zakkingssnelheid van de meetbout (mm/​jaar) sinds de meting"
       },
       "datum": {
         "type": "GOB.Date",
-        "description": "Datum waarop de meting heeft plaatsgevonden",
-        "format": "%Y%m%d"
+        "description": "Datum waarop de meting heeft plaatsgevonden"
       },
       "geometrie": {
         "type": "GOB.Geo.Point",
         "srid": "RD",
-        "decimal_separator": ",",
         "description": "Geometrische ligging van de meetbout"
       }
     }
