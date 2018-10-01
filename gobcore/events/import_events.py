@@ -14,6 +14,7 @@ todo: The delete and confirm actions contain too much data. Contents can be left
 from abc import ABCMeta, abstractmethod
 
 from gobcore.exceptions import GOBException
+from gobcore.model import GOBModel
 from gobcore.typesystem import get_gob_type
 
 modifications_key = 'modifications'
@@ -23,6 +24,7 @@ class ImportEvent(metaclass=ABCMeta):
     name = "event"
     is_add_new = False
     timestamp_field = None  # Each event is timestamped
+    gob_model = GOBModel()
 
     @classmethod
     @abstractmethod
@@ -44,6 +46,7 @@ class ImportEvent(metaclass=ABCMeta):
     def __init__(self, data, metadata):
         self._data = data
         self._metadata = metadata
+        self._model = gob_model.get_model(self._metadata.entity)
 
     def pop_ids(self):
         """Removes and returns relevent ids
@@ -68,9 +71,8 @@ class ImportEvent(metaclass=ABCMeta):
         """
         setattr(entity, self.timestamp_field, self._metadata.timestamp)
 
-        model = self._metadata.model
         for key, value in self._data.items():
-            gob_type = get_gob_type(model[key]['type'])
+            gob_type = get_gob_type(model['attributes'][key]['type'])
             setattr(entity, key, gob_type.from_value(value).to_db)
 
 
