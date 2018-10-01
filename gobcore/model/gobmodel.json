@@ -1,5 +1,5 @@
 {
-  "meetbouten": {
+  "meetbout": {
     "version": "0.1",
     "entity_id": "meetboutid",
     "attributes": {
@@ -7,181 +7,78 @@
         "type": "GOB.String",
         "description": "Unieke identificatie van de meetbout"
       },
-      "xcoordinaat": {
-        "type": "GOB.Decimal",
-        "description": "Xcoördinaat van de locatie van de meetbout"
-      },
-      "ycoordinaat": {
-        "type": "GOB.Decimal",
-        "description": "Ycoördinaat van de locatie van de meetbout"
+      "nabij_adres": {
+        "type": "GOB.String",
+        "description": "Een adres in de nabijheid van de meetbout",
+        "ref": "nummeraanduiding"
       },
       "locatie": {
         "type": "GOB.String",
         "description": "Beschrijving van de locatie van de meetbout, bijvoorbeeld 'in gemeenschappelijke muur'"
       },
-      "bouwblokzijde": {
-        "type": "GOB.String",
-        "description": "Zijde van het bouwblok, waarop de meetbout geplaatst is"
-      },
-      "blokeenheid": {
-        "type": "GOB.String",
-        "description": "Blokeenheid, waarbinnen de meetbout zich bevindt"
-      },
-      "status": {
+      "status_id": {
         "type": "GOB.Character",
-        "description": "Status van de meetbout (A=actueel, V=vervallen)"
+        "description": "Status id van de meetbout (1=actueel, 2=niet te meten, 3=vervallen)"
       },
-      "indicatie_beveiligd": {
-        "type": "GOB.Boolean",
-        "description": "Indicatie of meetbout is beveiligd (ja of nee)"
-      },
-      "eigenaar": {
+      "status_omschrijving": {
         "type": "GOB.String",
-        "description": "Eigenaar van de meetbout, aangeduid met een code"
+        "description": "Statusomschrijving van de meetbout"
       },
-      "nabij_ref_adressen": {
+      "vervaldatum": {
+        "type": "GOB.Date",
+        "description": "Datum waarop de meting heeft plaatsgevonden"
+      },
+      "merk_id": {
+        "type": "GOB.Character",
+        "description": "Merk id"
+      },
+      "merk_omschrijving": {
         "type": "GOB.String",
-        "description": "Een adres in de nabijheid van de meetbout",
-        "ref": "nummeraanduiding"
+        "description": "Merkomschrijving"
       },
-      "ligt_in_ref_bouwblokken": {
+      "xmuurvlak": {
+        "type": "GOB.Decimal",
+        "description": "X-coördinaat muurvlak"
+      },
+      "ymuurvlak": {
+        "type": "GOB.Decimal",
+        "description": "Y-coördinaat muurvlak"
+      },
+      "windrichting": {
+        "type": "GOB.String",
+        "description": "Windrichting"
+      },
+      "ligt_in_bouwblok": {
         "type": "GOB.String",
         "description": "Het bouwblok waarbinnen de meetbout ligt",
         "ref": "bouwblok"
       },
-      "ligt_in_ref_stadsdelen": {
+      "ligt_in_buurt": {
+        "type": "GOB.String",
+        "description": "De buurt waarbinnen de meetbout ligt",
+        "ref": "buurt"
+      },
+      "ligt_in_stadseel": {
         "type": "GOB.String",
         "description": "Het stadsdeel waarbinnen de meetbout ligt",
-        "ref": "stadsdeel"
+        "ref": "buurt"
       },
-      "hoogte_tov_nap": {
+      "xcoordinaat": {
         "type": "GOB.Decimal",
-        "description": "Gemeten hoogte van de meetbout tov NAP"
+        "description": "X-coördinaat van de locatie van de meetbout"
       },
-      "zakking_cumulatief": {
+      "ycoordinaat": {
         "type": "GOB.Decimal",
-        "description": "Cumulatieve zakking sinds de plaatsing van de meetbout"
-      },
-      "zakkingssnelheid": {
-        "type": "GOB.Decimal",
-        "description": "Zakkingssnelheid van de meetbout (mm/​jaar) sinds de meting"
-      },
-      "datum": {
-        "type": "GOB.Date",
-        "description": "Datum waarop de meting heeft plaatsgevonden"
+        "description": "Y-coördinaat van de locatie van de meetbout"
       },
       "geometrie": {
         "type": "GOB.Geo.Point",
         "srid": "RD",
         "description": "Geometrische ligging van de meetbout"
-      }
-    }
-  },
-  "meting": {
-    "version": "0.1",
-    "entity_id": "metingid",
-    "attributes": {
-      "metingid": {
-        "type": "GOB.String",
-        "description": "Unieke identificatie van de meting"
       },
-      "type": {
-        "type": "GOB.Character",
-        "description": "Type meting (N=nulmeting, H=herhalingsmeting, T=tussentijdse meting, S=schatting)"
-      },
-      "datum": {
-        "type": "GOB.Date",
-        "description": "Datum waarop de meting heeft plaatsgevonden"
-      },
-      "aantal_dagen": {
-        "type": "GOB.Decimal",
-        "description": "Aantal dagen na de vorige meting"
-      },
-      "hoogte_tov_nap": {
-        "type": "GOB.Decimal",
-        "description": "Gemeten hoogte van de meetbout tov NAP"
-      },
-      "zakking": {
-        "type": "GOB.Decimal",
-        "description": "Zakking van de meting t.o.v. vorige meting (mm)"
-      },
-      "zakkingssnelheid": {
-        "type": "GOB.Decimal",
-        "description": "Zakkingssnelheid van de meetbout (mm/​jaar) sinds de meting"
-      },
-      "zakking_cumulatief": {
-        "type": "GOB.Decimal",
-        "description": "Cumulatieve zakking sinds de plaatsing van de meetbout"
-      },
-      "wijze_van_inwinnen": {
-        "type": "GOB.String",
-        "description": "Wijze waarop de meting is ingewonnen"
-      },
-      "hoort_bij": {
-        "type": "GOB.String",
-        "description": "De meetbout waarop de meting is gedaan",
-        "ref": "meetbout"
-      },
-      "refereert_aan": {
-        "type": "GOB.String",
-        "description": "De referentiepunten waar de metingen aan worden opgehangen",
-        "ref": "referentiepunt"
-
-      },
-      "is_gemeten_door": {
-        "type": "GOB.String",
-        "description": "De onderneming die de meting heeft uitgevoerd",
-        "ref": "maatschappelijke_activiteit"
-      }
-    }
-  },
-  "referentiepunt": {
-    "version": "0.1",
-    "entity_id": "",
-    "attributes": {
-      "locatie": {
-        "type": "GOB.String",
-        "description": "Beschrijving van de locatie van het referentiepunt bijv 'nabij noordoostelijke gevelhoek'"
-      },
-      "xcoordinaat": {
-        "type": "GOB.Decimal",
-        "description": "X-coördinaat van de locatie van het referentiepunt"
-      },
-      "ycoordinaat": {
-        "type": "GOB.Decimal",
-        "description": "Y-coördinaat van de locatie van het referentiepunt"
-      },
-      "hoogte_tov_nap": {
-        "type": "GOB.Decimal",
-        "description": "Hoogte van het referentiepunt t.o.v. NAP"
-      },
-      "datum": {
-        "type": "GOB.Date",
-        "description": "Datum van plaatsing van het referentiepunt"
-      },
-      "geometrie": {
-        "type": "GOB.Geo.Point",
-        "description": "Geometrische ligging van het referentiepunt"
-      },
-      "kan_zijn": {
-        "type": "GOB.String",
-        "ref": "nap_peilmerk",
-        "description": "Het NAP-peilmerk dat het referentiepunt kan zijn"
-      }
-    }
-  },
-  "rollaag": {
-    "version": "0.1",
-    "entity_id": "Rollaagid",
-    "attributes": {
-      "rollaagidentificatie": {
-        "type": "GOB.String",
-        "description": "Unieke identificatie van de rollaag"
-      },
-      "is_gemeten_van": {
-        "type": "GOB.String",
-        "description": "Het bouwblok waarvan de rollaag is gemeten",
-        "ref": "bouwblok"
+      "publiceerbaar": {
+        "type": "GOB.Boolean",
+        "description": "Publiceerbaar ja of nee"
       }
     }
   }
