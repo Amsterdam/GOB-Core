@@ -45,5 +45,7 @@ def get_event_fixture():
 
 
 def get_metadata_fixture():
-    header = {key: random_string() for key in ["source", "timestamp", "id_column", "entity", "version", "model"]}
+    header = {key: random_string() for key in ["source", "timestamp", "version", "model"]}
+    header['entity'] = 'meetbouten'
+    header['id_column'] = 'meetboutid'
     return MessageMetaData(**header)

@@ -46,7 +46,7 @@ class ImportEvent(metaclass=ABCMeta):
     def __init__(self, data, metadata):
         self._data = data
         self._metadata = metadata
-        self._model = gob_model.get_model(self._metadata.entity)
+        self._model = self.gob_model.get_model(self._metadata.entity)
 
     def pop_ids(self):
         """Removes and returns relevent ids
@@ -72,7 +72,7 @@ class ImportEvent(metaclass=ABCMeta):
         setattr(entity, self.timestamp_field, self._metadata.timestamp)
 
         for key, value in self._data.items():
-            gob_type = get_gob_type(model['attributes'][key]['type'])
+            gob_type = get_gob_type(self._model['attributes'][key]['type'])
             setattr(entity, key, gob_type.from_value(value).to_db)
 
 
