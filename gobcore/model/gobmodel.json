@@ -39,17 +39,17 @@
         "type": "GOB.String",
         "description": "Eigenaar van de meetbout, aangeduid met een code"
       },
-      "nabij_ref_adressen": {
+      "nabij_adres": {
         "type": "GOB.String",
         "description": "Een adres in de nabijheid van de meetbout",
         "ref": "nummeraanduiding"
       },
-      "ligt_in_ref_bouwblokken": {
+      "ligt_in_bouwblok": {
         "type": "GOB.String",
         "description": "Het bouwblok waarbinnen de meetbout ligt",
         "ref": "bouwblok"
       },
-      "ligt_in_ref_stadsdelen": {
+      "ligt_in_stadsdeel": {
         "type": "GOB.String",
         "description": "Het stadsdeel waarbinnen de meetbout ligt",
         "ref": "stadsdeel"
@@ -117,18 +117,18 @@
         "type": "GOB.String",
         "description": "Wijze waarop de meting is ingewonnen"
       },
-      "hoort_bij": {
+      "hoort_bij_meetbout": {
         "type": "GOB.String",
         "description": "De meetbout waarop de meting is gedaan",
         "ref": "meetbout"
       },
-      "refereert_aan": {
+      "refereert_aan_referentiepunt": {
         "type": "GOB.String",
         "description": "De referentiepunten waar de metingen aan worden opgehangen",
         "ref": "referentiepunt"
 
       },
-      "is_gemeten_door": {
+      "is_gemeten_door_onderneming": {
         "type": "GOB.String",
         "description": "De onderneming die de meting heeft uitgevoerd",
         "ref": "maatschappelijke_activiteit"
@@ -137,7 +137,7 @@
   },
   "referentiepunt": {
     "version": "0.1",
-    "entity_id": "",
+    "entity_id": null,
     "attributes": {
       "locatie": {
         "type": "GOB.String",
@@ -163,7 +163,7 @@
         "type": "GOB.Geo.Point",
         "description": "Geometrische ligging van het referentiepunt"
       },
-      "kan_zijn": {
+      "kan_zijn_nap_peilmerk": {
         "type": "GOB.String",
         "ref": "nap_peilmerk",
         "description": "Het NAP-peilmerk dat het referentiepunt kan zijn"
@@ -174,11 +174,11 @@
     "version": "0.1",
     "entity_id": "Rollaagid",
     "attributes": {
-      "rollaagidentificatie": {
+      "rollaagid": {
         "type": "GOB.String",
         "description": "Unieke identificatie van de rollaag"
       },
-      "is_gemeten_van": {
+      "is_gemeten_van_bouwblok": {
         "type": "GOB.String",
         "description": "Het bouwblok waarvan de rollaag is gemeten",
         "ref": "bouwblok"
