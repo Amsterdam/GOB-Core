@@ -29,7 +29,7 @@
         "description": "Datum waarop de meting heeft plaatsgevonden"
       },
       "merk_id": {
-        "type": "GOB.Character",
+        "type": "GOB.String",
         "description": "Merk id"
       },
       "merk_omschrijving": {
