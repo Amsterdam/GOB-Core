@@ -72,7 +72,7 @@ class ImportEvent(metaclass=ABCMeta):
         setattr(entity, self.timestamp_field, self._metadata.timestamp)
 
         for key, value in self._data.items():
-            gob_type = get_gob_type(self._model['attributes'][key]['type'])
+            gob_type = get_gob_type(self._model['fields'][key]['type'])
             setattr(entity, key, gob_type.from_value(value).to_db)
 
 

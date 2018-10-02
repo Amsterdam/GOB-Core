@@ -47,7 +47,7 @@ def get_gob_type(name):
     return _gob_types_dict[name]
 
 
-def get_modifications(entity, data, model):
+def get_modifications(entity, data, model):     # noqa: C901
     """Get a list of modifications
 
     :param entity: an object with named attributes with values
@@ -64,7 +64,12 @@ def get_modifications(entity, data, model):
     for field_name, field in model.items():
         gob_type = get_gob_type(field['type'])
         old_value = gob_type.from_value(getattr(entity, field_name))
-        new_value = gob_type.from_value(data[field_name])
+
+        # Try to get the new value from the data, if missing, skip this field
+        try:
+            new_value = gob_type.from_value(data[field_name])
+        except KeyError:
+            continue
 
         if old_value != new_value:
             modifications.append({'key': field_name, 'old_value': old_value, 'new_value': new_value})
