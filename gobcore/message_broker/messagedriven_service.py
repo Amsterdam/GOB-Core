@@ -1,7 +1,7 @@
 import time
 
 from gobcore.message_broker.async_message_broker import AsyncConnection
-from gobcore.message_broker.config import WORKFLOW_EXCHANGE, CONNECTION_PARAMS
+from gobcore.message_broker.config import CONNECTION_PARAMS
 
 keep_running = True
 
@@ -13,11 +13,17 @@ def messagedriven_service(service_definition):
 
     ```
     SERVICEDEFINITION = {
-        'key_of_the_message_to_listen_to': {
+        'unique_key': {
+            'exchange': 'name_of_the_exchange_to_listen_to',
             'queue': 'name_of_the_queue_to_listen_to',
+            'key': 'name_of_the_key_to_listen_to'
             'handler': 'method_to_invoke_on_message',
-            'report_back': 'key_of_the_return_message',
-            'report_queue': 'name_of_the_queue_to_report_to'
+             # optional report functionality
+            'report': {
+                'exchange': 'name_of_the_exchange_to_report_to',
+                'queue': 'name_of_the_queue_to_report_to',
+                'key': 'name_of_the_key_to_report_to'
+            }
         }
     }
     ```
@@ -31,19 +37,19 @@ def messagedriven_service(service_definition):
 
     """
 
-    on_message = _get_on_message(service_definition)
-
     with AsyncConnection(CONNECTION_PARAMS) as connection:
         # Subscribe to the queues, handle messages in the on_message function (runs in another thread)
         for key, service in service_definition.items():
 
             queue_in = {
-                "exchange": WORKFLOW_EXCHANGE,
+                "exchange": service['exchange'],
                 "name": service['queue'],
-                "key": key
+                "key": service['key']
             }
 
+            on_message = _get_on_message(service)
             connection.subscribe([queue_in], on_message)
+
             print(f"Listening to messages {key} on {service['queue']}")
 
         # Repeat forever
@@ -54,7 +60,7 @@ def messagedriven_service(service_definition):
             print(".")
 
 
-def _get_on_message(service_definition):
+def _get_on_message(service_implementation):
     """Create the on_message message-handler for this service_defintion """
 
     def on_message(connection, queue, key, msg):
@@ -67,21 +73,7 @@ def _get_on_message(service_definition):
 
         :return:
         """
-        if key not in service_definition:
-            print(f"no workflow for message {key} on queue {queue['name']}")
-            return False
-
-        service_impl = service_definition[key]
-        handler = service_impl['handler']
-
-        report_queque = {
-            "exchange": WORKFLOW_EXCHANGE,
-            "name": service_impl['report_queue'],
-            "key": service_impl['report_back']
-        }
-
-        report_back = service_impl['report_back']
-
+        handler = service_implementation['handler']
         print(f"{key} accepted from {queue['name']}, start handling")
 
         try:
@@ -89,7 +81,11 @@ def _get_on_message(service_definition):
         except RuntimeError:
             return False
 
-        connection.publish(report_queque, report_back, result_msg)
+        # If a report_queue
+        if 'report' in service_implementation:
+            report = service_implementation['report']
+            connection.publish(report, report['key'], result_msg)
+
         return True
 
     return on_message
