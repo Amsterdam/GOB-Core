@@ -146,5 +146,88 @@
         "description": "Het aantal dagen sinds de vorige meting"
       }
     }
+  },
+  "referentiepunten": {
+    "version": "0.1",
+    "entity_id": "referentiepuntid",
+    "attributes": {
+      "referentiepuntid": {
+        "type": "GOB.String",
+        "description": "Unie­ke iden­ti­fi­ca­tie van de me­ting"
+      },
+      "nabij_adres": {
+        "type": "GOB.String",
+        "description": "Een adres in de nabijheid van het referentiepunt",
+        "ref": "nummeraanduiding"
+      },
+      "locatie": {
+        "type": "GOB.String",
+        "description": "Be­schrij­ving van de lo­ca­tie van het re­fe­ren­tie­punt bijv 'na­bij noord­oos­te­lij­ke ge­vel­hoek'."
+      },
+      "status_id": {
+        "type": "GOB.Character",
+        "description": "Status id van het referentiepunt (1=actueel, 2=niet te meten, 3=vervallen)"
+      },
+      "status_omschrijving": {
+        "type": "GOB.String",
+        "description": "Statusomschrijving van het referentiepunt"
+      },
+      "vervaldatum": {
+        "type": "GOB.Date",
+        "description": "Vervalda­tum van het re­fe­ren­tie­punt."
+      },
+      "merk_id": {
+        "type": "GOB.String",
+        "description": "Merk id"
+      },
+      "merk_omschrijving": {
+        "type": "GOB.String",
+        "description": "Merkomschrijving"
+      },
+      "xmuurvlak": {
+        "type": "GOB.Decimal",
+        "description": "X-coördinaat muurvlak"
+      },
+      "ymuurvlak": {
+        "type": "GOB.Decimal",
+        "description": "Y-coördinaat muurvlak"
+      },
+      "windrichting": {
+        "type": "GOB.String",
+        "description": "Windrichting"
+      },
+      "ligt_in_bouwblok": {
+        "type": "GOB.String",
+        "description": "Het bouwblok waarbinnen het re­fe­ren­tie­punt ligt",
+        "ref": "bouwblok"
+      },
+      "ligt_in_buurt": {
+        "type": "GOB.String",
+        "description": "De buurt waarbinnen het re­fe­ren­tie­punt ligt",
+        "ref": "buurt"
+      },
+      "ligt_in_stadseel": {
+        "type": "GOB.String",
+        "description": "Het stadsdeel waarbinnen het re­fe­ren­tie­punt ligt",
+        "ref": "buurt"
+      },
+      "xcoordinaat": {
+        "type": "GOB.Decimal",
+        "description": "X-coördinaat van de locatie van het re­fe­ren­tie­punt"
+      },
+      "ycoordinaat": {
+        "type": "GOB.Decimal",
+        "description": "Y-coördinaat van de locatie van het re­fe­ren­tie­punt"
+      },
+      "geometrie": {
+        "type": "GOB.Geo.Point",
+        "srid": "RD",
+        "description": "Geometrische ligging van de meetbout"
+      },
+      "publiceerbaar": {
+        "type": "GOB.Boolean",
+        "description": "Publiceerbaar ja of nee"
+      }
+    }
   }
 }
