@@ -46,9 +46,7 @@ def get_logger(name):
     """
     logger = logging.getLogger(name)
 
-    logging.basicConfig(
-        level=LOGLEVEL
-    )
+    logger.setLevel(LOGLEVEL)
 
     handler = RequestsHandler()
     formatter = logging.Formatter(LOGFORMAT)
