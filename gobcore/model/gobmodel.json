@@ -81,5 +81,70 @@
         "description": "Publiceerbaar ja of nee"
       }
     }
+  },
+  "metingen": {
+    "version": "0.1",
+    "entity_id": "metingid",
+    "attributes": {
+      "metingid": {
+        "type": "GOB.String",
+        "description": "Unie­ke iden­ti­fi­ca­tie van de me­ting"
+      },
+      "hoort_bij_meetbout": {
+        "type": "GOB.String",
+        "description": "De meet­bout waar­op de me­ting is ge­daan",
+        "ref": "meetbouten"
+      },
+      "datum": {
+        "type": "GOB.Date",
+        "description": "Da­tum waar­op de me­ting heeft plaats­ge­von­den"
+      },
+      "type_meting": {
+        "type": "GOB.Character",
+        "description": "Type me­ting (N=nul­me­ting, H=her­ha­lings­me­ting, T=tus­sen­tijd­se me­ting, S=schat­ting)"
+      },
+      "wijze_van_inwinnen_id": {
+        "type": "GOB.Character",
+        "description": "ID van de wij­ze waar­op de me­ting is in­ge­won­nen"
+      },
+      "wijze_van_inwinnen_omschrijving": {
+        "type": "GOB.String",
+        "description": "Wij­ze waar­op de me­ting is in­ge­won­nen"
+      },
+      "hoogte_tov_nap": {
+        "type": "GOB.Decimal",
+        "description": "Ge­me­ten hoog­te van de meet­bout tov NAP"
+      },
+      "zakking": {
+        "type": "GOB.Decimal",
+        "description": "Zak­king van de me­ting t.o.v. vo­ri­ge me­ting (mm)"
+      },
+      "refereert_aan": {
+        "type": "GOB.JSON",
+        "description": "De re­fe­ren­tie­pun­ten waar de me­tin­gen aan wor­den op­ge­han­gen",
+        "ref": "referentiepunten"
+      },
+      "zakkingssnelheid": {
+        "type": "GOB.Decimal",
+        "description": "Zak­kings­snel­heid van de meet­bout (mm/​jaar) sinds de me­ting"
+      },
+      "zakking_cumulatief": {
+        "type": "GOB.Decimal",
+        "description": "Cu­mu­la­tie­ve zak­king sinds de plaat­sing van de meet­bout"
+      },
+      "is_gemeten_door": {
+        "type": "GOB.String",
+        "description": "ID Van de on­der­ne­ming die de me­ting heeft uit­ge­voerd",
+        "ref": "onderneming"
+      },
+      "hoeveelste_meting": {
+        "type": "GOB.Integer",
+        "description": "Hoeveelste meting van de meetbout"
+      },
+      "aantal_dagen": {
+        "type": "GOB.Integer",
+        "description": "Het aantal dagen sinds de vorige meting"
+      }
+    }
   }
 }
