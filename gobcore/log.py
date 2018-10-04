@@ -54,4 +54,8 @@ def get_logger(name):
 
     logger.addHandler(handler)
 
+    # Temporary loggin also to stdout
+    stdout_handler = logging.StreamHandler()
+    logger.addHandler(stdout_handler)
+
     return logger
