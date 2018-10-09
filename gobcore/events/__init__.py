@@ -60,8 +60,8 @@ def get_event_for(entity, data, metadata, modifications):
         source_id = entity._source_id
         entity_id = getattr(entity, metadata.id_column)
     else:
-        source_id = data[metadata.id_column]
-        entity_id = source_id
+        source_id = data['_source_id']
+        entity_id = data[metadata.id_column]
 
     modifications_dict = dict(modifications=modifications)
     data = modifications_dict if data is None else {**modifications_dict, **data}
