@@ -20,9 +20,10 @@ class MessageMetaData():
                 self.id_column is None or \
                 self.entity is None or \
                 self.version is None or \
+                self.process_id is None or \
                 self.model is None:
             raise GOBException("Incomplete metadata, all of source, timestamp, id_column, entity, version "
-                               "and model need to be defined")
+                               "process_id and model need to be defined")
 
     @property
     def source(self):
@@ -45,6 +46,10 @@ class MessageMetaData():
         return self._header['version']
 
     @property
+    def process_id(self):
+        return self._header['process_id']
+
+    @property
     def model(self):
         return self._header['model']
 
@@ -56,6 +61,7 @@ class MessageMetaData():
             "id_column": self.id_column,
             "entity": self.entity,
             "version": self.version,
+            "process_id": self.process_id,
             "model": self.model
         }
 

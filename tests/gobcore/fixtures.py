@@ -52,4 +52,5 @@ def get_metadata_fixture():
     header = {key: random_string() for key in ["source", "timestamp", "version", "model"]}
     header['entity'] = 'meetbouten'
     header['id_column'] = 'meetboutid'
+    header['process_id'] = f"{header['timestamp']}.{header['source']}.{header['entity']}"
     return MessageMetaData(**header)

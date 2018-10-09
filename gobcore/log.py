@@ -35,6 +35,10 @@ class RequestsHandler(logging.Handler):
             "formatted_msg": self.format(record)
         }
 
+        log_msg['process_id'] = getattr(record, 'process_id', None)
+        log_msg['source'] = getattr(record, 'source', None)
+        log_msg['entity'] = getattr(record, 'entity', None)
+
         publish(LOG_QUEUE, record.levelname, log_msg)
 
 
