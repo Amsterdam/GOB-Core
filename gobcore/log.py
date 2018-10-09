@@ -38,6 +38,7 @@ class RequestsHandler(logging.Handler):
         log_msg['process_id'] = getattr(record, 'process_id', None)
         log_msg['source'] = getattr(record, 'source', None)
         log_msg['entity'] = getattr(record, 'entity', None)
+        log_msg['data'] = getattr(record, 'data', None)
 
         publish(LOG_QUEUE, record.levelname, log_msg)
 
