@@ -28,7 +28,7 @@ class RequestsHandler(logging.Handler):
         :return: None
         """
         log_msg = {
-            "timestamp": datetime.datetime.now().replace(microsecond=0).isoformat(),
+            "timestamp": datetime.datetime.now().isoformat(),
             "level": record.levelname,
             "name": record.name,
             "msg": record.msg,
