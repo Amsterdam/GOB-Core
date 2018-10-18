@@ -5,6 +5,9 @@ from gobcore.message_broker.config import CONNECTION_PARAMS
 
 keep_running = True
 
+CHECK_CONNECTION = 5    # Check connection every n seconds
+REPORT_INTERVAL = 60    # Report statistics every n seconds
+
 
 def _get_service(services, exchange, queue, key):
     """Gets the service for the specified exchange, queue and key combination
@@ -106,7 +109,13 @@ def messagedriven_service(services):
 
         # Repeat forever
         print("Queue connection for servicedefinition started")
-        while keep_running:
-            time.sleep(60)
-            # Report some statistics or whatever is useful
-            print(".")
+        n = 0
+        while keep_running and connection.is_alive():
+            time.sleep(CHECK_CONNECTION)
+            n += CHECK_CONNECTION
+            if n > REPORT_INTERVAL:
+                # Report some statistics or whatever is useful
+                print(".", flush=True)
+                n = 0
+
+        print("Queue connection for servicedefinition has stopped")

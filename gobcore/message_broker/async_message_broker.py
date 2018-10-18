@@ -12,6 +12,7 @@ The code is modified to allow for asynchronous send and receive in parallel
 import decimal
 import json
 import threading
+import traceback
 
 import pika
 
@@ -59,6 +60,7 @@ class AsyncConnection(object):
 
         # The RabbitMQ eventloop thread
         self._eventloop = None
+        self._eventloop_failed = False
 
         # Optional method, called on connection established
         self._on_connect_callback = None
@@ -69,6 +71,9 @@ class AsyncConnection(object):
 
     def __exit__(self, *args):
         self.disconnect()
+
+    def is_alive(self):
+        return not self._eventloop_failed
 
     def _on_open_connection(self, connection):
         """Called on successful connection to RabbitMQ
@@ -164,8 +169,10 @@ class AsyncConnection(object):
             try:
                 self._connection.ioloop.start()
             except Exception as e:
+                traceback.print_exc(limit=-5)
                 progress("Eventloop exception:", e)
             progress("Eventloop ended")
+            self._eventloop_failed = True
 
         # A callback function can be specified that will be called when a connection is established
         self._on_connect_callback = on_connect_callback
