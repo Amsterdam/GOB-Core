@@ -29,6 +29,7 @@ class MockIoloop:
 class MockDeliver:
 
     delivery_tag = "tag"
+    exchange = "exchange"
 
     def __init__(self, key):
         self.routing_key = key
@@ -262,7 +263,8 @@ def test_subscribe(monkeypatch):
     # Test subscription and message receipt
     mock_connection(monkeypatch, connection_success=True)
 
-    def on_message(self, queue, key, body):
+    # connection, exchange, queue, key, msg
+    def on_message(self, exchange, queue, key, body):
         assert(key == "mykey")
         assert(body == "mybody")
 

@@ -257,7 +257,7 @@ class AsyncConnection(object):
                 except json.decoder.JSONDecodeError:
                     pass
 
-                if message_handler(self, queue, basic_deliver.routing_key, msg) is not False:
+                if message_handler(self, basic_deliver.exchange, queue, basic_deliver.routing_key, msg) is not False:
                     # Default is to acknowledge message
                     channel.basic_ack(basic_deliver.delivery_tag)
 
@@ -273,7 +273,7 @@ class AsyncConnection(object):
             :return: A method that links the handler to a consumer
             """
             return lambda frame: self._channel.basic_consume(
-                consumer_callback=on_message(queue),
+                consumer_callback=on_message(queue["name"]),
                 queue=queue["name"])
 
         # Subscribe to each queue in the list

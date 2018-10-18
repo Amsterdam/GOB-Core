@@ -6,7 +6,37 @@ from gobcore.message_broker.config import CONNECTION_PARAMS
 keep_running = True
 
 
-def messagedriven_service(service_definition):
+def _get_service(services, exchange, queue, key):
+    return next(s for s in services.values() if
+                s["exchange"] == exchange and
+                s["queue"] == queue and
+                (s["key"] == key or s["key"] == "#"))
+
+
+def _on_message(connection, service, msg):
+    """Called on every message receipt
+
+    :param connection: the connection with the message broker
+    :param service: the service definition for the message
+    :param msg: the contents of the message
+
+    :return:
+    """
+    handler = service['handler']
+    try:
+        result_msg = handler(msg)
+    except RuntimeError:
+        return False
+
+    # If a report_queue
+    if 'report' in service:
+        report = service['report']
+        connection.publish(report, report['key'], result_msg)
+
+    return True
+
+
+def messagedriven_service(services):
     """Start a connection with a the message broker and the given definition
 
     servicedefenition is a dict of dicts:
@@ -37,20 +67,34 @@ def messagedriven_service(service_definition):
 
     """
 
+    def on_message(connection, exchange, queue, key, msg):
+        """Called on every message receipt
+
+        :param connection: the connection with the message broker
+        :param exchange: the message broker exchange
+        :param queue: the message broker queue
+        :param key: the identification of the message (e.g. fullimport.proposal)
+        :param msg: the contents of the message
+
+        :return:
+        """
+        print(f"{key} accepted from {queue}, start handling")
+        service = _get_service(services, exchange, queue, key)
+        return _on_message(connection, service, msg)
+
     with AsyncConnection(CONNECTION_PARAMS) as connection:
         # Subscribe to the queues, handle messages in the on_message function (runs in another thread)
-        for key, service in service_definition.items():
+        queues = []
+        for key, service in services.items():
 
-            queue_in = {
+            queues.append({
                 "exchange": service['exchange'],
                 "name": service['queue'],
                 "key": service['key']
-            }
+            })
+            print(f"Listening to messages {service['key']} on queue {service['queue']}")
 
-            on_message = _get_on_message(service)
-            connection.subscribe([queue_in], on_message)
-
-            print(f"Listening to messages {key} on {service['queue']}")
+        connection.subscribe(queues, on_message)
 
         # Repeat forever
         print("Queue connection for servicedefinition started")
@@ -58,34 +102,3 @@ def messagedriven_service(service_definition):
             time.sleep(60)
             # Report some statistics or whatever is useful
             print(".")
-
-
-def _get_on_message(service_implementation):
-    """Create the on_message message-handler for this service_defintion """
-
-    def on_message(connection, queue, key, msg):
-        """Called on every message receipt
-
-        :param connection: the connection with the message broker
-        :param queue: the message broker queue
-        :param key: the identification of the message (e.g. fullimport.proposal)
-        :param msg: the contents of the message
-
-        :return:
-        """
-        handler = service_implementation['handler']
-        print(f"{key} accepted from {queue['name']}, start handling")
-
-        try:
-            result_msg = handler(msg)
-        except RuntimeError:
-            return False
-
-        # If a report_queue
-        if 'report' in service_implementation:
-            report = service_implementation['report']
-            connection.publish(report, report['key'], result_msg)
-
-        return True
-
-    return on_message

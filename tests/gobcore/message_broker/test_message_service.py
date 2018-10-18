@@ -22,6 +22,22 @@ def mock_get_on_message(service):
 
 class TestMessageDrivenService(unittest.TestCase):
 
+    def test_get_service(self):
+        services = {
+            "a": {
+                "exchange": "e1",
+                "queue": "q1",
+                "key": "k1"
+            },
+            "b": {
+                "exchange": "e2",
+                "queue": "q2",
+                "key": "#"
+            }
+        }
+        self.assertTrue(messagedriven_service._get_service(services, "e1", "q1", "k1") == services["a"])
+        self.assertTrue(messagedriven_service._get_service(services, "e2", "q2", "xyz") == services["b"])
+
     def test_get_on_message(self):
 
         global return_message
