@@ -7,6 +7,14 @@ keep_running = True
 
 
 def _get_service(services, exchange, queue, key):
+    """Gets the service for the specified exchange, queue and key combination
+
+    :param services:
+    :param exchange:
+    :param queue:
+    :param key:
+    :return:
+    """
     return next(s for s in services.values() if
                 s["exchange"] == exchange and
                 s["queue"] == queue and

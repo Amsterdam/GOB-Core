@@ -38,7 +38,7 @@ class TestMessageDrivenService(unittest.TestCase):
         self.assertTrue(messagedriven_service._get_service(services, "e1", "q1", "k1") == services["a"])
         self.assertTrue(messagedriven_service._get_service(services, "e2", "q2", "xyz") == services["b"])
 
-    def test_get_on_message(self):
+    def test_on_message(self):
 
         global return_message
 
@@ -58,8 +58,8 @@ class TestMessageDrivenService(unittest.TestCase):
 
         with mock.patch.object(connection, "publish") as mocked_publish:
 
-            on_message = messagedriven_service._get_on_message(single_service)
-            result = on_message(connection, queue, key, message)
+            # on_message = messagedriven_service._get_on_message(single_service)
+            result = messagedriven_service._on_message(connection, single_service, message)
 
             # The result should be True
             self.assertTrue(result)
@@ -71,9 +71,7 @@ class TestMessageDrivenService(unittest.TestCase):
             mocked_publish.assert_called_with(return_queue, return_queue['key'], return_message)
 
     @mock.patch("gobcore.message_broker.messagedriven_service.AsyncConnection")
-    @mock.patch("gobcore.message_broker.messagedriven_service._get_on_message",
-                side_effect=mock_get_on_message)
-    def test_messagedriven_service(self, get_on_message, mocked_connection):
+    def test_messagedriven_service(self, mocked_connection):
 
         global return_method
         return_method = fixtures.random_string()
@@ -92,4 +90,4 @@ class TestMessageDrivenService(unittest.TestCase):
         mocked_connection.return_value.__enter__.return_value.subscribe\
             .assert_called_with([{'exchange': expected_exchange,
                                   'name': expected_queue,
-                                  'key': expected_key}], return_method)
+                                  'key': expected_key}], mock.ANY)  # Inner function
