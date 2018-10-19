@@ -26,7 +26,8 @@ def progress(*args):
     :return: None
     """
 
-    print("Progress", threading.get_ident(), *args)
+    # print("Progress", threading.get_ident(), *args)
+    pass
 
 
 class AsyncConnection(object):
@@ -276,17 +277,20 @@ class AsyncConnection(object):
             A consumer will be created to consume the messages from the queue
 
             :param queue: The queue that is consumed by this on_message
-            :param queue: The name of the queue
             :return: A method that links the handler to a consumer
             """
             return lambda frame: self._channel.basic_consume(
-                consumer_callback=on_message(queue["name"]),
-                queue=queue["name"])
+                consumer_callback=on_message(queue),
+                queue=queue)
+
+        # Provide for a callback for every queue
+        queue_names = set([queue["name"] for queue in queues])
+        callback = {name: on_queue_bind(name) for name in queue_names}
 
         # Subscribe to each queue in the list
         for queue in queues:
             self._channel.queue_bind(
-                callback=on_queue_bind(queue),
+                callback=callback[queue["name"]],
                 exchange=queue["exchange"],
                 queue=queue["name"],
                 routing_key=queue["key"]

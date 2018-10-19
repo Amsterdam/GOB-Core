@@ -1,7 +1,9 @@
+import sys
 import time
 
 from gobcore.message_broker.async_message_broker import AsyncConnection
 from gobcore.message_broker.config import CONNECTION_PARAMS
+from gobcore.message_broker.initialise_queues import initialize_message_broker
 
 keep_running = True
 
@@ -45,6 +47,23 @@ def _on_message(connection, service, msg):
         connection.publish(report, report['key'], result_msg)
 
     return True
+
+
+def _init():
+    """Initializes the message broker
+
+    This method is idempotent. If the message broker has already been initialised it will be noticed and
+    the initialisation becomes a noop
+
+    :return:
+    """
+    try:
+        initialize_message_broker()
+    except Exception as e:
+        print(f"Error: Failed to initialize message broker, {str(e)}")
+        sys.exit(1)
+
+    print("Succesfully initialized message broker")
 
 
 def messagedriven_service(services):
@@ -92,6 +111,9 @@ def messagedriven_service(services):
         print(f"{key} accepted from {queue}, start handling")
         service = _get_service(services, exchange, queue, key)
         return _on_message(connection, service, msg)
+
+    # Start by initializing the message broker (idempotent)
+    _init()
 
     with AsyncConnection(CONNECTION_PARAMS) as connection:
         # Subscribe to the queues, handle messages in the on_message function (runs in another thread)
