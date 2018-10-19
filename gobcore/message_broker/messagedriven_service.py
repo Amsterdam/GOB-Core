@@ -135,7 +135,7 @@ def messagedriven_service(services):
         while keep_running and connection.is_alive():
             time.sleep(CHECK_CONNECTION)
             n += CHECK_CONNECTION
-            if n > REPORT_INTERVAL:
+            if n >= REPORT_INTERVAL:
                 # Report some statistics or whatever is useful
                 print(".", flush=True)
                 n = 0
