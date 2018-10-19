@@ -70,8 +70,9 @@ class TestMessageDrivenService(unittest.TestCase):
             # The return message should be published on the return queue
             mocked_publish.assert_called_with(return_queue, return_queue['key'], return_message)
 
+    @mock.patch("gobcore.message_broker.messagedriven_service._init", return_value=None)
     @mock.patch("gobcore.message_broker.messagedriven_service.AsyncConnection")
-    def test_messagedriven_service(self, mocked_connection):
+    def test_messagedriven_service(self, mocked_connection, mocked_init):
 
         global return_method
         return_method = fixtures.random_string()
@@ -86,6 +87,7 @@ class TestMessageDrivenService(unittest.TestCase):
         messagedriven_service.keep_running = False
         messagedriven_service.messagedriven_service(service_definition)
 
+        mocked_init.assert_called_with()
         mocked_connection.assert_called_with(CONNECTION_PARAMS)
         mocked_connection.return_value.__enter__.return_value.subscribe\
             .assert_called_with([{'exchange': expected_exchange,
