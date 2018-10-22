@@ -1,0 +1,25 @@
+{
+  "meetbouten": {
+    "meetbouten": {
+      "enhanced": {
+        "version": "0.1",
+        "query": [
+"    SELECT meetbouten.*",
+"    ,       eerste_metingen.datum                                          AS datum",
+"    ,       meest_recente_metingen.hoogte_tov_nap",
+"    ,       meest_recente_metingen.zakkingssnelheid",
+"    ,       meest_recente_metingen.zakking_cumulatief",
+"    FROM              meetbouten",
+"    LEFT JOIN (",
+"            SELECT DISTINCT ON (hoort_bij_meetbout_id) * from metingen",
+"            ORDER BY hoort_bij_meetbout_id, datum DESC",
+"    ) AS meest_recente_metingen          ON meetbouten._id = meest_recente_metingen.hoort_bij_meetbout_id",
+"    LEFT JOIN (",
+"            SELECT DISTINCT ON (hoort_bij_meetbout_id) * from metingen",
+"            ORDER BY hoort_bij_meetbout_id, datum ASC",
+"    ) AS eerste_metingen                 ON meetbouten._id = eerste_metingen.hoort_bij_meetbout_id"
+        ]
+      }
+    }
+  }
+}
