@@ -33,6 +33,13 @@ FIXED_COLUMNS = {
     "_id": "GOB.String"         # Provide for a generic (independent from Stelselpedia) id field for every entity
 }
 
+PRIVATE_META_FIELDS = {
+        field_name: {
+            "type": field_type,
+            "description": ""
+        } for field_name, field_type in METADATA_COLUMNS["private"].items()
+    }
+
 PUBLIC_META_FIELDS = {
         field_name: {
             "type": field_type,

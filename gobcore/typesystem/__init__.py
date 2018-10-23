@@ -5,6 +5,10 @@ The possible types for each attribute are defined in this module.
 The definition and characteristics of each type is in the gob_types module
 
 """
+import sqlalchemy
+import geoalchemy2
+
+from gobcore.exceptions import GOBException
 from gobcore.typesystem import gob_types, gob_geotypes
 
 # The possible type definitions are imported from the gob_types module
@@ -34,6 +38,23 @@ _gob_geotypes = {f'GOB.Geo.{gob_type.name}': gob_type for gob_type in GEO_TYPES}
 _gob_types_dict = {**_gob_types, **_gob_geotypes}
 
 
+# Convert GOB_TYPES to a dictionary indexed by the name of the type, prefixed by GOB.
+_gob_sql_types_list = [{'gob_type': gob_type, 'sql_type': gob_type.sql_type} for gob_type in GOB_TYPES + GEO_TYPES]
+
+# Postgres specific mapping for sql types to GOBTypes
+_gob_postgres_sql_types_list = [
+    {'sql_type': sqlalchemy.types.VARCHAR, 'gob_type': GOB.String},
+    {'sql_type': sqlalchemy.types.CHAR, 'gob_type': GOB.Character},
+    {'sql_type': sqlalchemy.types.INTEGER, 'gob_type': GOB.Integer},
+    {'sql_type': sqlalchemy.types.NUMERIC, 'gob_type': GOB.Decimal},
+    {'sql_type': sqlalchemy.types.BOOLEAN, 'gob_type': GOB.Boolean},
+    {'sql_type': sqlalchemy.types.DATE, 'gob_type': GOB.Date},
+    {'sql_type': sqlalchemy.dialects.postgresql.base.TIMESTAMP, 'gob_type': GOB.DateTime},
+    {'sql_type': sqlalchemy.types.JSON, 'gob_type': GOB.JSON},
+    {'sql_type': geoalchemy2.types.Geometry, 'gob_type': GEO.Point},
+]
+
+
 def get_gob_type(name):
     """
     Get the type definition for a given type name
@@ -45,6 +66,22 @@ def get_gob_type(name):
     :return: the type definition (class) for the given type name
     """
     return _gob_types_dict[name]
+
+
+def get_gob_type_from_sql_type(sql_type):
+    """
+    Get the type definition for a given sqlalchemy type
+
+    Example:
+        get_gob_type_from_sqlalchemy_type(<class 'sqlalchemy.sql.sqltypes.Integer'>) => GOBType:String
+
+    :param name:
+    :return: the type definition (class) for the given type name
+    """
+    for type_map in _gob_postgres_sql_types_list:
+        if sql_type == type_map['sql_type']:
+            return type_map['gob_type']
+    raise GOBException(f"No GOBType found for SQLType: {sql_type}")
 
 
 def get_modifications(entity, data, model):     # noqa: C901
