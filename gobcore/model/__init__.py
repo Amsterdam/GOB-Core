@@ -24,7 +24,7 @@ class GOBModel():
                 # For references add the _text and _id fields with type GOB.String
                 fields[f'{field_name}_text'] = attributes
                 fields[f'{field_name}_id'] = {
-                    'type': "GOB.String",
+                    'type': attributes['type'],
                     'description': f"Reference ID to {ref}"
                 }
             else:

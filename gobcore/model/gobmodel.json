@@ -63,14 +63,6 @@
         "description": "Het stadsdeel waarbinnen de meetbout ligt",
         "ref": "buurt"
       },
-      "xcoordinaat": {
-        "type": "GOB.Decimal",
-        "description": "X-coördinaat van de locatie van de meetbout"
-      },
-      "ycoordinaat": {
-        "type": "GOB.Decimal",
-        "description": "Y-coördinaat van de locatie van de meetbout"
-      },
       "geometrie": {
         "type": "GOB.Geo.Point",
         "srid": "RD",
@@ -134,8 +126,7 @@
       },
       "is_gemeten_door": {
         "type": "GOB.String",
-        "description": "ID Van de onderneming die de meting heeft uitgevoerd",
-        "ref": "onderneming"
+        "description": "ID Van de onderneming die de meting heeft uitgevoerd"
       },
       "hoeveelste_meting": {
         "type": "GOB.Integer",
@@ -163,6 +154,14 @@
       "locatie": {
         "type": "GOB.String",
         "description": "Beschrijving van de locatie van het referentiepunt bijv 'nabij noordoostelijke gevelhoek'."
+      },
+      "hoogte_tov_nap": {
+        "type": "GOB.Decimal",
+        "description": "Hoog­te van het re­fe­ren­tie­punt t.o.v. NAP"
+      },
+      "datum": {
+        "type": "GOB.Date",
+        "description": "Da­tum van plaat­sing van het re­fe­ren­tie­punt."
       },
       "status_id": {
         "type": "GOB.Character",
@@ -211,18 +210,15 @@
         "description": "Het stadsdeel waarbinnen het referentiepunt ligt",
         "ref": "buurt"
       },
-      "xcoordinaat": {
-        "type": "GOB.Decimal",
-        "description": "X-coördinaat van de locatie van het referentiepunt"
-      },
-      "ycoordinaat": {
-        "type": "GOB.Decimal",
-        "description": "Y-coördinaat van de locatie van het referentiepunt"
-      },
       "geometrie": {
         "type": "GOB.Geo.Point",
         "srid": "RD",
         "description": "Geometrische ligging van de meetbout"
+      },
+      "is_nap_peilmerk": {
+        "type": "GOB.String",
+        "description": "Het NAP-peil­merk dat het re­fe­ren­tie­punt kan zijn.",
+        "ref": "peilmerk"
       },
       "publiceerbaar": {
         "type": "GOB.Boolean",

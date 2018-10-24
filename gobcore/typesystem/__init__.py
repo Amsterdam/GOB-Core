@@ -44,12 +44,14 @@ _gob_sql_types_list = [{'gob_type': gob_type, 'sql_type': gob_type.sql_type} for
 # Postgres specific mapping for sql types to GOBTypes
 _gob_postgres_sql_types_list = [
     {'sql_type': sqlalchemy.types.VARCHAR, 'gob_type': GOB.String},
+    {'sql_type': sqlalchemy.types.TEXT, 'gob_type': GOB.String},
     {'sql_type': sqlalchemy.types.CHAR, 'gob_type': GOB.Character},
     {'sql_type': sqlalchemy.types.INTEGER, 'gob_type': GOB.Integer},
     {'sql_type': sqlalchemy.types.NUMERIC, 'gob_type': GOB.Decimal},
     {'sql_type': sqlalchemy.types.BOOLEAN, 'gob_type': GOB.Boolean},
     {'sql_type': sqlalchemy.types.DATE, 'gob_type': GOB.Date},
     {'sql_type': sqlalchemy.dialects.postgresql.base.TIMESTAMP, 'gob_type': GOB.DateTime},
+    {'sql_type': sqlalchemy.dialects.postgresql.JSON, 'gob_type': GOB.JSON},
     {'sql_type': sqlalchemy.types.JSON, 'gob_type': GOB.JSON},
     {'sql_type': geoalchemy2.types.Geometry, 'gob_type': GEO.Point},
 ]

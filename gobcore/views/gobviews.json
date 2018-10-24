@@ -20,6 +20,25 @@
 "    ) AS eerste_metingen                 ON meetbouten._id = eerste_metingen.hoort_bij_meetbout_id"
         ]
       }
+    },
+    "metingen": {
+      "enhanced": {
+        "version": "0.1",
+        "query": [
+"    SELECT metingen.*",
+"    ,       refereert_aan_id->>0                                 AS refp1_nr",
+"    ,       refereert_aan_id->>1                                 AS refp2_nr",
+"    ,       refereert_aan_id->>2                                 AS refp3_nr",
+"    ,       CASE WHEN wijze_van_inwinnen_id = '1' THEN 'W'",
+"                 WHEN wijze_van_inwinnen_id = '2' THEN 'T'",
+"                 WHEN wijze_van_inwinnen_id = '3' THEN 'G' END   AS wvi",
+"    ,       meetbouten.ligt_in_stadseel_text",
+"    FROM  metingen",
+"    LEFT JOIN (",
+"            SELECT _id, ligt_in_stadseel_text from meetbouten",
+"    ) AS meetbouten ON metingen.hoort_bij_meetbout_id = meetbouten._id"
+        ]
+      }
     }
   }
 }
