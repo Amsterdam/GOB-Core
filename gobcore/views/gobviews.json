@@ -39,6 +39,17 @@
 "    ) AS meetbouten ON metingen.hoort_bij_meetbout_id = meetbouten._id"
         ]
       }
+    },
+    "rollagen": {
+      "enhanced": {
+        "version": "0.1",
+        "query": [
+"    SELECT *",
+"    ,       row_number() OVER (order by rollaagid) as idx",
+"    FROM  rollagen",
+"    ORDER BY rollaagid"
+        ]
+      }
     }
   }
 }

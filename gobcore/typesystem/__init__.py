@@ -47,6 +47,7 @@ _gob_postgres_sql_types_list = [
     {'sql_type': sqlalchemy.types.TEXT, 'gob_type': GOB.String},
     {'sql_type': sqlalchemy.types.CHAR, 'gob_type': GOB.Character},
     {'sql_type': sqlalchemy.types.INTEGER, 'gob_type': GOB.Integer},
+    {'sql_type': sqlalchemy.types.BIGINT, 'gob_type': GOB.Integer},    
     {'sql_type': sqlalchemy.types.NUMERIC, 'gob_type': GOB.Decimal},
     {'sql_type': sqlalchemy.types.BOOLEAN, 'gob_type': GOB.Boolean},
     {'sql_type': sqlalchemy.types.DATE, 'gob_type': GOB.Date},
