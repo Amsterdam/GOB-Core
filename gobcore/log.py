@@ -10,13 +10,19 @@ Todo:
 """
 import logging
 import datetime
+import atexit
 
-from gobcore.message_broker.config import LOG_QUEUE
-from gobcore.message_broker import publish
-
+from gobcore.log_publisher import LogPublisher
 
 LOGFORMAT = "%(asctime)s %(name)-12s %(levelname)-8s %(message)s"
 LOGLEVEL = logging.INFO
+
+# Instantiate a log publisher
+LOG_PUBLISHER = LogPublisher()
+# Connect to the message broker
+LOG_PUBLISHER.connect()
+# Disconnect at exit
+atexit.register(LOG_PUBLISHER.disconnect)
 
 
 class RequestsHandler(logging.Handler):
@@ -40,7 +46,7 @@ class RequestsHandler(logging.Handler):
         log_msg['entity'] = getattr(record, 'entity', None)
         log_msg['data'] = getattr(record, 'data', None)
 
-        publish(LOG_QUEUE, record.levelname, log_msg)
+        LOG_PUBLISHER.publish(record.levelname, log_msg)
 
 
 def get_logger(name):
@@ -59,7 +65,7 @@ def get_logger(name):
 
     logger.addHandler(handler)
 
-    # Temporary loggin also to stdout
+    # Temporary logging also to stdout
     stdout_handler = logging.StreamHandler()
     logger.addHandler(stdout_handler)
 
