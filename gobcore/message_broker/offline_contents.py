@@ -13,7 +13,7 @@ from pathlib import Path
 
 from gobcore.message_broker.config import GOB_SHARED_DIR
 
-_MAX_CONTENTS_SIZE = 128    # Any message contents larger than this size is stored offline
+_MAX_CONTENTS_SIZE = 99999999    # Any message contents larger than this size is stored offline
 _CONTENTS = "contents"      # The name of the message attribute to check for its contents
 _CONTENTS_REF = "contents_ref"  # The name of the message attribute to store the reference to the offloaded contents
 _MESSAGE_BROKER_FOLDER = "message_broker"   # The name of the folder where the offloaded contents are stored
