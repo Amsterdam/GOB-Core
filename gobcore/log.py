@@ -17,12 +17,7 @@ from gobcore.log_publisher import LogPublisher
 LOGFORMAT = "%(asctime)s %(name)-12s %(levelname)-8s %(message)s"
 LOGLEVEL = logging.INFO
 
-# Instantiate a log publisher
-LOG_PUBLISHER = LogPublisher()
-# Connect to the message broker
-LOG_PUBLISHER.connect()
-# Disconnect at exit
-atexit.register(LOG_PUBLISHER.disconnect)
+LOG_PUBLISHER = None
 
 
 class RequestsHandler(logging.Handler):
@@ -45,6 +40,15 @@ class RequestsHandler(logging.Handler):
         log_msg['source'] = getattr(record, 'source', None)
         log_msg['entity'] = getattr(record, 'entity', None)
         log_msg['data'] = getattr(record, 'data', None)
+
+        global LOG_PUBLISHER
+        if LOG_PUBLISHER is None:
+            # Instantiate a log publisher
+            LOG_PUBLISHER = LogPublisher()
+            # Connect to the message broker
+            LOG_PUBLISHER.connect()
+            # Disconnect at exit
+            atexit.register(LOG_PUBLISHER.disconnect)
 
         LOG_PUBLISHER.publish(record.levelname, log_msg)
 
