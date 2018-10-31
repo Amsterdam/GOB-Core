@@ -24,7 +24,9 @@ CONNECTION_PARAMS = pika.ConnectionParameters(
     host=MESSAGE_BROKER,
     virtual_host=MESSAGE_BROKER_VHOST,
     credentials=pika.PlainCredentials(username=MESSAGE_BROKER_USER,
-                                      password=MESSAGE_BROKER_PASSWORD)
+                                      password=MESSAGE_BROKER_PASSWORD),
+    heartbeat_interval=600,
+    blocked_connection_timeout=300
 )
 
 WORKFLOW_EXCHANGE = "gob.workflow"
