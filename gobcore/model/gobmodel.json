@@ -10,7 +10,7 @@
       "nabij_adres": {
         "type": "GOB.String",
         "description": "Een adres in de nabijheid van de meetbout",
-        "ref": "nummeraanduiding"
+        "ref": "bag:nummeraanduiding"
       },
       "locatie": {
         "type": "GOB.String",
@@ -51,17 +51,17 @@
       "ligt_in_bouwblok": {
         "type": "GOB.String",
         "description": "Het bouwblok waarbinnen de meetbout ligt",
-        "ref": "bouwblok"
+        "ref": "gebieden:bouwblok"
       },
       "ligt_in_buurt": {
         "type": "GOB.String",
         "description": "De buurt waarbinnen de meetbout ligt",
-        "ref": "buurt"
+        "ref": "gebieden:buurt"
       },
       "ligt_in_stadseel": {
         "type": "GOB.String",
         "description": "Het stadsdeel waarbinnen de meetbout ligt",
-        "ref": "buurt"
+        "ref": "gebieden:stadseel"
       },
       "geometrie": {
         "type": "GOB.Geo.Point",
@@ -85,7 +85,7 @@
       "hoort_bij_meetbout": {
         "type": "GOB.String",
         "description": "De meetbout waarop de meting is gedaan",
-        "ref": "meetbouten"
+        "ref": "meetbouten:meetbouten"
       },
       "datum": {
         "type": "GOB.Date",
@@ -114,7 +114,7 @@
       "refereert_aan": {
         "type": "GOB.JSON",
         "description": "De referentiepunten waar de metingen aan worden opgehangen",
-        "ref": "referentiepunten"
+        "ref": "meetbouten:referentiepunten"
       },
       "zakkingssnelheid": {
         "type": "GOB.Decimal",
@@ -149,7 +149,7 @@
       "nabij_adres": {
         "type": "GOB.String",
         "description": "Een adres in de nabijheid van het referentiepunt",
-        "ref": "nummeraanduiding"
+        "ref": "bag:nummeraanduiding"
       },
       "locatie": {
         "type": "GOB.String",
@@ -198,17 +198,17 @@
       "ligt_in_bouwblok": {
         "type": "GOB.String",
         "description": "Het bouwblok waarbinnen het referentiepunt ligt",
-        "ref": "bouwblok"
+        "ref": "gebieden:bouwblok"
       },
       "ligt_in_buurt": {
         "type": "GOB.String",
         "description": "De buurt waarbinnen het referentiepunt ligt",
-        "ref": "buurt"
+        "ref": "gebieden:buurt"
       },
       "ligt_in_stadseel": {
         "type": "GOB.String",
         "description": "Het stadsdeel waarbinnen het referentiepunt ligt",
-        "ref": "buurt"
+        "ref": "gebieden:stadsdeel"
       },
       "geometrie": {
         "type": "GOB.Geo.Point",
@@ -218,7 +218,7 @@
       "is_nap_peilmerk": {
         "type": "GOB.String",
         "description": "Het NAP-peil­merk dat het re­fe­ren­tie­punt kan zijn.",
-        "ref": "peilmerk"
+        "ref": "nap:peilmerk"
       },
       "publiceerbaar": {
         "type": "GOB.Boolean",
@@ -237,7 +237,7 @@
       "is_gemeten_van_bouwblok": {
         "type": "GOB.String",
         "description": "Het bouwblok waarvan de rollaag is gemeten",
-        "ref": "bouwblokken"
+        "ref": "gebieden:bouwblokken"
       }
     }
   }
