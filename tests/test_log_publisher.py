@@ -11,27 +11,19 @@ class TestLogPublisher(unittest.TestCase):
         publisher = LogPublisher(None)
         assert(publisher is not None)
 
-
-    @mock.patch('gobcore.message_broker.message_broker.Connection.is_alive', return_value=True)
+    @mock.patch('gobcore.log_publisher.LogPublisher._auto_disconnect')
     @mock.patch('gobcore.message_broker.message_broker.Connection.publish')
-    def testPublish(self, patched_publish, pathed_is_alive):
+    def testPublish(self, patched_publish, patched_auto_disconnect):
         publisher = LogPublisher(None)
         publisher.publish("Level", "Message")
         assert(patched_publish.called)
-        assert(pathed_is_alive.called)
 
 
-    @mock.patch('gobcore.message_broker.message_broker.Connection.is_alive', return_value=True)
+    @mock.patch('gobcore.log_publisher.LogPublisher._auto_disconnect')
     @mock.patch('gobcore.message_broker.message_broker.Connection.connect')
-    def testConnect(self, patched_connect, pathed_is_alive):
+    @mock.patch('gobcore.message_broker.message_broker.Connection.publish')
+    def testAutoConnect(self, patched_publish, patched_connect, patched_auto_disconnect):
         publisher = LogPublisher(None)
-        publisher.connect()
+        publisher.publish("Level", "Message")
         assert(patched_connect.called)
-
-
-    @mock.patch('gobcore.message_broker.message_broker.Connection.is_alive', return_value=True)
-    @mock.patch('gobcore.message_broker.message_broker.Connection.disconnect')
-    def testDisconnect(self, patched_disconnnect, pathed_is_alive):
-        publisher = LogPublisher(None)
-        publisher.disconnect()
-        assert(patched_disconnnect.called)
+        assert(patched_auto_disconnect.called)

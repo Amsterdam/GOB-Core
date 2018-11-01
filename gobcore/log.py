@@ -10,7 +10,6 @@ Todo:
 """
 import logging
 import datetime
-import atexit
 
 from gobcore.log_publisher import LogPublisher
 
@@ -45,8 +44,6 @@ class RequestsHandler(logging.Handler):
         if LOG_PUBLISHER is None:
             # Instantiate a log publisher
             LOG_PUBLISHER = LogPublisher()
-            # Disconnect at exit
-            atexit.register(LOG_PUBLISHER.disconnect)
 
         LOG_PUBLISHER.publish(record.levelname, log_msg)
 
