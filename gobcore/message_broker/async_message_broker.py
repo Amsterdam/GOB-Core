@@ -67,6 +67,9 @@ class AsyncConnection(object):
         # Optional method, called on connection established
         self._on_connect_callback = None
 
+        # Threaded message handler
+        self._message_handler_thread = None
+
     def __enter__(self):
         self.connect()
         return self
@@ -107,6 +110,9 @@ class AsyncConnection(object):
             :param channel: The Channel object
             :return: None
             """
+
+            # Handle max 1 message at the same time
+            self._channel.basic_qos(prefetch_count=1)
 
             # If a callback has been defined for connection success, call this function
             if self._on_connect_callback:
@@ -277,10 +283,19 @@ class AsyncConnection(object):
                 except json.decoder.JSONDecodeError:
                     pass
 
-                if message_handler(self, basic_deliver.exchange, queue, basic_deliver.routing_key, msg) is not False:
-                    # Default is to acknowledge message
-                    channel.basic_ack(basic_deliver.delivery_tag)
-                    end_message(offload_id)
+                def run_message_handler():
+                    print("Handle message")
+                    if message_handler(self, basic_deliver.exchange, queue, basic_deliver.routing_key, msg) is not False:
+                        # Default is to acknowledge message
+                        channel.basic_ack(basic_deliver.delivery_tag)
+                        end_message(offload_id)
+
+                if self._message_handler_thread is not None:
+                    print("Wait for thread")
+                    self._message_handler_thread.join()
+
+                self._message_handler_thread = threading.Thread(target=run_message_handler)
+                self._message_handler_thread.start()
 
             return handle_message
 
