@@ -12,8 +12,9 @@ class TestLogPublisher(unittest.TestCase):
         assert(publisher is not None)
 
     @mock.patch('gobcore.log_publisher.LogPublisher._auto_disconnect')
+    @mock.patch('gobcore.message_broker.message_broker.Connection.connect')
     @mock.patch('gobcore.message_broker.message_broker.Connection.publish')
-    def testPublish(self, patched_publish, patched_auto_disconnect):
+    def testPublish(self, patched_publish, patched_connect, patched_auto_disconnect):
         publisher = LogPublisher(None)
         publisher.publish("Level", "Message")
         assert(patched_publish.called)
