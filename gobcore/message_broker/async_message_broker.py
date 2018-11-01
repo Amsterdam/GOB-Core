@@ -284,16 +284,15 @@ class AsyncConnection(object):
                     pass
 
                 def run_message_handler():
-                    print("Handle message")
                     if message_handler(self, basic_deliver.exchange, queue, basic_deliver.routing_key, msg) is not False:
                         # Default is to acknowledge message
                         channel.basic_ack(basic_deliver.delivery_tag)
                         end_message(offload_id)
 
                 if self._message_handler_thread is not None:
-                    print("Wait for thread")
+                    # Wait for any not yet terminated thread
                     self._message_handler_thread.join()
-
+                # Start a new thread to handle the message
                 self._message_handler_thread = threading.Thread(target=run_message_handler)
                 self._message_handler_thread.start()
 
