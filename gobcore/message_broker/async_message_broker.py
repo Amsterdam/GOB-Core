@@ -112,7 +112,7 @@ class AsyncConnection(object):
             """
 
             # Handle max 1 message at the same time
-            self._channel.basic_qos(prefetch_count=1)
+            channel.basic_qos(prefetch_count=1)
 
             # If a callback has been defined for connection success, call this function
             if self._on_connect_callback:
