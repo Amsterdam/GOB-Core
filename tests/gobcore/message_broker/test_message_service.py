@@ -70,9 +70,11 @@ class TestMessageDrivenService(unittest.TestCase):
             # The return message should be published on the return queue
             mocked_publish.assert_called_with(return_queue, return_queue['key'], return_message)
 
+    @mock.patch("gobcore.status.heartbeat.Heartbeat.__init__", return_value=None)
+    @mock.patch("gobcore.status.heartbeat.Heartbeat.send")
     @mock.patch("gobcore.message_broker.messagedriven_service._init", return_value=None)
     @mock.patch("gobcore.message_broker.messagedriven_service.AsyncConnection")
-    def test_messagedriven_service(self, mocked_connection, mocked_init):
+    def test_messagedriven_service(self, mocked_connection, mocked_init, mocked_send, mocked_heartbeat):
 
         global return_method
         return_method = fixtures.random_string()
@@ -93,3 +95,6 @@ class TestMessageDrivenService(unittest.TestCase):
             .assert_called_with([{'exchange': expected_exchange,
                                   'name': expected_queue,
                                   'key': expected_key}], mock.ANY)  # Inner function
+
+        mocked_heartbeat.asssert_called_with("UNKNOWN")
+        mocked_send.assert_called()

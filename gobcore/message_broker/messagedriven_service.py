@@ -2,13 +2,16 @@ import sys
 import time
 
 from gobcore.message_broker.async_message_broker import AsyncConnection
+from gobcore.status.heartbeat import Heartbeat, HEARTBEAT_INTERVAL
 from gobcore.message_broker.config import CONNECTION_PARAMS
 from gobcore.message_broker.initialise_queues import initialize_message_broker
 
 keep_running = True
 
 CHECK_CONNECTION = 5    # Check connection every n seconds
-REPORT_INTERVAL = 60    # Report statistics every n seconds
+
+# Assure that heartbeats are sent at every HEARTBEAT_INTERVAL
+assert(HEARTBEAT_INTERVAL % CHECK_CONNECTION == 0)
 
 
 def _get_service(services, exchange, queue, key):
@@ -66,7 +69,7 @@ def _init():
     print("Succesfully initialized message broker")
 
 
-def messagedriven_service(services):
+def messagedriven_service(services, name="UNKNOWN"):
     """Start a connection with a the message broker and the given definition
 
     servicedefenition is a dict of dicts:
@@ -132,12 +135,13 @@ def messagedriven_service(services):
         # Repeat forever
         print("Queue connection for servicedefinition started")
         n = 0
+        heartbeat = Heartbeat(name)
         while keep_running and connection.is_alive():
             time.sleep(CHECK_CONNECTION)
             n += CHECK_CONNECTION
-            if n >= REPORT_INTERVAL:
-                # Report some statistics or whatever is useful
-                print(".", flush=True)
+            if n >= HEARTBEAT_INTERVAL:
+                heartbeat.send()
                 n = 0
 
         print("Queue connection for servicedefinition has stopped")
+        heartbeat.send()

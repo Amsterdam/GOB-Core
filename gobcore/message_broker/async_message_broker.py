@@ -197,7 +197,7 @@ class AsyncConnection(object):
             on_close_callback=on_close_connection)
 
         # Start the RabbitMQ eventloop
-        self._eventloop = threading.Thread(target=eventloop)
+        self._eventloop = threading.Thread(target=eventloop, name="Eventloop")
         self._eventloop.start()
 
         # Wait for the lock to be released to be able to report success or failure
@@ -293,7 +293,7 @@ class AsyncConnection(object):
                     # Wait for any not yet terminated thread
                     self._message_handler_thread.join()
                 # Start a new thread to handle the message
-                self._message_handler_thread = threading.Thread(target=run_message_handler)
+                self._message_handler_thread = threading.Thread(target=run_message_handler, name="MessageHandler")
                 self._message_handler_thread.start()
 
             return handle_message
