@@ -26,6 +26,8 @@ GOB_TYPES = [
     GOB.Date,
     GOB.DateTime,
     GOB.JSON,
+    GOB.Reference,
+    GOB.ManyReference,
 ]
 
 GEO_TYPES = [

@@ -378,3 +378,11 @@ class JSON(GOBType):
     @property
     def json(self):
         return self._string if self._string is not None else json.dumps(None)
+
+
+class Reference(JSON):
+    name = "Reference"
+
+
+class ManyReference(JSON):
+    name = "ManyReference"

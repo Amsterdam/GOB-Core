@@ -1,46 +1,38 @@
 {
   "meetbouten": {
     "version": "0.1",
-    "entity_id": "meetboutid",
+    "entity_id": "meetboutidentificatie",
     "attributes": {
-      "meetboutid": {
+      "meetboutidentificatie": {
         "type": "GOB.String",
         "description": "Unieke identificatie van de meetbout"
       },
-      "nabij_adres": {
-        "type": "GOB.String",
+      "nabij_nummeraanduiding": {
+        "type": "GOB.Reference",
         "description": "Een adres in de nabijheid van de meetbout",
-        "ref": "bag:nummeraanduiding"
+        "ref": "bag:nummeraanduidingen"
       },
       "locatie": {
         "type": "GOB.String",
         "description": "Beschrijving van de locatie van de meetbout, bijvoorbeeld 'in gemeenschappelijke muur'"
       },
-      "status_id": {
-        "type": "GOB.Character",
-        "description": "Status id van de meetbout (1=actueel, 2=niet te meten, 3=vervallen)"
-      },
-      "status_omschrijving": {
-        "type": "GOB.String",
-        "description": "Statusomschrijving van de meetbout"
+      "status": {
+        "type": "GOB.JSON",
+        "description": "Status van de meetbout (1=actueel, 2=niet te meten, 3=vervallen)"
       },
       "vervaldatum": {
         "type": "GOB.Date",
         "description": "Datum waarop de meting heeft plaatsgevonden"
       },
-      "merk_id": {
-        "type": "GOB.String",
-        "description": "Merk id"
+      "merk": {
+        "type": "GOB.JSON",
+        "description": "Merk"
       },
-      "merk_omschrijving": {
-        "type": "GOB.String",
-        "description": "Merkomschrijving"
-      },
-      "xmuurvlak": {
+      "x_coordinaat_muurvlak": {
         "type": "GOB.Decimal",
         "description": "X-coördinaat muurvlak"
       },
-      "ymuurvlak": {
+      "y_coordinaat_muurvlak": {
         "type": "GOB.Decimal",
         "description": "Y-coördinaat muurvlak"
       },
@@ -49,19 +41,19 @@
         "description": "Windrichting"
       },
       "ligt_in_bouwblok": {
-        "type": "GOB.String",
+        "type": "GOB.Reference",
         "description": "Het bouwblok waarbinnen de meetbout ligt",
-        "ref": "gebieden:bouwblok"
+        "ref": "gebieden:bouwblokken"
       },
       "ligt_in_buurt": {
-        "type": "GOB.String",
+        "type": "GOB.Reference",
         "description": "De buurt waarbinnen de meetbout ligt",
-        "ref": "gebieden:buurt"
+        "ref": "gebieden:buurten"
       },
-      "ligt_in_stadseel": {
-        "type": "GOB.String",
+      "ligt_in_stadsdeel": {
+        "type": "GOB.Reference",
         "description": "Het stadsdeel waarbinnen de meetbout ligt",
-        "ref": "gebieden:stadseel"
+        "ref": "gebieden:stadsdelen"
       },
       "geometrie": {
         "type": "GOB.Geo.Point",
@@ -76,14 +68,14 @@
   },
   "metingen": {
     "version": "0.1",
-    "entity_id": "metingid",
+    "entity_id": "metingidentificatie",
     "attributes": {
-      "metingid": {
+      "metingidentificatie": {
         "type": "GOB.String",
         "description": "Unieke identificatie van de meting"
       },
       "hoort_bij_meetbout": {
-        "type": "GOB.String",
+        "type": "GOB.Reference",
         "description": "De meetbout waarop de meting is gedaan",
         "ref": "meetbouten:meetbouten"
       },
@@ -95,12 +87,8 @@
         "type": "GOB.Character",
         "description": "Type meting (N=nulmeting, H=herhalingsmeting, T=tussentijdse meting, S=schatting)"
       },
-      "wijze_van_inwinnen_id": {
-        "type": "GOB.Character",
-        "description": "ID van de wijze waarop de meting is ingewonnen"
-      },
-      "wijze_van_inwinnen_omschrijving": {
-        "type": "GOB.String",
+      "wijze_van_inwinnen": {
+        "type": "GOB.JSON",
         "description": "Wijze waarop de meting is ingewonnen"
       },
       "hoogte_tov_nap": {
@@ -112,7 +100,7 @@
         "description": "Zakking van de meting t.o.v. vorige meting (mm)"
       },
       "refereert_aan": {
-        "type": "GOB.JSON",
+        "type": "GOB.ManyReference",
         "description": "De referentiepunten waar de metingen aan worden opgehangen",
         "ref": "meetbouten:referentiepunten"
       },
@@ -140,16 +128,16 @@
   },
   "referentiepunten": {
     "version": "0.1",
-    "entity_id": "referentiepuntid",
+    "entity_id": "referentiepuntidentificatie",
     "attributes": {
-      "referentiepuntid": {
+      "referentiepuntidentificatie": {
         "type": "GOB.String",
         "description": "Unieke identificatie van de meting"
       },
-      "nabij_adres": {
-        "type": "GOB.String",
+      "nabij_nummeraanduiding": {
+        "type": "GOB.Reference",
         "description": "Een adres in de nabijheid van het referentiepunt",
-        "ref": "bag:nummeraanduiding"
+        "ref": "bag:nummeraanduidingen"
       },
       "locatie": {
         "type": "GOB.String",
@@ -163,31 +151,23 @@
         "type": "GOB.Date",
         "description": "Da­tum van plaat­sing van het re­fe­ren­tie­punt."
       },
-      "status_id": {
-        "type": "GOB.Character",
-        "description": "Status id van het referentiepunt (1=actueel, 2=niet te meten, 3=vervallen)"
-      },
-      "status_omschrijving": {
-        "type": "GOB.String",
-        "description": "Statusomschrijving van het referentiepunt"
+      "status": {
+        "type": "GOB.JSON",
+        "description": "Status van het referentiepunt (1=actueel, 2=niet te meten, 3=vervallen)"
       },
       "vervaldatum": {
         "type": "GOB.Date",
         "description": "Vervaldatum van het referentiepunt."
       },
-      "merk_id": {
-        "type": "GOB.String",
-        "description": "Merk id"
+      "merk": {
+        "type": "GOB.JSON",
+        "description": "Merk van het referentiepunt"
       },
-      "merk_omschrijving": {
-        "type": "GOB.String",
-        "description": "Merkomschrijving"
-      },
-      "xmuurvlak": {
+      "x_coordinaat_muurvlak": {
         "type": "GOB.Decimal",
         "description": "X-coördinaat muurvlak"
       },
-      "ymuurvlak": {
+      "y_coordinaat_muurvlak": {
         "type": "GOB.Decimal",
         "description": "Y-coördinaat muurvlak"
       },
@@ -196,19 +176,19 @@
         "description": "Windrichting"
       },
       "ligt_in_bouwblok": {
-        "type": "GOB.String",
+        "type": "GOB.Reference",
         "description": "Het bouwblok waarbinnen het referentiepunt ligt",
-        "ref": "gebieden:bouwblok"
+        "ref": "gebieden:bouwblokken"
       },
       "ligt_in_buurt": {
-        "type": "GOB.String",
+        "type": "GOB.Reference",
         "description": "De buurt waarbinnen het referentiepunt ligt",
-        "ref": "gebieden:buurt"
+        "ref": "gebieden:buurten"
       },
-      "ligt_in_stadseel": {
-        "type": "GOB.String",
+      "ligt_in_stadsdeel": {
+        "type": "GOB.Reference",
         "description": "Het stadsdeel waarbinnen het referentiepunt ligt",
-        "ref": "gebieden:stadsdeel"
+        "ref": "gebieden:stadsdelen"
       },
       "geometrie": {
         "type": "GOB.Geo.Point",
@@ -216,9 +196,9 @@
         "description": "Geometrische ligging van de meetbout"
       },
       "is_nap_peilmerk": {
-        "type": "GOB.String",
+        "type": "GOB.Reference",
         "description": "Het NAP-peil­merk dat het re­fe­ren­tie­punt kan zijn.",
-        "ref": "nap:peilmerk"
+        "ref": "nap:peilmerken"
       },
       "publiceerbaar": {
         "type": "GOB.Boolean",
@@ -228,14 +208,14 @@
   },
   "rollagen": {
     "version": "0.1",
-    "entity_id": "rollaagid",
+    "entity_id": "rollaagidentificatie",
     "attributes": {
-      "rollaagid": {
+      "rollaagidentificatie": {
         "type": "GOB.String",
         "description": "Unieke identificatie van de rollaag"
       },
       "is_gemeten_van_bouwblok": {
-        "type": "GOB.String",
+        "type": "GOB.Reference",
         "description": "Het bouwblok waarvan de rollaag is gemeten",
         "ref": "gebieden:bouwblokken"
       }

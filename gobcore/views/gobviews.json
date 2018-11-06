@@ -11,13 +11,13 @@
 "    ,       meest_recente_metingen.zakking_cumulatief",
 "    FROM              meetbouten",
 "    LEFT JOIN (",
-"            SELECT DISTINCT ON (hoort_bij_meetbout_id) * from metingen",
-"            ORDER BY hoort_bij_meetbout_id, datum DESC",
-"    ) AS meest_recente_metingen          ON meetbouten._id = meest_recente_metingen.hoort_bij_meetbout_id",
+"            SELECT DISTINCT ON (hoort_bij_meetbout->>'id') * from metingen",
+"            ORDER BY hoort_bij_meetbout->>'id', datum DESC",
+"    ) AS meest_recente_metingen          ON meetbouten._id = meest_recente_metingen.hoort_bij_meetbout->>'id'",
 "    LEFT JOIN (",
-"            SELECT DISTINCT ON (hoort_bij_meetbout_id) * from metingen",
-"            ORDER BY hoort_bij_meetbout_id, datum ASC",
-"    ) AS eerste_metingen                 ON meetbouten._id = eerste_metingen.hoort_bij_meetbout_id"
+"            SELECT DISTINCT ON (hoort_bij_meetbout->>'id') * from metingen",
+"            ORDER BY hoort_bij_meetbout->>'id', datum ASC",
+"    ) AS eerste_metingen                 ON meetbouten._id = eerste_metingen.hoort_bij_meetbout->>'id'"
         ]
       }
     },
@@ -26,17 +26,17 @@
         "version": "0.1",
         "query": [
 "    SELECT metingen.*",
-"    ,       refereert_aan_id->>0                                 AS refp1_nr",
-"    ,       refereert_aan_id->>1                                 AS refp2_nr",
-"    ,       refereert_aan_id->>2                                 AS refp3_nr",
-"    ,       CASE WHEN wijze_van_inwinnen_id = '1' THEN 'W'",
-"                 WHEN wijze_van_inwinnen_id = '2' THEN 'T'",
-"                 WHEN wijze_van_inwinnen_id = '3' THEN 'G' END   AS wvi",
-"    ,       meetbouten.ligt_in_stadseel_text",
+"    ,       refereert_aan->0->>'id'                                 AS refp1_nr",
+"    ,       refereert_aan->1->>'id'                          AS refp2_nr",
+"    ,       refereert_aan->2->>'id'                          AS refp3_nr",
+"    ,       CASE WHEN wijze_van_inwinnen->>'id' = '1' THEN 'W'",
+"                 WHEN wijze_van_inwinnen->>'id' = '2' THEN 'T'",
+"                 WHEN wijze_van_inwinnen->>'id' = '3' THEN 'G' END   AS wvi",
+"    ,       meetbouten.ligt_in_stadsdeel",
 "    FROM  metingen",
 "    LEFT JOIN (",
-"            SELECT _id, ligt_in_stadseel_text from meetbouten",
-"    ) AS meetbouten ON metingen.hoort_bij_meetbout_id = meetbouten._id"
+"            SELECT _id, ligt_in_stadsdeel->>'tekst' as ligt_in_stadsdeel from meetbouten",
+"    ) AS meetbouten ON metingen.hoort_bij_meetbout->>'id' = meetbouten._id"
         ]
       }
     },
@@ -45,9 +45,9 @@
         "version": "0.1",
         "query": [
 "    SELECT *",
-"    ,       row_number() OVER (order by rollaagid) as idx",
+"    ,       row_number() OVER (order by rollaagidentificatie) as idx",
 "    FROM  rollagen",
-"    ORDER BY rollaagid"
+"    ORDER BY rollaagidentificatie"
         ]
       }
     }
