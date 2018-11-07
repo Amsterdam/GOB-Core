@@ -1,6 +1,6 @@
 """GOB Data types
 
-GOB data consists of entities with attributes, eg Meetbout = { meetboutidentificatie, locatie, ... }
+GOB data consists of entities with attributes, eg Meetbout = { identificatie, locatie, ... }
 The possible types for each attribute are defined in this module.
 The definition and characteristics of each type is in the gob_types module
 

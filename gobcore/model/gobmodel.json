@@ -1,9 +1,9 @@
 {
   "meetbouten": {
     "version": "0.1",
-    "entity_id": "meetboutidentificatie",
+    "entity_id": "identificatie",
     "attributes": {
-      "meetboutidentificatie": {
+      "identificatie": {
         "type": "GOB.String",
         "description": "Unieke identificatie van de meetbout"
       },
@@ -82,9 +82,9 @@
   },
   "metingen": {
     "version": "0.1",
-    "entity_id": "metingidentificatie",
+    "entity_id": "identificatie",
     "attributes": {
-      "metingidentificatie": {
+      "identificatie": {
         "type": "GOB.String",
         "description": "Unieke identificatie van de meting"
       },
@@ -151,9 +151,9 @@
   },
   "referentiepunten": {
     "version": "0.1",
-    "entity_id": "referentiepuntidentificatie",
+    "entity_id": "identificatie",
     "attributes": {
-      "referentiepuntidentificatie": {
+      "identificatie": {
         "type": "GOB.String",
         "description": "Unieke identificatie van de meting"
       },
@@ -245,9 +245,9 @@
   },
   "rollagen": {
     "version": "0.1",
-    "entity_id": "rollaagidentificatie",
+    "entity_id": "identificatie",
     "attributes": {
-      "rollaagidentificatie": {
+      "identificatie": {
         "type": "GOB.String",
         "description": "Unieke identificatie van de rollaag"
       },

@@ -45,9 +45,9 @@
         "version": "0.1",
         "query": [
 "    SELECT *",
-"    ,       row_number() OVER (order by rollaagidentificatie) as idx",
+"    ,       row_number() OVER (order by identificatie) as idx",
 "    FROM  rollagen",
-"    ORDER BY rollaagidentificatie"
+"    ORDER BY identificatie"
         ]
       }
     }

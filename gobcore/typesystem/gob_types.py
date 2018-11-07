@@ -323,7 +323,7 @@ class Date(String):
 class DateTime(Date):
     name = "DateTime"
     sql_type = sqlalchemy.DateTime
-    internal_format = "%Y-%m-%d %H:%M:%S.%f"
+    internal_format = "%Y-%m-%dT%H:%M:%S.%f"
 
     def __init__(self, value):
         super().__init__(value)
@@ -333,6 +333,8 @@ class DateTime(Date):
         input_format = kwargs['format'] if 'format' in kwargs else cls.internal_format
 
         if value is not None:
+            # Convert to isoformat if value is a datetime object
+            value = value.isoformat() if isinstance(value, datetime.datetime) else value
             try:
                 value = datetime.datetime.strptime(str(value), input_format).strftime(cls.internal_format)
             except ValueError as v:
