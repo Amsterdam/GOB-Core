@@ -5,7 +5,6 @@ The GOB Header holds the header values of a workflow message.
 Todo: Name of the module (message) should correspond to the contents of the file (GOBHeader)
 
 """
-from gobcore.exceptions import GOBException
 
 
 class MessageMetaData():

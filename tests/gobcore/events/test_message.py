@@ -17,17 +17,6 @@ class TestEvents(unittest.TestCase):
         for key in keys:
             self.assertIn(key, header)
 
-        # Test failure if not all keys are present
-        header['source'] = None
-
-        with self.assertRaises(GOBException):
-            MessageMetaData(**header)
-
-        header.pop('source')
-        with self.assertRaises(KeyError):
-            MessageMetaData(**header)
-
-
     def test_ImportMessage(self):
         metadata = fixtures.get_metadata_fixture()
         header = metadata.as_header
