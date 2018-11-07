@@ -64,6 +64,20 @@
         "type": "GOB.Boolean",
         "description": "Publiceerbaar ja of nee"
       }
+    },
+    "api": {
+      "filters": [
+        {
+          "field": "_source",
+          "op": "==",
+          "value": "Grondslag"
+        },
+        {
+          "field": "publiceerbaar",
+          "op": "==",
+          "value": true
+        }
+      ]
     }
   },
   "metingen": {
@@ -124,6 +138,15 @@
         "type": "GOB.Integer",
         "description": "Het aantal dagen sinds de vorige meting"
       }
+    },
+    "api": {
+      "filters": [
+        {
+          "field": "_source",
+          "op": "==",
+          "value": "Grondslag"
+        }
+      ]
     }
   },
   "referentiepunten": {
@@ -204,6 +227,20 @@
         "type": "GOB.Boolean",
         "description": "Publiceerbaar ja of nee"
       }
+    },
+    "api": {
+      "filters": [
+        {
+          "field": "_source",
+          "op": "==",
+          "value": "Grondslag"
+        },
+        {
+          "field": "publiceerbaar",
+          "op": "==",
+          "value": true
+        }
+      ]
     }
   },
   "rollagen": {
@@ -219,6 +256,15 @@
         "description": "Het bouwblok waarvan de rollaag is gemeten",
         "ref": "gebieden:bouwblokken"
       }
+    },
+    "api": {
+      "filters": [
+        {
+          "field": "_source",
+          "op": "==",
+          "value": "Basisinformatie"
+        }
+      ]
     }
   }
 }

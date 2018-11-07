@@ -12,18 +12,8 @@ class MessageMetaData():
 
     source_id_column = '_source_id'
 
-    def __init__(self, **header):
+    def __init__(self, header):
         self._header = header
-
-        if self.source is None or \
-                self.timestamp is None or \
-                self.id_column is None or \
-                self.entity is None or \
-                self.version is None or \
-                self.process_id is None or \
-                self.model is None:
-            raise GOBException("Incomplete metadata, all of source, timestamp, id_column, entity, version "
-                               "process_id and model need to be defined")
 
     @property
     def source(self):
@@ -51,7 +41,7 @@ class MessageMetaData():
 
     @property
     def model(self):
-        return self._header['model']
+        return {}
 
     @property
     def as_header(self):
@@ -69,7 +59,7 @@ class MessageMetaData():
 class ImportMessage():
 
     def __init__(self, msg):
-        self._metadata = MessageMetaData(**msg["header"])
+        self._metadata = MessageMetaData(msg["header"])
 
         self._summary = msg["summary"]
         self._contents = msg["contents"]
