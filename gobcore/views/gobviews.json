@@ -4,20 +4,30 @@
       "enhanced": {
         "version": "0.1",
         "query": [
-"    SELECT meetbouten.*",
-"    ,       eerste_metingen.datum                                          AS datum",
-"    ,       meest_recente_metingen.hoogte_tov_nap",
-"    ,       meest_recente_metingen.zakkingssnelheid",
-"    ,       meest_recente_metingen.zakking_cumulatief",
-"    FROM              meetbouten",
-"    LEFT JOIN (",
-"            SELECT DISTINCT ON (hoort_bij_meetbout->>'id') * from metingen",
-"            ORDER BY hoort_bij_meetbout->>'id', datum DESC",
-"    ) AS meest_recente_metingen          ON meetbouten._id = meest_recente_metingen.hoort_bij_meetbout->>'id'",
-"    LEFT JOIN (",
-"            SELECT DISTINCT ON (hoort_bij_meetbout->>'id') * from metingen",
-"            ORDER BY hoort_bij_meetbout->>'id', datum ASC",
-"    ) AS eerste_metingen                 ON meetbouten._id = eerste_metingen.hoort_bij_meetbout->>'id'"
+          "    SELECT  meetbouten.identificatie",
+          "    ,       meetbouten.ligt_in_buurt->>'tekst'                              AS buurt",
+          "    ,       meetbouten.geometrie",
+          "    ,       meetbouten.ligt_in_stadsdeel->>'tekst'                          AS stadsdeel",
+          "    ,       meetbouten.ligt_in_bouwblok->>'tekst'                           AS bouwblok",
+          "    ,       eerste_metingen.datum                                           AS datum",
+          "    ,       meest_recente_metingen.hoogte_tov_nap",
+          "    ,       meest_recente_metingen.zakkingssnelheid",
+          "    ,       meest_recente_metingen.zakking_cumulatief",
+          "    ,       nabij_nummeraanduiding->>'bronwaarde'                           AS adres",
+          "    ,       CASE WHEN status->>'id' = '1' THEN 'A'",
+          "              WHEN status->>'id' = '2' THEN 'A'",
+          "              WHEN status->>'id' = '3' THEN 'V'",
+          "            END                                                             AS status_id",
+          "            FROM              meetbouten",
+          "            LEFT JOIN (",
+          "              SELECT DISTINCT ON (hoort_bij_meetbout->>'id') * from metingen",
+          "              ORDER BY hoort_bij_meetbout->>'id', datum DESC",
+          "            ) AS meest_recente_metingen          ON meetbouten._id = meest_recente_metingen.hoort_bij_meetbout->>'id'",
+          "            LEFT JOIN (",
+          "              SELECT DISTINCT ON (hoort_bij_meetbout->>'id') * from metingen",
+          "              ORDER BY hoort_bij_meetbout->>'id', datum ASC",
+          "            ) AS eerste_metingen                 ON meetbouten._id = eerste_metingen.hoort_bij_meetbout->>'id'",
+          "    WHERE publiceerbaar = TRUE"
         ]
       }
     },
@@ -25,18 +35,44 @@
       "enhanced": {
         "version": "0.1",
         "query": [
-"    SELECT metingen.*",
-"    ,       refereert_aan->0->>'id'                                 AS refp1_nr",
-"    ,       refereert_aan->1->>'id'                          AS refp2_nr",
-"    ,       refereert_aan->2->>'id'                          AS refp3_nr",
-"    ,       CASE WHEN wijze_van_inwinnen->>'id' = '1' THEN 'W'",
-"                 WHEN wijze_van_inwinnen->>'id' = '2' THEN 'T'",
-"                 WHEN wijze_van_inwinnen->>'id' = '3' THEN 'G' END   AS wvi",
-"    ,       meetbouten.ligt_in_stadsdeel",
-"    FROM  metingen",
-"    LEFT JOIN (",
-"            SELECT _id, ligt_in_stadsdeel->>'tekst' as ligt_in_stadsdeel from meetbouten",
-"    ) AS meetbouten ON metingen.hoort_bij_meetbout->>'id' = meetbouten._id"
+          "    SELECT metingen.identificatie",
+          "    ,       datum",
+          "    ,       type_meting",
+          "    ,       hoogte_tov_nap",
+          "    ,       zakking",
+          "    ,       zakkingssnelheid",
+          "    ,       zakking_cumulatief",
+          "    ,       is_gemeten_door",
+          "    ,       (hoeveelste_meting - 1)                                   AS hoeveelste_meting",
+          "    ,       hoort_bij_meetbout->>'id'                                 AS hoort_bij_meetbout",
+          "    ,       refereert_aan->0->>'id'                                   AS refp1_nr",
+          "    ,       refereert_aan->1->>'id'                                   AS refp2_nr",
+          "    ,       refereert_aan->2->>'id'                                   AS refp3_nr",
+          "    ,       CASE WHEN aantal_dagen::TEXT = '0' THEN ''::TEXT",
+          "                 ELSE aantal_dagen::TEXT",
+          "            END                                                       AS aantal_dagen",
+          "    ,       CASE WHEN wijze_van_inwinnen->>'id' = '1' THEN 'W'",
+          "                 WHEN wijze_van_inwinnen->>'id' = '2' THEN 'T'",
+          "                 WHEN wijze_van_inwinnen->>'id' = '3' THEN 'G' END    AS wvi",
+          "    ,       meetbouten.ligt_in_stadsdeel",
+          "    FROM  metingen",
+          "    LEFT JOIN (",
+          "            SELECT _id, ligt_in_stadsdeel->>'tekst' as ligt_in_stadsdeel from meetbouten",
+          "    ) AS meetbouten ON metingen.hoort_bij_meetbout->>'id' = meetbouten._id"
+        ]
+      }
+    },
+    "referentiepunten": {
+      "enhanced": {
+        "version": "0.1",
+        "query": [
+"    SELECT identificatie",
+"    ,      geometrie",
+"    ,      hoogte_tov_nap",
+"    ,      datum",
+"    ,      CONCAT_WS(' ', nabij_nummeraanduiding->>'bronwaarde', locatie)             AS locatie",
+"    FROM  referentiepunten",
+"    WHERE publiceerbaar = TRUE"
         ]
       }
     },
@@ -45,7 +81,7 @@
         "version": "0.1",
         "query": [
 "    SELECT *",
-"    ,       row_number() OVER (order by identificatie) as idx",
+"    ,       ROW_NUMBER() OVER (order by identificatie) AS idx",
 "    FROM  rollagen",
 "    ORDER BY identificatie"
         ]
