@@ -28,9 +28,9 @@ METADATA_COLUMNS = {
     # On applying the event this state is compared with the current state
     # Only when these two match the event will be applied, otherwise the event will be rejected.
     "private": {
-        "_source": "GOB.String", # Source for the specific entity, eg the name of a database
-        "_source_id": "GOB.String", # Id of the entity in the above mentioned source
-        "_last_event": "GOB.Integer" # Id of the last event that has been applied to this entity
+        "_source": "GOB.String",  # Source for the specific entity, eg the name of a database
+        "_source_id": "GOB.String",  # Id of the entity in the above mentioned source
+        "_last_event": "GOB.Integer"  # Id of the last event that has been applied to this entity
     }
 }
 

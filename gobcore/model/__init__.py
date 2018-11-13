@@ -23,14 +23,11 @@ class GOBModel():
         return {field_name: spec for field_name, spec in attributes.items()
                 if spec['type'] in ['GOB.Reference', 'GOB.ManyReference']}
 
-    def get_model(self):
-        return self.data.items()
-
     def get_catalog_names(self):
         return self._data.keys()
 
     def get_catalogs(self):
-        return self._data.items()
+        return self._data
 
     def get_catalog(self, catalog_name):
         return self._data[catalog_name] if catalog_name in self._data else None
@@ -38,6 +35,14 @@ class GOBModel():
     def get_collection_names(self, catalog_name):
         catalog = self.get_catalog(catalog_name)
         return catalog['collections'].keys() if 'collections' in catalog else None
+
+    def get_collections(self, catalog_name):
+        catalog = self.get_catalog(catalog_name)
+        return catalog['collections'] if 'collections' in catalog else None
+
+    def get_collection(self, catalog_name, collection_name):
+        collections = self.get_collections(catalog_name)
+        return collections[collection_name] if collection_name in collections else None
 
     def get_table_names(self):
         '''
@@ -48,11 +53,3 @@ class GOBModel():
             for collection_name in self.get_collection_names(catalog_name):
                 table_names.append(f'{catalog_name}_{collection_name}')
         return table_names
-
-    def get_collections(self, catalog_name):
-        catalog = self.get_catalog(catalog_name)
-        return catalog['collections'] if 'collections' in catalog else None
-
-    def get_collection(self, catalog_name, collection_name):
-        collections = self.get_collections(catalog_name)
-        return collections[collection_name] if collection_name in collections else None
