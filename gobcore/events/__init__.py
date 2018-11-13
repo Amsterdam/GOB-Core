@@ -59,12 +59,15 @@ def get_event_for(entity, data, metadata, modifications):
     if has_old_state:
         source_id = entity._source_id
         entity_id = getattr(entity, metadata.id_column)
+        last_event = entity._last_event
     else:
         source_id = data['_source_id']
         entity_id = data[metadata.id_column]
+        last_event = None
 
     modifications_dict = dict(modifications=modifications)
     data = modifications_dict if data is None else {**modifications_dict, **data}
+    data = {**data, "_last_event": last_event}
 
     return gob_event.create_event(
         source_id, metadata.id_column, entity_id, data)

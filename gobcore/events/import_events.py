@@ -43,9 +43,15 @@ class ImportEvent(metaclass=ABCMeta):
 
         return {"event": cls.name, "data": data}
 
+    @classmethod
+    def last_event(cls, data):
+        return {"_last_event": data["_last_event"]}
+
     def __init__(self, data, metadata):
         self._data = data
         self._metadata = metadata
+
+        self.last_event = self._data.pop("_last_event")
         self._model = self.gob_model.get_collection(self._metadata.catalogue, self._metadata.entity)
 
     def pop_ids(self):
@@ -165,7 +171,7 @@ class MODIFY(ImportEvent):
         #   MODIFY has no data attributes only modifications
         if modifications_key not in data:
             raise GOBException("MODIFY event requires modifications")
-        mods = {modifications_key: data[modifications_key]}
+        mods = {modifications_key: data[modifications_key], **(cls.last_event(data))}
 
         return super().create_event(_source_id, _id_column, _entity_id, mods)
 
@@ -186,8 +192,8 @@ class DELETE(ImportEvent):
 
     @classmethod
     def create_event(cls, _source_id, _id_column, _entity_id, data):
-        #  DELETE has no data
-        return super().create_event(_source_id, _id_column, _entity_id, {})
+        #  DELETE has no data, except reference to entity age
+        return super().create_event(_source_id, _id_column, _entity_id, cls.last_event(data))
 
 
 class CONFIRM(ImportEvent):
@@ -206,5 +212,5 @@ class CONFIRM(ImportEvent):
 
     @classmethod
     def create_event(cls, _source_id, _id_column, _entity_id, data):
-        #  CONFIRM has no data
-        return super().create_event(_source_id, _id_column, _entity_id, {})
+        #  CONFIRM has no data, except reference to entity age
+        return super().create_event(_source_id, _id_column, _entity_id, cls.last_event(data))
