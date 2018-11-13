@@ -58,8 +58,9 @@
           "    ,       meetbouten.ligt_in_stadsdeel",
           "    FROM  meetbouten_metingen                                         AS metingen",
           "    LEFT JOIN (",
-          "            SELECT _id, ligt_in_stadsdeel->>'tekst' as ligt_in_stadsdeel from meetbouten_meetbouten",
-          "    ) AS meetbouten ON metingen.hoort_bij_meetbout->>'id' = meetbouten._id"
+          "            SELECT _id, publiceerbaar, ligt_in_stadsdeel->>'tekst' as ligt_in_stadsdeel from meetbouten_meetbouten",
+          "    ) AS meetbouten ON metingen.hoort_bij_meetbout->>'id' = meetbouten._id",
+          "    WHERE publiceerbaar = TRUE"
         ]
       }
     },
