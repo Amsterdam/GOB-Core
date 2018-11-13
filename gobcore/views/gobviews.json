@@ -89,5 +89,29 @@
         ]
       }
     }
+  },
+  "nap": {
+    "peilmerken": {
+      "enhanced": {
+        "version": "0.1",
+        "query": [
+          "    SELECT identificatie",
+          "    ,      hoogte_tov_nap",
+          "    ,      jaar",
+          "    ,      merk->>'id'                                                                AS merk_id",
+          "    ,      omschrijving",
+          "    ,      windrichting",
+          "    ,      x_coordinaat_muurvlak",
+          "    ,      y_coordinaat_muurvlak",
+          "    ,      rws_nummer",
+          "    ,      geometrie",
+          "    FROM  nap_peilmerken",
+          "    WHERE (status->>'id')::INT IN (1,2) AND",
+          "          vervaldatum IS NULL AND",
+          "          hoogte_tov_nap IS NOT NULL AND",
+          "          publiceerbaar = TRUE"
+        ]
+      }
+    }
   }
 }
