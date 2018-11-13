@@ -21,3 +21,6 @@ class TestModel(unittest.TestCase):
 
     def test_get_table_names(self):
         self.assertIn('meetbouten_meetbouten', self.model.get_table_names())
+
+    def test_get_table_name(self):
+        self.assertEqual('meetbouten_meetbouten', self.model.get_table_name('meetbouten', 'meetbouten'))

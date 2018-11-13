@@ -51,5 +51,8 @@ class GOBModel():
         table_names = []
         for catalog_name in self.get_catalog_names():
             for collection_name in self.get_collection_names(catalog_name):
-                table_names.append(f'{catalog_name}_{collection_name}')
+                table_names.append(self.get_table_name(catalog_name, collection_name))
         return table_names
+
+    def get_table_name(self, catalog_name, collection_name):
+        return f'{catalog_name}_{collection_name}'
