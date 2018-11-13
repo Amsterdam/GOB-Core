@@ -7,6 +7,7 @@
           "    SELECT  meetbouten.identificatie",
           "    ,       meetbouten.ligt_in_buurt->>'tekst'                              AS buurt",
           "    ,       meetbouten.geometrie",
+          "    ,       meetbouten.locatie",
           "    ,       meetbouten.ligt_in_stadsdeel->>'tekst'                          AS stadsdeel",
           "    ,       meetbouten.ligt_in_bouwblok->>'tekst'                           AS bouwblok",
           "    ,       eerste_metingen.datum                                           AS datum",
