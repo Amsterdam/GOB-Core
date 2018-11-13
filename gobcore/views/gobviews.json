@@ -18,13 +18,13 @@
           "              WHEN status->>'id' = '2' THEN 'A'",
           "              WHEN status->>'id' = '3' THEN 'V'",
           "            END                                                             AS status_id",
-          "            FROM              meetbouten",
+          "            FROM              meetbouten_meetbouten                         AS meetbouten",
           "            LEFT JOIN (",
-          "              SELECT DISTINCT ON (hoort_bij_meetbout->>'id') * from metingen",
+          "              SELECT DISTINCT ON (hoort_bij_meetbout->>'id') * from meetbouten_metingen",
           "              ORDER BY hoort_bij_meetbout->>'id', datum DESC",
           "            ) AS meest_recente_metingen          ON meetbouten._id = meest_recente_metingen.hoort_bij_meetbout->>'id'",
           "            LEFT JOIN (",
-          "              SELECT DISTINCT ON (hoort_bij_meetbout->>'id') * from metingen",
+          "              SELECT DISTINCT ON (hoort_bij_meetbout->>'id') * from meetbouten_metingen",
           "              ORDER BY hoort_bij_meetbout->>'id', datum ASC",
           "            ) AS eerste_metingen                 ON meetbouten._id = eerste_metingen.hoort_bij_meetbout->>'id'",
           "    WHERE publiceerbaar = TRUE"
@@ -55,9 +55,9 @@
           "                 WHEN wijze_van_inwinnen->>'id' = '2' THEN 'T'",
           "                 WHEN wijze_van_inwinnen->>'id' = '3' THEN 'G' END    AS wvi",
           "    ,       meetbouten.ligt_in_stadsdeel",
-          "    FROM  metingen",
+          "    FROM  meetbouten_metingen                                         AS metingen",
           "    LEFT JOIN (",
-          "            SELECT _id, ligt_in_stadsdeel->>'tekst' as ligt_in_stadsdeel from meetbouten",
+          "            SELECT _id, ligt_in_stadsdeel->>'tekst' as ligt_in_stadsdeel from meetbouten_meetbouten",
           "    ) AS meetbouten ON metingen.hoort_bij_meetbout->>'id' = meetbouten._id"
         ]
       }
@@ -71,7 +71,7 @@
 "    ,      hoogte_tov_nap",
 "    ,      datum",
 "    ,      CONCAT_WS(' ', nabij_nummeraanduiding->>'bronwaarde', locatie)             AS locatie",
-"    FROM  referentiepunten",
+"    FROM  meetbouten_referentiepunten",
 "    WHERE publiceerbaar = TRUE"
         ]
       }
@@ -82,7 +82,7 @@
         "query": [
 "    SELECT *",
 "    ,       ROW_NUMBER() OVER (order by identificatie) AS idx",
-"    FROM  rollagen",
+"    FROM  meetbouten_rollagen",
 "    ORDER BY identificatie"
         ]
       }

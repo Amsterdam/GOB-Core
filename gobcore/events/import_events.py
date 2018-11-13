@@ -46,7 +46,7 @@ class ImportEvent(metaclass=ABCMeta):
     def __init__(self, data, metadata):
         self._data = data
         self._metadata = metadata
-        self._model = self.gob_model.get_model(self._metadata.entity)
+        self._model = self.gob_model.get_collection(self._metadata.catalogue, self._metadata.entity)
 
     def pop_ids(self):
         """Removes and returns relevent ids

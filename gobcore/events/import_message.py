@@ -27,6 +27,10 @@ class MessageMetaData():
         return self._header['id_column']
 
     @property
+    def catalogue(self):
+        return self._header['catalogue']
+
+    @property
     def entity(self):
         return self._header['entity']
 
@@ -48,6 +52,7 @@ class MessageMetaData():
             "source": self.source,
             "timestamp": self.timestamp,
             "id_column": self.id_column,
+            "catalogue": self.catalogue,
             "entity": self.entity,
             "version": self.version,
             "process_id": self.process_id,
