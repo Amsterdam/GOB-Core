@@ -141,6 +141,10 @@
           "aantal_dagen": {
             "type": "GOB.Integer",
             "description": "Het aantal dagen sinds de vorige meting"
+          },
+          "publiceerbaar": {
+            "type": "GOB.Boolean",
+            "description": "Publiceerbaar ja of nee"
           }
         },
         "api": {
@@ -149,6 +153,11 @@
               "field": "_source",
               "op": "==",
               "value": "Grondslag"
+            },
+            {
+              "field": "publiceerbaar",
+              "op": "==",
+              "value": true
             }
           ]
         }
@@ -339,6 +348,15 @@
             "type": "GOB.Boolean",
             "description": "Publiceerbaar ja of nee"
           }
+        },
+        "api": {
+          "filters": [
+            {
+              "field": "_source",
+              "op": "==",
+              "value": "Grondslag"
+            }
+          ]
         }
       }
     }
