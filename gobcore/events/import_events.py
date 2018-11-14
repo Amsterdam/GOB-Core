@@ -45,7 +45,7 @@ class ImportEvent(metaclass=ABCMeta):
 
     @classmethod
     def last_event(cls, data):
-        return {"_last_event": data["_last_event"]}
+        return {"_last_event": data.get("_last_event")}
 
     def __init__(self, data, metadata):
         self._data = data
@@ -63,7 +63,7 @@ class ImportEvent(metaclass=ABCMeta):
 
         :return: entity_id, source_id: ids of this event
         """
-        entity_id = self._data.pop(self._metadata.id_column)
+        entity_id = None if self._metadata.id_column is None else self._data.pop(self._metadata.id_column)
         source_id = self._data.pop(self._metadata.source_id_column)
 
         return entity_id, source_id
@@ -105,6 +105,12 @@ class ADD(ImportEvent):
         # Clear the _date_deleted field to re-enable deleted records
         setattr(entity, '_date_deleted', None)
 
+        # The data for the add event is in the entity attribute
+        # The _last_event and other meta info is set seperately from the entity update
+        self._data = self._data["entity"]
+        del self._data["_last_event"]
+        self.pop_ids()
+
         super().apply_to(entity)
 
     @classmethod
@@ -113,7 +119,13 @@ class ADD(ImportEvent):
         if modifications_key in data:
             data.pop(modifications_key)
 
-        return super().create_event(_source_id, _id_column, _entity_id, data)
+        event_data = {
+            "entity": data,
+            "id_column": _id_column,
+            **(cls.last_event(data))
+        }
+
+        return super().create_event(_source_id, _id_column, _entity_id, event_data)
 
 
 class MODIFY(ImportEvent):

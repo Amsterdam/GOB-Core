@@ -30,7 +30,7 @@ METADATA_COLUMNS = {
     "private": {
         "_source": "GOB.String",  # Source for the specific entity, eg the name of a database
         "_source_id": "GOB.String",  # Id of the entity in the above mentioned source
-        "_last_event": "GOB.String"  # Id of the last event that has been applied to this entity
+        "_last_event": "GOB.Integer"  # Id of the last event that has been applied to this entity
     }
 }
 
