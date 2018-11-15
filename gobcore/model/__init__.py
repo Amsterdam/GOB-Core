@@ -7,6 +7,13 @@ class GOBModel():
         path = os.path.join(os.path.dirname(__file__), 'gobmodel.json')
         with open(path) as file:
             data = json.load(file)
+
+        if os.getenv('DISABLE_TEST_CATALOGUE', True):
+            # Default is to include the test catalogue
+            # By setting the DISABLE_TEST_CATALOGUE environment variable
+            # the test catalogue can be removed
+            del data["test_catalogue"]
+
         self._data = data
 
         # Extract references for easy access in API

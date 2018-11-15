@@ -1,4 +1,48 @@
 {
+  "test_catalogue": {
+    "version": "0.1",
+    "description": "Test catalogue.",
+    "collections": {
+      "test_entity": {
+        "version": "0.1",
+        "entity_id": "testid",
+        "attributes": {
+          "string": {
+            "type": "GOB.String",
+            "description": "String value."
+          },
+          "character": {
+            "type": "GOB.Character",
+            "description": "Character value."
+          },
+          "decimal": {
+            "type": "GOB.Decimal",
+            "description": "Decimal value."
+          },
+          "integer": {
+            "type": "GOB.Integer",
+            "description": "Integer value."
+          },
+          "point": {
+            "type": "GOB.Geo.Point",
+            "srid": "RD",
+            "description": "Point value"
+          },
+          "date": {
+            "type": "GOB.Date",
+            "description": "Date value."
+          },
+          "boolean": {
+            "type": "GOB.Boolean",
+            "description": "Boolean value."
+          }
+        },
+        "api": {
+          "filters": []
+        }
+      }
+    }
+  },
   "meetbouten":{
     "version": "0.1",
     "description": "De meetgegevens van bouten in de Amsterdamse panden.",
