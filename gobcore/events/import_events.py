@@ -168,14 +168,9 @@ class MODIFY(ImportEvent):
         modified_attributes = {}
 
         for mutation in modifications:
-            current_val = getattr(entity, mutation['key'])
-            expected_val = mutation['old_value']
-            if current_val != expected_val:
-                msg = f"Trying to modify data that is not in sync: entity id {entity._id}, " \
-                      f"attribute {mutation['key']} had value '{current_val}', but expected was '{expected_val}'"
-                raise GOBException(msg)
-            else:
-                modified_attributes[mutation['key']] = mutation['new_value']
+            # It might be tempting to compare the current value with the expected value (old_value in the event)
+            # But: the current value is a database type and the expected value is a json type
+            modified_attributes[mutation['key']] = mutation['new_value']
         return modified_attributes
 
     @classmethod
