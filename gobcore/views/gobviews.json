@@ -106,10 +106,7 @@
           "    ,      rws_nummer",
           "    ,      geometrie",
           "    FROM  nap_peilmerken",
-          "    WHERE (status->>'id')::INT IN (1,2) AND",
-          "          vervaldatum IS NULL AND",
-          "          hoogte_tov_nap IS NOT NULL AND",
-          "          publiceerbaar = TRUE"
+          "    WHERE publiceerbaar = TRUE"
         ]
       }
     }
