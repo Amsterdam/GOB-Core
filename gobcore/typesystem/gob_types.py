@@ -347,7 +347,7 @@ class DateTime(Date):
 
 class JSON(GOBType):
     name = "JSON"
-    sql_type = sqlalchemy.JSON
+    sql_type = sqlalchemy.dialects.postgresql.JSONB
 
     def __init__(self, value):
         if value is not None:

@@ -1,0 +1,73 @@
+{
+  "Grondslag": {
+    "meetbouten": {
+      "meetbouten": {
+        "ligt_in_bouwblok": {
+          "method": "geo_in",
+          "source_attribute": "geometrie",
+          "destination_attribute": "geometrie"
+        },
+        "ligt_in_buurt": {
+          "method": "geo_in",
+          "source_attribute": "geometrie",
+          "destination_attribute": "geometrie"
+        },
+        "ligt_in_stadseel": {
+          "method": "geo_in",
+          "source_attribute": "geometrie",
+          "destination_attribute": "geometrie"
+        }
+      },
+      "metingen": {
+        "hoort_bij_meetbout": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "refereert_aan": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        }
+      },
+      "referentiepunten": {
+        "ligt_in_bouwblok": {
+          "method": "geo_in",
+          "source_attribute": "geometrie",
+          "destination_attribute": "geometrie"
+        },
+        "ligt_in_buurt": {
+          "method": "geo_in",
+          "source_attribute": "geometrie",
+          "destination_attribute": "geometrie"
+        },
+        "ligt_in_stadseel": {
+          "method": "geo_in",
+          "source_attribute": "geometrie",
+          "destination_attribute": "geometrie"
+        },
+        "is_nap_peilmerk": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        }
+      }
+    },
+    "nap": {
+      "peilmerken": {
+        "ligt_in_bouwblok": {
+          "method": "geo_in",
+          "source_attribute": "geometrie",
+          "destination_attribute": "geometrie"
+        }
+      }
+    }
+  },
+  "Basisinformatie": {
+    "meetbouten": {
+      "rollagen": {
+        "is_gemeten_van_bouwblok": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        }
+      }
+    }
+  }
+}
