@@ -153,6 +153,8 @@ class Character(String):
         if value is None:
             return cls(None)
         string_value = str(value)
+        if len(string_value) != 1:
+            raise GOBTypeException(f"value '{string_value}' has more than one character")
         return cls(string_value[0]) if len(string_value) > 0 else cls(None)
 
 

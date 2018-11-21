@@ -1,5 +1,7 @@
 import os
 import json
+import re
+
 from abc import abstractmethod
 from json import JSONDecodeError
 
@@ -82,6 +84,11 @@ class Point(GEOType):
     @classmethod  # noqa: C901
     def from_value(cls, value, **kwargs):
         """Instantiates the GOBType Point, with either a database value, a geojson or WKT string"""
+
+        if isinstance(value, str):
+            regex = re.compile("^POINT\s*\([0-9\s\.]*\)$")
+            if not regex.match(value):
+                raise ValueError("Illegal WKT value")
 
         if isinstance(value, geoalchemy2.elements.WKBElement):
             # Use shapely to construct wkt string and use wkt load to get correct precision

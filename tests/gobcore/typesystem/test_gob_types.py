@@ -61,15 +61,17 @@ class TestGobTypes(unittest.TestCase):
         GobType = get_gob_type("GOB.Character")
         self.assertEqual(GobType.name, "Character")
         self.assertEqual('null', GobType.from_value(None).json)
-        self.assertEqual('"1"', GobType.from_value(123).json)
+        with self.assertRaises(GOBException):
+            self.assertEqual('"1"', GobType.from_value(123).json)
+        with self.assertRaises(GOBException):
+            self.assertEqual('"1"', GobType.from_value("123").json)
+        self.assertEqual('"1"', GobType.from_value(1).json)
         self.assertEqual('"N"', GobType.from_value('N').json)
-        self.assertEqual('"O"', GobType.from_value('Overtime').json)
-
-        self.assertTrue("1" == GobType.from_value(123))
-        self.assertFalse(GobType.from_value(123) == 1)
+        with self.assertRaises(GOBException):
+            self.assertEqual('"O"', GobType.from_value('Overtime').json)
 
         # DB ouptut is string
-        self.assertIsInstance(GobType.from_value('Overtime').to_db, str)
+        self.assertIsInstance(GobType.from_value('O').to_db, str)
 
     def test_int(self):
         GobType = get_gob_type("GOB.Integer")
