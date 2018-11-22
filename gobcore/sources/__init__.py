@@ -7,6 +7,7 @@ from gobcore.model import GOBModel
 
 
 class GOBSources():
+
     def __init__(self):
         path = os.path.join(os.path.dirname(__file__), 'gobsources.json')
         with open(path) as file:
@@ -15,36 +16,33 @@ class GOBSources():
         self._data = data
         self._model = GOBModel()
 
-        self._relations = {}
+        self._relations = defaultdict(lambda: defaultdict(list))
 
         # Extract references for easy access in API
         for source_name, source in self._data.items():
-            self._relations.update(self._extract_relations(source_name, source))
+            self._extract_relations(source_name, source)
 
     def _extract_relations(self, source_name, source):
-        relations = defaultdict(lambda: defaultdict(list))
         for catalog_name, catalog in self._model.get_catalogs().items():
             for collection_name, collection in catalog['collections'].items():
                 for field_name, spec in collection['references'].items():
-                    relation = {
-                        'source': source_name,
-                        'catalog': catalog_name,
-                        'collection': collection_name,
-                        'field_name': field_name
-                    }
-
-                    relation.update(
-                        self._get_field_relation(
-                            source,
-                            catalog_name,
-                            collection_name,
-                            field_name
-                        )
+                    field_relation = self._get_field_relation(
+                        source,
+                        catalog_name,
+                        collection_name,
+                        field_name
                     )
-                    ref_catalog, ref_collection = spec['ref'].split(':')
-
-                    relations[ref_catalog][ref_collection].append(relation)
-        return relations
+                    if field_relation:
+                        relation = {
+                            'source': source_name,
+                            'catalog': catalog_name,
+                            'collection': collection_name,
+                            'field_name': field_name,
+                            'type': spec['type'],
+                            **field_relation
+                        }
+                        ref_catalog, ref_collection = spec['ref'].split(':')
+                        self._relations[ref_catalog][ref_collection].append(relation)
 
     def _get_field_relation(self, source, catalog_name, collection_name, field_name):
         try:
