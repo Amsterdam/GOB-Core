@@ -88,7 +88,7 @@ class Point(GEOType):
         if isinstance(value, str):
             regex = re.compile("^POINT\s*\([0-9\s\.]*\)$")
             if not regex.match(value):
-                raise ValueError("Illegal WKT value")
+                raise ValueError("Illegal Point WKT value")
 
         if isinstance(value, geoalchemy2.elements.WKBElement):
             # Use shapely to construct wkt string and use wkt load to get correct precision
@@ -160,7 +160,7 @@ class Polygon(GEOType):
         if isinstance(value, str):
             regex = re.compile("^POLYGON\s*\([0-9\s\.,\(\)]*\)$")
             if not regex.match(value):
-                raise ValueError(f"Illegal WKT value: {value}")
+                raise ValueError(f"Illegal Polygon WKT value: {value}")
 
         if isinstance(value, geoalchemy2.elements.WKBElement):
             # Use shapely to construct wkt string and use wkt load to get correct precision
@@ -242,7 +242,7 @@ class Geometry(GEOType):
         if isinstance(value, str):
             regex = re.compile("^[A-Z]+\s*\([A-Z0-9.,\s\(\)]+\)$")
             if not regex.match(value):
-                print(f"Illegal WKT value: {value}")
+                raise ValueError(f"Illegal Geometry WKT value: {value}")
 
         if isinstance(value, geoalchemy2.elements.WKBElement):
             # Use shapely to construct wkt string and use wkt load to get correct precision
