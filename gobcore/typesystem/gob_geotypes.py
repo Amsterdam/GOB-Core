@@ -148,7 +148,14 @@ class Polygon(GEOType):
 
     @classmethod  # noqa: C901
     def from_value(cls, value, **kwargs):
-        """Instantiates the GOBType Point, with either a database value, a geojson or WKT string"""
+        """Instantiates a Polygon from a value and optional arguments
+
+        Currently precision is supported as an optional argument
+
+        :param value: the value to convert to a polygon
+        :param kwargs: optional arguments
+        :return: Polygon
+        """
 
         if isinstance(value, str):
             regex = re.compile("^POLYGON\s*\(\([0-9\s\.,]*\)\)$")
@@ -180,13 +187,21 @@ class Polygon(GEOType):
 
     @classmethod
     def from_values(cls, **values):
-        """Instantiate a Point, using x and y coordinates, and optional srid:
+        """Instantiates a Polygon from a values dictionary
 
-            point = Point.from_values(x=1, y=2, srid=28992)
+        :param values: dictionary containing construction parameters
+        :raises ValueError because the method is not implemented
+        :return None
         """
         raise ValueError(f"NYI")
 
     @classmethod
     def get_column_definition(cls, column_name, **kwargs):
+        """Get the database column definition for a Polygon
+
+        :param column_name: name of the column in the database
+        :param kwargs: arguments
+        :return: sqlalchemy.Column
+        """
         srid = kwargs['srid'] if 'srid' in kwargs else cls._srid
         return sqlalchemy.Column(column_name, geoalchemy2.Geometry(geometry_type='POLYGON', srid=srid))
