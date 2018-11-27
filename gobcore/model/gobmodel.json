@@ -414,6 +414,46 @@
     "version": "0.1",
     "description": "Gebieden in Amsterdam.",
     "collections": {
+      "bouwblokken": {
+        "version": "0.1",
+        "entity_id": "identificatie",
+        "has_states": true,
+        "attributes": {
+          "identificatie": {
+            "type": "GOB.String",
+            "description": "Unieke identificatie van het object."
+          },
+          "code": {
+            "type": "GOB.String",
+            "description": "Officiële code van het object."
+          },
+          "datum_begin_geldigheid": {
+            "type": "GOB.Date",
+            "description": "De datum waarop het object is gecreëerd."
+          },
+          "datum_einde_geldigheid": {
+            "type": "GOB.Date",
+            "description": "De datum waarop het object is komen te vervallen."
+          },
+          "ligt_in_buurt": {
+            "type": "GOB.Reference",
+            "description": "De buurt waar het bouwblok in ligt.",
+            "ref": "gebieden:buurten"
+          },
+          "geometrie": {
+            "type": "GOB.Geo.Polygon",
+            "description": "Geometrische beschrijving van een object."
+          }
+        },
+        "api": {
+          "filters": [
+            {
+              "field": "datum_einde_geldigheid",
+              "op": "is_null"
+            }
+          ]
+        }
+      },
       "buurten": {
         "version": "0.1",
         "entity_id": "identificatie",
