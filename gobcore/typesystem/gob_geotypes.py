@@ -140,6 +140,7 @@ class Point(GEOType):
         srid = kwargs['srid'] if 'srid' in kwargs else cls._srid
         return sqlalchemy.Column(column_name, geoalchemy2.Geometry(geometry_type='POINT', srid=srid))
 
+
 class Polygon(GEOType):
     # POLYGON ((115145.619264024 485115.91328199, ...))
     name = "Polygon"

@@ -87,7 +87,7 @@ class TestMessageDrivenService(unittest.TestCase):
         expected_exchange = single_service['exchange']
 
         messagedriven_service.keep_running = False
-        messagedriven_service.messagedriven_service(service_definition)
+        messagedriven_service.messagedriven_service(service_definition, "Any name")
 
         mocked_init.assert_called_with()
         mocked_connection.assert_called_with(CONNECTION_PARAMS)
