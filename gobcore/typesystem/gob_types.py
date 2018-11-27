@@ -335,14 +335,20 @@ class DateTime(Date):
         input_format = kwargs['format'] if 'format' in kwargs else cls.internal_format
 
         if value is not None:
-            # Convert to isoformat if value is a datetime object
-            value = value.isoformat() if isinstance(value, datetime.datetime) else value
             try:
-                value = datetime.datetime.strptime(str(value), input_format).strftime(cls.internal_format)
+                if not isinstance(value, datetime.datetime):
+                    value = datetime.datetime.strptime(str(value), input_format)
+                value = value.strftime(cls.internal_format)
             except ValueError as v:
                 raise GOBTypeException(v)
 
         return cls(str(value)) if value is not None else cls(None)
+
+    @property
+    def to_db(self):
+        if self._string is None:
+            return None
+        return datetime.datetime.strptime(self._string, self.internal_format)
 
 
 class JSON(GOBType):

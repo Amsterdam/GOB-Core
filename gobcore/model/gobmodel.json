@@ -225,11 +225,11 @@
           },
           "hoogte_tov_nap": {
             "type": "GOB.Decimal",
-            "description": "Hoog­te van het re­fe­ren­tie­punt t.o.v. NAP"
+            "description": "Hoogte van het referentiepunt t.o.v. NAP"
           },
           "datum": {
             "type": "GOB.Date",
-            "description": "Da­tum van plaat­sing van het re­fe­ren­tie­punt."
+            "description": "Datum van plaatsing van het referentiepunt."
           },
           "status": {
             "type": "GOB.JSON",
@@ -277,7 +277,7 @@
           },
           "is_nap_peilmerk": {
             "type": "GOB.Reference",
-            "description": "Het NAP-peil­merk dat het re­fe­ren­tie­punt kan zijn.",
+            "description": "Het NAP-peilmerk dat het referentiepunt kan zijn.",
             "ref": "nap:peilmerken"
           },
           "publiceerbaar": {
@@ -332,19 +332,19 @@
     "collections": {
       "peilmerken": {
         "version": "0.1",
-        "entity_id": "peilmerknummer",
+        "entity_id": "identificatie",
         "attributes": {
           "identificatie": {
             "type": "GOB.String",
-            "description": "Het peilmerknum­mer van het peil­merk."
+            "description": "Het peilmerknummer van het peilmerk."
           },
           "hoogte_tov_nap": {
             "type": "GOB.Decimal",
-            "description": "Hoog­te van het peilmerk t.o.v. NAP"
+            "description": "Hoogte van het peilmerk t.o.v. NAP"
           },
           "jaar": {
             "type": "GOB.Integer",
-            "description": "Het jaar van wa­ter­pas­sing, be­ho­ren­de bij de hoog­te."
+            "description": "Het jaar van waterpassing, behorende bij de hoogte."
           },
           "merk": {
             "type": "GOB.JSON",
@@ -352,7 +352,7 @@
           },
           "omschrijving": {
             "type": "GOB.String",
-            "description": "Be­schrij­ving van het ob­ject waar­in het peil­merk zich be­vindt."
+            "description": "Beschrijving van het object waarin het peilmerk zich bevindt."
           },
           "windrichting": {
             "type": "GOB.String",
@@ -368,7 +368,7 @@
           },
           "rws_nummer": {
             "type": "GOB.String",
-            "description": "Num­mer dat Rijks­wa­ter­staat han­teert."
+            "description": "Nummer dat Rijkswaterstaat hanteert."
           },
           "geometrie": {
             "type": "GOB.Geo.Point",
@@ -404,6 +404,64 @@
               "field": "publiceerbaar",
               "op": "==",
               "value": true
+            }
+          ]
+        }
+      }
+    }
+  },
+  "gebieden": {
+    "version": "0.1",
+    "description": "Gebieden in Amsterdam.",
+    "collections": {
+      "buurten": {
+        "version": "0.1",
+        "entity_id": "identificatie",
+        "has_states": true,
+        "attributes": {
+          "identificatie": {
+            "type": "GOB.String",
+            "description": "Unieke identificatie van het object."
+          },
+          "naam": {
+            "type": "GOB.String",
+            "description": "De naam van het object."
+          },
+          "code": {
+            "type": "GOB.String",
+            "description": "Volledige, samengestelde, code, bestaande uit stadsdeelcode en wijkcode."
+          },
+          "datum_begin_geldigheid": {
+            "type": "GOB.Date",
+            "description": "De datum waarop het object is gecreëerd."
+          },
+          "datum_einde_geldigheid": {
+            "type": "GOB.Date",
+            "description": "De datum waarop het object is komen te vervallen."
+          },
+          "documentdatum": {
+            "type": "GOB.Date",
+            "description": "De datum waarop het document is vastgesteld, op basis waarvan een opname, mutatie of een verwijdering van gegevens ten aanzien van het object heeft plaatsgevonden."
+          },
+          "documentnummer": {
+            "type": "GOB.String",
+            "description": "De unieke aanduiding van het brondocument op basis waarvan een opname, mutatie of een verwijdering van gegevens ten aanzien van het object heeft plaatsgevonden."
+          },
+          "ligt_in_wijk": {
+            "type": "GOB.Reference",
+            "description": "De wijk waar de buurt in ligt.",
+            "ref": "gebieden:wijken"
+          },
+          "geometrie": {
+            "type": "GOB.Geo.Polygon",
+            "description": "Geometrische beschrijving van een object."
+          }
+        },
+        "api": {
+          "filters": [
+            {
+              "field": "datum_einde_geldigheid",
+              "op": "is_null"
             }
           ]
         }

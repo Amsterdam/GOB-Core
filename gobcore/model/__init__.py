@@ -1,6 +1,8 @@
 import os
 import json
 
+from gobcore.model.metadata import STATE_FIELDS
+
 
 class GOBModel():
     def __init__(self):
@@ -21,9 +23,16 @@ class GOBModel():
             for entity_name, model in catalog['collections'].items():
                 model['references'] = self._extract_references(model['attributes'])
 
+                model_attributes = model['attributes']
+                state_attributes = STATE_FIELDS if model.get('has_states') else {}
+                all_attributes = {
+                    **state_attributes,
+                    **model_attributes
+                }
+
                 # Add fields to the GOBModel to be used in database creation and lookups
                 model['fields'] = {
-                    field_name: attributes for field_name, attributes in model['attributes'].items()
+                    field_name: attributes for field_name, attributes in all_attributes.items()
                 }
 
     def _extract_references(self, attributes):

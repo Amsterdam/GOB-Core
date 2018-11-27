@@ -69,7 +69,7 @@ def _init():
     print("Succesfully initialized message broker")
 
 
-def messagedriven_service(services, name="UNKNOWN"):
+def messagedriven_service(services, name):
     """Start a connection with a the message broker and the given definition
 
     servicedefenition is a dict of dicts:
