@@ -57,7 +57,7 @@ class Heartbeat():
                     "name": t.name,
                     "is_alive": t.is_alive()
                 } for t in threading.enumerate()],
-            "timestamp": datetime.datetime.now().isoformat()
+            "timestamp": datetime.datetime.utcnow().isoformat()
         }
 
         self._connection.publish(self._queue, self._queue["key"], status_msg)
