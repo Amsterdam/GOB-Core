@@ -3,19 +3,28 @@
     "meetbouten": {
       "meetbouten": {
         "ligt_in_bouwblok": {
-          "method": "geo_in",
-          "source_attribute": "geometrie",
-          "destination_attribute": "geometrie"
+          "method": "equals",
+          "destination_attribute": "code"
         },
         "ligt_in_buurt": {
-          "method": "geo_in",
-          "source_attribute": "geometrie",
-          "destination_attribute": "geometrie"
+          "method": "through",
+          "source_attribute": "ligt_in_bouwblok",
+          "destination_attribute": "identificatie",
+          "chain": [
+            {"entity": "gebieden:bouwblokken", "source_attribute": "ligt_in_bouwblok", "destination_attribute": "identificatie"},
+            {"entity": "gebieden:buurten", "source_attribute": "ligt_in_buurt", "destination_attribute": "identificatie"}
+          ]
         },
-        "ligt_in_stadseel": {
-          "method": "geo_in",
-          "source_attribute": "geometrie",
-          "destination_attribute": "geometrie"
+        "ligt_in_stadsdeel": {
+          "method": "through",
+          "source_attribute": "ligt_in_bouwblok",
+          "destination_attribute": "identificatie",
+          "chain": [
+            {"entity": "gebieden:bouwblokken", "source_attribute": "ligt_in_bouwblok", "destination_attribute": "identificatie", "filters": [{"field": "datum_einde_geldigheid", "op":"is_null"}]},
+            {"entity": "gebieden:buurten", "source_attribute": "ligt_in_buurt", "destination_attribute": "identificatie", "filters": [{"field": "datum_einde_geldigheid", "op":"is_null"}]},
+            {"entity": "gebieden:wijken", "source_attribute": "ligt_in_wijk", "destination_attribute": "identificatie", "filters": [{"field": "datum_einde_geldigheid", "op":"is_null"}]},
+            {"entity": "gebieden:stadsdelen", "source_attribute": "ligt_in_stadsdeel", "destination_attribute": "identificatie", "filters": [{"field": "datum_einde_geldigheid", "op":"is_null"}]}
+          ]
         }
       },
       "metingen": {
@@ -30,16 +39,15 @@
       },
       "referentiepunten": {
         "ligt_in_bouwblok": {
-          "method": "geo_in",
-          "source_attribute": "geometrie",
-          "destination_attribute": "geometrie"
+          "method": "equals",
+          "destination_attribute": "code"
         },
         "ligt_in_buurt": {
           "method": "geo_in",
           "source_attribute": "geometrie",
           "destination_attribute": "geometrie"
         },
-        "ligt_in_stadseel": {
+        "ligt_in_stadsdeel": {
           "method": "geo_in",
           "source_attribute": "geometrie",
           "destination_attribute": "geometrie"
@@ -53,9 +61,8 @@
     "nap": {
       "peilmerken": {
         "ligt_in_bouwblok": {
-          "method": "geo_in",
-          "source_attribute": "geometrie",
-          "destination_attribute": "geometrie"
+          "method": "equals",
+          "destination_attribute": "code"
         }
       }
     }
@@ -64,6 +71,28 @@
     "meetbouten": {
       "rollagen": {
         "is_gemeten_van_bouwblok": {
+          "method": "equals",
+          "destination_attribute": "code"
+        }
+      }
+    }
+  },
+  "DIVA": {
+    "gebieden": {
+      "bouwblokken": {
+        "ligt_in_buurt": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        }
+      },
+      "buurten": {
+        "ligt_in_wijk": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        }
+      },
+      "wijken": {
+        "ligt_in_stadsdeel": {
           "method": "equals",
           "destination_attribute": "identificatie"
         }
