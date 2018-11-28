@@ -88,7 +88,7 @@ class Point(GEOType):
         if isinstance(value, str):
             regex = re.compile("^POINT\s*\([0-9\s\.]*\)$")
             if not regex.match(value):
-                raise ValueError("Illegal Point WKT value")
+                raise ValueError(f"Illegal Point WKT value: {value}")
 
         if isinstance(value, geoalchemy2.elements.WKBElement):
             # Use shapely to construct wkt string and use wkt load to get correct precision
