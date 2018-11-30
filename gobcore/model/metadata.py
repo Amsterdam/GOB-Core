@@ -62,23 +62,17 @@ STATE_COLUMNS = {
     "registratiedatum": "GOB.DateTime"
 }
 
-PRIVATE_META_FIELDS = {
+
+def columns_to_fields(columns, descriptions):
+    return {
         field_name: {
             "type": field_type,
-            "description": DESCRIPTION[field_name]
-        } for field_name, field_type in METADATA_COLUMNS["private"].items()
+            "description": descriptions[field_name]
+        } for field_name, field_type in columns.items()
     }
 
-PUBLIC_META_FIELDS = {
-        field_name: {
-            "type": field_type,
-            "description": DESCRIPTION[field_name]
-        } for field_name, field_type in METADATA_COLUMNS["public"].items()
-    }
 
-STATE_FIELDS = {
-    field_name: {
-        "type": field_type,
-        "description": DESCRIPTION[field_name]
-    } for field_name, field_type in STATE_COLUMNS.items()
-}
+PRIVATE_META_FIELDS = columns_to_fields(METADATA_COLUMNS["private"], DESCRIPTION)
+PUBLIC_META_FIELDS = columns_to_fields(METADATA_COLUMNS["public"], DESCRIPTION)
+FIXED_FIELDS = columns_to_fields(FIXED_COLUMNS, DESCRIPTION)
+STATE_FIELDS = columns_to_fields(STATE_COLUMNS, DESCRIPTION)
