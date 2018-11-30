@@ -43,14 +43,24 @@
           "destination_attribute": "code"
         },
         "ligt_in_buurt": {
-          "method": "geo_in",
-          "source_attribute": "geometrie",
-          "destination_attribute": "geometrie"
+          "method": "through",
+          "source_attribute": "ligt_in_bouwblok",
+          "destination_attribute": "identificatie",
+          "chain": [
+            {"entity": "gebieden:bouwblokken", "source_attribute": "ligt_in_bouwblok", "destination_attribute": "identificatie"},
+            {"entity": "gebieden:buurten", "source_attribute": "ligt_in_buurt", "destination_attribute": "identificatie"}
+          ]
         },
         "ligt_in_stadsdeel": {
-          "method": "geo_in",
-          "source_attribute": "geometrie",
-          "destination_attribute": "geometrie"
+          "method": "through",
+          "source_attribute": "ligt_in_bouwblok",
+          "destination_attribute": "identificatie",
+          "chain": [
+            {"entity": "gebieden:bouwblokken", "source_attribute": "ligt_in_bouwblok", "destination_attribute": "identificatie", "filters": [{"field": "datum_einde_geldigheid", "op":"is_null"}]},
+            {"entity": "gebieden:buurten", "source_attribute": "ligt_in_buurt", "destination_attribute": "identificatie", "filters": [{"field": "datum_einde_geldigheid", "op":"is_null"}]},
+            {"entity": "gebieden:wijken", "source_attribute": "ligt_in_wijk", "destination_attribute": "identificatie", "filters": [{"field": "datum_einde_geldigheid", "op":"is_null"}]},
+            {"entity": "gebieden:stadsdelen", "source_attribute": "ligt_in_stadsdeel", "destination_attribute": "identificatie", "filters": [{"field": "datum_einde_geldigheid", "op":"is_null"}]}
+          ]
         },
         "is_nap_peilmerk": {
           "method": "equals",
