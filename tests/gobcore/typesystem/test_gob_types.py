@@ -2,8 +2,9 @@ import random
 import unittest
 from datetime import datetime
 
-from gobcore.exceptions import GOBException
+from gobcore.exceptions import GOBException, GOBTypeException
 from gobcore.typesystem import get_gob_type
+from gobcore.typesystem.gob_types import GOBType
 from tests.gobcore import fixtures
 
 
@@ -147,6 +148,9 @@ class TestGobTypes(unittest.TestCase):
         self.assertEqual('true', GobType.from_value('Y', format='YN').json)
         self.assertEqual('false', GobType.from_value('N', format='YN').json)
         self.assertIsNone(GobType.from_value('J', format='YN').to_db)
+        # Test unknown format
+        with self.assertRaises(GOBTypeException):
+            GobType.from_value('Yes', format='YesNo')
 
     def test_date(self):
         GobType = get_gob_type("GOB.Date")
@@ -168,6 +172,29 @@ class TestGobTypes(unittest.TestCase):
 
         # DB ouptut is datetime
         self.assertIsInstance(GobType.from_value('2016-05-04').to_db, datetime)
+
+    def test_datetime(self):
+        GobType = get_gob_type("GOB.DateTime")
+        self.assertEqual(GobType.name, "DateTime")
+
+        self.assertEqual('null', GobType.from_value(None).json)
+        self.assertEqual("2016-05-04T12:00:00.123000", str(GobType.from_value('2016-05-04T12:00:00.123000')))
+        self.assertEqual("2016-05-04T12:00:00.123000", str(GobType.from_value('20160504 12:00:00.123000', format="%Y%m%d %H:%M:%S.%f")))
+
+        self.assertEqual('"2016-05-04T12:00:00.123000"', GobType.from_value('2016-05-04T12:00:00.123000').json)
+        self.assertEqual('"2016-05-04T12:00:00.123000"', GobType.from_value('20160504 12:00:00.123000', format="%Y%m%d %H:%M:%S.%f").json)
+
+        with self.assertRaises(GOBException):
+            GobType.from_value('N')
+        with self.assertRaises(GOBException):
+            GobType.from_value('Overtime')
+        with self.assertRaises(GOBException):
+            GobType.from_value(1)
+
+        # DB ouptut is datetime
+        self.assertIsInstance(GobType.from_value('2016-05-04T12:00:00.123000').to_db, datetime)
+        # unless an empty string is entered
+        self.assertIsNone(GobType.from_value(None).to_db)
 
     def test_json(self):
         GobType = get_gob_type("GOB.JSON")
@@ -200,6 +227,28 @@ class TestGobTypes(unittest.TestCase):
 
         self.assertEqual(in_order, GobType(out_of_order))
         self.assertEqual(in_order, GobType.from_value(GobType(out_of_order)))
+
+        # Test unknown format
+        with self.assertRaises(GOBTypeException):
+            GobType.from_value('{"test" = "test"}')
+
+        # DB ouptut is json
+        self.assertIsInstance(GobType.from_value('{"key": "value"}').to_db, dict)
+
+    def test_reference(self):
+        GobType = get_gob_type("GOB.Reference")
+        self.assertEqual(GobType.name, "Reference")
+
+        # Test that a value of id is ignored when comparing references. Only test bronwaarde
+        self.assertEqual(GobType.from_value('{"bronwaarde": "123456"}'), GobType.from_value('{"bronwaarde": "123456", "id": "123456"}'))
+
+    def test_many_reference(self):
+        GobType = get_gob_type("GOB.ManyReference")
+        self.assertEqual(GobType.name, "ManyReference")
+
+        # Test that a value of id is ignored when comparing references. Only test bronwaarde
+        self.assertEqual(GobType.from_value('[{"bronwaarde": "123456"}, {"bronwaarde": "654321"}]'), GobType.from_value('[{"bronwaarde": "123456", "id": "123456"}, {"bronwaarde": "654321", "id": "654321"}]'))
+
 
     def test_None_to_db(self):
         from gobcore.typesystem import gob_types, gob_geotypes

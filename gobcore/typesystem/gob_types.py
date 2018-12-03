@@ -393,6 +393,30 @@ class JSON(GOBType):
 class Reference(JSON):
     name = "Reference"
 
+    def __eq__(self, other, exclude_keys=('id')):
+        """Internal representation is string, that is what we compare
+
+        :param other: other GOB Type to compare with
+        :return: True or False
+        """
+        cleaned_self = {k: v for k, v in json.loads(self._string).items() if k not in exclude_keys}
+        cleaned_other = {k: v for k, v in json.loads(str(other)).items() if k not in exclude_keys}
+
+        return cleaned_self == cleaned_other
+
 
 class ManyReference(JSON):
     name = "ManyReference"
+
+    def __eq__(self, other, exclude_keys=('id')):
+        """Internal representation is string, that is what we compare
+
+        :param other: other GOB Type to compare with
+        :return: True or False
+        """
+        cleaned_self = [{k: v for k, v in item.items() if k not in exclude_keys}
+                        for item in json.loads(self._string)]
+        cleaned_other = [{k: v for k, v in item.items() if k not in exclude_keys}
+                         for item in json.loads(self._string)]
+
+        return cleaned_self == cleaned_other
