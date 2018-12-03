@@ -1,10 +1,14 @@
 import sys
 import time
+import traceback
 
 from gobcore.message_broker.async_message_broker import AsyncConnection
 from gobcore.status.heartbeat import Heartbeat, HEARTBEAT_INTERVAL
 from gobcore.message_broker.config import CONNECTION_PARAMS
 from gobcore.message_broker.initialise_queues import initialize_message_broker
+from gobcore.log import get_logger
+
+logger = None
 
 keep_running = True
 
@@ -29,6 +33,28 @@ def _get_service(services, exchange, queue, key):
                 (s["key"] == key or s["key"] == "#"))
 
 
+def log_error(msg, cause_msg, err):
+    """Log the error message
+
+    :param msg: Description of the error
+    :param cause_msg: The message that caused the error
+    :param err: The exception that has been raised
+    :return: None
+    """
+    global logger
+    if logger is None:
+        # Instantiate a logger if it doesn't yet exist for the CORE module
+        logger = get_logger(name="CORE")
+
+    # Include the header to associate the log message with the correct processid
+    logger.error(msg, extra={
+        **cause_msg['header'],
+        "data": {
+            "error": str(err)   # Include a short error description
+        }
+    })
+
+
 def _on_message(connection, service, msg):
     """Called on every message receipt
 
@@ -41,8 +67,14 @@ def _on_message(connection, service, msg):
     handler = service['handler']
     try:
         result_msg = handler(msg)
-    except RuntimeError:
-        return False
+    except Exception as err:
+        # Print error message, the message that caused the error and a short stacktrace
+        stacktrace = traceback.format_exc(limit=-5)
+        print("Message processing has failed, further processing stopped", msg, stacktrace)
+        # Log the error and a short error description
+        log_error(f"Message processing has failed, further processing stopped", msg, err)
+        # Message has caused a crash, remove the message from the queue by returning true
+        return True
 
     # If a report_queue
     if 'report' in service:
