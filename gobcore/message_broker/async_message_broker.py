@@ -280,7 +280,7 @@ class AsyncConnection(object):
 
                         # Allow for offline contents
                         msg, offload_id = load_message(msg, from_json)
-                    except json.decoder.JSONDecodeError:
+                    except (TypeError, json.decoder.JSONDecodeError):
                         # message was not json, pass message as it is received
                         msg = body
 

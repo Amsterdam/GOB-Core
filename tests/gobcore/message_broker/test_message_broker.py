@@ -280,5 +280,14 @@ def test_subscribe(monkeypatch):
     }
     connection.subscribe([queue, queue], on_message)
     connection.publish(queue, "key", "mybody")
-    connection.disconnect()
     assert(consumed_message == "mybody")
+
+    # connection, exchange, queue, key, msg
+    def on_message_fail(self, exchange, queue, key, body):
+        raise Exception
+
+    connection.subscribe([queue, queue], on_message_fail)
+    connection.publish(queue, "key", "mybody")
+    assert(consumed_message == "mybody")
+
+    connection.disconnect()
