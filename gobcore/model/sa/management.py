@@ -21,6 +21,7 @@ class Log(Base):
     timestamp = Column(DateTime)
     process_id = Column(String)
     source = Column(String)
+    application = Column(String)
     destination = Column(String)
     catalogue = Column(String)
     entity = Column(String)

@@ -38,6 +38,7 @@ class RequestsHandler(logging.Handler):
         log_msg['process_id'] = getattr(record, 'process_id', None)
         log_msg['id'] = getattr(record, 'id', None)
         log_msg['source'] = getattr(record, 'source', None)
+        log_msg['application'] = getattr(record, 'application', None)
         log_msg['destination'] = getattr(record, 'destination', None)
         log_msg['catalogue'] = getattr(record, 'catalogue', None)
         log_msg['entity'] = getattr(record, 'entity', None)
