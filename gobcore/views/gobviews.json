@@ -110,5 +110,162 @@
         ]
       }
     }
+  },
+  "gebieden": {
+    "bouwblokken": {
+      "enhanced": {
+        "version": "0.1",
+        "query": [
+          "    SELECT",
+          "        bouwblokken.identificatie",
+          "    ,   bouwblokken.volgnummer",
+          "    ,   bouwblokken.code",
+          "    ,   bouwblokken.datum_begin_geldigheid",
+          "    ,   bouwblokken.datum_einde_geldigheid",
+          "    ,   buurten.identificatie AS buurtidentificatie",
+          "    ,   buurten.volgnummer AS buurtvolgnummer",
+          "    ,   buurten.code AS buurtnaam",
+          "    ,   buurten.naam AS buurtcode",
+          "    ,   wijken.identificatie AS wijkidentificatie",
+          "    ,   wijken.volgnummer AS wijkvolgnummer",
+          "    ,   wijken.code AS wijknaam",
+          "    ,   wijken.naam AS wijkcode",
+          "    ,   NULL AS ggw_identificatie",
+          "    ,   NULL AS ggw_volgnummer",
+          "    ,   NULL AS ggw_naam",
+          "    ,   NULL AS ggw_code",
+          "    ,   NULL AS ggp_identificatie",
+          "    ,   NULL AS ggp_volgnummer",
+          "    ,   NULL AS ggp_naam",
+          "    ,   NULL AS ggp_code",
+          "    ,   stadsdelen.identificatie AS stadsdeelidentificatie",
+          "    ,   stadsdelen.volgnummer AS stadsdeelvolgnummer",
+          "    ,   stadsdelen.code AS stadsdeelnaam",
+          "    ,   stadsdelen.naam AS stadsdeelcode",
+          "    ,   NULL AS brk_gemeenteidentificatie",
+          "    ,   NULL AS brk_gemeentenaam",
+          "    ,   bouwblokken.geometrie",
+          "    FROM",
+          "        gebieden_bouwblokken AS bouwblokken",
+          "        LEFT JOIN",
+          "            gebieden_buurten AS buurten",
+          "            ON bouwblokken.ligt_in_buurt->>'id' = buurten.identificatie",
+          "        LEFT JOIN",
+          "            gebieden_wijken AS wijken",
+          "            ON buurten.ligt_in_wijk->>'id' = wijken.identificatie",
+          "        LEFT JOIN",
+          "            gebieden_stadsdelen AS stadsdelen",
+          "            ON wijken.ligt_in_stadsdeel->>'id' = stadsdelen.identificatie",
+          "    WHERE bouwblokken.datum_einde_geldigheid IS NULL",
+          "    AND buurten.datum_einde_geldigheid IS NULL",
+          "    AND wijken.datum_einde_geldigheid IS NULL",
+          "    AND stadsdelen.datum_einde_geldigheid IS NULL"
+        ]
+      }
+    },
+    "buurten": {
+      "enhanced": {
+        "version": "0.1",
+        "query": [
+          "    SELECT",
+          "        buurten.identificatie",
+          "    ,   buurten.volgnummer",
+          "    ,   buurten.naam",
+          "    ,   buurten.code",
+          "    ,   buurten.datum_begin_geldigheid",
+          "    ,   buurten.datum_einde_geldigheid",
+          "    ,   buurten.documentdatum",
+          "    ,   buurten.documentnummer",
+          "    ,   NULL AS cbs_nummer",
+          "    ,   wijken.identificatie AS wijkidentificatie",
+          "    ,   wijken.volgnummer AS wijkvolgnummer",
+          "    ,   wijken.code AS wijknaam",
+          "    ,   wijken.naam AS wijkcode",
+          "    ,   NULL AS ggw_identificatie",
+          "    ,   NULL AS ggw_volgnummer",
+          "    ,   NULL AS ggw_naam",
+          "    ,   NULL AS ggw_code",
+          "    ,   NULL AS ggp_identificatie",
+          "    ,   NULL AS ggp_volgnummer",
+          "    ,   NULL AS ggp_naam",
+          "    ,   NULL AS ggp_code",
+          "    ,   stadsdelen.identificatie AS stadsdeelidentificatie",
+          "    ,   stadsdelen.volgnummer AS stadsdeelvolgnummer",
+          "    ,   stadsdelen.code AS stadsdeelnaam",
+          "    ,   stadsdelen.naam AS stadsdeelcode",
+          "    ,   NULL AS brk_gemeenteidentificatie",
+          "    ,   NULL AS brk_gemeentenaam",
+          "    ,   buurten.geometrie",
+          "    FROM",
+          "        gebieden_buurten AS buurten",
+          "        LEFT JOIN",
+          "            gebieden_wijken AS wijken",
+          "            ON buurten.ligt_in_wijk->>'id' = wijken.identificatie",
+          "        LEFT JOIN",
+          "            gebieden_stadsdelen AS stadsdelen",
+          "            ON wijken.ligt_in_stadsdeel->>'id' = stadsdelen.identificatie",
+          "    WHERE buurten.datum_einde_geldigheid IS NULL",
+          "    AND wijken.datum_einde_geldigheid IS NULL",
+          "    AND stadsdelen.datum_einde_geldigheid IS NULL"
+        ]
+      }
+    },
+    "wijken": {
+      "enhanced": {
+        "version": "0.1",
+        "query": [
+          "    SELECT",
+          "        wijken.identificatie",
+          "    ,   wijken.volgnummer",
+          "    ,   wijken.naam",
+          "    ,   wijken.code",
+          "    ,   wijken.datum_begin_geldigheid",
+          "    ,   wijken.datum_einde_geldigheid",
+          "    ,   wijken.documentdatum",
+          "    ,   wijken.documentnummer",
+          "    ,   NULL AS cbs_nummer",
+          "    ,   NULL AS ggw_identificatie",
+          "    ,   NULL AS ggw_volgnummer",
+          "    ,   NULL AS ggw_naam",
+          "    ,   NULL AS ggw_code",
+          "    ,   stadsdelen.identificatie AS stadsdeelidentificatie",
+          "    ,   stadsdelen.volgnummer AS stadsdeelvolgnummer",
+          "    ,   stadsdelen.code AS stadsdeelnaam",
+          "    ,   stadsdelen.naam AS stadsdeelcode",
+          "    ,   NULL AS brk_gemeenteidentificatie",
+          "    ,   NULL AS brk_gemeentenaam",
+          "    ,   wijken.geometrie",
+          "    FROM",
+          "        gebieden_wijken AS wijken",
+          "        LEFT JOIN",
+          "            gebieden_stadsdelen AS stadsdelen",
+          "            ON wijken.ligt_in_stadsdeel->>'id' = stadsdelen.identificatie",
+          "    WHERE wijken.datum_einde_geldigheid IS NULL",
+          "    AND stadsdelen.datum_einde_geldigheid IS NULL;"
+        ]
+      }
+    },
+    "stadsdelen": {
+      "enhanced": {
+        "version": "0.1",
+        "query": [
+          "    SELECT",
+          "        stadsdelen.identificatie",
+          "    ,   stadsdelen.volgnummer",
+          "    ,   stadsdelen.naam",
+          "    ,   stadsdelen.code",
+          "    ,   stadsdelen.datum_begin_geldigheid",
+          "    ,   stadsdelen.datum_einde_geldigheid",
+          "    ,   stadsdelen.documentdatum",
+          "    ,   stadsdelen.documentnummer",
+          "    ,   NULL AS brk_gemeenteidentificatie",
+          "    ,   NULL AS brk_gemeentenaam",
+          "    ,   stadsdelen.geometrie",
+          "    FROM",
+          "        gebieden_stadsdelen AS stadsdelen",
+          "    WHERE stadsdelen.datum_einde_geldigheid IS NULL"
+        ]
+      }
+    }
   }
 }
