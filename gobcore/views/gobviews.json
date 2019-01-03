@@ -80,13 +80,13 @@
       "enhanced": {
         "version": "0.1",
         "query": [
-"    SELECT identificatie",
-"    ,      geometrie",
-"    ,      hoogte_tov_nap",
-"    ,      datum",
-"    ,      CONCAT_WS(' ', nabij_nummeraanduiding->>'bronwaarde', locatie)       AS locatie",
-"    FROM  meetbouten_referentiepunten",
-"    WHERE publiceerbaar = TRUE"
+          "    SELECT identificatie",
+          "    ,      geometrie",
+          "    ,      hoogte_tov_nap",
+          "    ,      datum",
+          "    ,      CONCAT_WS(' ', nabij_nummeraanduiding->>'bronwaarde', locatie)       AS locatie",
+          "    FROM  meetbouten_referentiepunten",
+          "    WHERE publiceerbaar = TRUE"
         ]
       }
     },
@@ -94,10 +94,14 @@
       "enhanced": {
         "version": "0.1",
         "query": [
-"    SELECT *",
-"    ,       ROW_NUMBER() OVER (order by identificatie) AS idx",
-"    FROM  meetbouten_rollagen",
-"    ORDER BY identificatie"
+          "    SELECT meetbouten_rollagen.identificatie",
+          "    ,       ROW_NUMBER() OVER (order by meetbouten_rollagen.identificatie) AS idx",
+          "    ,       ST_centroid(bouwblokken.geometrie) AS geometrie",
+          "    FROM  meetbouten_rollagen",
+          "        LEFT JOIN",
+          "            gebieden_bouwblokken AS bouwblokken",
+          "            ON meetbouten_rollagen.identificatie = bouwblokken.code",
+          "    ORDER BY meetbouten_rollagen.identificatie"
         ]
       }
     }

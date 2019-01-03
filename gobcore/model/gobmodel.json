@@ -466,6 +466,11 @@
             "description": "De wijk waar de buurt in ligt.",
             "ref": "gebieden:wijken"
           },
+          "cbs_code": {
+            "type": "GOB.String",
+            "description": "De CBS-code van het object.",
+            "ref": "gebieden:wijken"
+          },
           "geometrie": {
             "type": "GOB.Geo.Polygon",
             "description": "Geometrische beschrijving van een object."
@@ -517,6 +522,11 @@
             "type": "GOB.Reference",
             "description": "Het stadsdeel waar de wijk in ligt.",
             "ref": "gebieden:stadsdelen"
+          },
+          "cbs_code": {
+            "type": "GOB.String",
+            "description": "De CBS-code van het object.",
+            "ref": "gebieden:wijken"
           },
           "geometrie": {
             "type": "GOB.Geo.Polygon",
