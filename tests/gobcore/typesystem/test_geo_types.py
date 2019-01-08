@@ -13,7 +13,7 @@ class TestGobGeoTypes(unittest.TestCase):
         self.assertEqual(GobType.name, "Point")
 
         self.assertEqual('POINT(112.0 22.0)', str(GobType.from_values(x=112, y=22, precision=1)))
-        self.assertEqual('POINT(112.00 22.00)', str(GobType.from_values(x=112, y=22)))
+        self.assertEqual('POINT(112.000 22.000)', str(GobType.from_values(x=112, y=22)))
         self.assertEqual('POINT(52.3063972 4.9627873)', str(GobType.from_values(x=52.3063972, y=4.9627873, precision=7)))
         self.assertEqual('POINT(52.3063972 4.9627873)',
                          str(GobType.from_values(x="52,3063972", y="4,9627873", precision=7, decimal_separator=",")))
@@ -32,7 +32,7 @@ class TestGobGeoTypes(unittest.TestCase):
         mock_db_field.srid = 28992
         mock_db_field.data = '01010000204071000000000000f0abfd400000000050a11d41'
 
-        self.assertEqual('POINT (121535.00 485460.00)', str(GobType.from_value(mock_db_field)))
+        self.assertEqual('POINT (121535.000 485460.000)', str(GobType.from_value(mock_db_field)))
 
     def test_gob_polygon(self):
         GobType = get_gob_type("GOB.Geo.Polygon")

@@ -16,7 +16,7 @@ from gobcore.typesystem.json import GobTypeJSONEncoder
 
 # todo: define here? Or in model? (Or both)?
 DEFAULT_SRID = int(os.getenv("DEFAULT_SRID", "28992"))
-DEFAULT_PRECISION = 2
+DEFAULT_PRECISION = 3
 
 
 class GEOType(GOBType):
