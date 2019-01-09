@@ -350,11 +350,6 @@ class DateTime(Date):
             return None
         return datetime.datetime.strptime(self._string, self.internal_format)
 
-    @property
-    def json(self):
-        return json.dumps(datetime.datetime.strptime(self._string, self.internal_format).isoformat()) \
-               if self._string is not None else json.dumps(None)
-
 
 class JSON(GOBType):
     name = "JSON"
