@@ -594,7 +594,7 @@
           ]
         }
       },
-      "GGWs": {
+      "ggwgebieden": {
         "version": "0.1",
         "entity_id": "identificatie",
         "has_states": true,
@@ -638,7 +638,7 @@
           }
         }
       },
-      "GGPs": {
+      "ggpgebieden": {
         "version": "0.1",
         "entity_id": "identificatie",
         "has_states": true,
