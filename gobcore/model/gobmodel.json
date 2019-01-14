@@ -632,6 +632,11 @@
             "description": "Het stadsdeel waar het gebied in ligt.",
             "ref": "gebieden:stadsdelen"
           },
+          "bestaat_uit_wijken": {
+            "type": "GOB.ManyReference",
+            "description": "De wijken waaruit het object bestaat.",
+            "ref": "gebieden:wijken"
+          },
           "geometrie": {
             "type": "GOB.Geo.Polygon",
             "description": "Geometrische beschrijving van een object."
@@ -675,6 +680,11 @@
             "type": "GOB.Reference",
             "description": "Het stadsdeel waar het gebied in ligt.",
             "ref": "gebieden:stadsdelen"
+          },
+          "bestaat_uit_wijken": {
+            "type": "GOB.ManyReference",
+            "description": "De wijken waaruit het object bestaat.",
+            "ref": "gebieden:wijken"
           },
           "geometrie": {
             "type": "GOB.Geo.Polygon",
