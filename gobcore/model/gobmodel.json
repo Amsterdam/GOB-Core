@@ -630,7 +630,7 @@
           "ligt_in_stadsdeel": {
             "type": "GOB.Reference",
             "description": "Het stadsdeel waar het gebied in ligt.",
-            "ref": "kadaster:gemeenten"
+            "ref": "gebieden:stadsdelen"
           },
           "geometrie": {
             "type": "GOB.Geo.Polygon",
@@ -674,7 +674,7 @@
           "ligt_in_stadsdeel": {
             "type": "GOB.Reference",
             "description": "Het stadsdeel waar het gebied in ligt.",
-            "ref": "kadaster:gemeenten"
+            "ref": "gebieden:stadsdelen"
           },
           "geometrie": {
             "type": "GOB.Geo.Polygon",
