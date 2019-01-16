@@ -85,6 +85,28 @@
           "destination_attribute": "code"
         }
       }
+    },
+    "gebieden": {
+      "ggwgebieden": {
+        "ligt_in_stadsdeel": {
+          "method": "equals",
+          "destination_attribute": "code"
+        },
+        "bestaat_uit_wijken": {
+          "method": "equals",
+          "destination_attribute": "code"
+        }
+      },
+      "ggpgebieden": {
+        "ligt_in_stadsdeel": {
+          "method": "equals",
+          "destination_attribute": "code"
+        },
+        "bestaat_uit_buurten": {
+          "method": "equals",
+          "destination_attribute": "code"
+        }
+      }
     }
   },
   "DIVA": {
