@@ -35,6 +35,10 @@
           "boolean": {
             "type": "GOB.Boolean",
             "description": "Boolean value."
+          },
+          "json": {
+            "type": "GOB.JSON",
+            "description": "JSON value."
           }
         },
         "api": {
