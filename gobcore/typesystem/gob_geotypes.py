@@ -243,6 +243,8 @@ class Geometry(GEOType):
             regex = re.compile("^[A-Z]+\s*\([A-Z0-9.,\s\(\)]+\)$")
             if not regex.match(value):
                 raise ValueError(f"Illegal Geometry WKT value: {value}")
+            # Use wkt load to get correct precision
+            value = wkt.loads(value)
 
         if isinstance(value, geoalchemy2.elements.WKBElement):
             # Use shapely to construct wkt string and use wkt load to get correct precision

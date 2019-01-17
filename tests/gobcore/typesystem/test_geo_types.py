@@ -47,7 +47,7 @@ class TestGobGeoTypes(unittest.TestCase):
         GobType = get_gob_type("GOB.Geo.Geometry")
         self.assertEqual(GobType.name, "Geometry")
 
-        self.assertEqual('POLYGON(112.0 22.0, 113.0 22.0, 113.0 21.0)', str(GobType.from_value('POLYGON(112.0 22.0, 113.0 22.0, 113.0 21.0)')))
+        self.assertEqual('POINT (1.000 2.000)', str(GobType.from_value('POINT (1 2)')))
 
         empty_geometry = GobType('')
         self.assertEqual('null', empty_geometry.json)
