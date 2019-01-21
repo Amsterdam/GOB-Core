@@ -44,10 +44,6 @@
             "type": "GOB.DateTime",
             "description": "DateTime value."
           },
-          "pkinteger": {
-            "type": "GOB.PKInteger",
-            "description": "Primary key integer value"
-          },
           "reference": {
             "type": "GOB.Reference",
             "description": "Reference value.",
@@ -729,6 +725,68 @@
           "geometrie": {
             "type": "GOB.Geo.Polygon",
             "description": "Geometrische beschrijving van een object."
+          }
+        }
+      }
+    }
+  },
+  "bag": {
+    "version": "0.1",
+    "description": "De lijst met kenmerken bestaat uit kenmerken die landelijk zijn vastgesteld, en uit kenmerken die als extra gegevens (de BAG+ gegevens) voor de procesvoering van de gemeente Amsterdam worden bijgehouden.",
+    "collections": {
+      "woonplaatsen": {
+        "version": "0.1",
+        "entity_id": "identificatie",
+        "has_states": true,
+        "attributes": {
+          "identificatie": {
+            "type": "GOB.String",
+            "description": "Landelijke identificerende code 3594."
+          },
+          "naam": {
+            "type": "GOB.String",
+            "description": "Officiële naam woonplaats."
+          },
+          "geometrie": {
+            "type": "GOB.Geo.Geometry",
+            "description": "Vorm en ligging woonplaats in het Nationale Rijksdriehoekstelsel."
+          },
+          "geconstateerd": {
+            "type": "GOB.String",
+            "description": "Dit geeft aan dat een WOONPLAATS in de registratie is opgenomen als gevolg van een feitelijke constatering en niet op basis van een regulier brondocument."
+          },
+          "datum_begin_geldigheid": {
+            "type": "GOB.Date",
+            "description": "De ingangsdatum van de geldigheid van een bepaalde combinatie van gegevens over een WOONPLAATS."
+          },
+          "datum_einde_geldigheid": {
+            "type": "GOB.Date",
+            "description": "De einddatum van de geldigheid van een bepaalde combinatie van gegevens over een WOONPLAATS."
+          },
+          "aanduiding_in_onderzoek": {
+            "type": "GOB.Boolean",
+            "description": "Hiermee wordt aangegeven dat een onderzoek wordt uitgevoerd naar de juistheid van een of meer gegevens van het betreffende object (J/N)."
+          },
+          "documentdatum": {
+            "type": "GOB.Date",
+            "description": "De datum waarop het brondocument is vastgesteld."
+          },
+          "documentnummer": {
+            "type": "GOB.String",
+            "description": "Het unieke nummer van het brondocument."
+          },
+          "status": {
+            "type": "GOB.JSON",
+            "description": "Levenscyclus van de woonplaats, Woonplaats aangewezen, Woonplaats ingetrokken."
+          },
+          "ligt_in_gemeente": {
+            "type": "GOB.Reference",
+            "ref": "kadaster:gemeenten",
+            "description": "De gemeente waarin de woonplaats ligt."
+          },
+          "bagproces": {
+            "type": "GOB.JSON",
+            "description": "Functionele handeling die ten grondslag ligt aan de gebeurtenis."
           }
         }
       }
