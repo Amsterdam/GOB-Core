@@ -821,6 +821,74 @@
             "description": "Functionele handeling die ten grondslag ligt aan de gebeurtenis."
           }
         }
+      },
+      "openbareruimtes": {
+        "version": "0.1",
+        "entity_id": "identificatie",
+        "has_states": true,
+        "attributes": {
+          "identificatie": {
+            "type": "GOB.String",
+            "description": "Landelijke identificerende sleutel."
+          },
+          "status": {
+            "type": "GOB.JSON",
+            "description": "De status van de levenscyclus van een openbare ruimte (Naamgeving uitgegeven, Naamgeving ingetrokken)."
+          },
+          "begin_geldigheid": {
+            "type": "GOB.DateTime",
+            "description": "De ingangsdatum van de geldigheid van een bepaalde combinatie van gegevens over een OPENBARE RUIMTE."
+          },
+          "eind_geldigheid": {
+            "type": "GOB.DateTime",
+            "description": "De einddatum van de geldigheid van een bepaalde combinatie van gegevens over een OPENBARE RUIMTE."
+          },
+          "geconstateerd": {
+            "type": "GOB.Boolean",
+            "description": "Dit geeft aan dat een OPENBARE RUIMTE in de registratie is opgenomen als gevolg van een feitelijke constatering en niet op basis van een regulier brondocument (J/N)"
+          },
+          "aanduiding_in_onderzoek": {
+            "type": "GOB.Boolean",
+            "description": "Hiermee wordt aangegeven dat een onderzoek wordt uitgevoerd naar de juistheid van een of meer gegevens van het betreffende object (J/N)."
+          },
+          "type": {
+            "type": "GOB.JSON",
+            "description": "De aard van de zodanig benoemde openbare ruimte (01 Weg, 02 Water, 03 Spoorbaan, 04 Terrein, 05 Kunstwerk, 06 Landschappelijk gebied, 07 Administratief gebied)"
+          },
+          "documentdatum": {
+            "type": "GOB.Date",
+            "description": "De datum waarop het brondocument is vastgesteld."
+          },
+          "documentnummer": {
+            "type": "GOB.String",
+            "description": "Het unieke nummer van het brondocument."
+          },
+          "naam": {
+            "type": "GOB.String",
+            "description": "Officiële naam openbare ruimte (80 tekens)."
+          },
+          "naam_nen": {
+            "type": "GOB.String",
+            "description": "Straatnaam volgens de inkortingsregels van NEN 5825 (24 tekens)."
+          },
+          "ligt_in_woonplaats": {
+            "type": "GOB.Reference",
+            "ref": "bag:woonplaatsen",
+            "description": "De woonplaats (landelijke identificatie) waarin de openbare ruimte ligt."
+          },
+          "beschrijving": {
+            "type": "GOB.String",
+            "description": "Beschrijving van de openbare ruimte bijvoorbeeld: Vogel. Wereldwijd komen 24 soorten albatrossen voor. De meeste leven op het zuidelijk halfrond. De grootste albatros heeft een spanwijdte van meer dan drie meter en is daarmee de grootste zeevogel ter wereld."
+          },
+          "bagproces": {
+            "type": "GOB.JSON",
+            "description": "Functionele handeling die ten grondslag ligt aan de gebeurtenis."
+          },
+          "geometrie": {
+            "type": "GOB.Geo.Geometry",
+            "description": "Zie inwinregels voor geometrie openbare ruimte."
+          }
+        }
       }
     }
   }
