@@ -825,6 +825,7 @@
       "openbareruimtes": {
         "version": "0.1",
         "entity_id": "identificatie",
+        "abbreviation": "ORE",
         "has_states": true,
         "attributes": {
           "identificatie": {
