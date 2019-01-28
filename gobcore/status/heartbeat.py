@@ -13,8 +13,7 @@ import datetime
 import threading
 import atexit
 
-from gobcore.message_broker.message_broker import Connection
-from gobcore.message_broker.config import CONNECTION_PARAMS, HEARTBEAT_QUEUE, get_queue
+from gobcore.message_broker.config import HEARTBEAT_QUEUE, get_queue
 
 HEARTBEAT_INTERVAL = 60     # Send a heartbeat every 60 seconds
 
