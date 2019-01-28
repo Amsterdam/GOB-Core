@@ -131,6 +131,7 @@ def messagedriven_service(services, name):
     messagedriven_services(SERVICEDEFINITION)
 
     """
+    heartbeat = None
 
     def on_message(connection, exchange, queue, key, msg):
         """Called on every message receipt
@@ -145,7 +146,15 @@ def messagedriven_service(services, name):
         """
         print(f"{key} accepted from {queue}, start handling")
         service = _get_service(services, exchange, queue, key)
-        return _on_message(connection, service, msg)
+
+        # A heartbeat updates the status of the process
+        # Send a heartbeat before and after the processing of the message to keep the overview up-to-date
+        # independent of the scheduled heartbeats
+        heartbeat.send()
+        result = _on_message(connection, service, msg)
+        heartbeat.send()
+
+        return result
 
     # Start by initializing the message broker (idempotent)
     _init()
@@ -162,12 +171,13 @@ def messagedriven_service(services, name):
             })
             print(f"Listening to messages {service['key']} on queue {service['queue']}")
 
+        heartbeat = Heartbeat(connection, name)
+
         connection.subscribe(queues, on_message)
 
         # Repeat forever
         print("Queue connection for servicedefinition started")
         n = 0
-        heartbeat = Heartbeat(name)
         while keep_running and connection.is_alive():
             time.sleep(CHECK_CONNECTION)
             n += CHECK_CONNECTION

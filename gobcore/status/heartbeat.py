@@ -21,16 +21,15 @@ HEARTBEAT_INTERVAL = 60     # Send a heartbeat every 60 seconds
 
 class Heartbeat():
 
-    def __init__(self, name):
+    def __init__(self, connection, name):
         """Hearbeat
 
+        :param connection: the connection to use for the heartbeats
         :param name: the name of the service for which heartbeats are sent
         """
+        self._connection = connection
         self._name = name
 
-        # Open a connection with the mssage broker
-        self._connection = Connection(CONNECTION_PARAMS)
-        self._connection.connect()
         self._queue = get_queue(HEARTBEAT_QUEUE)
 
         # Send an initial heartbeat

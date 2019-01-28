@@ -62,6 +62,7 @@ def offload_message(msg, converter):
                     file.write(converter(contents))
             except IOError:
                 # When the write fails, returns the msg untouched
+                print("Offload failed", filename)
                 return msg
             # Replace the contents by a reference
             msg[_CONTENTS_REF] = unique_name
