@@ -15,7 +15,7 @@ import atexit
 import socket
 import os
 
-from gobcore.message_broker.config import HEARTBEAT_QUEUE, get_queue
+from gobcore.message_broker.config import HEARTBEAT_QUEUE, LOG_QUEUE, get_queue
 
 HEARTBEAT_INTERVAL = 60     # Send a heartbeat every 60 seconds
 
@@ -47,9 +47,8 @@ class Heartbeat():
         :param _: not used yet; the message itself
         :return: None
         """
-        heartbeat_queue = get_queue(HEARTBEAT_QUEUE)
-        if queue_name == heartbeat_queue["name"] and key == heartbeat_queue["key"]:
-            # Do not send a heartbeat on handling a heartbeat message
+        if queue_name == HEARTBEAT_QUEUE or queue_name == LOG_QUEUE:
+            # Do not send a heartbeat on handling a heartbeat or log message
             return
         self.send()
 
