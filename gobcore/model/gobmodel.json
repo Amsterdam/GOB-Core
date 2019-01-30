@@ -885,6 +885,69 @@
           }
         }
       },
+      "ligplaatsen": {
+        "version": "0.1",
+        "abbreviation": "LPS",
+        "entity_id": "identificatie",
+        "has_states": true,
+        "attributes": {
+          "identificatie": {
+            "type": "GOB.String",
+            "description": "Landelijke identificerende sleutel."
+          },
+          "geconstateerd": {
+            "type": "GOB.Boolean",
+            "description": "Dit geeft aan dat een LIGPLAATS in de registratie is opgenomen als gevolg van een feitelijke constatering en niet op basis van een regulier brondocument."
+          },
+          "status": {
+            "type": "GOB.JSON",
+            "description": "De fase van de levenscyclus van een ligplaats, waarin de betreffende ligplaats zich bevindt, Plaats aangewezen, plaats ingetrokken."
+          },
+          "heeft_hoofdadres": {
+            "type": "GOB.Reference",
+            "ref": "bag:nummeraanduidingen",
+            "description": "Het HOOFDadres dat de ligplaats heeft."
+          },
+          "heeft_nevenadres": {
+            "type": "GOB.Reference",
+            "ref": "bag:nummeraanduidingen",
+            "description": "Het NEVENadres dat de ligplaats (optioneel) heeft."
+          },
+          "geometrie": {
+            "type": "GOB.Geo.Geometry",
+            "description": "Vorm en ligging van de ligplaats in het Nationale Rijksdriehoekstelsel."
+          },
+          "begin_geldigheid": {
+            "type": "GOB.DateTime",
+            "description": "De begindatum van een periode waarin een of meer gegevens die worden bijgehouden over een ligplaats een wijziging hebben ondergaan."
+          },
+          "eind_geldigheid": {
+            "type": "GOB.DateTime",
+            "description": "De einddatum van een periode waarin een of meer gegevens die worden bijgehouden over een ligplaats een wijziging hebben ondergaan."
+          },
+          "aanduiding_in_onderzoek": {
+            "type": "GOB.Boolean",
+            "description": "Hiermee wordt aangegeven dat een onderzoek wordt uitgevoerd naar de juistheid van een of meer gegevens van het betreffende object (J/N)."
+          },
+          "documentdatum": {
+            "type": "GOB.Date",
+            "description": "De datum waarop het brondocument is vastgesteld."
+          },
+          "documentnummer": {
+            "type": "GOB.String",
+            "description": "Het unieke nummer van het brondocument."
+          },
+          "ligt_in_buurt": {
+            "type": "GOB.Reference",
+            "ref": "gebieden:buurten",
+            "description": "De buurt waarin een ligplaats ligt."
+          },
+          "bagproces": {
+            "type": "GOB.JSON",
+            "description": "Functionele handeling die ten grondslag ligt aan de gebeurtenis."
+          }
+        }
+      },
       "openbareruimtes": {
         "version": "0.1",
         "entity_id": "identificatie",
