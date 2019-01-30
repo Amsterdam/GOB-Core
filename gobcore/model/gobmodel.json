@@ -842,12 +842,12 @@
           },
           "heeft_hoofdadres": {
             "type": "GOB.Reference",
-            "ref": "BAG:nummeraandudingen",
+            "ref": "bag:nummeraanduidingen",
             "description": "Het HOOFDadres dat de standplaats heeft."
           },
           "heeft_nevenadres": {
             "type": "GOB.Reference",
-            "ref": "BAG:nummeraandudingen",
+            "ref": "bag:nummeraanduidingen",
             "description": "Het NEVENadres dat de standplaats (optioneel) heeft."
           },
           "geometrie": {
@@ -876,7 +876,7 @@
           },
           "ligt_in_buurt": {
             "type": "GOB.Reference",
-            "ref": "Gebieden:buurten",
+            "ref": "gebieden:buurten",
             "description": "De buurt waarin een standplaats ligt."
           },
           "bagproces": {
