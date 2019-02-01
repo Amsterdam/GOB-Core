@@ -70,6 +70,7 @@ class TestMessageDrivenService(unittest.TestCase):
             # The return message should be published on the return queue
             mocked_publish.assert_called_with(return_queue, return_queue['key'], return_message)
 
+
     @mock.patch("gobcore.status.heartbeat.Heartbeat.__init__", return_value=None)
     @mock.patch("gobcore.status.heartbeat.Heartbeat.send")
     @mock.patch("gobcore.message_broker.messagedriven_service._init", return_value=None)
