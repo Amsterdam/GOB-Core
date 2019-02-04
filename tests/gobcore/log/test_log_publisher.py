@@ -6,7 +6,7 @@ from gobcore.log_publisher import LogPublisher
 
 class TestLogPublisher(unittest.TestCase):
 
-    def testconfigure(self):
+    def testConstructor(self):
         # Test if a log publisher can be initialized
         publisher = LogPublisher(None)
         assert(publisher is not None)
@@ -18,7 +18,6 @@ class TestLogPublisher(unittest.TestCase):
         publisher = LogPublisher(None)
         publisher.publish("Level", "Message")
         assert(patched_publish.called)
-
 
     @mock.patch('gobcore.log_publisher.LogPublisher._auto_disconnect')
     @mock.patch('gobcore.message_broker.message_broker.Connection.connect')
