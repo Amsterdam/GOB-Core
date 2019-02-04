@@ -115,6 +115,10 @@ class GobLogger:
 
         if GobLogger._logger.get(name) is None:
             GobLogger._logger[name] = self.get_logger(name, loglevel)
+            return
+
+        if loglevel is not None:
+            GobLogger._logger[name].setLevel(loglevel)
 
     def get_logger(self, name, loglevel=None):
         """Returns a logger instance

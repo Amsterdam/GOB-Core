@@ -55,3 +55,18 @@ def get_metadata_fixture():
     header['id_column'] = 'meetboutid'
     header['process_id'] = f"{header['timestamp']}.{header['source']}.{header['entity']}"
     return MessageMetaData(header)
+
+
+def get_dummy_msg():
+    return {
+        'header': {
+            'process_id': 'process_id',
+            'source': 'source',
+            'application': 'application',
+            'catalogue': 'catalogue',
+            'entity': 'entity',
+        }
+    }
+
+def construct_logging_output(level_str, name, msg):
+    return ':'.join([level_str, name, msg])

@@ -4,9 +4,9 @@ import unittest
 from gobcore.log_publisher import LogPublisher
 
 
-class TestLogPublisher(unittest.TestCase):
+class TestGobLogger(unittest.TestCase):
 
-    def testConstructor(self):
+    def testconfigure(self):
         # Test if a log publisher can be initialized
         publisher = LogPublisher(None)
         assert(publisher is not None)
