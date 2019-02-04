@@ -68,5 +68,6 @@ def get_dummy_msg():
         }
     }
 
+
 def construct_logging_output(level_str, name, msg):
     return ':'.join([level_str, name, msg])
