@@ -73,14 +73,18 @@ def get_event_for(old_data, new_data, modifications):
         # ADD, MODIFY, CONFIRM
         # Register the source of the event
         _source_id = new_data["_source_id"]
+        _hash = new_data["_hash"]
     else:
         # DELETE
         # No new source id, keep existing source id
         _source_id = old_data._source_id
+        _hash = None
 
     # The event data are the modifications
     data = dict(modifications=modifications)
     data["_last_event"] = _last_event
+    data["_hash"] = _hash
+
     if has_new_state:
         # Merge the new state data (possible ADD event)
         # The ultimate event class will filter either the modifications (MODIFY) or the new data (ADD)

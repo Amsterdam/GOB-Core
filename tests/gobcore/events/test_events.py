@@ -15,6 +15,38 @@ class TestEvents(unittest.TestCase):
         with self.assertRaises(GOBException):
             events._get_event(fixtures.random_string())
 
+    def test_get_event_for_creates_add(self):
+        old_data = None
+        new_data = fixtures.get_data_fixture()
+        modifications = []
+
+        event = events.get_event_for(old_data, new_data, modifications)
+        self.assertEqual(event["event"], "ADD")
+
+    def test_get_event_for_creates_confirm(self):
+        new_data = fixtures.get_data_fixture()
+        old_data = fixtures.get_entity_fixture(new_data)
+        modifications = []
+
+        event = events.get_event_for(old_data, new_data, modifications)
+        self.assertEqual(event["event"], "CONFIRM")
+
+    def test_get_event_for_creates_modify(self):
+        new_data = fixtures.get_data_fixture()
+        old_data = fixtures.get_entity_fixture(fixtures.get_data_fixture())
+        modifications = [{'key': 'value'}]
+
+        event = events.get_event_for(old_data, new_data, modifications)
+        self.assertEqual(event["event"], "MODIFY")
+
+    def test_get_event_for_creates_modify(self):
+        new_data = None
+        old_data = fixtures.get_entity_fixture(fixtures.get_data_fixture())
+        modifications = []
+
+        event = events.get_event_for(old_data, new_data, modifications)
+        self.assertEqual(event["event"], "DELETE")
+
     def test_get_event_class_for(self):
         with self.assertRaises(GOBException):
             events._get_event_class_for(has_old_state=False, has_new_state=False,

@@ -23,7 +23,8 @@ DESCRIPTION = {
     "_gobid": "The internal GOB id of the entity.",
     "_id": "Provide for a generic (independent from Stelselpedia) id field for every entity.",
     "volgnummer": "Uniek volgnummer van de toestand van het object.",
-    "registratiedatum": "De datum waarop de toestand is geregistreerd."
+    "registratiedatum": "De datum waarop de toestand is geregistreerd.",
+    "_hash": "A hash of the values of all public fields for comparison",
 }
 
 """Meta data that is registered for every entity"""
@@ -48,7 +49,8 @@ METADATA_COLUMNS = {
         "_source": "GOB.String",
         "_application": "GOB.String",
         "_source_id": "GOB.String",
-        "_last_event": "GOB.Integer"
+        "_last_event": "GOB.Integer",
+        "_hash": "GOB.String",
     }
 }
 

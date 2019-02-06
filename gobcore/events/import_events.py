@@ -17,6 +17,7 @@ from gobcore.exceptions import GOBException
 from gobcore.model import GOBModel
 from gobcore.typesystem import get_gob_type
 
+hash_key = '_hash'
 modifications_key = 'modifications'
 
 
@@ -51,6 +52,7 @@ class ImportEvent(metaclass=ABCMeta):
         self._metadata = metadata
 
         self.last_event = self._data.pop("_last_event")
+
         self._model = self.gob_model.get_collection(self._metadata.catalogue, self._metadata.entity)
 
     def apply_to(self, entity):
@@ -67,7 +69,8 @@ class ImportEvent(metaclass=ABCMeta):
         # And the id of the entity within the application
         entity._source_id = self._data["_source_id"]
 
-        skip = ["_source_id", "_entity_source_id"]
+        skip = ["_source_id", "_entity_source_id", hash_key]
+
         for key, value in self._data.items():
             if key not in skip:
                 gob_type = get_gob_type(self._model['fields'][key]['type'])
@@ -100,6 +103,10 @@ class ADD(ImportEvent):
         # The data for the add event is in the entity attribute
         # The _last_event and other meta info is set seperately from the entity update
         self._data = self._data["entity"]
+
+        # Set the hash
+        entity._hash = self._data[hash_key]
+
         del self._data["_last_event"]
 
         super().apply_to(entity)
@@ -139,8 +146,10 @@ class MODIFY(ImportEvent):
     timestamp_field = "_date_modified"
 
     def apply_to(self, entity):
-        # extract modifications from the data, before applying the event to the entity
+        # Set the hash
+        entity._hash = self._data[hash_key]
 
+        # extract modifications from the data, before applying the event to the entity
         modifications = self._data.pop(modifications_key)
         attribute_set = self._extract_modifications(entity, modifications)
         self._data = {**self._data, **attribute_set}
@@ -168,7 +177,11 @@ class MODIFY(ImportEvent):
         #   MODIFY has no data attributes only modifications
         if modifications_key not in data:
             raise GOBException("MODIFY event requires modifications")
-        mods = {modifications_key: data[modifications_key], **(cls.last_event(data))}
+        mods = {
+            modifications_key: data[modifications_key],
+            hash_key: data[hash_key],
+            **(cls.last_event(data))
+        }
 
         return super().create_event(_source_id, _entity_source_id, mods)
 
