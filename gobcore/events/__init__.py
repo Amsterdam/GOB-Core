@@ -73,7 +73,7 @@ def get_event_for(old_data, new_data, modifications):
         # ADD, MODIFY, CONFIRM
         # Register the source of the event
         _source_id = new_data["_source_id"]
-        _hash = new_data["_hash"]
+        _hash = new_data[import_events.hash_key]
     else:
         # DELETE
         # No new source id, keep existing source id
@@ -83,7 +83,7 @@ def get_event_for(old_data, new_data, modifications):
     # The event data are the modifications
     data = dict(modifications=modifications)
     data["_last_event"] = _last_event
-    data["_hash"] = _hash
+    data[import_events.hash_key] = _hash
 
     if has_new_state:
         # Merge the new state data (possible ADD event)
