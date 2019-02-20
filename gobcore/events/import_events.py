@@ -62,15 +62,9 @@ class ImportEvent(metaclass=ABCMeta):
         :param metadata: the metadata of the import message
         :return:
         """
-        # Register the time that the event has been applied to the entity
-        setattr(entity, self.timestamp_field, self._metadata.timestamp)
-        # Register the application that delivered the event
-        entity._application = self._metadata.application
-
-        for key, value in self._data.items():
-            if key not in self.skip:
-                gob_type = get_gob_type(self._model['all_fields'][key]['type'])
-                setattr(entity, key, gob_type.from_value(value).to_db)
+        dict = self.get_attribute_dict()
+        for key, value in dict.items():
+            setattr(entity, key, value)
 
     def get_attribute_dict(self):
         """Gets an dict with attributes to insert entities in bulk
@@ -111,9 +105,6 @@ class ADD(ImportEvent):
     def apply_to(self, entity):
         # Clear the _date_deleted field to re-enable deleted records
         setattr(entity, '_date_deleted', None)
-
-        # The data for the add event is in the entity attribute
-        self._data = self._data["entity"]
 
         super().apply_to(entity)
 
