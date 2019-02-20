@@ -14,6 +14,7 @@ This looks as follows:
 
     referentiepunt = {
       ...
+      _id: 1,
       ligt_in_bouwblok: {
         bronwaarde: 'AA01'
       },
@@ -24,6 +25,7 @@ This looks as follows:
 
     referentiepunt = {
       ...
+      _id: 1,
       ligt_in_bouwblok: {
         bronwaarde: 'AA01',
         identificatie: '03630012096976'
@@ -40,6 +42,7 @@ However, Bouwblok is an entity with state. Entities with state have a registrati
 The relation should be:
 
       ...
+      _id: 1,
       ligt_in_bouwblok: {
         bronwaarde: 'AA01',
         identificaties: [
@@ -79,14 +82,13 @@ Efficient updates require answers to questions like:
 The following database structure is therefor proposed (with demo data from the example):
 
     {
-        catalog: 'meetbouten'
-        collection: 'referentiepunten'
-        attribute: 'ligt_in_bouwblok'
-        bronwaarde: 'AA01'
-        dest_catalog: 'gebieden'
-        dest_collection: 'bouwblokken'
-        dest_attribute: 'code'
-        dest_id: '03630012096976'
+        src_catalog: 'meetbouten'
+        src_collection: 'referentiepunten'
+        src_attribute: 'ligt_in_bouwblok'
+        src_id: 1
+        dst_catalog: 'gebieden'
+        dst_collection: 'bouwblokken'
+        dst_id: '03630012096976'
         begin_geldigheid: t0
         eind_geldigheid: t1
     }
@@ -107,18 +109,155 @@ To get the complete data of an entity it has to be joined with its relations.
 Relations become like regular entities within GOB. They are updated using events and can be tracked over time. The regular entity attributes are part of each relation.
 
     gobid             GOB unique internal id
-    _id               Functional id, can be equal to technical id
+    _id               catalog.collection.id.attribute, eg gebieden.wijken.036XXX.ligt_in_stadsdeel
     _version          0.1
     _date_created
     _date_confirmed
     _date_modified
     _date_deleted
-    _source           functional source for the bronwaarde, e.g. 'AMSBI'
-    _application      technical source for the bronwaarde, e.g. 'Neuron'
-    _source_id        technical id for the bronwaarde
+    _source           
+    _application      
+    _source_id        _id.volgnummer        
     _last_event       last event that has "touched" the relation
     _hash             hash of the relation to allow for fast compares
 
 Relations can be a regular part of GOB by defining its structure in GOB Model. It's catalog can be set to gob and the collection to relations. The database table name becomes gob_relations.
 
 GOB Relations can be retrieved via the API like any other GOB entity.
+
+## Example
+
+BAG-Adressen:
+
+    {
+        _id: 1
+        ligt_in_wijk: {
+            bronwaarde: 'W1'
+        },
+        volgnummer: 1,
+        begin_geldigheid: 1-1-2001,
+        eind_geldigheid: 1-1-2007
+    }
+	
+    {
+        _id: 1
+        ligt_in_wijk: {
+            bronwaarde: 'W3'
+        },
+        volgnummer: 2,
+        begin_geldigheid: 1-1-2007,
+        eind_geldigheid: NULL
+    }
+
+Gebieden-Wijken:
+
+    {
+        _id: 1,
+        code: 'W1',
+        volgnummer: 1,
+        begin_geldigheid: 1-1-2000,
+        eind_geldigheid: 1-1-2003
+    }
+	
+    {
+        _id: 2,
+        code: 'W1',
+        volgnummer: 1,
+        begin_geldigheid: 1-1-2003,
+        eind_geldigheid: 1-1-2006
+    }
+	
+    {
+        _id: 1,
+        code: 'W1',
+        volgnummer: 2,
+        begin_geldigheid: 1-1-2006,
+        eind_geldigheid: NULL
+    }
+	
+    {
+        _id: 3,
+        code: 'W3',
+        volgnummer: 1,
+        begin_geldigheid: 1-1-2000,
+        eind_geldigheid: 1-1-2009
+    }
+	
+
+GOB-Relations:
+
+    {
+        _id: 'bag.adressen.ligt_in_wijk'
+        src_catalog: 'bag'
+        src_collection: 'adressen'
+        src_attribute: 'ligt_in_wijk'
+        src_id: 1
+        dst_catalog: 'gebieden'
+        dst_collection: 'wijken'
+        dst_id: 1
+        volgnummer: int(1-1-2001)
+        registratiedatum: now
+        begin_geldigheid: 1-1-2001
+        eind_geldigheid: 1-1-2003
+    }
+
+    {
+        _id: 'bag.adressen.ligt_in_wijk'
+        src_catalog: 'bag'
+        src_collection: 'adressen'
+        src_attribute: 'ligt_in_wijk'
+        src_id: 1
+        dst_catalog: 'gebieden'
+        dst_collection: 'wijken'
+        dst_id: 2
+        volgnummer: int(1-1-2003)
+        registratiedatum: now
+        begin_geldigheid: 1-1-2003
+        eind_geldigheid: 1-1-2006
+    }
+
+    {
+        _id: 'bag.adressen.ligt_in_wijk'
+        src_catalog: 'bag'
+        src_collection: 'adressen'
+        src_attribute: 'ligt_in_wijk'
+        src_id: 1
+        dst_catalog: 'gebieden'
+        dst_collection: 'wijken'
+        dst_id: 1
+        volgnummer: int(1-1-2006)
+        registratiedatum: now
+        begin_geldigheid: 1-1-2006
+        eind_geldigheid: 1-1-2007
+    }
+
+    {
+        _id: 'bag.adressen.ligt_in_wijk'
+        src_catalog: 'bag'
+        src_collection: 'adressen'
+        src_attribute: 'ligt_in_wijk'
+        src_id: 1
+        dst_catalog: 'gebieden'
+        dst_collection: 'wijken'
+        dst_id: 3
+        volgnummer: int(1-1-2007)
+        registratiedatum: now
+        begin_geldigheid: 1-1-2007
+        eind_geldigheid: 1-1-2009
+    }
+
+    {
+        _id: 'bag.adressen.ligt_in_wijk'
+        src_catalog: 'bag'
+        src_collection: 'adressen'
+        src_attribute: 'ligt_in_wijk'
+        src_id: 1
+        dst_catalog: 'gebieden'
+        dst_collection: 'wijken'
+        dst_id: NULL
+        volgnummer: int(1-1-2009)
+        registratiedatum: now
+        begin_geldigheid: 1-1-2009
+        eind_geldigheid: NULL
+    }
+
