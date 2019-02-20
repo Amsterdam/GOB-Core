@@ -18,7 +18,8 @@ GOB_EVENTS = [
     GOB.ADD,
     GOB.DELETE,
     GOB.MODIFY,
-    GOB.CONFIRM
+    GOB.CONFIRM,
+    GOB.BULKCONFIRM
 ]
 
 # Convert GOB_EVENTS to a dictionary indexed by the name of the event

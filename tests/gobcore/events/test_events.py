@@ -3,6 +3,7 @@ import unittest
 from gobcore import events
 from gobcore.events import GOB, GobEvent
 from gobcore.exceptions import GOBException
+
 from tests.gobcore import fixtures
 
 
@@ -39,7 +40,7 @@ class TestEvents(unittest.TestCase):
         event = events.get_event_for(old_data, new_data, modifications)
         self.assertEqual(event["event"], "MODIFY")
 
-    def test_get_event_for_creates_modify(self):
+    def test_get_event_for_creates_delete(self):
         new_data = None
         old_data = fixtures.get_entity_fixture(fixtures.get_data_fixture())
         modifications = []

@@ -26,6 +26,7 @@ class ImportEvent(metaclass=ABCMeta):
     is_add_new = False
     timestamp_field = None  # Each event is timestamped
     gob_model = GOBModel()
+    skip = ["_entity_source_id", "_last_event"]
 
     @classmethod
     @abstractmethod
@@ -50,8 +51,7 @@ class ImportEvent(metaclass=ABCMeta):
     def __init__(self, data, metadata):
         self._data = data
         self._metadata = metadata
-
-        self.last_event = self._data.pop("_last_event")
+        self.last_event = self._data.pop("_last_event", None)
 
         self._model = self.gob_model.get_collection(self._metadata.catalogue, self._metadata.entity)
 
@@ -67,12 +67,26 @@ class ImportEvent(metaclass=ABCMeta):
         # Register the application that delivered the event
         entity._application = self._metadata.application
 
-        skip = ["_entity_source_id", "_last_event"]
-
         for key, value in self._data.items():
-            if key not in skip:
+            if key not in self.skip:
                 gob_type = get_gob_type(self._model['all_fields'][key]['type'])
                 setattr(entity, key, gob_type.from_value(value).to_db)
+
+    def get_attribute_dict(self):
+        """Gets an dict with attributes to insert entities in bulk
+
+        :return:
+        """
+        entity = {
+            self.timestamp_field: self._metadata.timestamp,
+            '_application': self._metadata.application
+        }
+
+        for key, value in self._data.items():
+            if key not in self.skip:
+                gob_type = get_gob_type(self._model['all_fields'][key]['type'])
+                entity[key] = gob_type.from_value(value).to_db
+        return entity
 
 
 class ADD(ImportEvent):
@@ -115,6 +129,12 @@ class ADD(ImportEvent):
         }
 
         return super().create_event(_source_id, _entity_source_id, event_data)
+
+    def get_attribute_dict(self):
+        # The data for the add event is in the entity attribute
+        self._data = self._data["entity"]
+
+        return super().get_attribute_dict()
 
 
 class MODIFY(ImportEvent):
@@ -216,3 +236,35 @@ class CONFIRM(ImportEvent):
     def create_event(cls, _source_id, _entity_source_id, data):
         #  CONFIRM has no data, except reference to entity age
         return super().create_event(_source_id, _entity_source_id, cls.last_event(data))
+
+
+class BULKCONFIRM(ImportEvent):
+    """
+    Example:
+    {
+        BULKCONFIRM
+        entity: meetbouten
+        source: meetboutengis
+        source_id: None
+        data: {
+            confirms: [
+                {'source_id': 12881429, 'last_event': 1234},
+                {'source_id': 12881430, 'last_event': 1235},
+                ...
+            ],
+            _source_id: None
+        }
+    }
+    """
+    name = "BULKCONFIRM"
+    timestamp_field = "_date_confirmed"
+
+    @classmethod
+    def create_event(cls, confirms):
+        #  BULKCONFIRM has a list of dicts with source_id and last_event
+        data = {
+            'confirms': confirms,
+            '_source_id': None,
+            '_entity_source_id': None
+        }
+        return {"event": cls.name, "data": data}

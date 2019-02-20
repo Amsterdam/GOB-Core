@@ -1,7 +1,7 @@
 import random
 import string
 
-from gobcore.events import GOB_EVENTS
+from gobcore.events import GOB, GOB_EVENTS
 from gobcore.events import import_events
 from gobcore.events.import_message import MessageMetaData
 
@@ -39,7 +39,9 @@ def random_bool():
 
 
 def random_gob_event():
-    return random.choice(GOB_EVENTS)
+    events = GOB_EVENTS.copy()
+    events.remove(GOB.BULKCONFIRM)
+    return random.choice(events)
 
 
 def get_event_data_fixture(gob_event):
