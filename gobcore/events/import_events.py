@@ -73,7 +73,8 @@ class ImportEvent(metaclass=ABCMeta):
         """
         entity = {
             self.timestamp_field: self._metadata.timestamp,
-            '_application': self._metadata.application
+            '_application': self._metadata.application,
+            '_source': self._metadata.source
         }
 
         for key, value in self._data.items():
