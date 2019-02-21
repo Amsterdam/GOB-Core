@@ -187,7 +187,7 @@ Gebieden-Wijken:
 GOB-Relations:
 
     {
-        _id: 'bag.adressen.ligt_in_wijk'
+        _id: 'bag.adressen.1.ligt_in_wijk'
         src_catalog: 'bag'
         src_collection: 'adressen'
         src_attribute: 'ligt_in_wijk'
@@ -202,7 +202,7 @@ GOB-Relations:
     }
 
     {
-        _id: 'bag.adressen.ligt_in_wijk'
+        _id: 'bag.adressen.1.ligt_in_wijk'
         src_catalog: 'bag'
         src_collection: 'adressen'
         src_attribute: 'ligt_in_wijk'
@@ -217,7 +217,7 @@ GOB-Relations:
     }
 
     {
-        _id: 'bag.adressen.ligt_in_wijk'
+        _id: 'bag.adressen.1.ligt_in_wijk'
         src_catalog: 'bag'
         src_collection: 'adressen'
         src_attribute: 'ligt_in_wijk'
@@ -232,7 +232,7 @@ GOB-Relations:
     }
 
     {
-        _id: 'bag.adressen.ligt_in_wijk'
+        _id: 'bag.adressen.1.ligt_in_wijk'
         src_catalog: 'bag'
         src_collection: 'adressen'
         src_attribute: 'ligt_in_wijk'
@@ -247,7 +247,7 @@ GOB-Relations:
     }
 
     {
-        _id: 'bag.adressen.ligt_in_wijk'
+        _id: 'bag.adressen.1.ligt_in_wijk'
         src_catalog: 'bag'
         src_collection: 'adressen'
         src_attribute: 'ligt_in_wijk'
