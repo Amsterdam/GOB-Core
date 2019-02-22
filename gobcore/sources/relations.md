@@ -85,7 +85,7 @@ The following database structure is therefor proposed (with demo data from the e
         src_catalog: 'meetbouten'
         src_collection: 'referentiepunten'
         src_attribute: 'ligt_in_bouwblok'
-        src_id: 1
+        src_id: 1 (includes volgnummer for entity with states)
         dst_catalog: 'gebieden'
         dst_collection: 'bouwblokken'
         dst_id: '03630012096976'
@@ -109,7 +109,7 @@ To get the complete data of an entity it has to be joined with its relations.
 Relations become like regular entities within GOB. They are updated using events and can be tracked over time. The regular entity attributes are part of each relation.
 
     gobid             GOB unique internal id
-    _id               catalog.collection.id.attribute, eg gebieden.wijken.036XXX.ligt_in_stadsdeel
+    _id               catalog.collection.id.attribute, eg gebieden.wijken.036XXX.1.ligt_in_stadsdeel
     _version          0.1
     _date_created
     _date_confirmed
@@ -127,10 +127,15 @@ GOB Relations can be retrieved via the API like any other GOB entity.
 
 ## Example
 
+The example assumes that ligt_in_wijk is a "many reference".
+
+This is only for demonstration purposes.
+
 BAG-Adressen:
 
     {
-        _id: 1
+        _id: 1,
+        _source_id: 1.1
         ligt_in_wijk: {
             bronwaarde: 'W1'
         },
@@ -140,9 +145,10 @@ BAG-Adressen:
     }
 	
     {
-        _id: 1
+        _id: 1,
+        _source_id: 1.2
         ligt_in_wijk: {
-            bronwaarde: 'W3'
+            bronwaarde: ['W1', 'W3']
         },
         volgnummer: 2,
         begin_geldigheid: 1-1-2007,
@@ -153,6 +159,7 @@ Gebieden-Wijken:
 
     {
         _id: 1,
+        _source_id: 1.1,
         code: 'W1',
         volgnummer: 1,
         begin_geldigheid: 1-1-2000,
@@ -161,6 +168,7 @@ Gebieden-Wijken:
 	
     {
         _id: 2,
+        _source_id: 2.1,        
         code: 'W1',
         volgnummer: 1,
         begin_geldigheid: 1-1-2003,
@@ -169,6 +177,7 @@ Gebieden-Wijken:
 	
     {
         _id: 1,
+        _source_id: 1.2,
         code: 'W1',
         volgnummer: 2,
         begin_geldigheid: 1-1-2006,
@@ -177,6 +186,7 @@ Gebieden-Wijken:
 	
     {
         _id: 3,
+        _source_id: 3.1,
         code: 'W3',
         volgnummer: 1,
         begin_geldigheid: 1-1-2000,
@@ -187,14 +197,14 @@ Gebieden-Wijken:
 GOB-Relations:
 
     {
-        _id: 'bag.adressen.1.ligt_in_wijk'
+        _id: 'bag.adressen.1.1.ligt_in_wijk'
         src_catalog: 'bag'
         src_collection: 'adressen'
         src_attribute: 'ligt_in_wijk'
-        src_id: 1
+        src_id: 1.1
         dst_catalog: 'gebieden'
         dst_collection: 'wijken'
-        dst_id: 1
+        dst_id: [1.1]
         volgnummer: int(1-1-2001)
         registratiedatum: now
         begin_geldigheid: 1-1-2001
@@ -202,14 +212,14 @@ GOB-Relations:
     }
 
     {
-        _id: 'bag.adressen.1.ligt_in_wijk'
+        _id: 'bag.adressen.1.1.ligt_in_wijk'
         src_catalog: 'bag'
         src_collection: 'adressen'
         src_attribute: 'ligt_in_wijk'
-        src_id: 1
+        src_id: 1.1
         dst_catalog: 'gebieden'
         dst_collection: 'wijken'
-        dst_id: 2
+        dst_id: [2.1]
         volgnummer: int(1-1-2003)
         registratiedatum: now
         begin_geldigheid: 1-1-2003
@@ -217,14 +227,14 @@ GOB-Relations:
     }
 
     {
-        _id: 'bag.adressen.1.ligt_in_wijk'
+        _id: 'bag.adressen.1.1.ligt_in_wijk'
         src_catalog: 'bag'
         src_collection: 'adressen'
         src_attribute: 'ligt_in_wijk'
-        src_id: 1
+        src_id: 1.1
         dst_catalog: 'gebieden'
         dst_collection: 'wijken'
-        dst_id: 1
+        dst_id: [1.2]
         volgnummer: int(1-1-2006)
         registratiedatum: now
         begin_geldigheid: 1-1-2006
@@ -232,14 +242,14 @@ GOB-Relations:
     }
 
     {
-        _id: 'bag.adressen.1.ligt_in_wijk'
+        _id: 'bag.adressen.1.2.ligt_in_wijk'
         src_catalog: 'bag'
         src_collection: 'adressen'
         src_attribute: 'ligt_in_wijk'
-        src_id: 1
+        src_id: 1.2
         dst_catalog: 'gebieden'
         dst_collection: 'wijken'
-        dst_id: 3
+        dst_id: [1.2, 3.1]
         volgnummer: int(1-1-2007)
         registratiedatum: now
         begin_geldigheid: 1-1-2007
@@ -247,17 +257,16 @@ GOB-Relations:
     }
 
     {
-        _id: 'bag.adressen.1.ligt_in_wijk'
+        _id: 'bag.adressen.1.2.ligt_in_wijk'
         src_catalog: 'bag'
         src_collection: 'adressen'
         src_attribute: 'ligt_in_wijk'
-        src_id: 1
+        src_id: 1.2
         dst_catalog: 'gebieden'
         dst_collection: 'wijken'
-        dst_id: NULL
+        dst_id: [1.2, NULL]
         volgnummer: int(1-1-2009)
         registratiedatum: now
         begin_geldigheid: 1-1-2009
         eind_geldigheid: NULL
     }
-
