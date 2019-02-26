@@ -309,7 +309,9 @@ class Date(String):
 
         if value is not None:
             try:
-                value = datetime.datetime.strptime(str(value), input_format).date().strftime(cls.internal_format)
+                value = datetime.datetime.strptime(str(value), input_format).date()
+                # Transform to internal string format and work around issue: https://bugs.python.org/issue13305
+                value = f"{value.year:04d}-" + value.strftime("%m-%d")
             except ValueError as v:
                 raise GOBTypeException(v)
 
@@ -338,7 +340,8 @@ class DateTime(Date):
             try:
                 if not isinstance(value, datetime.datetime):
                     value = datetime.datetime.strptime(str(value), input_format)
-                value = value.strftime(cls.internal_format)
+                # Transform to internal string format and work around issue: https://bugs.python.org/issue13305
+                value = f"{value.year:04d}-" + value.strftime("%m-%dT%H:%M:%S.%f")
             except ValueError as v:
                 raise GOBTypeException(v)
 

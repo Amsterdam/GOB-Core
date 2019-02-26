@@ -163,6 +163,9 @@ class TestGobTypes(unittest.TestCase):
         self.assertEqual('"2016-05-04"', GobType.from_value('2016-05-04').json)
         self.assertEqual('"2016-05-04"', GobType.from_value('20160504', format="%Y%m%d").json)
 
+        # Test edge case https://bugs.python.org/issue13305 strftime is not consistent for years < 1000
+        self.assertEqual('"0001-05-04"', GobType.from_value('0001-05-04').json)
+
         with self.assertRaises(GOBException):
             GobType.from_value('N')
         with self.assertRaises(GOBException):
@@ -183,6 +186,10 @@ class TestGobTypes(unittest.TestCase):
 
         self.assertEqual('"2016-05-04T12:00:00.123000"', GobType.from_value('2016-05-04T12:00:00.123000').json)
         self.assertEqual('"2016-05-04T12:00:00.123000"', GobType.from_value('20160504 12:00:00.123000', format="%Y%m%d %H:%M:%S.%f").json)
+
+        # Test edge case https://bugs.python.org/issue13305 strftime is not consistent for years < 1000
+        self.assertEqual('"0005-05-04T12:00:00.123000"', GobType.from_value('0005-05-04T12:00:00.123000').json)
+        self.assertEqual('"0005-05-04T12:00:00.123000"', GobType.from_value('00050504 12:00:00.123000', format="%Y%m%d %H:%M:%S.%f").json)
 
         with self.assertRaises(GOBException):
             GobType.from_value('N')
