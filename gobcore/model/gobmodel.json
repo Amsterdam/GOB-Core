@@ -816,6 +816,11 @@
             "ref": "kadaster:gemeenten",
             "description": "De gemeente waarin de woonplaats ligt."
           },
+          "heeft_brondocumenten": {
+            "type": "GOB.ManyReference",
+            "ref": "bag:brondocumenten",
+            "description": "De bron­d­o­cu­ment(en) op ba­sis waar­van het ob­ject is toe­ge­voegd aan de re­gi­stra­tie."
+          },
           "bagproces": {
             "type": "GOB.JSON",
             "description": "Functionele handeling die ten grondslag ligt aan de gebeurtenis."
@@ -879,6 +884,11 @@
             "ref": "gebieden:buurten",
             "description": "De buurt waarin een standplaats ligt."
           },
+          "heeft_brondocumenten": {
+            "type": "GOB.ManyReference",
+            "ref": "bag:brondocumenten",
+            "description": "De bron­d­o­cu­ment(en) op ba­sis waar­van het ob­ject is toe­ge­voegd aan de re­gi­stra­tie."
+          },
           "bagproces": {
             "type": "GOB.JSON",
             "description": "Functionele handeling die ten grondslag ligt aan de gebeurtenis."
@@ -941,6 +951,11 @@
             "type": "GOB.Reference",
             "ref": "gebieden:buurten",
             "description": "De buurt waarin een ligplaats ligt."
+          },
+          "heeft_brondocumenten": {
+            "type": "GOB.ManyReference",
+            "ref": "bag:brondocumenten",
+            "description": "De bron­d­o­cu­ment(en) op ba­sis waar­van het ob­ject is toe­ge­voegd aan de re­gi­stra­tie."
           },
           "bagproces": {
             "type": "GOB.JSON",
@@ -1006,6 +1021,11 @@
           "beschrijving": {
             "type": "GOB.String",
             "description": "Beschrijving van de openbare ruimte bijvoorbeeld: Vogel. Wereldwijd komen 24 soorten albatrossen voor. De meeste leven op het zuidelijk halfrond. De grootste albatros heeft een spanwijdte van meer dan drie meter en is daarmee de grootste zeevogel ter wereld."
+          },
+          "heeft_brondocumenten": {
+            "type": "GOB.ManyReference",
+            "ref": "bag:brondocumenten",
+            "description": "De bron­d­o­cu­ment(en) op ba­sis waar­van het ob­ject is toe­ge­voegd aan de re­gi­stra­tie."
           },
           "bagproces": {
             "type": "GOB.JSON",
@@ -1228,15 +1248,15 @@
             "type": "GOB.JSON",
             "description": "Reden van de afvoer van het verblijfsobject."
           },
-          "heeft_brondocumenten": {
-            "type": "GOB.ManyReference",
-            "ref": "bag:brondocumenten",
-            "description": "De bron­d­o­cu­ment(en) op ba­sis waar­van het ob­ject is toe­ge­voegd aan de re­gi­stra­tie."
-          },
           "ligt_in_buurt": {
             "type": "GOB.Reference",
             "ref": "gebieden:buurten",
             "description": "Buurt waar­in het ver­blijfs­ob­ject ligt."
+          },
+          "heeft_brondocumenten": {
+            "type": "GOB.ManyReference",
+            "ref": "bag:brondocumenten",
+            "description": "De bron­d­o­cu­ment(en) op ba­sis waar­van het ob­ject is toe­ge­voegd aan de re­gi­stra­tie."
           },
           "bagproces": {
             "type": "GOB.JSON",
