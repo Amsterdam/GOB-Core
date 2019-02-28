@@ -130,5 +130,27 @@
         }
       }
     }
+  },
+  "DGDialog": {
+    "gebieden": {
+      "bouwblokken": {
+        "ligt_in_buurt": {
+          "method": "equals",
+          "destination_attribute": "code"
+        }
+      },
+      "buurten": {
+        "ligt_in_wijk": {
+          "method": "equals",
+          "destination_attribute": "code"
+        }
+      },
+      "wijken": {
+        "ligt_in_stadsdeel": {
+          "method": "equals",
+          "destination_attribute": "code"
+        }
+      }
+    }
   }
 }
