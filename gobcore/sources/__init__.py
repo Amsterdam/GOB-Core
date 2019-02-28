@@ -41,8 +41,8 @@ class GOBSources():
                             'type': spec['type'],
                             **field_relation
                         }
-                        ref_catalog, ref_collection = spec['ref'].split(':')
-                        self._relations[ref_catalog][ref_collection].append(relation)
+                        # Store the relation for the catalog - collection
+                        self._relations[catalog_name][collection_name].append(relation)
 
     def _get_field_relation(self, source, catalog_name, collection_name, field_name):
         try:
@@ -52,6 +52,23 @@ class GOBSources():
         else:
             return relation
 
-    def get_relations(self, catalog_name, collection_name):
+    def get_field_relations(self, catalog_name, collection_name, field_name):
+        """
+        Get all the relations for the specified field in the given catalog - collection
 
+        Not that more field relations may exist because multiple applications may
+        be source for the field.
+
+        :param catalog_name:
+        :param collection_name:
+        :param field_name:
+        :return:
+        """
+        try:
+            relations = self.get_relations(catalog_name, collection_name)
+            return [relation for relation in relations if relation["field_name"] == field_name]
+        except KeyError:
+            return []
+
+    def get_relations(self, catalog_name, collection_name):
         return self._relations[catalog_name][collection_name]
