@@ -109,6 +109,15 @@ class GOBType(metaclass=ABCMeta):
         """
         pass
 
+    @property
+    @abstractmethod
+    def to_value(self):
+        """Python object of the GOBType instance
+
+        :return: Python object
+        """
+        pass
+
     @classmethod
     def get_column_definition(cls, column_name):
         """Returns the SQL Alchemy column definition for the type """
@@ -134,6 +143,10 @@ class String(GOBType):
 
     @property
     def to_db(self):
+        return self._string
+
+    @property
+    def to_value(self):
         return self._string
 
 
@@ -181,6 +194,10 @@ class Integer(String):
         if self._string is None:
             return None
         return int(self._string)
+
+    @property
+    def to_value(self):
+        return int(self._string) if self._string else None
 
 
 class PKInteger(Integer):
@@ -233,6 +250,10 @@ class Decimal(GOBType):
             return None
         return float(self._string)
 
+    @property
+    def to_value(self):
+        return self._string
+
 
 class Boolean(GOBType):
     name = "Boolean"
@@ -283,6 +304,10 @@ class Boolean(GOBType):
     def to_db(self):
         return self._bool()
 
+    @property
+    def to_value(self):
+        return self._bool()
+
     def _bool(self):
         if self._string == str(True):
             return True
@@ -319,6 +344,12 @@ class Date(String):
 
     @property
     def to_db(self):
+        if self._string is None:
+            return None
+        return datetime.datetime.strptime(self._string, self.internal_format)
+
+    @property
+    def to_value(self):
         if self._string is None:
             return None
         return datetime.datetime.strptime(self._string, self.internal_format)
@@ -391,6 +422,10 @@ class JSON(GOBType):
     @property
     def json(self):
         return self._string if self._string is not None else json.dumps(None)
+
+    @property
+    def to_value(self):
+        return json.loads(self._string)
 
 
 class Reference(JSON):

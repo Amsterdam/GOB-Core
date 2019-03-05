@@ -76,6 +76,10 @@ class GEOType(GOBType):
             return json.dumps(None)
         return json.dumps(wkt.loads(self._string))
 
+    @property
+    def to_value(self):
+        return self._string
+
 
 class Point(GEOType):
     name = "Point"

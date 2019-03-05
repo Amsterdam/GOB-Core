@@ -120,3 +120,13 @@ def get_modifications(entity, data, model):     # noqa: C901
             modifications.append({'key': field_name, 'old_value': old_value, 'new_value': new_value})
 
     return modifications
+
+
+def get_value(entity):
+    """Get a dictionatry with python objects of an entity of GOBTypes
+
+    :param entity: an object with named attributes with values
+
+    :return: a dictionary of key, values
+    """
+    return {key: value.to_value for key, value in entity.items()}

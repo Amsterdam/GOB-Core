@@ -74,6 +74,9 @@ class TestGobTypes(unittest.TestCase):
         # DB ouptut is string
         self.assertIsInstance(GobType.from_value('O').to_db, str)
 
+        # Python value is string
+        self.assertIsInstance(GobType.from_value('O').to_value, str)
+
     def test_int(self):
         GobType = get_gob_type("GOB.Integer")
         self.assertEqual(GobType.name, "Integer")
@@ -84,6 +87,9 @@ class TestGobTypes(unittest.TestCase):
 
         # DB ouptut is int
         self.assertIsInstance(GobType.from_value('123').to_db, int)
+
+        # Python value is int
+        self.assertIsInstance(GobType.from_value('123').to_value, int)
 
         with self.assertRaises(GOBException):
             GobType.from_value('N')
@@ -104,6 +110,9 @@ class TestGobTypes(unittest.TestCase):
 
         # DB ouptut is float
         self.assertIsInstance(GobType.from_value('123').to_db, float)
+
+        # Python value is string
+        self.assertIsInstance(GobType.from_value('123').to_value, str)
 
         with self.assertRaises(GOBException):
             GobType.from_value("123,123")
@@ -132,6 +141,10 @@ class TestGobTypes(unittest.TestCase):
         self.assertIsNone(GobType.from_value(None).to_db)
         self.assertTrue(GobType.from_value(True).to_db)
         self.assertFalse(GobType.from_value(False).to_db)
+
+        self.assertIsNone(GobType.from_value(None).to_value)
+        self.assertTrue(GobType.from_value(True).to_value)
+        self.assertFalse(GobType.from_value(False).to_value)
 
         with self.assertRaises(GOBException):
             GobType.from_value('N')
@@ -176,6 +189,9 @@ class TestGobTypes(unittest.TestCase):
         # DB ouptut is datetime
         self.assertIsInstance(GobType.from_value('2016-05-04').to_db, datetime)
 
+        # Python value is datetime
+        self.assertIsInstance(GobType.from_value('2016-05-04').to_value, datetime)
+
     def test_datetime(self):
         GobType = get_gob_type("GOB.DateTime")
         self.assertEqual(GobType.name, "DateTime")
@@ -200,8 +216,15 @@ class TestGobTypes(unittest.TestCase):
 
         # DB ouptut is datetime
         self.assertIsInstance(GobType.from_value('2016-05-04T12:00:00.123000').to_db, datetime)
+
         # unless an empty string is entered
         self.assertIsNone(GobType.from_value(None).to_db)
+
+        # Python value is datetime
+        self.assertIsInstance(GobType.from_value('2016-05-04T12:00:00.123000').to_value, datetime)
+
+        # unless an empty string is entered
+        self.assertIsNone(GobType.from_value(None).to_value)
 
     def test_json(self):
         GobType = get_gob_type("GOB.JSON")
@@ -241,6 +264,9 @@ class TestGobTypes(unittest.TestCase):
 
         # DB ouptut is json
         self.assertIsInstance(GobType.from_value('{"key": "value"}').to_db, dict)
+
+        # Python value is dict
+        self.assertIsInstance(GobType.from_value('{"key": "value"}').to_value, dict)
 
     def test_reference(self):
         GobType = get_gob_type("GOB.Reference")
