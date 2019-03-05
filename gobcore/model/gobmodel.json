@@ -1177,7 +1177,7 @@
           },
           "ligt_in_panden": {
             "type": "GOB.ManyReference",
-            "ref": "bad:panden",
+            "ref": "bag:panden",
             "description": "De unie­ke lan­de­lij­ke aan­dui­din­gen van de pan­den waar­van het ver­blijfs­ob­ject on­der­deel uit­maakt."
           },
           "begin_geldigheid": {

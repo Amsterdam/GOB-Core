@@ -4,6 +4,7 @@ import json
 from gobcore.model.metadata import FIELD
 from gobcore.model.metadata import STATE_FIELDS
 from gobcore.model.metadata import PRIVATE_META_FIELDS, PUBLIC_META_FIELDS, FIXED_FIELDS
+from gobcore.model.relations import get_relations
 
 
 EVENTS_DESCRIPTION = {
@@ -46,6 +47,7 @@ class GOBModel():
             del data["test_catalogue"]
 
         self._data = data
+        self._data["rel"] = get_relations(self)
 
         global_attributes = {
             **PRIVATE_META_FIELDS,
