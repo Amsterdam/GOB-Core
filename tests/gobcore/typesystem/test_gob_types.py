@@ -1,6 +1,6 @@
 import random
 import unittest
-from datetime import datetime
+from datetime import datetime, date
 
 from gobcore.exceptions import GOBException, GOBTypeException
 from gobcore.typesystem import get_gob_type
@@ -190,7 +190,7 @@ class TestGobTypes(unittest.TestCase):
         self.assertIsInstance(GobType.from_value('2016-05-04').to_db, datetime)
 
         # Python value is datetime
-        self.assertIsInstance(GobType.from_value('2016-05-04').to_value, datetime)
+        self.assertIsInstance(GobType.from_value('2016-05-04').to_value, date)
 
     def test_datetime(self):
         GobType = get_gob_type("GOB.DateTime")

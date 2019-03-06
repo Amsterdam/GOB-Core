@@ -352,7 +352,7 @@ class Date(String):
     def to_value(self):
         if self._string is None:
             return None
-        return datetime.datetime.strptime(self._string, self.internal_format)
+        return datetime.datetime.strptime(self._string, self.internal_format).date()
 
 
 class DateTime(Date):
@@ -380,6 +380,12 @@ class DateTime(Date):
 
     @property
     def to_db(self):
+        if self._string is None:
+            return None
+        return datetime.datetime.strptime(self._string, self.internal_format)
+
+    @property
+    def to_value(self):
         if self._string is None:
             return None
         return datetime.datetime.strptime(self._string, self.internal_format)
@@ -425,6 +431,8 @@ class JSON(GOBType):
 
     @property
     def to_value(self):
+        if self._string is None:
+            return None
         return json.loads(self._string)
 
 

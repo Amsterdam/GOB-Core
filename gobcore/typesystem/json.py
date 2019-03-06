@@ -25,13 +25,13 @@ class GobTypeJSONEncoder(json.JSONEncoder):
         if isinstance(obj, decimal.Decimal):
             return json.loads(str(obj))
 
-        if isinstance(obj, datetime.date):
+        if type(obj) is datetime.date:
             # First convert datetime to string and use GOBType to create JSON output
             string_value = datetime.datetime.strftime(obj, Date.internal_format)
             obj = Date.from_value(string_value, **{'format': Date.internal_format})
             return json.loads(obj.json)
 
-        if isinstance(obj, datetime.datetime):
+        if type(obj) is datetime.datetime:
             # First convert datetime to string and use GOBType to create JSON output
             string_value = datetime.datetime.strftime(obj, DateTime.internal_format)
             obj = DateTime.from_value(string_value, **{'format': DateTime.internal_format})
