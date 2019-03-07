@@ -1232,7 +1232,7 @@
             "type": "GOB.Integer",
             "description": "Geeft het aantal kamers aan bin­nen het ver­blijfs­ob­ject."
           },
-          "ei­gen­doms­ver­hou­ding": {
+          "eigendomsverhouding": {
             "type": "GOB.JSON",
             "description": "Geeft de eigendomsverhouding aan (huur of eigendom)."
           },
