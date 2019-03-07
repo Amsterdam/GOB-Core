@@ -1018,7 +1018,7 @@
             "ref": "bag:woonplaatsen",
             "description": "De woonplaats (landelijke identificatie) waarin de openbare ruimte ligt."
           },
-          "beschrijving": {
+          "beschrijving_naam": {
             "type": "GOB.String",
             "description": "Beschrijving van de openbare ruimte bijvoorbeeld: Vogel. Wereldwijd komen 24 soorten albatrossen voor. De meeste leven op het zuidelijk halfrond. De grootste albatros heeft een spanwijdte van meer dan drie meter en is daarmee de grootste zeevogel ter wereld."
           },
@@ -1204,7 +1204,7 @@
             "type": "GOB.JSON",
             "description": "Amsterdamse uitbreiding op Gebruiksdoel verblijfsobject."
           },
-          "gebruiksdoel_zorgfunctie": {
+          "gebruiksdoel_gezondheidszorgfunctie": {
             "type": "GOB.JSON",
             "description": "Amsterdamse uitbreiding op Gebruiksdoel verblijfsobject."
           },
@@ -1231,6 +1231,10 @@
           "aantal_kamers": {
             "type": "GOB.Integer",
             "description": "Geeft het aantal kamers aan bin­nen het ver­blijfs­ob­ject."
+          },
+          "ei­gen­doms­ver­hou­ding": {
+            "type": "GOB.JSON",
+            "description": "Geeft de eigendomsverhouding aan (huur of eigendom)."
           },
           "feitelijk_gebruik": {
             "type": "GOB.JSON",
@@ -1347,6 +1351,33 @@
           "bagproces": {
             "type": "GOB.JSON",
             "description": "Functionele handeling die ten grondslag ligt aan de gebeurtenis."
+          }
+        }
+      },
+      "brondocumenten": {
+        "version": "0.1",
+        "abbreviation": "BDT",
+        "entity_id": "documentnummer",
+        "attributes": {
+          "documentnummer": {
+            "type": "GOB.String",
+            "description": "Iden­ti­fi­ce­ren­de num­mer van het do­cu­ment."
+          },
+          "dossier": {
+            "type": "GOB.String",
+            "description": "Verwijzing vanuit de overige objectklassen."
+          },
+          "bronleverancier": {
+            "type": "GOB.JSON",
+            "description": "Ver­strek­ker van bron­d­o­cu­men­ten en/​of ge­ge­vens voort­ko­mend uit het uit­oe­fe­nen of voor­be­rei­den van een ge­meen­te­lij­ke be­voegd­heid, die no­dig zijn voor een re­gi­stra­tie aan de bronhouder, con­form vast­ge­stel­de aan­le­ver­spe­ci­fi­ca­ties."
+          },
+          "type_dossier": {
+            "type": "GOB.JSON",
+            "description": "Het type dossier."
+          },
+          "type_brondocument": {
+            "type": "GOB.JSON",
+            "description": "Het type brondocument."
           }
         }
       }
