@@ -1,7 +1,7 @@
 import unittest
 from unittest import mock
 
-from gobcore.model.relations import _get_relation, _get_relation_name, get_relations
+from gobcore.model.relations import _get_relation, _get_relation_name, get_relation_name, get_relations, create_relation
 
 
 class TestRelations(unittest.TestCase):
@@ -10,135 +10,34 @@ class TestRelations(unittest.TestCase):
         pass
 
     def test_relation(self):
+        global_attributes = ['source', 'id', 'derivation', 'begin_geldigheid', 'eind_geldigheid']
+        src_attributes = ['src_id', 'src_source', 'src_volgnummer']
+        dst_attributes = ['dst_id', 'dst_source', 'dst_volgnummer']
+        attributes = global_attributes + src_attributes + dst_attributes
+
         result = _get_relation("name", {'type': 'GOB.DateTime'}, {'type': 'GOB.Date'})
-        expect = {
-            'version': '0.1',
-            'abbreviation': 'name',
-            'entity_id': 'id',
-            'attributes': {
-                'id': {
-                    'type': 'GOB.String',
-                    'description': 'Functional source id, a generic (independent from Stelselpedia) id field for every entity.'
-                },
-                'volgnummer': {
-                    'type': 'GOB.String',
-                    'description': 'Uniek volgnummer van de toestand van het object.'
-                },
-                'derivation': {
-                    'type': 'GOB.String',
-                    'description': 'Describes the derivation logic for the relation (e.g. geometric, reference, ..)'
-                },
-                'begin_geldigheid': {
-                    'type': 'GOB.DateTime',
-                    'description': 'Begin relation'
-                },
-                'eind_geldigheid': {
-                    'type': 'GOB.DateTime',
-                    'description': 'End relation'
-                },
-                'dst_source': {
-                    'type': 'GOB.String',
-                    'description': 'Functional source for the specific entity, eg the name of a department.'
-                },
-                'dst_id': {
-                    'type': 'GOB.String',
-                    'description': 'Functional source id, a generic (independent from Stelselpedia) id field for every entity.'
-                },
-                'dst_volgnummer': {
-                    'type': 'GOB.String',
-                    'description': 'Uniek volgnummer van de toestand van het object.'
-                }
-            }
-        }
-        self.assertEqual(result, expect)
+        self.assertEqual(result['abbreviation'], "name")
+        self.assertEqual(result['entity_id'], "id")
+        for validity in ['begin_geldigheid', 'eind_geldigheid']:
+            self.assertEqual(result['attributes'][validity]['type'], 'GOB.DateTime')
+        self.assertEqual(len(result['attributes'].keys()), len(attributes))
+        for attr in attributes:
+            self.assertTrue(attr in result['attributes'])
+            for prop in ['type', 'description']:
+                self.assertTrue(prop in result['attributes'][attr])
 
         result = _get_relation("name", None, None)
-        expect = {
-            'id': {
-                'type': 'GOB.String',
-                'description': 'Functional source id, a generic (independent from Stelselpedia) id field for every entity.'
-            },
-            'derivation': {
-                'type': 'GOB.String',
-                'description': 'Describes the derivation logic for the relation (e.g. geometric, reference, ..)'
-            },
-            'dst_source': {
-                'type': 'GOB.String',
-                'description': 'Functional source for the specific entity, eg the name of a department.'
-            },
-            'dst_id': {
-                'type': 'GOB.String',
-                'description': 'Functional source id, a generic (independent from Stelselpedia) id field for every entity.'
-            }
-        }
-        self.assertEqual(result["attributes"], expect)
+        for validity in ['begin_geldigheid', 'eind_geldigheid']:
+            self.assertEqual(result['attributes'][validity]['type'], 'GOB.Date')
+        self.assertEqual(len(result['attributes'].keys()), len(attributes))
 
         result = _get_relation("name",  {'type': 'GOB.Date'}, None)
-        expect = {
-            'id': {
-                'type': 'GOB.String',
-                'description': 'Functional source id, a generic (independent from Stelselpedia) id field for every entity.'
-            },
-            'volgnummer': {
-                'type': 'GOB.String',
-                'description': 'Uniek volgnummer van de toestand van het object.'
-            },
-            'derivation': {
-                'type': 'GOB.String',
-                'description': 'Describes the derivation logic for the relation (e.g. geometric, reference, ..)'
-            },
-            'begin_geldigheid': {
-                'type': 'GOB.Date',
-                'description': 'Begin relation'
-            },
-            'eind_geldigheid': {
-                'type': 'GOB.Date',
-                'description': 'End relation'
-            },
-            'dst_source': {
-                'type': 'GOB.String',
-                'description': 'Functional source for the specific entity, eg the name of a department.'
-            },
-            'dst_id': {
-                'type': 'GOB.String',
-                'description': 'Functional source id, a generic (independent from Stelselpedia) id field for every entity.'
-            }
-        }
-        self.assertEqual(result["attributes"], expect)
+        for validity in ['begin_geldigheid', 'eind_geldigheid']:
+            self.assertEqual(result['attributes'][validity]['type'], 'GOB.Date')
 
         result = _get_relation("name", None, {'type': 'GOB.Date'})
-        expect = {
-            'id': {
-                'type': 'GOB.String',
-                'description': 'Functional source id, a generic (independent from Stelselpedia) id field for every entity.'
-            },
-            'derivation': {
-                'type': 'GOB.String',
-                'description': 'Describes the derivation logic for the relation (e.g. geometric, reference, ..)'
-            },
-            'begin_geldigheid': {
-                'type': 'GOB.Date',
-                'description': 'Begin relation'
-            },
-            'eind_geldigheid': {
-                'type': 'GOB.Date',
-                'description': 'End relation'
-            },
-            'dst_source': {
-                'type': 'GOB.String',
-                'description': 'Functional source for the specific entity, eg the name of a department.'
-            },
-            'dst_id': {
-                'type': 'GOB.String',
-                'description': 'Functional source id, a generic (independent from Stelselpedia) id field for every entity.'
-            },
-            'dst_volgnummer': {
-                'type': 'GOB.String',
-                'description': 'Uniek volgnummer van de toestand van het object.'
-            }
-        }
-        print(result["attributes"])
-        self.assertEqual(result["attributes"], expect)
+        for validity in ['begin_geldigheid', 'eind_geldigheid']:
+            self.assertEqual(result['attributes'][validity]['type'], 'GOB.Date')
 
     def test_relation_name(self):
         model = mock.MagicMock()
@@ -148,7 +47,12 @@ class TestRelations(unittest.TestCase):
             },
             "catalog_name": "catalog",
             "collection": {
-                'abbreviation': 'col'
+                'abbreviation': 'col',
+                'attributes': {
+                    'reference': {
+                        'ref': 'src:dst'
+                    }
+                }
             },
             "collection_name": "collection"
         }
@@ -162,9 +66,17 @@ class TestRelations(unittest.TestCase):
             },
             "collection_name": "collection"
         }
-        name = _get_relation_name(model, src, dst, "reference")
+
+        name = _get_relation_name(src, dst, "reference")
         expect = 'cat_col_dst_cat_dst_col_reference'
         self.assertEqual(name, expect)
+
+        model.get_catalog.return_value = src['catalog']
+        model.get_collection.return_value = src['collection']
+        name = get_relation_name(model, "catalog", "collection", "reference")
+        expect = 'cat_col_cat_col_reference'
+        self.assertEqual(name, expect)
+
 
     @mock.patch('gobcore.model.relations._get_relation_name')
     def test_relations(self, mock_get_relation_name):
@@ -199,3 +111,42 @@ class TestRelations(unittest.TestCase):
         relations = get_relations(model)
         self.assertIsNotNone(relations['collections']['name'])
         self.assertEqual(len(relations['collections'].items()), 1)
+
+    def test_create_relation(self):
+        src = {
+            'source': 'src_source',
+            'id': 'src_id',
+            'volgnummer': 'src_volgnummer'
+        }
+        dst = {
+            'source': 'dst_source',
+            'id': 'dst_id',
+            'volgnummer': 'dst_volgnummer'
+        }
+        validity = {
+            'begin_geldigheid': 'begin',
+            'eind_geldigheid': 'eind'
+        }
+        result = create_relation(src, validity, dst, "derivation")
+        expect = {
+            'source': 'src_source.dst_source',
+            'id': 'src_id.src_volgnummer.dst_id.dst_volgnummer',
+            'src_source': 'src_source',
+            'src_id': 'src_id',
+            'src_volgnummer': 'src_volgnummer',
+            'derivation': 'derivation',
+            'begin_geldigheid': 'begin',
+            'eind_geldigheid': 'eind',
+            'dst_source': 'dst_source',
+            'dst_id': 'dst_id',
+            'dst_volgnummer': 'dst_volgnummer'
+        }
+        self.assertEqual(result, expect)
+
+        src['volgnummer'] = None
+        result = create_relation(src, validity, dst, "derivation")
+        self.assertEqual(result['id'], 'src_id.dst_id.dst_volgnummer')
+
+        dst['volgnummer'] = None
+        result = create_relation(src, validity, dst, "derivation")
+        self.assertEqual(result['id'], 'src_id.dst_id')
