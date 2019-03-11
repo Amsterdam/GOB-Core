@@ -1378,6 +1378,10 @@
           "type_brondocument": {
             "type": "GOB.JSON",
             "description": "Het type brondocument."
+          },
+          "registratiedatum": {
+            "type": "GOB.DateTime",
+            "description": "De datum waar­op het bron­d­o­cu­ment is op­ge­sla­gen in het re­gis­ter."
           }
         }
       }
