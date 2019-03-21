@@ -132,5 +132,119 @@
         }
       }
     }
+  },
+  "Neuron": {
+    "bag": {
+      "woonplaatsen": {
+        "heeft_brondocumenten": {
+          "method": "equals",
+          "destination_attribute": "dossier"
+        }
+      },
+      "standplaatsen": {
+        "heeft_hoofdadres": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "heeft_nevenadres": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "ligt_in_buurt": {
+          "method": "lies_in",
+          "source_attribute": "geometrie",
+          "destination_attribute": "geometrie"
+        },
+        "heeft_brondocumenten": {
+          "method": "equals",
+          "destination_attribute": "dossier"
+        }
+      },
+      "ligplaatsen": {
+        "heeft_hoofdadres": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "heeft_nevenadres": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "ligt_in_buurt": {
+          "method": "lies_in",
+          "source_attribute": "geometrie",
+          "destination_attribute": "geometrie"
+        },
+        "heeft_brondocumenten": {
+          "method": "equals",
+          "destination_attribute": "dossier"
+        }
+      },
+      "openbareruimtes": {
+        "ligt_in_woonplaats": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "heeft_brondocumenten": {
+          "method": "equals",
+          "destination_attribute": "dossier"
+        }
+      },
+      "nummeraanduidingen": {
+        "ligt_aan_openbareruimte": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "adresseert_verblijfsobject": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "adresseert_ligplaats": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "adresseert_standplaats": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "heeft_brondocumenten": {
+          "method": "equals",
+          "destination_attribute": "dossier"
+        }
+      },
+      "verblijfsobjecten": {
+        "heeft_hoofdadres": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "heeft_nevenadres": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "ligt_in_panden": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "ligt_in_buurt": {
+          "method": "lies_in",
+          "source_attribute": "geometrie",
+          "destination_attribute": "geometrie"
+        },
+        "heeft_brondocumenten": {
+          "method": "equals",
+          "destination_attribute": "dossier"
+        }
+      },
+      "panden": {
+        "ligt_in_bouwblok": {
+          "method": "lies_in",
+          "source_attribute": "geometrie",
+          "destination_attribute": "geometrie"
+        },
+        "heeft_brondocumenten": {
+          "method": "equals",
+          "destination_attribute": "dossier"
+        }
+      }
+    }
   }
 }
