@@ -4,3 +4,7 @@ class GOBException(Exception):
 
 class GOBTypeException(GOBException):
     pass
+
+
+class GOBEmptyResultException(GOBException):
+    pass
