@@ -2,15 +2,19 @@ atomicwrites==1.2.1
 attrs==18.2.0
 click==6.7
 coverage==4.5.1
+cx-Oracle==7.0.0
 flake8==3.5.0
 GeoAlchemy2==0.5.0
 geomet==0.2.0.post2
+-e git+https://github.com/Amsterdam/objectstore.git@v1.0#egg=objectstore
 mccabe==0.6.1
 mock==2.0.0
 more-itertools==4.3.0
+pandas==0.23.3
 pbr==4.2.0
 pika==0.12.0
 pluggy==0.7.1
+psycopg2-binary==2.7.7
 py==1.6.0
 pycodestyle==2.3.1
 pyflakes==1.6.0
