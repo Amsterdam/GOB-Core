@@ -13,6 +13,6 @@ exclude=.git,
         scripts,
         venv,
         */settings_commons.py,
-        ./src/objectstore
+        ./src/datapunt-objectstore
 max-complexity=6
 max-line-length = 119
