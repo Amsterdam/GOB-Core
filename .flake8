@@ -12,6 +12,7 @@ exclude=.git,
         tests,
         scripts,
         venv,
-        */settings_commons.py
+        */settings_commons.py,
+        ./src/objectstore
 max-complexity=6
 max-line-length = 119
