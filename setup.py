@@ -14,6 +14,14 @@ setup(
         'geoalchemy2',
         'geomet',
         'shapely',
+        'cx-Oracle==7.0.0',
+        'objectstore==v1.0',
+        'requests==2.20.0',
+        'psycopg2-binary==2.7.7',
+        'pandas==0.23.3',
     ],
-    packages=find_packages(exclude=['tests*'])
+    packages=find_packages(exclude=['tests*']),
+    dependency_links=[
+        'git+ssh://git@github.com/Amsterdam/objectstore.git@v1.0#egg=objectstore-v1.0',
+    ],
 )
