@@ -35,6 +35,7 @@ STATUS_EXCHANGE = "gob.status"
 
 PROPOSAL_QUEUE = WORKFLOW_EXCHANGE + '.proposal'
 REQUEST_QUEUE = WORKFLOW_EXCHANGE + '.request'
+PREPARE_QUEUE = WORKFLOW_EXCHANGE + '.prepare'
 IMPORT_QUEUE = WORKFLOW_EXCHANGE + '.import'
 EXPORT_QUEUE = WORKFLOW_EXCHANGE + '.export'
 HEARTBEAT_QUEUE = STATUS_EXCHANGE + '.heartbeat'
@@ -50,6 +51,11 @@ QUEUES = [
         "exchange": WORKFLOW_EXCHANGE,
         "name": REQUEST_QUEUE,
         "key": "*.request"
+    },
+    {
+        "exchange": WORKFLOW_EXCHANGE,
+        "name": PREPARE_QUEUE,
+        "key": "prepare.start"
     },
     {
         "exchange": WORKFLOW_EXCHANGE,
