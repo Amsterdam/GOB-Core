@@ -49,6 +49,13 @@ class ProgressTicker():
         self._report_interval = report_interval
         self._count = 0
 
+    def __enter__(self):
+        print(f"Start {self._name}")
+        return self
+
+    def __exit__(self, *args):
+        print(f"End {self._name} - {self._count}")
+
     def tick(self):
         self._count += 1
         if self._count % self._report_interval == 0:
