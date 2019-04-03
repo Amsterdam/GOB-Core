@@ -231,7 +231,8 @@
           "            WHERE eind_geldigheid IS NULL",
           "            ) AS stadsdelen",
           "            ON wijken.ligt_in_stadsdeel->>'_id' = stadsdelen.identificatie",
-          "    WHERE bouwblokken.eind_geldigheid IS NULL"
+          "    WHERE bouwblokken.eind_geldigheid IS NULL",
+          "    ORDER BY bouwblokken.code"
         ]
       }
     },

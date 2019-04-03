@@ -93,8 +93,9 @@
     "gebieden": {
       "bouwblokken": {
         "ligt_in_buurt": {
-          "method": "equals",
-          "destination_attribute": "identificatie"
+          "method": "lies_in",
+          "source_attribute": "geometrie",
+          "destination_attribute": "geometrie"
         }
       },
       "buurten": {
@@ -130,8 +131,9 @@
     "gebieden": {
       "bouwblokken": {
         "ligt_in_buurt": {
-          "method": "equals",
-          "destination_attribute": "code"
+          "method": "lies_in",
+          "source_attribute": "geometrie",
+          "destination_attribute": "geometrie"
         }
       },
       "buurten": {
