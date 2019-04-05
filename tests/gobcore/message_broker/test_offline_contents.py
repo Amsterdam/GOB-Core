@@ -116,7 +116,15 @@ class TestOfflineContents(unittest.TestCase):
 
         mock_remove.assert_called_with(cp_writer.filename)
 
+    @mock.patch('gobcore.message_broker.offline_contents.ijson', mock.MagicMock())
+    @mock.patch('os.remove')
+    @mock.patch('builtins.open')
+    def testContentsReader(self, mock_open, mock_remove):
+        cp_reader = None
+        with oc.ContentsReader("filename") as reader:
+            mock_open.assert_called_with("filename", "r")
 
+            cp_reader = reader
 
-
-
+        self.assertIsNotNone(cp_reader.file)
+        mock_remove.assert_called_with(cp_reader.filename)

@@ -7,6 +7,7 @@ This prevents the message broker from transferring large messages
 import gc
 import uuid
 import json
+import ijson
 import os
 from datetime import datetime
 from pathlib import Path
@@ -37,7 +38,7 @@ class ContentsWriter:
         self.empty = True
         return self
 
-    def __exit__(self, exc_type, exc_val, traceback):
+    def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
         if exc_type is not None:
             os.remove(self.filename)
@@ -62,6 +63,43 @@ class ContentsWriter:
         """
         self.file.write("]")
         self.file.close()
+
+
+class ContentsReader:
+
+    def __init__(self, filename):
+        """
+        Initialize a contents reader with the name of the file to be read
+
+        :param filename:
+        """
+        self.filename = filename
+
+    def __enter__(self):
+        """
+        Opens the file and provides for a generator for the items in the contents array
+
+        :return:
+        """
+        self.file = open(self.filename, "r")
+        # Use prefix='item' to get per entity (contents = [entity, entity, ...])
+        self.items = ijson.items(self.file, prefix="item")
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """
+        After the contents has been read, closes the file and removes it
+
+        :param exc_type:
+        :param exc_val:
+        :param exc_tb:
+        :return:
+        """
+        self.file.close()
+        try:
+            os.remove(self.filename)
+        except Exception as e:
+            print(f"Remove failed ({str(e)})")
 
 
 def _get_unique_name():
