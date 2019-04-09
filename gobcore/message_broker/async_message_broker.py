@@ -299,6 +299,7 @@ class AsyncConnection(object):
                 def run_message_handler():
                     offload_id = None
                     result = None
+                    msg = None
                     try:
                         # Try to get the message, parse any json contents and retrieve any offloaded contents
                         msg, offload_id = get_message_from_body()
@@ -309,8 +310,9 @@ class AsyncConnection(object):
                         stacktrace = traceback.format_exc(limit=-5)
                         print(f"Message handling has failed: {str(e)}, message: {str(body)}", stacktrace)
 
-                    # run fail-safe method to end the message
-                    end_message(msg, offload_id)
+                    if msg is not None:
+                        # run fail-safe method to end the message
+                        end_message(msg, offload_id)
 
                     if result is not False:
                         # Default is to acknowledge message
