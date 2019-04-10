@@ -19,4 +19,4 @@ def query_postgresql(connection, query: str):
             yield row
         cursor.close()
     except Error as e:
-        raise GOBException(f'Error executing query: {query}. Error: {e}')
+        raise GOBException(f'Error executing query: {query[:80]}. Error: {e}')
