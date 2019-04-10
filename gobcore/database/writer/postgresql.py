@@ -37,14 +37,9 @@ def execute_postgresql_query(connection, query: str) -> None:
     :return:
     """
     try:
-        print(query[:200])
-        print(connection)
         cursor = connection.cursor()
-        print(cursor)
         cursor.execute(query)
-        print("Executed")
         connection.commit()
-        print("Committed")
         cursor.close()
     except Error as e:
         raise GOBException(f'Error executing query: {query[:80]}. Error: {e}')
