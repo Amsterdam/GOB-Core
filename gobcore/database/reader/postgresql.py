@@ -11,12 +11,11 @@ def query_postgresql(connection, query: str):
     :return:
     """
     try:
-        cursor = connection.cursor(cursor_factory=DictCursor)
-        cursor.execute(query)
-        connection.commit()
+        with connection.cursor(cursor_factory=DictCursor) as cursor:
+            cursor.execute(query)
+            connection.commit()
 
-        for row in cursor:
-            yield row
-        cursor.close()
+            for row in cursor:
+                yield row
     except Error as e:
         raise GOBException(f'Error executing query: {query[:80]}. Error: {e}')

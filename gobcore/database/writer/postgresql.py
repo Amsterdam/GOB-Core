@@ -21,10 +21,9 @@ def write_rows_to_postgresql(connection, table: str, rows: List[list]) -> None:
     """
     query = f"INSERT INTO {table} VALUES %s"
     try:
-        cursor = connection.cursor()
-        execute_values(cursor, query, rows)
-        connection.commit()
-        cursor.close()
+        with connection.cursor() as cursor:
+            execute_values(cursor, query, rows)
+            connection.commit()
     except Error as e:
         raise GOBException(f'Error writing rows to table {table}. Error: {e}')
 
@@ -37,10 +36,9 @@ def execute_postgresql_query(connection, query: str) -> None:
     :return:
     """
     try:
-        cursor = connection.cursor()
-        cursor.execute(query)
-        connection.commit()
-        cursor.close()
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            connection.commit()
     except Error as e:
         raise GOBException(f'Error executing query: {query[:80]}. Error: {e}')
 

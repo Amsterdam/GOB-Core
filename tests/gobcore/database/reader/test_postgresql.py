@@ -20,6 +20,12 @@ class MockConnection():
         def __iter__(self):
             return iter(self.expected_result)
 
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            pass
+
     commit_obj = MagicMock()
 
     def __init__(self, expected_result):
@@ -46,5 +52,4 @@ class TestPostgresReader(TestCase):
         self.assertEqual(expected_result, list(result))
 
         connection.cursor_obj.execute.assert_called_with(query)
-        connection.cursor_obj.close.assert_called_once()
 

@@ -18,6 +18,12 @@ class TestPostgresqlWriter(TestCase):
             def close(self):
                 return
 
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                pass
+
         cursor_obj = Cursor()
         commit_obj = MagicMock()
 
@@ -52,7 +58,6 @@ class TestPostgresqlWriter(TestCase):
         query = "SELECT something FROM somewhere WHERE this = that"
         execute_postgresql_query(mock_connection, query)
         mock_connection.cursor().execute.assert_called_with(query)
-        mock_connection.cursor().close.assert_called_once()
 
     def test_execute_postresql_query_error(self):
         """Asserts that a psycopg2 error is re-raised as a GOBException """
