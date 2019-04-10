@@ -13,6 +13,7 @@ setup(
         'sqlalchemy',
         'geoalchemy2',
         'geomet',
+        'ijson',
         'shapely',
         'cx-Oracle==7.0.0',
         'datapunt-objectstore',
