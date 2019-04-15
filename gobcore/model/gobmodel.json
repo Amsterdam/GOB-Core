@@ -1427,22 +1427,22 @@
             "type": "GOB.String",
             "description": "De unieke aanduiding van een Kadastraal object."
           },
-          "aangeduid_door_burgerlijke_gemeente": {
+          "aangeduid_door_burgerlijkegemeente": {
             "type": "GOB.Reference",
             "ref": "brk:burgerlijkegemeentes",
             "description": ""
           },
-          "aangeduid_door_kadastrale_gemeente": {
+          "aangeduid_door_kadastralegemeente": {
             "type": "GOB.Reference",
             "ref": "brk:kadastralegemeentes",
             "description": "De ka­das­tra­le ge­meen­te, het eer­ste ge­deel­te van de aan­dui­ding van een ka­das­traal ob­ject."
           },
-          "aangeduid_door_kadastrale_gemeentecode": {
+          "aangeduid_door_kadastralegemeentecode": {
             "type": "GOB.Reference",
             "ref": "brk:kadastralesgemeentecodes",
             "description": ""
           },
-          "aangeduid_door_kadastrale_sectie": {
+          "aangeduid_door_kadastralesectie": {
             "type": "GOB.Reference",
             "ref": "brk:kadastralesecties",
             "description": "De ka­das­tra­le sec­tie, het twee­de ge­deel­te van de aan­dui­ding van een ka­das­traal ob­ject."
