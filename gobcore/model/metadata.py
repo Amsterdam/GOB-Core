@@ -28,6 +28,7 @@ class FIELD:
     SEQNR = "volgnummer"
     REGISTRATION_DATE = "registratiedatum"
     HASH = "_hash"
+    EXPIRATION_DATE = "_expiration_date"
 
 
 """Description of all fields that are automatically added to each entity"""
@@ -46,6 +47,7 @@ DESCRIPTION = {
     FIELD.SEQNR: "Uniek volgnummer van de toestand van het object.",
     FIELD.REGISTRATION_DATE: "De datum waarop de toestand is geregistreerd.",
     FIELD.HASH: "A hash of the values of all public fields for comparison",
+    FIELD.EXPIRATION_DATE: "Timestamp telling when the entity will be or is expired.",
 }
 
 """Meta data that is registered for every entity"""
@@ -57,6 +59,7 @@ METADATA_COLUMNS = {
         FIELD.DATE_CONFIRMED: "GOB.DateTime",
         FIELD.DATE_MODIFIED: "GOB.DateTime",
         FIELD.DATE_DELETED: "GOB.DateTime",
+        FIELD.EXPIRATION_DATE: "GOB.DateTime",
     },
 
     # These properties will not be made public by the API

@@ -896,6 +896,10 @@
             "type": "GOB.String",
             "description": "Het unieke nummer van het brondocument."
           },
+          "feitelijk_gebruik": {
+            "type": "GOB.JSON",
+            "description": "Feitelijk gebruik van een standplaats."
+          },
           "ligt_in_buurt": {
             "type": "GOB.Reference",
             "ref": "gebieden:buurten",
@@ -963,6 +967,10 @@
           "documentnummer": {
             "type": "GOB.String",
             "description": "Het unieke nummer van het brondocument."
+          },
+          "feitelijk_gebruik": {
+            "type": "GOB.JSON",
+            "description": "Feitelijk gebruik van een ligplaats."
           },
           "ligt_in_buurt": {
             "type": "GOB.Reference",
