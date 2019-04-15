@@ -1417,7 +1417,7 @@
     "abbreviation": "BRK",
     "description": "De Basisregistratie kadaster (BRK) bevat informatie over percelen, eigendom, hypotheken, beperkte rechten (zoals recht van erfpacht, opstal en vruchtgebruik) en leidingnetwerken. Daarnaast staan er kadastrale kaarten in met perceel, perceelnummer, oppervlakte, kadastrale grens en de grenzen van het rijk, de provincies en gemeenten.",
     "collections": {
-      "kadastraal_object": {
+      "kadastraleobjecten": {
         "version": "0.1",
         "abbreviation": "KOT",
         "entity_id": "identificatie",
@@ -1429,22 +1429,22 @@
           },
           "aangeduid_door_burgerlijke_gemeente": {
             "type": "GOB.Reference",
-            "ref": "brk:burgerlijke_gemeente",
+            "ref": "brk:burgerlijkegemeentes",
             "description": ""
           },
           "aangeduid_door_kadastrale_gemeente": {
             "type": "GOB.Reference",
-            "ref": "brk:kadastrale_gemeente",
+            "ref": "brk:kadastralegemeentes",
             "description": "De ka­das­tra­le ge­meen­te, het eer­ste ge­deel­te van de aan­dui­ding van een ka­das­traal ob­ject."
           },
           "aangeduid_door_kadastrale_gemeentecode": {
             "type": "GOB.Reference",
-            "ref": "brk:kadastrale_gemeentecode",
+            "ref": "brk:kadastralesgemeentecodes",
             "description": ""
           },
           "aangeduid_door_kadastrale_sectie": {
             "type": "GOB.Reference",
-            "ref": "brk:kadastrale_sectie",
+            "ref": "brk:kadastralesecties",
             "description": "De ka­das­tra­le sec­tie, het twee­de ge­deel­te van de aan­dui­ding van een ka­das­traal ob­ject."
           },
           "volgnummer": {
@@ -1542,7 +1542,7 @@
           "is_ontstaan_uit_g_perceel": {
             "type": "GOB.Reference",
             "description": "Dit veld is al­léén ge­vuld wan­neer het be­schre­ven ka­das­tra­le ob­ject een A-per­ceel be­treft.",
-            "ref": "brk:kadastraal_object"
+            "ref": "brk:kadastraleobjecten"
           },
           "heeft_een_relatie_met_verblijfsobject": {
             "type": "GOB.ManyReference",
