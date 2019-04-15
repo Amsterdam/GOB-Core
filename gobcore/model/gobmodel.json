@@ -1427,9 +1427,9 @@
             "type": "GOB.String",
             "description": "De unieke aanduiding van een Kadastraal object."
           },
-          "aangeduid_door_burgerlijkegemeente": {
+          "aangeduid_door_gemeente": {
             "type": "GOB.Reference",
-            "ref": "brk:burgerlijkegemeentes",
+            "ref": "brk:gemeentes",
             "description": ""
           },
           "aangeduid_door_kadastralegemeente": {
@@ -1439,7 +1439,7 @@
           },
           "aangeduid_door_kadastralegemeentecode": {
             "type": "GOB.Reference",
-            "ref": "brk:kadastralesgemeentecodes",
+            "ref": "brk:kadastralegemeentecodes",
             "description": ""
           },
           "aangeduid_door_kadastralesectie": {
