@@ -34,15 +34,18 @@ class ContentsWriter:
         self.filename = _get_filename(unique_name)
 
     def __enter__(self):
-        self.file = open(self.filename, 'w')
-        self.file.write("[")
-        self.empty = True
+        self.open()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
         if exc_type is not None:
             os.remove(self.filename)
+
+    def open(self):
+        self.file = open(self.filename, 'w')
+        self.file.write("[")
+        self.empty = True
 
     def write(self, entity):
         """
