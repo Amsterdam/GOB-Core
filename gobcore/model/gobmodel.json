@@ -1411,5 +1411,146 @@
         }
       }
     }
+  },
+  "brk": {
+    "version": "0.1",
+    "abbreviation": "BRK",
+    "description": "De Basisregistratie kadaster (BRK) bevat informatie over percelen, eigendom, hypotheken, beperkte rechten (zoals recht van erfpacht, opstal en vruchtgebruik) en leidingnetwerken. Daarnaast staan er kadastrale kaarten in met perceel, perceelnummer, oppervlakte, kadastrale grens en de grenzen van het rijk, de provincies en gemeenten.",
+    "collections": {
+      "kadastraal_object": {
+        "version": "0.1",
+        "abbreviation": "KOT",
+        "entity_id": "identificatie",
+        "has_states": true,
+        "attributes": {
+          "identificatie": {
+            "type": "GOB.String",
+            "description": "De unieke aanduiding van een Kadastraal object."
+          },
+          "aangeduid_door_burgerlijke_gemeente": {
+            "type": "GOB.Reference",
+            "ref": "brk:burgerlijke_gemeente",
+            "description": ""
+          },
+          "aangeduid_door_kadastrale_gemeente": {
+            "type": "GOB.Reference",
+            "ref": "brk:kadastrale_gemeente",
+            "description": "De ka­das­tra­le ge­meen­te, het eer­ste ge­deel­te van de aan­dui­ding van een ka­das­traal ob­ject."
+          },
+          "aangeduid_door_kadastrale_gemeentecode": {
+            "type": "GOB.Reference",
+            "ref": "brk:kadastrale_gemeentecode",
+            "description": ""
+          },
+          "aangeduid_door_kadastrale_sectie": {
+            "type": "GOB.Reference",
+            "ref": "brk:kadastrale_sectie",
+            "description": "De ka­das­tra­le sec­tie, het twee­de ge­deel­te van de aan­dui­ding van een ka­das­traal ob­ject."
+          },
+          "volgnummer": {
+            "type": "GOB.Integer",
+            "description": ""
+          },
+          "perceelnummer": {
+            "type": "GOB.Integer",
+            "description": "Een nu­me­rie­ke aan­dui­ding van het ka­das­tra­le per­ceel per sec­tie, deel van de ka­das­tra­le aan­dui­ding van de on­roe­ren­de zaak."
+          },
+          "indexletter": {
+            "type": "GOB.Character",
+            "description": "Let­ter Ka­das­traal ob­ject, dit geeft een in­di­ca­tie voor het type ob­ject. G Grond perceel. A Appartementsrecht"
+          },
+          "indexnummer": {
+            "type": "GOB.Integer",
+            "description": "Volgnummer van het Appartementsrecht"
+          },
+          "gemeente": {
+            "type": "GOB.String",
+            "description": ""
+          },
+          "soort_grootte": {
+            "type": "GOB.JSON",
+            "description": "Aanduiding van soort grootte"
+          },
+          "grootte": {
+            "type": "GOB.Integer",
+            "description": "De groot­te van een ka­das­traal ob­ject is de op­per­vlak­te van het ka­das­tra­le per­ceel. Dit kan bij een deel­per­ceel een ge­schat­te groot­te zijn."
+          },
+          "soort_cultuur_bebouwd": {
+            "type": "GOB.JSON",
+            "description": "De soort cultuur bebouwd is een aanduiding voor de aard van de soort cultuur van een bebouwd kadastraal object, weergegeven als ‘omschrijving kadastraal object’ in Mijn.kadaster.nl (Kadaster-on-line; KOL). Dit kenmerk is afgeleid van de notariële akte (artikel 87, eerste lid, onder a, van de Kadasterregeling 1994). Dit kan afwijken van: het feitelijk gebruik in de WOZ; gebruiksdoel in de BAG; SBI-code in het HR."
+          },
+          "soort_cultuur_onbebouwd": {
+            "type": "GOB.JSON",
+            "description": "De soort cultuur onbebouwd is een aan­dui­ding voor de aard van de meest sig­ni­fi­can­te cul­tuur van het on­be­bouw­de deel van het ka­das­traal ob­ject, weer­ge­ge­ven als ‘om­schrij­ving ka­das­traal ob­jec­t’ in Mijn.ka­das­ter.nl Dit ken­merk is in be­gin­sel af­ge­leid van de no­ta­riële akte, maar kan wor­den bij­ge­steld op grond van een ver­zoek van de ei­ge­naar (of een schrif­te­lijk ge­vol­mach­tig­de na­mens de ei­ge­naar)per brief, fax of e-mail­be­richt. Dit kan afwijken van: het feitelijk gebruik in de WOZ; gebruiksdoel in de BAG; SBI-code in het HR."
+          },
+          "status": {
+            "type":"GOB.Character",
+            "description": "Status van het Kadastraal Object ('B' is bestaand)"
+          },
+          "geometrie": {
+            "type": "GOB.Geo.Polygon",
+            "description": "Vorm en lig­ging van de ka­das­tra­le sec­tie in het stel­sel van de Rijks­drie­hoeks­me­ting (RD)"
+          },
+          "plaatscoordinaten": {
+            "type": "GOB.Geo.Geometry",
+            "description": "De aan­dui­ding van een kaart­punt voor de weer­ga­ve van de iden­ti­fi­ca­tie van een per­ceel (cen­tro­ï­de)"
+          },
+          "perceelnummer_rotatie": {
+            "type": "GOB.Decimal",
+            "description": "Ro­ta­tie van het per­ceel­num­mer ten be­hoe­ve van af­beel­ding op de kaart. Per­ceel­num­mers wor­den bij­voor­beeld ge­kan­teld om in een smal per­ceel te pas­sen"
+          },
+          "perceelnummer_verschuiving": {
+            "type": "GOB.JSON",
+            "description": "Co­ör­di­na­ten voor het ver­schui­ven van het per­ceel­num­mer op de kaart naar een lo­ca­tie waar meer ruim­te is om het num­mer af te beel­den"
+          },
+          "indicatie_voorlopige_geometrie": {
+            "type": "GOB.Character",
+            "description": "Indicatie of de geometrie (kadastrale grens) voorlopig is of niet J N"
+          },
+          "koopsom": {
+            "type": "GOB.Integer",
+            "description": "Het in een ter in­schrij­ving aan­ge­bo­den stuk ver­mel­de be­drag, waar­voor 1 of meer on­roe­ren­de za­ken zijn ver­kre­gen."
+          },
+          "koopsom_valutacode": {
+            "type": "GOB.String",
+            "description": "Aan­dui­ding van de va­lu­ta­soort ge­bruikt bij de koop"
+          },
+          "koopjaar": {
+            "type": "GOB.String",
+            "description": "Transactiejaar van de aankoop"
+          },
+          "indicatie_meer_objecten": {
+            "type": "GOB.Character",
+            "description": "In­di­ca­tie dat de koop­som be­trek­king heeft op meer dan 1 ka­das­traal ob­ject"
+          },
+          "toestandsdatum": {
+            "type": "GOB.DateTime",
+            "description": "De toestandsdatum is de datum die aangeeft tot hoever de kadastrale registratie volledig is bijgewerkt. Dat houdt in dat: alle voor en op deze toestandsdatum binnengekomen brondocumenten zijn verwerkt; alle brondocumenten die na deze toestandsdatum zijn binnengekomen, verwerkt kunnen zijn."
+          },
+          "begin_geldigheid": {
+            "type": "GOB.DateTime",
+            "description": ""
+          },
+          "eind_geldigheid": {
+            "type": "GOB.DateTime",
+            "description": ""
+          },
+          "in_onderzoek": {
+            "type": "GOB.String",
+            "description": "Als dit veld is ge­vuld geeft dit de omschrijving waarom dit gegeven in onderzoek staat (art. 7n en 7r Kadasterwet)."
+          },
+          "is_ontstaan_uit_g_perceel": {
+            "type": "GOB.Reference",
+            "description": "Dit veld is al­léén ge­vuld wan­neer het be­schre­ven ka­das­tra­le ob­ject een A-per­ceel be­treft.",
+            "ref": "brk:kadastraal_object"
+          },
+          "heeft_een_relatie_met_verblijfsobject": {
+            "type": "GOB.ManyReference",
+            "description": "Relatie naar verblijfsobject",
+            "ref": "bag:verblijfsobjecten"
+          }
+        }
+      }
+    }
   }
 }
