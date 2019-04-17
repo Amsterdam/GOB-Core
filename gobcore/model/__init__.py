@@ -195,3 +195,12 @@ class GOBModel():
 
     def get_table_name(self, catalog_name, collection_name):
         return f'{catalog_name}_{collection_name}'
+
+    def table_name_from_ref(self, ref):
+        """Returns the table name from a reference
+
+        :param ref:
+        :return:
+        """
+        catalog, collection = ref.split(':')
+        return self.get_table_name(catalog, collection)

@@ -9,7 +9,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 # Import data definitions
 from gobcore.model import GOBModel, EVENTS, EVENTS_DESCRIPTION
-from gobcore.model.metadata import FIXED_FIELDS, PRIVATE_META_FIELDS, PUBLIC_META_FIELDS, STATE_FIELDS, FIELD
+from gobcore.model.metadata import FIELD
 from gobcore.model.metadata import columns_to_fields
 from gobcore.sources import GOBSources
 from gobcore.typesystem import get_gob_type
@@ -32,25 +32,6 @@ def get_column(column_name, column_specification):
     column = gob_type.get_column_definition(column_name)
     column.doc = column_specification["description"]
     return column
-
-
-def _fields_for_collection(collection):
-    """
-    Returns fields for entity from collection
-
-    :param collection:
-    :return:
-    """
-    fields = {col: desc for col, desc in collection['fields'].items()}
-    state_fields = STATE_FIELDS if collection.get('has_states') else {}
-
-    return {
-        **FIXED_FIELDS,
-        **PRIVATE_META_FIELDS,
-        **PUBLIC_META_FIELDS,
-        **fields,
-        **state_fields,
-    }
 
 
 def _derive_models():
@@ -98,21 +79,14 @@ def _derive_models():
             # }
 
             # the GOB model for the specified entity
-            entity = _fields_for_collection(collection)
-
             table_name = model.get_table_name(catalog_name, collection_name)
-            models[table_name] = columns_to_model(table_name, entity)
+            models[table_name] = columns_to_model(table_name, collection['all_fields'])
 
     return models
 
 
 def _remove_leading_underscore(s: str):
     return re.sub(r'^_', '', s)
-
-
-def _tablename_from_ref(ref: str):
-    catalog, collection = ref.split(':')
-    return model.get_table_name(catalog, collection)
 
 
 def _default_indexes_for_columns(input_columns: list) -> dict:
@@ -142,10 +116,9 @@ def _default_indexes_for_columns(input_columns: list) -> dict:
 
 def _relation_indexes_for_collection(catalog_name, collection_name, collection):
     indexes = {}
-    entity = _fields_for_collection(collection)
     table_name = model.get_table_name(catalog_name, collection_name)
 
-    reference_columns = {column: desc['ref'] for column, desc in entity.items() if
+    reference_columns = {column: desc['ref'] for column, desc in collection['all_fields'].items() if
                          desc['type'] in ['GOB.Reference', 'GOB.ManyReference']}
 
     # Search source and destination attributes for relation and define index
@@ -154,7 +127,7 @@ def _relation_indexes_for_collection(catalog_name, collection_name, collection):
 
         for relation in relations:
             src_index_col = f"{relation['source_attribute'] if 'source_attribute' in relation else col}"
-            dst_index_table = _tablename_from_ref(ref)
+            dst_index_table = model.table_name_from_ref(ref)
 
             indexes[f'{table_name}.idx.{_remove_leading_underscore(src_index_col)}'] = {
                 "table_name": table_name,
@@ -178,7 +151,7 @@ def _derive_indexes() -> dict:
                 # No migrations defined yet...
                 raise ValueError("Unexpected version, please write a generic migration here or migrate the import")
 
-            entity = _fields_for_collection(collection)
+            entity = collection['all_fields']
             table_name = model.get_table_name(catalog_name, collection_name)
 
             # Generate indexes on default columns
