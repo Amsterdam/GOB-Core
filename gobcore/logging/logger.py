@@ -34,7 +34,8 @@ class RequestsHandler(logging.Handler):
             "formatted_msg": self.format(record),
         }
 
-        optional_attrs = ["process_id", "id", "source", "application", "destination", "catalogue", "entity", "data"]
+        optional_attrs = ["process_id", "id", "source", "application", "destination", "catalogue", "entity", "data",
+                          "jobid", "stepid"]
         for optional_attr in optional_attrs:
             log_msg[optional_attr] = getattr(record, optional_attr, None)
 
