@@ -1550,6 +1550,74 @@
             "ref": "bag:verblijfsobjecten"
           }
         }
+      },
+      "zakelijkerechten": {
+        "version": "0.1",
+        "abbreviation": "ZRT",
+        "entity_id": "identificatie",
+        "attributes": {
+          "identificatie": {
+            "type": "GOB.String",
+            "description": "De Ka­das­ter iden­ti­fi­ca­tie is een door het Ka­das­ter toe­ge­ken­de lan­de­lijk uniek num­mer aan dit za­ke­lijk recht bin­nen de ka­das­tra­le re­gi­stra­tie."
+          },
+          "belast": {
+            "type": "GOB.String",
+            "description": "Dit za­ke­lijk recht be­last de vol­gen­de Aard­za­ke­lijk­rech­ten"
+          },
+          "belast_met": {
+            "type": "GOB.String",
+            "description": "Dit za­ke­lijk recht is be­last met de vol­gen­de Aard­za­ke­lijk­rech­ten"
+          },
+          "ontstaan_uit": {
+            "type": "GOB.String",
+            "description": "Als deze waar­de is ge­vuld, dan is dit recht ont­staan uit een ap­par­te­ments­split­sing, die hier met zijn iden­ti­fi­ce­ren­de ken­merk aan­ge­ge­ven wordt (VVE)"
+          },
+          "betrokken_bij": {
+            "type": "GOB.String",
+            "description": "Als deze waar­de is ge­vuld, dan is dit recht be­trok­ken bij een ap­par­te­ments­split­sing, die hier met zijn iden­ti­fi­ce­ren­de ken­merk aan­ge­ge­ven wordt (VVE)"
+          },
+          "is_beperkt_tot": {
+            "type": "GOB.Integer",
+            "description": "Is be­perkt tot te­naam­stel­ling, dat wil zeg­gen is be­perkt tot een sub­ject"
+          },
+          "rust_op": {
+            "type": "GOB.Reference",
+            "ref": "brk:kadastraleobjecten",
+            "description": "Het kadastraal object en volgnummer waarop het zakelijk recht rust"
+          },
+          "appartementsrechtsplitsingidentificatie": {
+            "type": "GOB.Integer",
+            "description": "De identificatie van de appartementsrechtsplitsing"
+          },
+          "appartementsrechtsplitsingtype": {
+            "type": "GOB.String",
+            "description": "Het type appartementsrechtsplitsing. De mogelijke waarden zijn: hoofdsplitsing of ondersplitsing of splitsing afkoop erfpacht."
+          },
+          "einddatum_appartementsrechtsplitsing": {
+            "type": "GOB.Date",
+            "description": "Eind­da­tum van de appartementsrechtsplitsing"
+          },
+          "indicatie_actueel_appartementsrechtsplitsing": {
+            "type": "GOB.String",
+            "description": "In­di­ca­tie van de ac­tu­a­li­teit van de appartementsrechtsplitsing"
+          },
+          "aard_zakelijk_recht": {
+            "type": "GOB.JSON",
+            "description": "De aard van het zakelijk recht"
+          },
+          "akr_aard_zakelijk_recht": {
+            "type": "GOB.String",
+            "description": "De AKR code van de aard van het zakelijk recht"
+          },
+          "toestandsdatum": {
+            "type": "GOB.Date",
+            "description": "De toestandsdatum is de datum die aangeeft tot hoever de kadastrale registratie volledig is bijgewerkt. Dat houdt in dat: alle voor en op deze toestandsdatum binnengekomen brondocumenten zijn verwerkt; alle brondocumenten die na deze toestandsdatum zijn binnengekomen, verwerkt kunnen zijn."
+          },
+          "einddatum": {
+            "type": "GOB.Date",
+            "description": ""
+          }
+        }
       }
     }
   }
