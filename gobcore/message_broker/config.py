@@ -32,12 +32,14 @@ CONNECTION_PARAMS = pika.ConnectionParameters(
 WORKFLOW_EXCHANGE = "gob.workflow"
 LOG_EXCHANGE = "gob.log"
 STATUS_EXCHANGE = "gob.status"
+RESULT_EXCHANGE = "gob.result"
 
 PROPOSAL_QUEUE = WORKFLOW_EXCHANGE + '.proposal'
 REQUEST_QUEUE = WORKFLOW_EXCHANGE + '.request'
 PREPARE_QUEUE = WORKFLOW_EXCHANGE + '.prepare'
 IMPORT_QUEUE = WORKFLOW_EXCHANGE + '.import'
 EXPORT_QUEUE = WORKFLOW_EXCHANGE + '.export'
+RESULT_QUEUE = RESULT_EXCHANGE + '.completed'
 HEARTBEAT_QUEUE = STATUS_EXCHANGE + '.heartbeat'
 LOG_QUEUE = LOG_EXCHANGE + '.all'
 
@@ -66,6 +68,11 @@ QUEUES = [
         "exchange": WORKFLOW_EXCHANGE,
         "name": EXPORT_QUEUE,
         "key": "export.start"
+    },
+    {
+        "exchange": RESULT_EXCHANGE,
+        "name": RESULT_QUEUE,
+        "key": "*.completed"
     },
     {
         "exchange": LOG_EXCHANGE,

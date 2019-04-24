@@ -16,7 +16,7 @@ import pika
 from gobcore.message_broker.config import CONNECTION_PARAMS,\
                                           MESSAGE_BROKER, MESSAGE_BROKER_PORT, MESSAGE_BROKER_VHOST,\
                                           MESSAGE_BROKER_USER, MESSAGE_BROKER_PASSWORD,\
-                                          WORKFLOW_EXCHANGE, LOG_EXCHANGE, STATUS_EXCHANGE,\
+                                          WORKFLOW_EXCHANGE, LOG_EXCHANGE, STATUS_EXCHANGE, RESULT_EXCHANGE,\
                                           QUEUES
 
 
@@ -87,7 +87,7 @@ def initialize_message_broker():
         print("Connect to message broker")
         channel = connection.channel()
 
-        for exchange in [WORKFLOW_EXCHANGE, LOG_EXCHANGE, STATUS_EXCHANGE]:
+        for exchange in [WORKFLOW_EXCHANGE, LOG_EXCHANGE, STATUS_EXCHANGE, RESULT_EXCHANGE]:
             print(f"Create exchange {exchange}")
             _create_exchange(channel=channel, exchange=exchange, durable=True)
 
