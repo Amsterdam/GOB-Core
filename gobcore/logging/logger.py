@@ -55,6 +55,8 @@ class Logger:
     LOGFORMAT = "%(asctime)s %(name)-12s %(levelname)-8s %(message)s"
     LOGLEVEL = logging.INFO
 
+    _SAVE_LOGS = ['warning', 'error']  # Save these messages to report at end of msg handling
+
     MAX_SIZE = 10000
 
     _logger = {}
@@ -63,6 +65,17 @@ class Logger:
         if name is not None:
             self.set_name(name)
         self._default_args = {}
+        self.messages = {key: [] for key in Logger._SAVE_LOGS}
+
+    def _save_log(self, level, msg):
+        if level in Logger._SAVE_LOGS:
+            self.messages[level].append(msg)
+
+    def get_warnings(self):
+        return self.messages['warning']
+
+    def get_errors(self):
+        return self.messages['error']
 
     def _log(self, level, msg, kwargs={}):
         """
@@ -78,10 +91,11 @@ class Logger:
         assert logger, f"Error: invalid logging level specified ({level})"
         extra = {**self._default_args, **kwargs}
         size = gettotalsizeof(msg) + gettotalsizeof(extra)
-        if size <= Logger.MAX_SIZE:
-            logger(msg, extra=extra)
-        else:
-            logger("Large log message skipped", extra=self._default_args)
+        if size > Logger.MAX_SIZE:
+            msg = f"{msg[:-1000]}..."
+            extra = self._default_args
+        logger(msg, extra=extra)
+        self._save_log(level, msg)
 
     def info(self, msg, kwargs={}):
         self._log('info', msg, kwargs)
