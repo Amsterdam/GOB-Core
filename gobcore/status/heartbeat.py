@@ -9,11 +9,12 @@ A service is marked dead when no heartbeats have been received after the REPORT_
 when the service has reported itself dead via the atexit method
 
 """
+import atexit
 import datetime
 import threading
-import atexit
 import socket
 import os
+import typing
 
 from gobcore.message_broker.config import HEARTBEAT_QUEUE, get_queue
 
@@ -23,6 +24,19 @@ HEARTBEAT_INTERVAL = 60     # Send a heartbeat every 60 seconds
 STATUS_START = "started"
 STATUS_OK = "ended"
 STATUS_FAIL = "failed"
+
+
+def _is_heartbeat_thread(t: threading.Thread) -> bool:
+    """ Test if given thread should be reported by heartbeat.
+        With this filter we can exclude threads that do not bring value to
+        performance management.
+     """
+    return not t.name.startswith("_")
+
+
+def _is_application_thread(t: threading.Thread) -> bool:
+    """ Test if given thread is for is_alive determination """
+    return t.name in ["Eventloop", threading.main_thread().name]
 
 
 class Heartbeat():
@@ -67,15 +81,26 @@ class Heartbeat():
         # At exit send a final heartbeat that denotes the end of the process
         atexit.register(self.send)
 
+    @property
+    def threads(self) -> typing.Iterable[threading.Thread]:
+        """Threads that heartbeat should report on"""
+        return list(filter(
+            _is_heartbeat_thread,
+            threading.enumerate()
+        ))
+
     def send(self):
         """Send a heartbeat signal
 
         :return: None
         """
-        # The main and eventloop thread should be alive
-        threads = [thread for thread in threading.enumerate() if
-                   thread.name in ["Eventloop", threading.main_thread().name] and thread.is_alive()]
-        is_alive = len(threads) == 2
+        application_threads = filter(
+            _is_application_thread,
+            self.threads
+        )
+
+        # All application threads should be alive
+        is_alive = all(t.is_alive() for t in application_threads)
 
         status_msg = {
             "name": self._name,
@@ -86,7 +111,8 @@ class Heartbeat():
                 {
                     "name": t.name,
                     "is_alive": t.is_alive()
-                } for t in threading.enumerate()],
+                } for t in self.threads
+            ],
             "timestamp": datetime.datetime.utcnow().isoformat()
         }
 
