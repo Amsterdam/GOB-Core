@@ -22,6 +22,7 @@ class MockHeartbeatConnection:
         self.queue = queue
         self.key = key
 
+
 class MockedThread:
     _is_alive = True
 
@@ -38,14 +39,17 @@ def generate_threads(*specs):
             yield MockedThread(*spec)
     return func
 
+
 class TestHeartbeat(unittest.TestCase):
 
     @mock.patch("gobcore.message_broker.message_broker.Connection.connect")
     @mock.patch("gobcore.message_broker.message_broker.Connection.publish")
-    def test_constructor(self, mocked_publish, mocked_connect):
+    @mock.patch("atexit.register")
+    def test_constructor(self, mocked_atexit_register, mocked_publish, mocked_connect):
         connection = MockHeartbeatConnection()
         _heartbeat = Heartbeat(connection, "Myname")
         mocked_connect.assert_not_called()
+        mocked_atexit_register.assert_called()
         self.assertIsNotNone(connection.msg)
 
     @mock.patch("gobcore.message_broker.message_broker.Connection.connect")
