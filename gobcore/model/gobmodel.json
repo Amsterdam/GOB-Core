@@ -1447,10 +1447,6 @@
             "ref": "brk:kadastralesecties",
             "description": "De ka­das­tra­le sec­tie, het twee­de ge­deel­te van de aan­dui­ding van een ka­das­traal ob­ject."
           },
-          "volgnummer": {
-            "type": "GOB.Integer",
-            "description": ""
-          },
           "perceelnummer": {
             "type": "GOB.Integer",
             "description": "Een nu­me­rie­ke aan­dui­ding van het ka­das­tra­le per­ceel per sec­tie, deel van de ka­das­tra­le aan­dui­ding van de on­roe­ren­de zaak."
@@ -1554,15 +1550,20 @@
       "zakelijkerechten": {
         "version": "0.1",
         "abbreviation": "ZRT",
-        "entity_id": "_nrn_id",
+        "entity_id": "identificatie",
+        "has_states": true,
         "attributes": {
-          "_nrn_id": {
-            "type": "GOB.Integer",
-            "description": ""
-          },
           "identificatie": {
             "type": "GOB.String",
             "description": "De Ka­das­ter iden­ti­fi­ca­tie is een door het Ka­das­ter toe­ge­ken­de lan­de­lijk uniek num­mer aan dit za­ke­lijk recht bin­nen de ka­das­tra­le re­gi­stra­tie."
+          },
+          "begin_geldigheid": {
+            "type": "GOB.DateTime",
+            "description": ""
+          },
+          "eind_geldigheid": {
+            "type": "GOB.DateTime",
+            "description": ""
           },
           "belast": {
             "type": "GOB.ManyReference",

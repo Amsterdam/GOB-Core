@@ -132,7 +132,9 @@ class Logger:
             'source': header.get('source'),
             'application': header.get('application'),
             'catalogue': header.get('catalogue'),
-            'entity': header.get('entity')
+            'entity': header.get('entity'),
+            'jobid': header.get('jobid'),
+            'stepid': header.get('stepid')
         })
         self._clear_logs()
 

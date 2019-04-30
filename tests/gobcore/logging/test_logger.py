@@ -58,7 +58,9 @@ class TestLogger(TestCase):
                 'source': 'any source',
                 'application': 'any application',
                 'catalogue': 'any catalogue',
-                'entity': 'any entity'
+                'entity': 'any entity',
+                'jobid': None,
+                'stepid': None
             },
             "some": "other"
         }

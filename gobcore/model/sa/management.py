@@ -20,7 +20,7 @@ class Job(Base):
     """
     __tablename__ = 'jobs'
 
-    id = Column(Integer, primary_key=True, doc="Internal primary key")
+    id = Column(Integer, primary_key=True, doc="Internal primary key", index=True)
     name = Column(String, doc="e.g. import.data/metingen.json.2020-01-20T12:43:18.005")
     type = Column(String, doc="import, export, ...", index=True)
     args = Column(ARRAY(String), doc="whatever was passed as argument when the job was started")
@@ -40,8 +40,8 @@ class JobStep(Base):
     """
     __tablename__ = 'jobsteps'
 
-    id = Column(Integer, primary_key=True, doc="Internal primary key")
-    jobid = Column(ForeignKey(Job.id))
+    id = Column(Integer, primary_key=True, doc="Internal primary key", index=True)
+    jobid = Column(ForeignKey(Job.id), index=True)
     name = Column(String, doc="compare, upload, enrich")
     start = Column(DateTime, doc="Time when the job step was started", index=True)
     end = Column(DateTime, doc="Time when the job step has ended", index=True)
@@ -59,9 +59,9 @@ class Log(Base):
     """
     __tablename__ = 'logs'
 
-    logid = Column(Integer, primary_key=True)
-    jobid = Column(ForeignKey(Job.id))
-    stepid = Column(ForeignKey(JobStep.id))
+    logid = Column(Integer, primary_key=True, index=True)
+    jobid = Column(ForeignKey(Job.id), index=True)
+    stepid = Column(ForeignKey(JobStep.id), index=True)
     timestamp = Column(DateTime)
     process_id = Column(String, index=True)
     source = Column(String, index=True)

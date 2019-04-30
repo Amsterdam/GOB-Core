@@ -294,15 +294,15 @@
       "zakelijkerechten": {
         "belast": {
           "method": "equals",
-          "destination_attribute": "_nrn_id"
+          "destination_attribute": "identificatie"
         },
         "belast_met": {
           "method": "equals",
-          "destination_attribute": "_nrn_id"
+          "destination_attribute": "identificatie"
         },
         "rust_op": {
           "method": "equals",
-          "destination_attribute": "_source_id"
+          "destination_attribute": "identificatie"
         }
       }
     }
