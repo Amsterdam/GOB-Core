@@ -1683,7 +1683,7 @@
             "description": "De ge­boor­te­plaats is een plaats­aan­dui­ding, die aan­geeft waar de na­tuur­lij­ke per­soon ge­bo­ren is."
           },
           "geboorteland": {
-            "type": "GOB.String",
+            "type": "GOB.JSON",
             "description": "Geboorteland is een aanduiding van het land waar de natuurlijke persoon geboren is."
           },
           "datum_overlijden": {
