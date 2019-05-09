@@ -322,6 +322,12 @@
           "method": "equals",
           "destination_attribute": "identificatie"
         }
+      },
+      "aantekeningenrechten": {
+        "betrokken_tenaamstelling": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        }
       }
     }
   }
