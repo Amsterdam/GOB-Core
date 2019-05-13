@@ -200,6 +200,9 @@ class TestGobTypes(unittest.TestCase):
         self.assertEqual("2016-05-04T12:00:00.123000", str(GobType.from_value('2016-05-04T12:00:00.123000')))
         self.assertEqual("2016-05-04T12:00:00.123000", str(GobType.from_value('20160504 12:00:00.123000', format="%Y%m%d %H:%M:%S.%f")))
 
+        self.assertEqual("2016-05-04T12:00:00.000000", str(GobType.from_value('2016-05-04T12:00:00')))
+        self.assertEqual("2016-05-04T12:00:00.000000", str(GobType.from_value('20160504 12:00:00', format="%Y%m%d %H:%M:%S")))
+
         self.assertEqual('"2016-05-04T12:00:00.123000"', GobType.from_value('2016-05-04T12:00:00.123000').json)
         self.assertEqual('"2016-05-04T12:00:00.123000"', GobType.from_value('20160504 12:00:00.123000', format="%Y%m%d %H:%M:%S.%f").json)
 

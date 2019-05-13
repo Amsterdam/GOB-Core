@@ -370,6 +370,9 @@ class DateTime(Date):
         if value is not None:
             try:
                 if not isinstance(value, datetime.datetime):
+                    if isinstance(value, str) and len(value) == len('YYYY-MM-DDTHH:MM:SS'):
+                        # Add missing microseconds
+                        value += '.000000'
                     value = datetime.datetime.strptime(str(value), input_format)
                 # Transform to internal string format and work around issue: https://bugs.python.org/issue13305
                 value = f"{value.year:04d}-" + value.strftime("%m-%dT%H:%M:%S.%f")
