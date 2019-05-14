@@ -178,6 +178,12 @@ def _derive_indexes() -> dict:
             "table_name": "events"
         }
 
+    # Add source catalogue, entity, eventid index
+    indexes[f'events.idx.source_catalogue_entity_eventid'] = {
+        "columns": ['source', 'catalogue', 'entity', 'eventid DESC'],
+        "table_name": "events",
+    }
+
     for catalog_name, catalog in model.get_catalogs().items():
         for collection_name, collection in model.get_collections(catalog_name).items():
             if collection['version'] != "0.1":
@@ -193,6 +199,14 @@ def _derive_indexes() -> dict:
                     "columns": columns,
                     "table_name": table_name,
                 }
+
+            # Add source, last event index
+            columns = [FIELD.SOURCE, FIELD.LAST_EVENT + ' DESC']
+            idx_name = "_".join([_remove_leading_underscore(column) for column in columns])
+            indexes[f'{table_name}.idx.{idx_name}'] = {
+                "columns": columns,
+                "table_name": table_name,
+            }
 
             # Generate indexes on referenced columns (GOB.Reference and GOB.ManyReference)
             indexes.update(**_relation_indexes_for_collection(catalog_name, collection_name, collection))
