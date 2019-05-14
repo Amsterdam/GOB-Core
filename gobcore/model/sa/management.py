@@ -3,7 +3,7 @@
 SQLAlchemy Management Models
 
 """
-from sqlalchemy import Column, DateTime, Integer, JSON, ARRAY, String, Boolean, ForeignKey
+from sqlalchemy import Column, DateTime, Integer, JSON, ARRAY, String, Boolean, ForeignKey, Index, text
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -95,6 +95,9 @@ class Service(Base):
 
     def __repr__(self):
         return f'<Service {self.name}>'
+
+
+Index("ix_timestamp_desc", Service.timestamp.desc())
 
 
 class ServiceTask(Base):
