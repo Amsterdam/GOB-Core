@@ -1463,7 +1463,7 @@
         "attributes": {
           "id": {
             "type": "GOB.Integer",
-            "description": ""
+            "description": "Neuron ID"
           },
           "identificatie": {
             "type": "GOB.String",
@@ -1597,7 +1597,7 @@
         "attributes": {
           "id": {
             "type": "GOB.Integer",
-            "description": ""
+            "description": "Neuron ID"
           },
           "identificatie": {
             "type": "GOB.String",
@@ -1681,7 +1681,7 @@
         "attributes": {
           "id": {
             "type": "GOB.Integer",
-            "description": ""
+            "description": "Neuron ID"
           },
           "identificatie": {
             "type": "GOB.String",
@@ -1807,7 +1807,7 @@
         "attributes": {
           "id": {
             "type": "GOB.Integer",
-            "description": ""
+            "description": "Neuron ID"
           },
           "identificatie": {
             "type": "GOB.String",
@@ -1869,7 +1869,7 @@
         "attributes": {
           "id": {
             "type": "GOB.Integer",
-            "description": ""
+            "description": "Neuron ID"
           },
           "identificatie": {
             "type": "GOB.String",
