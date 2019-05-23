@@ -174,7 +174,7 @@ def _derive_indexes() -> dict:
     indexes = {}
 
     # Add indexes to events table
-    event_indexes = ['eventid', 'catalogue', 'entity', 'action', 'source', 'application']
+    event_indexes = ['catalogue', 'entity', 'action', 'source', 'application']
     for column in event_indexes:
         indexes[f'events.idx.{column}'] = {
             "columns": [column],
