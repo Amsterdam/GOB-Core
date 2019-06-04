@@ -1522,7 +1522,7 @@
             "description": "Aanduiding van soort grootte"
           },
           "grootte": {
-            "type": "GOB.Integer",
+            "type": "GOB.Decimal",
             "description": "De groot­te van een ka­das­traal ob­ject is de op­per­vlak­te van het ka­das­tra­le per­ceel. Dit kan bij een deel­per­ceel een ge­schat­te groot­te zijn."
           },
           "soort_cultuur_bebouwd": {
