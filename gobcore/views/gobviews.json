@@ -551,7 +551,7 @@
           "        'identificatie', ligt_in_ggwgebied.identificatie,",
           "        'code', ligt_in_ggwgebied.code,",
           "        'naam', ligt_in_ggwgebied.naam",
-          "      ) AS _ref_ligt_in_ggwgwbied_gbd_ggw,",
+          "      ) AS _ref_ligt_in_ggwgebied_gbd_ggw,",
           "      json_build_object(",
           "        'identificatie', ligt_in_stadsdeel.identificatie,",
           "        'code', ligt_in_stadsdeel.code,",
