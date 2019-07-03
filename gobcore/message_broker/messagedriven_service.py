@@ -80,7 +80,7 @@ class MessagedrivenService:
         self.params = params
         self.thread_per_service = self.params.get('thread_per_service', False)
         self.threads = []
-        self.keep_running = True
+        self.keep_running = True  # This variable is used for testing only
 
         self._init()
 
@@ -136,13 +136,14 @@ class MessagedrivenService:
             # Subscribe to the queues, handle messages in the on_message function (runs in another thread)
             connection.subscribe(queues, self._on_message)
 
-            # Repeat forever
-            print("Queue connection for servicedefinition started")
+            id = ', '.join([queue for queue in queues])
+            print(f"Queue connection for {id} started")
 
+            # Repeat forever
             while self.keep_running and connection.is_alive():
                 time.sleep(CHECK_CONNECTION)
 
-            print("Queue connection for servicedefinition has stopped")
+            print(f"Queue connection for {id} stopped.")
 
     def start(self):
         queues = [service['queue'] for service in self.services.values()]
@@ -165,12 +166,13 @@ class MessagedrivenService:
 
                 for thread in self.threads:
                     if not thread['thread'].is_alive():
+                        print("ERROR: died thread found")
                         # Create new thread
                         thread['thread'] = self._start_thread(thread['queues'])
 
                 n += CHECK_CONNECTION
 
-                if n >= HEARTBEAT_INTERVAL:
+                if n >= HEARTBEAT_INTERVAL and all([t['thread'].is_alive() for t in self.threads]):
                     heartbeat.send()
                     n = 0
 
