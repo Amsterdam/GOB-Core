@@ -1,3 +1,4 @@
+import socket
 from sys import getsizeof
 from itertools import chain
 
@@ -60,3 +61,43 @@ class ProgressTicker():
         self._count += 1
         if self._count % self._report_interval == 0:
             print(f"{self._name} - {self._count}")
+
+
+def get_hostname():
+    """
+    :return: a string containing the hostname of the machine where the Python interpreter is currently executing
+    """
+    return socket.gethostname()
+
+
+def get_ip_address():
+    """
+    :return: a string containing the IPv4 address of the hostname
+    """
+    return socket.gethostbyname(get_hostname())
+
+
+def get_dns():
+    """
+    :return: a string containing the IPv4 address of the dns resolver or None if not found
+    """
+    try:
+        with open('/etc/resolv.conf') as fp:
+            for line in fp.readlines():
+                columns = line.split()
+                if len(columns) >= 2 and columns[0] == 'nameserver':
+                    return columns[1:][0]
+    except Exception:
+        pass
+
+
+def get_host_info():
+    """
+    :return: a dictionary containing hostname, ip adress and dns of the machine
+             where the Python interpreter is currently executing
+    """
+    return {
+        'name': get_hostname(),
+        'address': get_ip_address(),
+        'dns': get_dns()
+    }

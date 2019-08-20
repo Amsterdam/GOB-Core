@@ -17,6 +17,7 @@ import os
 import typing
 
 from gobcore.message_broker.config import STATUS_EXCHANGE, HEARTBEAT_KEY, PROGRESS_KEY
+from gobcore.utils import get_host_info
 
 HEARTBEAT_INTERVAL = 60     # Send a heartbeat every 60 seconds
 
@@ -61,6 +62,9 @@ class Heartbeat():
             jobid = msg["header"].get("jobid")
             stepid = msg["header"].get("stepid")
             if jobid and stepid:
+                # Log progress on stdout
+                print(cls._progress_log_msg(service.get('queue'), status, msg['header']))
+                # Publish progress
                 connection.publish(cls.exchange, cls.progress_key, {
                     # Include header so that any logs get reported on the correct job
                     "header": msg["header"],
@@ -70,6 +74,24 @@ class Heartbeat():
                     "status": status,
                     "info_msg": info_msg
                 })
+
+    @classmethod
+    def _progress_log_msg(cls, queue, status, header):
+        """
+        Return a message that contains info about the message and its execution state
+
+        :param queue: the name of the queue that holds the message
+        :param status: the status of the message
+        :param header: the message header
+        :return: a string with message info
+        """
+        # Info about message being processed
+        msg_info = [f"{key}: {header.get(key)}" for key in ['catalogue', 'collection', 'application', 'source']]
+
+        # Info about host that processes the message
+        host_info = [f"{key}: {value}" for key, value in get_host_info().items()]
+
+        return f"{queue} - {status} - {host_info} - {msg_info}"
 
     def __init__(self, connection, name):
         """Hearbeat
