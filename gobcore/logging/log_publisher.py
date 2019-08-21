@@ -43,7 +43,7 @@ class LogPublisher():
             if self._auto_disconnect_thread is not None:
                 # Join any previously ended threads
                 self._auto_disconnect_thread.join()
-            self._auto_disconnect_thread = threading.Thread(target=self._auto_disconnect)
+            self._auto_disconnect_thread = threading.Thread(target=self._auto_disconnect, name="AutoDisconnect")
             self._auto_disconnect_thread.start()
 
     def _disconnect(self):

@@ -132,7 +132,7 @@ class TestMessageDrivenService(unittest.TestCase):
         mock_thread.return_value = MagicMock()
         result = messagedriven_service._start_thread(queues_arg)
         mock_thread.assert_called_with(target=messagedriven_service._listen,
-                                       args=(queues_arg,))
+                                       args=(queues_arg,), name="QueueHandler")
         mock_thread.return_value.start.assert_called_once()
         self.assertEqual(mock_thread.return_value, result)
 

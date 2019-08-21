@@ -105,7 +105,7 @@ class MessagedrivenService:
             self._start_thread([queue])
 
     def _start_thread(self, queues):
-        thread = threading.Thread(target=self._listen, args=(queues,))
+        thread = threading.Thread(target=self._listen, args=(queues,), name="QueueHandler")
         thread.start()
 
         self.threads.append({
