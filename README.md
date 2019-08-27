@@ -9,7 +9,7 @@ pip install -e git+git://github.com/Amsterdam/GOB-Core.git@vX.Y.Z#egg=gobcore
 ```
 
 If you need to test with a local version of GOB-Core change the include line in 
-requeirements.txt with:
+requirements.txt with:
 
 ```bash
 -e <<local path to GOB-Core>>
