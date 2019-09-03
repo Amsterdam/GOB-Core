@@ -37,8 +37,13 @@ EVENTS = {
 
 class GOBModel():
     inverse_relations = None
+    _data = None
 
     def __init__(self):
+        if GOBModel._data is not None:
+            # Model is already initialised
+            return
+
         path = os.path.join(os.path.dirname(__file__), 'gobmodel.json')
         with open(path) as file:
             data = json.load(file)
@@ -49,8 +54,8 @@ class GOBModel():
             # the test catalogue can be removed
             del data["test_catalogue"]
 
-        self._data = data
-        self._data["rel"] = get_relations(self)
+        GOBModel._data = data
+        data["rel"] = get_relations(self)
 
         global_attributes = {
             **PRIVATE_META_FIELDS,
