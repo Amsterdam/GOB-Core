@@ -6,6 +6,7 @@ from gobcore.model.metadata import FIELD
 from gobcore.model.metadata import STATE_FIELDS
 from gobcore.model.metadata import PRIVATE_META_FIELDS, PUBLIC_META_FIELDS, FIXED_FIELDS
 from gobcore.model.relations import get_relations, get_inverse_relations
+from gobcore.model.schema import load_schema, SchemaException
 
 
 EVENTS_DESCRIPTION = {
@@ -55,6 +56,7 @@ class GOBModel():
             del data["test_catalogue"]
 
         GOBModel._data = data
+        self._load_schemas()
         data["rel"] = get_relations(self)
 
         global_attributes = {
@@ -86,6 +88,22 @@ class GOBModel():
                     **all_attributes,
                     **global_attributes
                 }
+
+    def _load_schemas(self):
+        """
+        Load any external schemas and updates model accordingly
+
+        :return: None
+        """
+        for catalog_name, catalog in self._data.items():
+            for entity_name, model in catalog['collections'].items():
+                if model.get('schema') is not None:
+                    try:
+                        model['attributes'] = load_schema(model['schema'], catalog_name, entity_name)
+                    except SchemaException as e:
+                        # Use a fallback scenario as long as the schemas are still in development
+                        print(f"ERROR: failed to load schema {model['schema']} for {catalog_name}:{entity_name}")
+                        model['attributes'] = model["_attributes"]
 
     def _set_api(self, catalog_name, entity_name, model):
         """

@@ -395,7 +395,8 @@
         "version": "0.1",
         "abbreviation": "PMK",
         "entity_id": "identificatie",
-        "attributes": {
+        "schema": "https://ams-schema.glitch.me/dataset/nap/peilmerken",
+        "_attributes": {
           "identificatie": {
             "type": "GOB.String",
             "description": "Het peilmerknummer van het peilmerk."
