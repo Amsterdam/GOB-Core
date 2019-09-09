@@ -1583,7 +1583,7 @@
           },
           "toestandsdatum": {
             "type": "GOB.DateTime",
-            "description": "De toestandsdatum is de datum die aangeeft tot hoever de kadastrale registratie volledig is bijgewerkt. Dat houdt in dat: alle voor en op deze toestandsdatum binnengekomen brondocumenten zijn verwerkt; alle brondocumenten die na deze toestandsdatum zijn binnengekomen, verwerkt kunnen zijn."
+            "description": "De datum waarop de geleverde toestand van het kadatraal object is ontstaan in de Basisregistratie Kadaster. (normaal gesproken maximaal 2 weken later t.o.v. tijdstip inschrijving)"
           },
           "begin_geldigheid": {
             "type": "GOB.DateTime",
