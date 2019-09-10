@@ -9,8 +9,6 @@ The code is modified to allow for asynchronous send and receive in parallel
 
 """
 import os
-import decimal
-import json
 import threading
 import traceback
 
@@ -18,6 +16,7 @@ import pika
 
 from gobcore.typesystem.json import GobTypeJSONEncoder
 from gobcore.message_broker.offline_contents import offload_message, load_message, end_message
+from gobcore.message_broker.utils import to_json, from_json, get_message_from_body
 
 
 def progress(*args):
@@ -226,9 +225,6 @@ class AsyncConnection(object):
         :param msg: The message
         :return: None
         """
-        def to_json(obj):
-            return json.dumps(obj, cls=GobTypeJSONEncoder, allow_nan=False)
-
         # Check whether a connection has been established
         if self._channel is None:
             raise Exception("Connection with message broker not available")
@@ -280,31 +276,13 @@ class AsyncConnection(object):
                 :param body: The message body (json dump)
                 :return: None
                 """
-                def from_json(obj):
-                    return json.loads(obj, parse_float=decimal.Decimal)
-
-                def get_message_from_body():
-                    offload_id = None
-                    try:
-                        # Try to parse body as json message, else pass it as it is received
-                        msg = from_json(body)
-
-                        # Allow for offline contents
-                        if self._params["load_message"]:
-                            msg, offload_id = load_message(msg, from_json, self._params)
-                    except (TypeError, json.decoder.JSONDecodeError):
-                        # message was not json, pass message as it is received
-                        msg = body
-
-                    return msg, offload_id
-
                 def run_message_handler():
                     offload_id = None
                     result = None
                     msg = None
                     try:
                         # Try to get the message, parse any json contents and retrieve any offloaded contents
-                        msg, offload_id = get_message_from_body()
+                        msg, offload_id = get_message_from_body(body, self._params)
                         # Try to handle the message
                         result = message_handler(self, basic_deliver.exchange, queue, basic_deliver.routing_key, msg)
                     except Exception as e:
