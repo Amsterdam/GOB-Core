@@ -22,6 +22,16 @@ class TestLogger(TestCase):
         self.assertIsNotNone(Logger._logger["Any logger"])
         self.assertIsInstance(Logger._logger["Any logger"], logging.Logger)
 
+    def test_get_warnings(self):
+        logger = Logger()
+        logger.messages['warning'] = 'warning messages'
+        self.assertEqual('warning messages', logger.get_warnings())
+
+    def test_get_errors(self):
+        logger = Logger()
+        logger.messages['error'] = 'error messages'
+        self.assertEqual('error messages', logger.get_errors())
+
     def test_multiple_init(self):
         logger1 = Logger("Any logger")
         logger2 = Logger("Any other logger")
@@ -101,7 +111,6 @@ class TestLogger(TestCase):
             }
         })
         level, args = RequestsHandler.LOG_PUBLISHER.publish.call_args[0]
-        print(args)
         self.assertEqual(args["msg"], "any error msg")
         self.assertEqual(args["source"], msg["header"]["source"])
         self.assertEqual(args["data"], {"error": "any error"})

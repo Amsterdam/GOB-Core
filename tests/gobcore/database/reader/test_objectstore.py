@@ -1,7 +1,7 @@
 import unittest
 from unittest import mock
 
-from gobcore.database.reader.objectstore import read_from_objectstore, _read_xls, _read_csv
+from gobcore.database.reader.objectstore import read_from_objectstore, _read_xls, _read_csv, _yield_rows
 
 
 class MockExcel():
@@ -116,3 +116,25 @@ class TestObjectstoreReader(unittest.TestCase):
         mock_isnull.return_value = True
         result = [obj for obj in _read_csv({}, {}, {})]
         self.assertEqual(result, [])
+
+    @mock.patch("gobcore.database.reader.objectstore.pandas.isnull", lambda x: x == 'pandasnull')
+    def test_yield_rows(self):
+        iterrows = [
+            ('', {'A': 1, 'B': 2, 'C': 'pandasnull', 'D': 4}),
+            ('', {'A': 5, 'B': 6, 'C': 7, 'D': 'pandasnull'}),
+            ('', {'A': 'pandasnull', 'B': 'pandasnull', 'C': 'pandasnull', 'D': 'pandasnull'}),
+        ]
+        file_info = {
+            'some': 'file',
+            'info': 'object',
+        }
+        config = {
+            'operators': ['lowercase_keys']
+        }
+
+        expected_result = [
+            {'a': 1, 'b': 2, 'c': None, 'd': 4, '_file_info': file_info},
+            {'a': 5, 'b': 6, 'c': 7, 'd': None, '_file_info': file_info},
+        ]
+
+        self.assertEqual(expected_result, list(_yield_rows(iterrows, file_info, config)))
