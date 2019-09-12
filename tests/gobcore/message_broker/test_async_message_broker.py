@@ -1,9 +1,12 @@
 import json
 import pika
 import pytest
+import os
 
-from mock import patch
+from unittest import TestCase
+from unittest.mock import MagicMock, patch
 
+from gobcore.message_broker.async_message_broker import AsyncConnection
 from gobcore.message_broker.message_broker import Connection
 
 
@@ -117,3 +120,75 @@ def test_publish_failure(monkeypatch):
     }
     with pytest.raises(Exception):
         connection.publish(queue, "key", "message")
+
+
+class TestAsyncConnection(TestCase):
+
+    def setUp(self) -> None:
+        self.connection_params = {'connection': 'params'}
+        self.params = {'other': 'params'}
+
+        self.async_connection = AsyncConnection(self.connection_params, self.params)
+
+    def test_init(self):
+
+        self.assertEqual({
+            'load_message': True,
+            'stream_contents': False,
+            'other': 'params',
+            'prefetch_count': 1,
+        }, self.async_connection._params)
+        self.assertEqual(self.connection_params, self.async_connection._connection_params)
+        self.assertFalse(self.async_connection._eventloop_failed)
+
+    def test_enter(self):
+        self.async_connection.connect = MagicMock()
+        self.assertEqual(self.async_connection, self.async_connection.__enter__())
+        self.async_connection.connect.assert_called_once()
+
+    def test_exit(self):
+        self.async_connection.disconnect = MagicMock()
+        self.async_connection.__exit__()
+        self.async_connection.disconnect.assert_called_once()
+
+    def test_is_alive(self):
+        self.assertTrue(self.async_connection.is_alive())
+        self.async_connection._eventloop_failed = True
+        self.assertFalse(self.async_connection.is_alive())
+
+    @patch('builtins.print')
+    @patch("gobcore.message_broker.async_message_broker.threading.Thread")
+    @patch("gobcore.message_broker.async_message_broker.os._exit")
+    def test_on_message_redeliver(self, mock_os_exit, mock_thread, mock_print):
+        msg = {'some': 'message'}
+        message_handler = MagicMock()
+        message_handler.side_effect = Exception
+        on_message = self.async_connection.on_message('some queue', message_handler)
+        channel = MagicMock()
+        basic_deliver = MagicMock()
+        properties = {}
+
+        basic_deliver.redelivered = False
+        on_message(channel, basic_deliver, properties, json.dumps(msg))
+
+        thread_target = mock_thread.call_args[1]['target']
+        thread_target()
+
+        mock_os_exit.assert_called_with(os.EX_TEMPFAIL)
+        print_msg = mock_print.call_args[0][0]
+
+        self.assertTrue(print_msg.startswith('Message handling has failed on first try'))
+
+        basic_deliver.redelivered = True
+        on_message(channel, basic_deliver, properties, json.dumps(msg))
+
+        thread_target = mock_thread.call_args[1]['target']
+        thread_target()
+
+        print_msg = mock_print.call_args[0][0]
+
+        self.assertTrue(print_msg.startswith('Message handling has failed on second try'))
+
+
+
+

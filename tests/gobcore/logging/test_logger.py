@@ -32,6 +32,22 @@ class TestLogger(TestCase):
         logger.messages['error'] = 'error messages'
         self.assertEqual('error messages', logger.get_errors())
 
+    def test_log(self):
+        mock_level_logger = MagicMock()
+        mock_logger = type('MockLogger', (object,), {'level': mock_level_logger})
+        logger = Logger()
+        logger._save_log = MagicMock()
+        logger._name = 'name'
+        Logger._logger = {logger._name: mock_logger}
+        logger._default_args = {'some': 'arg'}
+        logger.MAX_SIZE = 15
+        logger.SHORT_MESSAGE_SIZE = 10
+        message = 20 * 'a'
+        short_message = (10 * 'a') + '...'
+
+        logger._log('level', message, {'a': 'kwarg'})
+        mock_level_logger.assert_called_with(short_message, extra=logger._default_args)
+
     def test_multiple_init(self):
         logger1 = Logger("Any logger")
         logger2 = Logger("Any other logger")

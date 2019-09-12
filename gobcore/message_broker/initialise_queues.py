@@ -84,6 +84,20 @@ def _bind_queue(channel, exchange, queue, key):
     )
 
 
+def _initialize_queues(channel, queue_configuration):
+    for exchange, queues in queue_configuration.items():
+        print(f"Create exchange {exchange}")
+        _create_exchange(channel=channel, exchange=exchange, durable=True)
+
+        for queue, keys in queues.items():
+            print(f"Create queue {queue}")
+            _create_queue(channel=channel, queue=queue, durable=True)
+
+            for key in keys:
+                print(f"Binding key {key} to queue {queue}")
+                _bind_queue(channel=channel, exchange=exchange, queue=queue, key=key)
+
+
 def initialize_message_broker():
     """
     Initializes the RabbitMQ message broker.
@@ -101,15 +115,4 @@ def initialize_message_broker():
 
         print("Connect to message broker")
         channel = connection.channel()
-
-        for exchange, queues in QUEUE_CONFIGURATION.items():
-            print(f"Create exchange {exchange}")
-            _create_exchange(channel=channel, exchange=exchange, durable=True)
-
-            for queue, keys in queues.items():
-                print(f"Create queue {queue}")
-                _create_queue(channel=channel, queue=queue, durable=True)
-
-                for key in keys:
-                    print(f"Binding key {key} to queue {queue}")
-                    _bind_queue(channel=channel, exchange=exchange, queue=queue, key=key)
+        _initialize_queues(channel, QUEUE_CONFIGURATION)

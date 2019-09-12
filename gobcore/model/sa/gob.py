@@ -34,6 +34,26 @@ def get_column(column_name, column_specification):
     return column
 
 
+def columns_to_model(table_name, columns, has_states=False):
+    """Create a model out of table_name and GOB column specification
+
+    :param table_name: name of the table
+    :param columns: GOB column specification
+    :param has_states:
+    :return: Model class
+    """
+    # Convert columns to SQLAlchemy Columns
+    columns = {column_name: get_column(column_name, column_spec) for column_name, column_spec in columns.items()}
+
+    # Create model
+    return type(table_name, (Base,), {
+        "__tablename__": table_name,
+        **columns,
+        "__has_states__": has_states,
+        "__repr__": lambda self: f"{table_name}"
+    })
+
+
 def _derive_models():
     """Derive Models from GOB model specification
 
@@ -43,25 +63,6 @@ def _derive_models():
     models = {
         # e.g. "meetbouten_rollagen": <BASE>
     }
-
-    def columns_to_model(table_name, columns, has_states=False):
-        """Create a model out of table_name and GOB column specification
-
-        :param table_name: name of the table
-        :param columns: GOB column specification
-        :param has_states:
-        :return: Model class
-        """
-        # Convert columns to SQLAlchemy Columns
-        columns = {column_name: get_column(column_name, column_spec) for column_name, column_spec in columns.items()}
-
-        # Create model
-        return type(table_name, (Base,), {
-            "__tablename__": table_name,
-            **columns,
-            "__has_states__": has_states,
-            "__repr__": lambda self: f"{table_name}"
-        })
 
     # Start with events
     columns_to_model("events", columns_to_fields(EVENTS, EVENTS_DESCRIPTION))

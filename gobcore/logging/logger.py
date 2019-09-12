@@ -59,6 +59,7 @@ class Logger:
     _SAVE_LOGS = ['warning', 'error']  # Save these messages to report at end of msg handling
 
     MAX_SIZE = 10000
+    SHORT_MESSAGE_SIZE = 1000
 
     _logger = {}
 
@@ -95,8 +96,8 @@ class Logger:
         assert logger, f"Error: invalid logging level specified ({level})"
         extra = {**self._default_args, **kwargs}
         size = gettotalsizeof(msg) + gettotalsizeof(extra)
-        if size > Logger.MAX_SIZE:
-            msg = f"{msg[:-1000]}..."
+        if size > self.MAX_SIZE:
+            msg = f"{msg[:self.SHORT_MESSAGE_SIZE]}..."
             extra = self._default_args
         logger(msg, extra=extra)
         self._save_log(level, msg)

@@ -45,6 +45,13 @@ class TestOfflineContents(unittest.TestCase):
         mocked_filename.assert_called_with("x")
         mocked_remove.assert_called_with("filename")
 
+    @mock.patch('gobcore.message_broker.offline_contents._get_filename', return_value="filename")
+    @mock.patch('os.remove')
+    def testEndMessageCloseReader(self, mocked_remove, mocked_filename):
+        reader = mock.MagicMock()
+        oc.end_message({'some': 'content', 'contents_reader': reader}, 'unique name')
+        reader.close.assert_called_once()
+
     @mock.patch('gobcore.message_broker.offline_contents._get_unique_name', return_value="unique_name")
     @mock.patch('gobcore.message_broker.offline_contents._get_filename', return_value="filename")
     def testOffloadMessage(self, mocked_filename, mocked_unique_name):
@@ -72,6 +79,15 @@ class TestOfflineContents(unittest.TestCase):
                              {"contents": "contents", "any": "value"})
             self.assertFalse(mocked_writer.called)
         '''
+
+    @mock.patch('gobcore.message_broker.offline_contents._get_unique_name', return_value="unique_name")
+    @mock.patch('gobcore.message_broker.offline_contents._get_filename', return_value="filename")
+    def testOffloadMessageException(self, mocked_filename, mocked_unique_name):
+        msg = {'contents': 'the contents'}
+        converter = mock.MagicMock(side_effect=IOError)
+
+        with mock.patch('builtins.open', mock_open()):
+            self.assertEqual(msg, oc.offload_message(msg, converter))
 
     @mock.patch('gobcore.message_broker.offline_contents._get_filename', return_value="filename")
     def testLoadMessage(self, mocked_filename):
@@ -125,10 +141,27 @@ class TestOfflineContents(unittest.TestCase):
 
         mock_remove.assert_called_with(cp_writer.filename)
 
-    @mock.patch('gobcore.message_broker.offline_contents.ijson', mock.MagicMock())
-    @mock.patch('os.remove')
-    @mock.patch('builtins.open')
-    def testContentsReader(self, mock_open, mock_remove):
+
+@mock.patch('gobcore.message_broker.offline_contents.ijson', mock.MagicMock())
+@mock.patch('builtins.open')
+class TestContentsReader(unittest.TestCase):
+
+    def test_init(self, mock_open):
         reader = oc.ContentsReader("filename")
         mock_open.assert_called_with("filename", "r")
         self.assertIsNotNone(reader.file)
+
+    def test_items(self, mock_open):
+        reader = oc.ContentsReader("filename")
+        reader.close = mock.MagicMock()
+        items = ['a', 'b', 'c', 'd']
+        reader._items = items
+
+        self.assertEqual(list(reader.items()), items)
+        reader.close.assert_called_once()
+
+    def test_close(self, mock_open):
+        reader = oc.ContentsReader("filename")
+
+        reader.close()
+        mock_open.return_value.close.assert_called_once()

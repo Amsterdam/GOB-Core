@@ -6,6 +6,7 @@ import pytest
 from mock import patch
 
 from gobcore.message_broker.async_message_broker import AsyncConnection
+from gobcore.message_broker.message_broker import Connection
 
 
 class MockIoloop:
@@ -291,3 +292,28 @@ def test_subscribe(monkeypatch):
     assert(consumed_message == "mybody")
 
     connection.disconnect()
+
+
+def test_is_alive():
+    open_mock = type('OpenMock', (object,), {'is_open': True})
+    close_mock = type('CloseMock', (object,), {'is_open': False})
+    connection = Connection({})
+    connection._connection = None
+    connection._channel = open_mock
+    assert connection.is_alive() is False
+
+    connection._connection = open_mock
+    connection._channel = None
+    assert connection.is_alive() is False
+
+    connection._channel = open_mock
+    assert connection.is_alive() is True
+
+    connection._connection = close_mock
+    assert connection.is_alive() is False
+
+    connection._channel = close_mock
+    assert connection.is_alive() is False
+
+    connection._connection = open_mock
+    assert connection.is_alive() is False

@@ -40,6 +40,13 @@ class TestModel(unittest.TestCase):
         fields = self.model.get_functional_key_fields('meetbouten', 'meetbouten')
         self.assertEqual(fields, ['_source', 'identificatie'])
 
+    def test_functional_key_fields_state(self):
+        self.model.get_collection = MagicMock(return_value={'entity_id': 'identificatie'})
+        self.model.has_states = MagicMock(return_value=True)
+
+        self.assertEqual(['_source', 'identificatie', 'volgnummer'],
+                         self.model.get_functional_key_fields('cat', 'coll'))
+
     def test_technical_key_fields(self):
         fields = self.model.get_technical_key_fields('meetbouten', 'meetbouten')
         self.assertEqual(fields, ['_source', '_source_id'])
@@ -57,6 +64,24 @@ class TestModel(unittest.TestCase):
         }
         source_id = self.model.get_source_id(entity, spec)
         self.assertEqual(source_id, 'idvalue')
+
+    def test_source_id_states(self):
+        self.model.has_states = MagicMock(return_value=True)
+
+        entity = {
+            'idfield': 'idvalue',
+            'volgnummer': '1'
+        }
+        spec = {
+            'catalogue': 'meetbouten',
+            'entity': 'meetbouten',
+            'source': {
+                'entity_id': 'idfield'
+            }
+        }
+
+        self.assertEqual("idvalue.1", self.model.get_source_id(entity, spec))
+        self.model.has_states.assert_called_with('meetbouten', 'meetbouten')
 
     def test_set_api(self):
         model = {}
@@ -178,3 +203,23 @@ class TestModel(unittest.TestCase):
         result = model.get_catalog_collection_names_from_ref(ref)
         model.split_ref.assert_called_with(ref)
         self.assertEqual(model.split_ref.return_value, result)
+
+    @patch("gobcore.model.os.getenv", lambda x, _: x == 'DISABLE_TEST_CATALOGUE')
+    def test_test_catalog_deleted(self):
+        # Reinitialise
+        GOBModel._data = None
+
+        model = GOBModel()
+        self.assertFalse('test_catalogue' in model._data)
+
+        # Cleanup
+        GOBModel._data = None
+
+    def test_test_catalog_present(self):
+        model = GOBModel()
+        self.assertTrue('test_catalogue' in model._data)
+
+
+
+
+

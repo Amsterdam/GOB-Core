@@ -3,7 +3,7 @@ from unittest import mock
 
 from gobcore.model.relations import _get_relation, _get_relation_name, get_relation_name, get_relations, \
     create_relation, get_inverse_relations, get_fieldnames_for_missing_relations, _split_relation_table_name, \
-    get_reference_name_from_relation_table_name
+    get_reference_name_from_relation_table_name, _get_destination
 from gobcore.model import GOBModel
 from gobcore.exceptions import GOBException
 
@@ -284,3 +284,11 @@ class TestRelations(unittest.TestCase):
             mock_get_destination.side_effect = [None, "destination", "destination2"]
             result = get_fieldnames_for_missing_relations(MockModel())
             self.assertEqual(expected_result, result)
+
+    def test_get_destination_errors(self):
+        model = mock.MagicMock()
+        model.get_catalog.side_effect = TypeError
+        self.assertIsNone(_get_destination(model, 'cat', 'coll'))
+
+        model.get_catalog.side_effect = KeyError
+        self.assertIsNone(_get_destination(model, 'cat', 'coll'))

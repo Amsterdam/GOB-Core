@@ -1,13 +1,21 @@
 import unittest
 import mock
 
-from gobcore.model.schema import _get_gob_info, _to_gob, _do_resolve, SchemaException
+from gobcore.model.schema import _get_gob_info, _to_gob, _do_resolve, SchemaException, load_schema
 
 
 class TestAMSSchema(unittest.TestCase):
 
     def setUp(self):
         pass
+
+    @mock.patch("gobcore.model.schema.requests.get")
+    @mock.patch("gobcore.model.schema._resolve_all")
+    @mock.patch("gobcore.model.schema._to_gob")
+    def test_load_schema(self, mock_to_gob, mock_resolve, mock_get):
+        self.assertEqual(mock_to_gob.return_value, load_schema('uri', 'catalog', 'collection'))
+        mock_get.assert_called_with('uri')
+        mock_to_gob.assert_called_with(mock_resolve.return_value)
 
     def test_schema_gob_info(self):
         expect = {
@@ -79,7 +87,7 @@ class TestAMSSchema(unittest.TestCase):
             'y': {'anything': 'else', 'type': 'GOB.String'}
         })
 
-    def test_resolve(self):
+    def test_do_resolve(self):
         resolver = mock.MagicMock()
 
         node = {
@@ -96,3 +104,17 @@ class TestAMSSchema(unittest.TestCase):
         }
         result = _do_resolve(node, resolver)
         self.assertEqual(result, node)
+
+        node = {
+            "a": "b",
+            "$ref": "da ref"
+        }
+        resolver.resolving.return_value.__enter__.return_value = {'e': 'f'}
+        result = _do_resolve(node, resolver)
+        resolver.resolving.assert_called_with('da ref')
+        self.assertEqual({'$ref': 'da ref', 'a': 'b', 'e': 'f'}, result)
+
+        # Same as previous, now as part of list
+        node = [node]
+        self.assertEqual([result], _do_resolve(node, resolver))
+

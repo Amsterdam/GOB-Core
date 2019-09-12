@@ -14,9 +14,8 @@ import traceback
 
 import pika
 
-from gobcore.typesystem.json import GobTypeJSONEncoder
-from gobcore.message_broker.offline_contents import offload_message, load_message, end_message
-from gobcore.message_broker.utils import to_json, from_json, get_message_from_body
+from gobcore.message_broker.offline_contents import offload_message, end_message
+from gobcore.message_broker.utils import to_json, get_message_from_body
 
 
 def progress(*args):
@@ -245,6 +244,70 @@ class AsyncConnection(object):
             body=json_msg
         )
 
+    def on_message(self, queue, message_handler):
+        """This function is called for every message that is received
+
+        The specified handler will be called to let the application handle the message.
+        Default behaviour is to acknowledge the message after it has been successfully handled.
+        If the handler returns False the message will not be acknowledged and stay on the queue
+
+        :param queue: The queue that is consumed by this on_message
+        :return: The handle message function
+        """
+
+        def handle_message(channel, basic_deliver, properties, body):
+            """Handle the incoming message
+
+            The message body is a json object which will be parsed on receipt
+
+            Call the handler and acknowledge the message after it has been successfully handled
+
+            :param channel: The channel that represents the connection with RabbitMQ
+            :param basic_deliver: The deliver properties, e.g. is redelivery, routing_key, ...
+            :param properties: general message properties
+            :param body: The message body (json dump)
+            :return: None
+            """
+
+            def run_message_handler():
+                offload_id = None
+                result = None
+                msg = None
+                try:
+                    # Try to get the message, parse any json contents and retrieve any offloaded contents
+                    msg, offload_id = get_message_from_body(body, self._params)
+                    # Try to handle the message
+                    result = message_handler(self, basic_deliver.exchange, queue, basic_deliver.routing_key, msg)
+                except Exception as e:
+                    # Print error message, the message that caused the error and a short stacktrace
+                    stacktrace = traceback.format_exc(limit=-10)
+                    print(f"Message handling has failed: {str(e)}, message: {str(body)}", stacktrace)
+                    if basic_deliver.redelivered:
+                        # When a message is redelivered then remove the message from the queue
+                        print("Message handling has failed on second try, removing message")
+                    else:
+                        # Fatal fail program on first try
+                        print("Message handling has failed on first try, terminating program")
+                        os._exit(os.EX_TEMPFAIL)
+
+                if msg is not None:
+                    # run fail-safe method to end the message
+                    end_message(msg, offload_id)
+
+                if result is not False:
+                    # Default is to acknowledge message
+                    # Only on an explicit return value of False the message keeps unacked.
+                    channel.basic_ack(basic_deliver.delivery_tag)
+
+            if self._message_handler_thread is not None:
+                # Wait for any not yet terminated thread
+                self._message_handler_thread.join()
+            # Start a new thread to handle the message
+            self._message_handler_thread = threading.Thread(target=run_message_handler, name="MessageHandler")
+            self._message_handler_thread.start()
+
+        return handle_message
+
     def subscribe(self, queues, message_handler):
         """Subscribe to the given queues
 
@@ -252,72 +315,9 @@ class AsyncConnection(object):
         :return: None
         """
 
-        def on_message(queue):
-            """This function is called for every message that is received
-
-            The specified handler will be called to let the application handle the message.
-            Default behaviour is to acknowledge the message after it has been successfully handled.
-            If the handler returns False the message will not be acknowledged and stay on the queue
-
-            :param queue: The queue that is consumed by this on_message
-            :return: The handle message function
-            """
-
-            def handle_message(channel, basic_deliver, properties, body):
-                """Handle the incoming message
-
-                The message body is a json object which will be parsed on receipt
-
-                Call the handler and acknowledge the message after it has been successfully handled
-
-                :param channel: The channel that represents the connection with RabbitMQ
-                :param basic_deliver: The deliver properties, e.g. is redelivery, routing_key, ...
-                :param properties: general message properties
-                :param body: The message body (json dump)
-                :return: None
-                """
-                def run_message_handler():
-                    offload_id = None
-                    result = None
-                    msg = None
-                    try:
-                        # Try to get the message, parse any json contents and retrieve any offloaded contents
-                        msg, offload_id = get_message_from_body(body, self._params)
-                        # Try to handle the message
-                        result = message_handler(self, basic_deliver.exchange, queue, basic_deliver.routing_key, msg)
-                    except Exception as e:
-                        # Print error message, the message that caused the error and a short stacktrace
-                        stacktrace = traceback.format_exc(limit=-10)
-                        print(f"Message handling has failed: {str(e)}, message: {str(body)}", stacktrace)
-                        if basic_deliver.redelivered:
-                            # When a message is redelivered then remove the message from the queue
-                            print("Message handling has failed on second try, removing message")
-                        else:
-                            # Fatal fail program on first try
-                            print("Message handling has failed on first try, terminating program")
-                            os._exit(os.EX_TEMPFAIL)
-
-                    if msg is not None:
-                        # run fail-safe method to end the message
-                        end_message(msg, offload_id)
-
-                    if result is not False:
-                        # Default is to acknowledge message
-                        # Only on an explicit return value of False the message keeps unacked.
-                        channel.basic_ack(basic_deliver.delivery_tag)
-
-                if self._message_handler_thread is not None:
-                    # Wait for any not yet terminated thread
-                    self._message_handler_thread.join()
-                # Start a new thread to handle the message
-                self._message_handler_thread = threading.Thread(target=run_message_handler, name="MessageHandler")
-                self._message_handler_thread.start()
-
-            return handle_message
-
         for queue in queues:
             self._channel.basic_consume(
-                consumer_callback=on_message(queue),
+                consumer_callback=self.on_message(queue, message_handler),
                 queue=queue
             )
 

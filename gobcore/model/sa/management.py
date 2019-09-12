@@ -147,4 +147,4 @@ class Task(Base):
     process_id = Column(String)
 
     def __repr__(self):
-        return f'<Task {self.name} ({self.stepid})'
+        return f'<Task {self.name} ({self.stepid})>'
