@@ -46,7 +46,7 @@ class AsyncConnection(object):
 
     """
 
-    def __init__(self, connection_params, params={}):
+    def __init__(self, connection_params, params=None):
         """Create a new AsyncConnection
 
         :param address: The RabbitMQ address
@@ -59,9 +59,10 @@ class AsyncConnection(object):
         self._params = {
             "load_message": True,
             "stream_contents": False,
-            **params,
             "prefetch_count": 1
         }
+        if params:
+            self._params = {**self._params, **params}
 
         # The Connection and Channel objects
         self._connection = None

@@ -81,7 +81,7 @@ class Logger:
     def get_errors(self):
         return self.messages['error']
 
-    def _log(self, level, msg, kwargs={}):
+    def _log(self, level, msg, kwargs=None):
         """
         Logs the message at the given level
 
@@ -93,7 +93,7 @@ class Logger:
         """
         logger = getattr(Logger._logger[self._name], level)
         assert logger, f"Error: invalid logging level specified ({level})"
-        extra = {**self._default_args, **kwargs}
+        extra = {**self._default_args, **kwargs} if kwargs else {**self._default_args}
         size = gettotalsizeof(msg) + gettotalsizeof(extra)
         if size > Logger.MAX_SIZE:
             msg = f"{msg[:-1000]}..."
@@ -101,13 +101,13 @@ class Logger:
         logger(msg, extra=extra)
         self._save_log(level, msg)
 
-    def info(self, msg, kwargs={}):
+    def info(self, msg, kwargs=None):
         self._log('info', msg, kwargs)
 
-    def warning(self, msg, kwargs={}):
+    def warning(self, msg, kwargs=None):
         self._log('warning', msg, kwargs)
 
-    def error(self, msg, kwargs={}):
+    def error(self, msg, kwargs=None):
         self._log('error', msg, kwargs)
 
     def set_name(self, name):

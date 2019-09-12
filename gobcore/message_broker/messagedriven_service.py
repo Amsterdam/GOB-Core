@@ -72,10 +72,10 @@ class MessagedrivenService:
     MessagedrivenService(SERVICEDEFINITION).start()
 
     """
-    def __init__(self, services, name, params={}):
+    def __init__(self, services, name, params=None):
         self.services = services
         self.name = name
-        self.params = params
+        self.params = params or {}
         self.thread_per_service = self.params.get('thread_per_service', False)
         self.threads = []
         self.keep_running = True  # This variable is used for testing only
@@ -183,6 +183,6 @@ class MessagedrivenService:
         return next(s for s in self.services.values() if s["queue"] == queue)
 
 
-def messagedriven_service(services, name, params={}):
+def messagedriven_service(services, name, params=None):
     # For backwards compatibility
     MessagedrivenService(services, name, params).start()
