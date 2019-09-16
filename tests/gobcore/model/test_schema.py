@@ -14,7 +14,7 @@ class TestAMSSchema(unittest.TestCase):
     @mock.patch("gobcore.model.schema._to_gob")
     def test_load_schema(self, mock_to_gob, mock_resolve, mock_get):
         self.assertEqual(mock_to_gob.return_value, load_schema('uri', 'catalog', 'collection'))
-        mock_get.assert_called_with('uri')
+        mock_get.assert_called_with('uri', timeout=3)
         mock_to_gob.assert_called_with(mock_resolve.return_value)
 
     def test_schema_gob_info(self):

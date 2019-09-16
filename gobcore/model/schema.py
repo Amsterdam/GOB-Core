@@ -21,7 +21,7 @@ def load_schema(uri, catalog, collection):
     """
     try:
         # Load schema
-        response = requests.get(uri)
+        response = requests.get(uri, timeout=3)
         schema = response.json()
 
         # Resolve schema
