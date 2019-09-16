@@ -103,6 +103,7 @@ def _default_indexes_for_columns(input_columns: list) -> dict:
         (FIELD.SEQNR,),
         (FIELD.APPLICATION,),
         (FIELD.ID,),
+        (FIELD.GOBID,),
         (FIELD.SOURCE_ID,),
         (FIELD.START_VALIDITY,),
         (FIELD.END_VALIDITY,),
