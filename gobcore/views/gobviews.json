@@ -712,6 +712,7 @@
           "      vot.identificatie,",
           "      vot.volgnummer,",
           "      vot.aanduiding_in_onderzoek,",
+          "      vot.registratiedatum,",
           "      vot.geconstateerd,",
           "      json_build_object(",
           "        'identificatie', heeft_hoofdadres.identificatie,",
@@ -1123,6 +1124,7 @@
           "    SELECT",
           "      pnd.identificatie,",
           "      pnd.volgnummer,",
+          "      pnd.registratiedatum,",
           "      pnd.aanduiding_in_onderzoek,",
           "      pnd.geconstateerd,",
           "      pnd.oorspronkelijk_bouwjaar,",
@@ -1258,7 +1260,7 @@
           "    SELECT ",
           "      bpg.identificatie,",
           "      kot.identificatie AS kadastraal_object,",
-          "      kot.aangeduid_door_kadastralegemeente->>'bronwaarde' AS aangeduid_door_kadastralegemeente,",
+          "      kot.aangeduid_door_kadastralegemeentecode->>'bronwaarde' AS aangeduid_door_kadastralegemeentecode,",
           "      kot.aangeduid_door_kadastralesectie->>'bronwaarde' AS aangeduid_door_kadastralesectie,",
           "      kot.perceelnummer,",
           "      kot.indexletter,",
@@ -1280,6 +1282,7 @@
           "    ) kot ",
           "    ON",
           "      kot.src_id = bpg._id",
+          "    WHERE bpg._expiration_date IS NULL or bpg._expiration_date > NOW()",
           "    ORDER BY",
           "      bpg.identificatie"
         ]
