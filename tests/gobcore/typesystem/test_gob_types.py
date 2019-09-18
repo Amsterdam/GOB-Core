@@ -4,7 +4,6 @@ from datetime import datetime, date
 
 from gobcore.exceptions import GOBException, GOBTypeException
 from gobcore.typesystem import get_gob_type, is_gob_json_type, _gob_types
-from gobcore.typesystem.gob_types import GOBType
 from tests.gobcore import fixtures
 
 
@@ -318,3 +317,6 @@ class TestGobTypes(unittest.TestCase):
             self.assertTrue(is_gob_json_type(t))
         for t in non_json_types:
             self.assertFalse(is_gob_json_type(t))
+
+        self.assertFalse(is_gob_json_type('invalid_type'))
+

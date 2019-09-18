@@ -1,8 +1,10 @@
 import unittest
+import copy
 from unittest.mock import MagicMock, patch
 
 from gobcore.exceptions import GOBException
 from gobcore.model import GOBModel
+from gobcore.model.schema import SchemaException
 from tests.gobcore.fixtures import random_string
 
 
@@ -219,7 +221,63 @@ class TestModel(unittest.TestCase):
         model = GOBModel()
         self.assertTrue('test_catalogue' in model._data)
 
+    @patch('gobcore.model.load_schema')
+    def test_load_schemas(self, mock_load_schema):
+        mock_load_schema.return_value = 'loaded_attributes'
+        model = GOBModel()
+        model._data = {
+            'cat_a': {
+                'collections': {
+                    'coll_a': {
+                        'attributes': {
+                            'some': 'attribute',
+                        },
+                    },
+                    'coll_b': {
+                        '_attributes': {
+                            'some': 'attribute',
+                        },
+                        'schema': 'schema_b',
+                    }
+                }
+            },
+        }
+        expected = copy.deepcopy(model._data)
+        expected['cat_a']['collections']['coll_b']['attributes'] = 'loaded_attributes'
 
+        model._load_schemas()
+        self.assertEqual(expected, model._data)
 
+        mock_load_schema.assert_called_with('schema_b', 'cat_a', 'coll_b')
 
+    @patch('gobcore.model.load_schema')
+    @patch('builtins.print')
+    def test_load_schema_error(self, mock_print, mock_load_schema):
+        mock_load_schema.side_effect = SchemaException
+        model = GOBModel()
+        model._data = {
+            'cat_a': {
+                'collections': {
+                    'coll_a': {
+                        'attributes': {
+                            'some': 'attribute',
+                        },
+                    },
+                    'coll_b': {
+                        '_attributes': {
+                            'some': 'attribute',
+                        },
+                        'schema': 'schema_b',
+                    }
+                }
+            },
+        }
+        expected = copy.deepcopy(model._data)
+        expected['cat_a']['collections']['coll_b']['attributes'] = \
+            expected['cat_a']['collections']['coll_b']['_attributes']
+
+        model._load_schemas()
+        self.assertEqual(expected, model._data)
+        mock_print.assert_called_once()
+        self.assertTrue(mock_print.call_args[0][0].startswith('ERROR: failed to load schema'))
 

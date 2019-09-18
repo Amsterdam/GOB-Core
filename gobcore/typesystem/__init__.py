@@ -100,10 +100,11 @@ def is_gob_json_type(name):
     :param name:
     :return:
     """
-    gobtype = _gob_types_dict[name]
-
-    if gobtype is None:
+    try:
+        gobtype = _gob_types_dict[name]
+    except KeyError:
         return False
+
     return gobtype.sql_type.__visit_name__ == "JSONB"
 
 

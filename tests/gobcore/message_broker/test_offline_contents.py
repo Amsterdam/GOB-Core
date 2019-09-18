@@ -52,6 +52,17 @@ class TestOfflineContents(unittest.TestCase):
         oc.end_message({'some': 'content', 'contents_reader': reader}, 'unique name')
         reader.close.assert_called_once()
 
+    @mock.patch('gobcore.message_broker.offline_contents._get_filename', return_value="filename")
+    @mock.patch('os.remove')
+    @mock.patch('builtins.print')
+    def testEndMessageRemoveFailed(self, mocked_print, mocked_remove, mocked_filename):
+        mocked_remove.side_effect = Exception
+        reader = mock.MagicMock()
+        oc.end_message({'some': 'content', 'contents_reader': reader}, 'unique name')
+        reader.close.assert_called_once()
+        mocked_print.assert_called_once()
+        self.assertTrue(mocked_print.call_args[0][0].startswith('Remove failed'))
+
     @mock.patch('gobcore.message_broker.offline_contents._get_unique_name', return_value="unique_name")
     @mock.patch('gobcore.message_broker.offline_contents._get_filename', return_value="filename")
     def testOffloadMessage(self, mocked_filename, mocked_unique_name):

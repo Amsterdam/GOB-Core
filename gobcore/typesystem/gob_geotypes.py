@@ -55,7 +55,7 @@ class GEOType(GOBType):
     @abstractmethod
     def from_values(cls, **values):
         """Class method for composity GOB Types, that wil instantiate the type with the required values"""
-        pass
+        pass  # pragma: no cover
 
     @classmethod
     def _to_wkt_elem(cls, value, srid=None):
