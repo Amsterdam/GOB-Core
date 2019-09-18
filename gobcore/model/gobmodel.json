@@ -1593,10 +1593,6 @@
             "type": "GOB.DateTime",
             "description": ""
           },
-          "wijzigingsdatum": {
-            "type": "GOB.DateTime",
-            "description": ""
-          },
           "in_onderzoek": {
             "type": "GOB.String",
             "description": "Als dit veld is ge­vuld geeft dit de omschrijving waarom dit gegeven in onderzoek staat (art. 7n en 7r Kadasterwet)."
