@@ -1,5 +1,6 @@
 import unittest
 from unittest.mock import MagicMock, patch
+from json import JSONDecodeError
 
 import geoalchemy2
 
@@ -145,14 +146,28 @@ class TestGeometry(unittest.TestCase):
 
     def test_from_value(self):
         with self.assertRaises(ValueError):
-            Polygon.from_value('val')
+            Geometry.from_value('val')
 
         mock_db_field = MagicMock(spec=geoalchemy2.elements.WKBElement)
         mock_db_field.srid = 28992
         mock_db_field.data = '01010000204071000000000000f0abfd400000000050a11d41'
 
-        res = Polygon.from_value(mock_db_field)
+        res = Geometry.from_value(mock_db_field)
 
-    def test_from_value_errors(self):
-        # TODO
-        pass
+    def test_from_values(self):
+        with self.assertRaises(ValueError):
+            Geometry.from_values()
+
+    @patch('gobcore.typesystem.gob_geotypes.json.dumps')
+    @patch('gobcore.typesystem.gob_geotypes.json.loads')
+    def test_from_value_dict_and_errors(self, mock_loads, mock_dumps):
+        mock_dumps.return_value = 'value'
+        mock_loads.side_effect = TypeError
+
+        Geometry.from_value({'dict': 'value'})
+        mock_dumps.assert_called_with({'dict': 'value'}, cls=GobTypeJSONEncoder)
+
+        mock_loads.side_effect = JSONDecodeError('msg', 'doc', 0)
+
+        Geometry.from_value({'dict': 'value'})
+        mock_dumps.assert_called_with({'dict': 'value'}, cls=GobTypeJSONEncoder)

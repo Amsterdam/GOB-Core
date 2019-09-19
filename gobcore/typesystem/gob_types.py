@@ -101,13 +101,13 @@ class GOBType(metaclass=ABCMeta):
 
     @classmethod
     @abstractmethod
-    def from_value(cls, value):
+    def from_value(cls, value, **kwargs):
         """Classmethod GOBType constructor, able to ingest multiple types of values
 
         :param value: the value of the GOBType instance
         :return: GOBType
         """
-        pass
+        pass  # pragma: no cover
 
     @property
     @abstractmethod
@@ -116,7 +116,7 @@ class GOBType(metaclass=ABCMeta):
 
         :return: JSON String
         """
-        pass
+        pass  # pragma: no cover
 
     @property
     @abstractmethod
@@ -125,7 +125,7 @@ class GOBType(metaclass=ABCMeta):
 
         :return: DB Storable object
         """
-        pass
+        pass  # pragma: no cover
 
     @property
     @abstractmethod
@@ -134,7 +134,7 @@ class GOBType(metaclass=ABCMeta):
 
         :return: Python object
         """
-        pass
+        pass  # pragma: no cover
 
     @classmethod
     def get_column_definition(cls, column_name):

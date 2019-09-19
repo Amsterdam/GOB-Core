@@ -4,6 +4,7 @@ from datetime import datetime, date
 
 from gobcore.exceptions import GOBException, GOBTypeException
 from gobcore.typesystem import get_gob_type, is_gob_json_type, _gob_types
+from gobcore.typesystem.gob_types import GOBType, Boolean, Date, JSON
 from tests.gobcore import fixtures
 
 
@@ -320,3 +321,53 @@ class TestGobTypes(unittest.TestCase):
 
         self.assertFalse(is_gob_json_type('invalid_type'))
 
+
+class TestGOBType(unittest.TestCase):
+
+    class MockChild(GOBType):
+        is_secure = True
+
+        def __init__(self, value, **kwargs):
+            self.value = value
+            self.kwargs = kwargs
+            super().__init__(value)
+
+        @classmethod
+        def from_value(cls, value, **kwargs):
+            return cls(value, **kwargs)
+
+        def json(self):
+            pass
+
+        def to_db(self):
+            pass
+
+        def to_value(self):
+            pass
+
+    def test_from_value_secure(self):
+        res = self.MockChild.from_value_secure('value', {'level': 20})
+
+        self.assertEqual({'level': 20}, res.kwargs)
+        self.assertEqual('value', res.value)
+
+
+class TestBoolean(unittest.TestCase):
+
+    def test_bool_or_none_fallthrough(self):
+        self.assertIsNone(Boolean._bool_or_none('YN', 'YN'))
+
+
+class TestDate(unittest.TestCase):
+
+    def test_to_value_string_none(self):
+        date = Date("the value")
+        date._string = None
+
+        self.assertIsNone(date.to_value)
+
+class TestJSON(unittest.TestCase):
+
+    def test_to_value_string_none(self):
+        js = JSON(None)
+        self.assertIsNone(js.to_value)
