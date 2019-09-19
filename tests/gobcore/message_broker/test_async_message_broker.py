@@ -1,5 +1,6 @@
 import json
 import pika
+from pika import spec
 import pytest
 import os
 
@@ -20,18 +21,36 @@ class MockChannel:
     def close(self):
         self.is_open = False
 
-    def basic_publish(self,
-                      exchange,
-                      routing_key,
-                      properties,
-                      body):
+    def basic_publish(
+            self,
+            exchange,
+            routing_key,
+            properties,
+            body):
         global published_message
         published_message = body
 
+    def consume(self, queue, no_ack=False,
+                exclusive=False, arguments=None,
+                inactivity_timeout=None):
+        # No messages to consume
+        if not published_message:
+            yield (None, None, None)
+
+        yield (spec.Basic.Deliver(delivery_tag=1, exchange="exchange", routing_key="key"),
+               spec.BasicProperties(),
+               published_message)
+
+    def basic_ack(self, delivery_tag):
+        global published_message
+        published_message = None
+
+    def cancel(self):
+        self.is_open = False
 
 class MockConnection:
 
-    def __init__(self):
+    def __init__(self, connection_params, params=None):
         pass
 
     def close(self):
@@ -41,15 +60,15 @@ class MockConnection:
         return MockChannel()
 
 
+published_message = None
+connection_params = {'host': "host", 'credentials': {'username': "username", 'password': "password"}}
+
+
 class MockPika:
 
     def BlockingConnection(self, params):
         self._params = params
-        return MockConnection()
-
-
-published_message = None
-connection_params = {'host': "host", 'credentials': {'username': "username", 'password': "password"}}
+        return MockConnection(connection_params)
 
 
 def mock_connection(monkeypatch):
@@ -97,6 +116,7 @@ def test_publish(monkeypatch):
     mock_connection(monkeypatch)
 
     connection = Connection(connection_params)
+    assert connection._params == {"load_message": True, "prefetch_count": 1, "stream_contents": False}
     connection.connect()
     connection.publish(exchange="exchange", key="key", msg="message")
     assert(published_message == json.dumps("message"))
@@ -110,6 +130,52 @@ def test_publish_failure(monkeypatch):
     # publish should fail if we do not perform connection.connect()
     with pytest.raises(Exception):
         connection.publish(exchange="exchange", key="key", msg="message")
+
+
+def test_consume_message(monkeypatch):
+    mock_connection(monkeypatch)
+
+    def message_matched(msg):
+        return msg == "message"
+
+    # no messages
+    connection = Connection(connection_params=connection_params, params={"extra_param": "foo"})
+    assert connection._params == {"extra_param": "foo", "load_message": True, "prefetch_count": 1, "stream_contents": False}
+    connection.connect()
+    method, properties, msg, offload_id = connection.consume(exchange="exchange", queue="queue", key="key", message_matched=message_matched)
+    assert msg is None
+    connection.disconnect()
+
+    # publish message and consume it back without ack
+    connection.connect()
+    connection.publish(exchange="exchange", key="key", msg="message")
+    method, properties, msg, offload_id = connection.consume(exchange="exchange", queue="queue", key="key", message_matched=message_matched)
+    assert isinstance(method, spec.Basic.Deliver)
+    assert isinstance(properties, spec.BasicProperties)
+    assert msg == "message"
+    connection.disconnect()
+
+    # consume it now with ack
+    connection.connect()
+    method, properties, msg, offload_id = connection.consume(exchange="exchange", queue="queue", key="key", message_matched=message_matched, ack=True)
+    assert isinstance(method, spec.Basic.Deliver)
+    assert isinstance(properties, spec.BasicProperties)
+    assert msg == "message"
+    connection.disconnect()
+
+    # check that there are no messages left (ack worked)
+    connection.connect()
+    method, properties, msg, offload_id = connection.consume(exchange="exchange", queue="queue", key="key", message_matched=message_matched)
+    assert msg is None
+    connection.disconnect()
+
+    # try to consume message which does not match (message_matched returns False)
+    connection = Connection(connection_params=connection_params)
+    connection.connect()
+    connection.publish(exchange="exchange", key="key", msg="another_message")
+    method, properties, msg, offload_id = connection.consume(exchange="exchange", queue="queue", key="key", message_matched=message_matched)
+    assert msg is None
+    connection.disconnect()
 
 
 class TestAsyncConnection(TestCase):
