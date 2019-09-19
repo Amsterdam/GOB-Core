@@ -15,4 +15,4 @@ exclude=.git,
         */settings_commons.py,
         ./src/datapunt-objectstore
 max-complexity=6
-max-line-length = 119
+max-line-length=119

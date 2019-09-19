@@ -94,32 +94,22 @@ def test_connect_context_manager(monkeypatch):
 
 
 def test_publish(monkeypatch):
-    # Test publish message
     mock_connection(monkeypatch)
 
     connection = Connection(connection_params)
     connection.connect()
-    queue = {
-        "exchange": "exchange",
-        "name": "name",
-        "key": "key"
-    }
-    connection.publish(queue, "key", "message")
+    connection.publish(exchange="exchange", key="key", msg="message")
     assert(published_message == json.dumps("message"))
     connection.disconnect()
 
 
 def test_publish_failure(monkeypatch):
-    # Test publish failure
     mock_connection(monkeypatch)
 
     connection = Connection(connection_params)
-    queue = {
-        "name": "name",
-        "key": "key"
-    }
+    # publish should fail if we do not perform connection.connect()
     with pytest.raises(Exception):
-        connection.publish(queue, "key", "message")
+        connection.publish(exchange="exchange", key="key", msg="message")
 
 
 class TestAsyncConnection(TestCase):
@@ -188,7 +178,3 @@ class TestAsyncConnection(TestCase):
         print_msg = mock_print.call_args[0][0]
 
         self.assertTrue(print_msg.startswith('Message handling has failed on second try'))
-
-
-
-
