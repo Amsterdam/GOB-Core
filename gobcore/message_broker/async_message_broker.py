@@ -276,7 +276,12 @@ class AsyncConnection(object):
                 msg = None
                 try:
                     # Try to get the message, parse any json contents and retrieve any offloaded contents
-                    msg, offload_id = get_message_from_body(body, self._params)
+                    # Include any queue specific parameters
+                    params = {
+                        **self._params,
+                        **self._params.get(queue, {})
+                    }
+                    msg, offload_id = get_message_from_body(body, params)
                     # Try to handle the message
                     result = message_handler(self, basic_deliver.exchange, queue, basic_deliver.routing_key, msg)
                 except Exception as e:
