@@ -1,4 +1,20 @@
 {
+  "update_model": {
+    "description": "Start application of events that have not yet been applied",
+    "args": [
+      {
+        "name": "catalogue",
+        "required": false,
+        "description": "The name of the data catalogue (example: \"meetbouten\")"
+      },
+      {
+        "name": "entity",
+        "required": false,
+        "description": "The name of the data collection (example: \"metingen\")"
+      }
+    ],
+    "workflow": "update_model"
+  },
   "import": {
     "description": "Start an import job for a collection",
     "args": [
