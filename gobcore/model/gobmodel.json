@@ -1494,6 +1494,34 @@
             "description": "Mul­ti­vlak­ge­o­me­trie."
           }
         }
+      },
+      "overbouw": {
+        "version": "0.1",
+        "abbreviation": "OVW",
+        "entity_id": "identificatie",
+        "has_states": true,
+        "attributes": {
+          "identificatie": {
+            "type": "GOB.String",
+            "description": "Uniek iden­ti­fi­ce­rend ken­merk voor het ob­ject dat on­ver­an­der­lijk is zo­lang het ob­ject be­staat."
+          },
+          "begin_geldigheid": {
+            "type": "GOB.Date",
+            "description": "Da­tum waar op het ob­ject bij de bron­hou­der is ont­staan."
+          },
+          "eind_geldigheid": {
+            "type": "GOB.Date",
+            "description": "Datum waarop het object bij de bronhouder niet meer geldig is."
+          },
+          "relatieve_hoogteligging": {
+            "type": "GOB.Integer",
+            "description": "-2, -1, 0, 1, 2, 3 Aan­dui­ding voor de re­la­tie­ve hoog­te van het ob­ject ten op­zich­te van het maai­veld."
+          },
+          "geometrie": {
+            "type": "GOB.Geo.Geometry",
+            "description": "Mul­ti­vlak­ge­o­me­trie."
+          }
+        }
       }
     }
   },
