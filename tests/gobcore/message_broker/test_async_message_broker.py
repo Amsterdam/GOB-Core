@@ -132,52 +132,6 @@ def test_publish_failure(monkeypatch):
         connection.publish(exchange="exchange", key="key", msg="message")
 
 
-def test_consume_message(monkeypatch):
-    mock_connection(monkeypatch)
-
-    def message_matched(msg):
-        return msg == "message"
-
-    # no messages
-    connection = Connection(connection_params=connection_params, params={"extra_param": "foo"})
-    assert connection._params == {"extra_param": "foo", "load_message": True, "prefetch_count": 1, "stream_contents": False}
-    connection.connect()
-    method, properties, msg, offload_id = connection.consume(exchange="exchange", queue="queue", key="key", message_matched=message_matched)
-    assert msg is None
-    connection.disconnect()
-
-    # publish message and consume it back without ack
-    connection.connect()
-    connection.publish(exchange="exchange", key="key", msg="message")
-    method, properties, msg, offload_id = connection.consume(exchange="exchange", queue="queue", key="key", message_matched=message_matched)
-    assert isinstance(method, spec.Basic.Deliver)
-    assert isinstance(properties, spec.BasicProperties)
-    assert msg == "message"
-    connection.disconnect()
-
-    # consume it now with ack
-    connection.connect()
-    method, properties, msg, offload_id = connection.consume(exchange="exchange", queue="queue", key="key", message_matched=message_matched, ack=True)
-    assert isinstance(method, spec.Basic.Deliver)
-    assert isinstance(properties, spec.BasicProperties)
-    assert msg == "message"
-    connection.disconnect()
-
-    # check that there are no messages left (ack worked)
-    connection.connect()
-    method, properties, msg, offload_id = connection.consume(exchange="exchange", queue="queue", key="key", message_matched=message_matched)
-    assert msg is None
-    connection.disconnect()
-
-    # try to consume message which does not match (message_matched returns False)
-    connection = Connection(connection_params=connection_params)
-    connection.connect()
-    connection.publish(exchange="exchange", key="key", msg="another_message")
-    method, properties, msg, offload_id = connection.consume(exchange="exchange", queue="queue", key="key", message_matched=message_matched)
-    assert msg is None
-    connection.disconnect()
-
-
 class TestAsyncConnection(TestCase):
 
     def setUp(self) -> None:

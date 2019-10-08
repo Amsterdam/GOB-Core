@@ -8,7 +8,6 @@ Only publication is supported
 import json
 import pika
 
-from gobcore.message_broker.utils import get_message_from_body
 from gobcore.typesystem.json import GobTypeJSONEncoder
 
 
