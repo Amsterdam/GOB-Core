@@ -2212,6 +2212,30 @@
             "description": "Toestandsdatum, d.i. de laatste aanmaakdatum van de BRK-berichten in de naar DIVA gerepliceerde BRK-levering."
           }
         }
+      },
+      "kadastralesecties": {
+        "version": "0.1",
+        "abbreviation": "KSE",
+        "entity_id": "identificatie",
+        "attributes": {
+          "identificatie": {
+            "type": "GOB.String",
+            "description": "De unie­ke aan­dui­ding van een Ka­das­tra­le sec­tie."
+          },
+          "code": {
+            "type": "GOB.String",
+            "description": "Een al­fa­nu­me­rie­ke aan­dui­ding van de ka­das­tra­le sec­tie, deel van de ka­das­tra­le aan­dui­ding van de on­roe­ren­de zaak."
+          },
+          "is_onderdeel_van_kadastralegemeente": {
+            "type": "GOB.Reference",
+            "ref": "brk:kadastralegemeentes",
+            "description": "Een al­fa­nu­me­rie­ke aan­dui­ding van de ka­das­tra­le ge­meen­te, deel van de ka­das­tra­le aan­dui­ding van de on­roe­ren­de zaak. (bv. AS­D02)."
+          },
+          "geometrie": {
+            "type": "GOB.Geo.Geometry",
+            "description": "Vorm en lig­ging van de ka­das­tra­le sec­tie in het stel­sel van de Rijks­drie­hoek­me­ting (RD)."
+          }
+        }
       }
     }
   },
