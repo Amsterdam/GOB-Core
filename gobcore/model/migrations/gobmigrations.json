@@ -1,0 +1,16 @@
+{
+  "brk": {
+    "kadastralesecties": {
+      "0.1": {
+        "target_version": "0.2",
+        "conversions": [
+          {
+            "action": "rename",
+            "old_column": "is_onderdeel_van_kadastralegemeente",
+            "new_column": "is_onderdeel_van_kadastralegemeentecode"
+          }
+        ]
+      }
+    }
+  }
+}

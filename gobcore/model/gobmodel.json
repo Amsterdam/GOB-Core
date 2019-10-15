@@ -2734,7 +2734,7 @@
         }
       },
       "kadastralesecties": {
-        "version": "0.1",
+        "version": "0.2",
         "abbreviation": "KSE",
         "entity_id": "identificatie",
         "attributes": {
@@ -2746,14 +2746,54 @@
             "type": "GOB.String",
             "description": "Een al­fa­nu­me­rie­ke aan­dui­ding van de ka­das­tra­le sec­tie, deel van de ka­das­tra­le aan­dui­ding van de on­roe­ren­de zaak."
           },
-          "is_onderdeel_van_kadastralegemeente": {
+          "is_onderdeel_van_kadastralegemeentecode": {
             "type": "GOB.Reference",
-            "ref": "brk:kadastralegemeentes",
-            "description": "Een al­fa­nu­me­rie­ke aan­dui­ding van de ka­das­tra­le ge­meen­te, deel van de ka­das­tra­le aan­dui­ding van de on­roe­ren­de zaak. (bv. AS­D02)."
+            "ref": "brk:kadastralegemeentecodes",
+            "description": "Een al­fa­nu­me­rie­ke aan­dui­ding van de ka­das­tra­le ge­meen­tecode, deel van de ka­das­tra­le aan­dui­ding van de on­roe­ren­de zaak. (bv. AS­D02)."
           },
           "geometrie": {
             "type": "GOB.Geo.Geometry",
             "description": "Vorm en lig­ging van de ka­das­tra­le sec­tie in het stel­sel van de Rijks­drie­hoek­me­ting (RD)."
+          }
+        }
+      },
+      "kadastralegemeentecodes": {
+        "version": "0.1",
+        "abbreviation": "KCE",
+        "entity_id": "identificatie",
+        "attributes": {
+          "identificatie": {
+            "type": "GOB.String",
+            "description": "De unie­ke aan­dui­ding van een Ka­das­tra­le gemeentecode."
+          },
+          "is_onderdeel_van_kadastralegemeente": {
+            "type": "GOB.Reference",
+            "ref": "brk:kadastralegemeentes",
+            "description": "De ka­das­tra­le ge­meen­te waar de kadastrale gemeentecode onderdeel van is (bv. Sloten)."
+          },
+          "geometrie": {
+            "type": "GOB.Geo.Geometry",
+            "description": "Vorm en lig­ging van de ka­das­tra­le gemeentecode in het stel­sel van de Rijks­drie­hoek­me­ting (RD)."
+          }
+        }
+      },
+      "kadastralegemeentes": {
+        "version": "0.1",
+        "abbreviation": "KGE",
+        "entity_id": "identificatie",
+        "attributes": {
+          "identificatie": {
+            "type": "GOB.String",
+            "description": "De unie­ke aan­dui­ding van een Ka­das­tra­le ge­meen­te."
+          },
+          "ligt_in_gemeente": {
+            "type": "GOB.Reference",
+            "ref": "brk:gemeentes",
+            "description": "De burgelijke gemeente waarin de kadastrale gemeente ligt."
+          },
+          "geometrie": {
+            "type": "GOB.Geo.Geometry",
+            "description": "Vorm en lig­ging van de ka­das­tra­le gemeente in het stel­sel van de Rijks­drie­hoek­me­ting (RD)."
           }
         }
       }

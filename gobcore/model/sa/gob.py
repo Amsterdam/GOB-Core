@@ -69,10 +69,6 @@ def _derive_models():
 
     for catalog_name, catalog in model.get_catalogs().items():
         for collection_name, collection in model.get_collections(catalog_name).items():
-            if collection['version'] != "0.1":
-                # No migrations defined yet...
-                raise ValueError("Unexpected version, please write a generic migration here or migrate the import")
-
             # "attributes": {
             #     "attribute_name": {
             #         "type": "GOB type name, e.g. GOB.String",
@@ -197,10 +193,6 @@ def _derive_indexes() -> dict:
 
     for catalog_name, catalog in model.get_catalogs().items():
         for collection_name, collection in model.get_collections(catalog_name).items():
-            if collection['version'] != "0.1":
-                # No migrations defined yet...
-                raise ValueError("Unexpected version, please write a generic migration here or migrate the import")
-
             entity = collection['all_fields']
             table_name = model.get_table_name(catalog_name, collection_name)
 
