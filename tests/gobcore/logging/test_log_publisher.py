@@ -19,14 +19,16 @@ class TestLogPublisher(TestCase):
         publisher.publish("Level", "Message")
         assert(patched_publish.called)
 
+    @patch('gobcore.logging.log_publisher.threading.Thread')
     @patch('gobcore.logging.log_publisher.LogPublisher._auto_disconnect')
     @patch('gobcore.message_broker.message_broker.Connection.connect')
     @patch('gobcore.message_broker.message_broker.Connection.publish')
-    def test_auto_connect(self, patched_publish, patched_connect, patched_auto_disconnect):
+    def test_auto_connect(self, patched_publish, patched_connect, patched_auto_disconnect, patched_thread):
         publisher = LogPublisher(None)
         publisher.publish("Level", "Message")
         assert(patched_connect.called)
-        assert(patched_auto_disconnect.called)
+        patched_thread.assert_called_with(target=patched_auto_disconnect, name='AutoDisconnect')
+        patched_thread.return_value.start.assert_called_once()
 
     @patch('gobcore.logging.log_publisher.threading')
     @patch('gobcore.logging.log_publisher.LogPublisher._auto_disconnect')
