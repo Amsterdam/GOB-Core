@@ -351,6 +351,18 @@
         "aangeduid_door_gemeente": {
           "method": "equals",
           "destination_attribute": "identificatie"
+        },
+        "aangeduid_door_kadastralegemeente": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "aangeduid_door_kadastralegemeentecode": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "aangeduid_door_kadastralesectie": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
         }
       },
       "zakelijkerechten": {
@@ -441,6 +453,24 @@
         "is_bron_voor_zakelijk_recht": {
           "method": "equals",
           "destination_attribute": "identificatie"
+        }
+      },
+      "kadastralesecties": {
+        "is_onderdeel_van_kadastralegemeentecode": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        }
+      },
+      "kadastralegemeentecodes": {
+        "is_onderdeel_van_kadastralegemeente": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        }
+      },
+      "kadastralegemeentes": {
+        "ligt_in_gemeente": {
+          "method": "equals",
+          "destination_attribute": "naam"
         }
       }
     }
