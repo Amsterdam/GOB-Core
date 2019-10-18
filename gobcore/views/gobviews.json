@@ -711,7 +711,8 @@
           "      ligt_in_buurt._ligt_in_ggpgebied->>'id' = ligt_in_ggpgebied.identificatie AND",
           "      ligt_in_buurt._ligt_in_ggpgebied->>'volgnummer' = ligt_in_ggpgebied.volgnummer",
           "    WHERE",
-          "      vot._expiration_date > current_date OR vot._expiration_date IS NULL"
+          "      (vot._expiration_date > current_date OR vot._expiration_date IS NULL)",
+          "      AND vot._date_deleted IS NULL"
         ]
       },
       "enhanced_history": {
@@ -893,6 +894,7 @@
           "    ON",
           "      ligt_in_buurt._ligt_in_ggpgebied->>'id' = ligt_in_ggpgebied.identificatie AND",
           "      ligt_in_buurt._ligt_in_ggpgebied->>'volgnummer' = ligt_in_ggpgebied.volgnummer",
+          "    WHERE vot._date_deleted IS NULL",
           "    ORDER BY  vot.identificatie, vot.volgnummer"
         ]
       }
@@ -966,7 +968,8 @@
           "      nag.adresseert_standplaats->>'id' = adresseert_standplaats._id AND",
           "      nag.adresseert_standplaats->>'volgnummer' = adresseert_standplaats.volgnummer",
           "    WHERE",
-          "      nag._expiration_date > current_date OR nag._expiration_date IS NULL"
+          "      (nag._expiration_date > current_date OR nag._expiration_date IS NULL)",
+          "      AND nag._date_deleted IS NULL"
         ]
       },
       "enhanced_history": {
@@ -1043,6 +1046,7 @@
           "    ON",
           "      nag.adresseert_standplaats->>'id' = adresseert_standplaats._id AND",
           "      nag.adresseert_standplaats->>'volgnummer' = adresseert_standplaats.volgnummer",
+          "    WHERE nag._date_deleted IS NULL",
           "    ORDER BY  nag.identificatie, nag.volgnummer"
         ]
       }
@@ -1136,7 +1140,8 @@
           "      ligt_in_buurt._ligt_in_ggpgebied->>'id' = ligt_in_ggpgebied.identificatie AND",
           "      ligt_in_buurt._ligt_in_ggpgebied->>'volgnummer' = ligt_in_ggpgebied.volgnummer",
           "    WHERE",
-          "      pnd._expiration_date > current_date OR pnd._expiration_date IS NULL"
+          "      (pnd._expiration_date > current_date OR pnd._expiration_date IS NULL)",
+          "      AND pnd._date_deleted IS NULL"
         ]
       },
       "enhanced_history": {
@@ -1234,6 +1239,7 @@
           "    ON",
           "      ligt_in_buurt._ligt_in_ggpgebied->>'id' = ligt_in_ggpgebied.identificatie AND",
           "      ligt_in_buurt._ligt_in_ggpgebied->>'volgnummer' = ligt_in_ggpgebied.volgnummer",
+          "    WHERE pnd._date_deleted IS NULL",
           "    ORDER BY  pnd.identificatie, pnd.volgnummer"
         ]
       }
