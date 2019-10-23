@@ -886,6 +886,10 @@
             "type": "GOB.String",
             "description": "Landelijke identificerende code 3594."
           },
+          "amsterdamse_sleutel": {
+            "type": "GOB.String",
+            "description": "Amsterdamse identificerende code."
+          },
           "naam": {
             "type": "GOB.String",
             "description": "Officiële naam woonplaats."
@@ -963,6 +967,10 @@
           "identificatie": {
             "type": "GOB.String",
             "description": "Landelijke identificerende sleutel."
+          },
+          "amsterdamse_sleutel": {
+            "type": "GOB.String",
+            "description": "Amsterdamse identificerende code."
           },
           "geconstateerd": {
             "type": "GOB.Boolean",
@@ -1053,6 +1061,10 @@
             "type": "GOB.String",
             "description": "Landelijke identificerende sleutel."
           },
+          "amsterdamse_sleutel": {
+            "type": "GOB.String",
+            "description": "Amsterdamse identificerende code."
+          },
           "geconstateerd": {
             "type": "GOB.Boolean",
             "description": "Dit geeft aan dat een LIGPLAATS in de registratie is opgenomen als gevolg van een feitelijke constatering en niet op basis van een regulier brondocument."
@@ -1141,6 +1153,14 @@
           "identificatie": {
             "type": "GOB.String",
             "description": "Landelijke identificerende sleutel."
+          },
+          "amsterdamse_sleutel": {
+            "type": "GOB.String",
+            "description": "Amsterdamse identificerende code."
+          },
+          "straatcode": {
+            "type": "GOB.String",
+            "description": "Straatcode."
           },
           "status": {
             "type": "GOB.JSON",
@@ -1239,6 +1259,10 @@
           "identificatie": {
             "type": "GOB.String",
             "description": "Landelijke identificerende sleutel."
+          },
+          "amsterdamse_sleutel": {
+            "type": "GOB.String",
+            "description": "Amsterdamse identificerende code."
           },
           "huisnummer": {
             "type": "GOB.Integer",
@@ -1361,6 +1385,10 @@
           "identificatie": {
             "type": "GOB.String",
             "description": "Landelijke identificerende sleutel."
+          },
+          "amsterdamse_sleutel": {
+            "type": "GOB.String",
+            "description": "Amsterdamse identificerende code."
           },
           "geconstateerd": {
             "type": "GOB.Boolean",
@@ -1546,6 +1574,10 @@
           "identificatie": {
             "type": "GOB.String",
             "description": "Landelijke identificerende sleutel."
+          },
+          "amsterdamse_sleutel": {
+            "type": "GOB.String",
+            "description": "Amsterdamse identificerende code."
           },
           "geconstateerd": {
             "type": "GOB.Boolean",
