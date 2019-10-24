@@ -165,7 +165,6 @@ def _relation_indexes_for_collection(catalog_name, collection_name, collection, 
     # Search source and destination attributes for relation and define index
     for col, ref in reference_columns.items():
         dst_index_table = model.get_table_name_from_ref(ref)
-        dst_collection = model.get_collection_from_ref(ref)
         relations = sources.get_field_relations(catalog_name, collection_name, col)
 
         for relation in relations:
@@ -189,10 +188,6 @@ def _relation_indexes_for_collection(catalog_name, collection_name, collection, 
                 "columns": [relation['destination_attribute'], FIELD.START_VALIDITY, FIELD.END_VALIDITY,
                             FIELD.DATE_DELETED],
             }
-
-            indexes[name]["type"] = _get_special_column_type(
-                dst_collection['all_fields'][relation['destination_attribute']]['type']
-            )
 
     return indexes
 
