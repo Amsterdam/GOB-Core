@@ -209,18 +209,20 @@ def _derive_indexes() -> dict:
     indexes = {}
 
     # Add indexes to events table
-    event_indexes = ['catalogue', 'entity', 'action', 'source']
-    for column in event_indexes:
-        indexes[f'events.idx.{column}'] = {
-            "columns": [column],
+    event_indexes = [
+        ('catalogue',),
+        ('entity',),
+        ('action',),
+        ('source',),
+        ('entity', 'catalogue', 'source',),
+        ('entity', 'timestamp DESC',),
+    ]
+    for index in event_indexes:
+        name = ".".join([column.replace(' ', '_').lower() for column in index])
+        indexes[f'events.idx.{name}'] = {
+            "columns": index,
             "table_name": "events"
         }
-
-    # Add entity, timestamp index
-    indexes[f'events.idx.entity_timestamp'] = {
-        "columns": ['entity', 'timestamp DESC'],
-        "table_name": "events",
-    }
 
     for catalog_name, catalog in model.get_catalogs().items():
         for collection_name, collection in model.get_collections(catalog_name).items():
