@@ -1409,11 +1409,13 @@
           "financieringscode": {
             "type": "GOB.JSON",
             "description": "Geeft aan op welke wijze een woning gefinancierd is bij de bouw.",
-            "code": {
-              "type": "GOB.String"
-            },
-            "omschrijving": {
-              "type": "GOB.String"
+            "attributes": {
+              "code": {
+                "type": "GOB.String"
+              },
+              "omschrijving": {
+                "type": "GOB.String"
+              }
             }
           },
           "geconstateerd": {
