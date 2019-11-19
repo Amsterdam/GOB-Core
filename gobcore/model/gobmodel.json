@@ -890,6 +890,10 @@
             "type": "GOB.String",
             "description": "Amsterdamse identificerende code."
           },
+          "woonplaats_ptt": {
+            "type": "GOB.String",
+            "description": "Woon­plaats­naam vol­gens de schrijf­wij­ze van Post­NL."
+          },
           "naam": {
             "type": "GOB.String",
             "description": "Officiële naam woonplaats."
@@ -1162,6 +1166,10 @@
             "type": "GOB.String",
             "description": "Straatcode."
           },
+          "straatnaam_ptt": {
+            "type": "GOB.String",
+            "description": "Straatnaam volgens de schrijfwijze van PostNL (17 tekens)."
+          },
           "status": {
             "type": "GOB.JSON",
             "description": "De status van de levenscyclus van een openbare ruimte (Naamgeving uitgegeven, Naamgeving ingetrokken).",
@@ -1389,6 +1397,24 @@
           "amsterdamse_sleutel": {
             "type": "GOB.String",
             "description": "Amsterdamse identificerende code."
+          },
+          "cbs_nummer": {
+            "type": "GOB.String",
+            "description": "CBS-nummer."
+          },
+          "woningvoorraad": {
+            "type": "GOB.String",
+            "description": "Geeft aan of een ver­blijfs­ob­ject bij de woningvoorraad hoort."
+          },
+          "financieringscode": {
+            "type": "GOB.JSON",
+            "description": "Geeft aan op welke wijze een woning gefinancierd is bij de bouw.",
+            "code": {
+              "type": "GOB.String"
+            },
+            "omschrijving": {
+              "type": "GOB.String"
+            }
           },
           "geconstateerd": {
             "type": "GOB.Boolean",
