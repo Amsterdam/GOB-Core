@@ -36,7 +36,7 @@ class GOBViews():
             self._load_collection_from_dir(catalog_name, collection, collection_path)
 
     def _load_collection_from_dir(self, catalog_name: str, collection_name: str, collection_path: str):
-        """Loads collection from collectoin_path
+        """Loads collection from collection_path
 
         :param catalog_name:
         :param collection_name:
