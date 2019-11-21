@@ -22,7 +22,7 @@ class Secure(JSON):
         """
         if not is_encrypted(value):
             assert level is not None, "Missing level to encrypt the given value"
-            value = encrypt(value, confidence_level=level)
+            value = encrypt(str(value), confidence_level=level)
         super().__init__(json.dumps(value))
 
     @classmethod

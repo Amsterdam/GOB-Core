@@ -2,13 +2,15 @@
 
 """
 import random
-import json
-# import base64
 
-from gobcore.secure.demo import demo
+from gobcore.secure.fernet import Crypto
 
 
 _safe_storage = {}
+
+_KEY_INDEX = "i"
+_CONFIDENCE_LEVEL = "l"
+_VALUE = "v"
 
 
 def is_encrypted(value):
@@ -18,7 +20,7 @@ def is_encrypted(value):
     :param value: any value
     :return: True when the value is an encrypted value
     """
-    keys = ["i", "l", "v"]
+    keys = [_KEY_INDEX, _CONFIDENCE_LEVEL, _VALUE]
     return isinstance(value, dict) and \
         all([key in value for key in keys]) and \
         len(value.keys()) == len(keys)
@@ -31,7 +33,7 @@ def confidence_level(encrypted_value):
     :param encrypted_value: any encrypted value
     :return: the required confidence level to have access to the value
     """
-    return encrypted_value["l"]
+    return encrypted_value[_CONFIDENCE_LEVEL]
 
 
 def encrypt(value, confidence_level):
@@ -42,11 +44,11 @@ def encrypt(value, confidence_level):
     :param confidence_level:
     :return:
     """
-    key_index, secret = _get_encrypt_secret(confidence_level)
+    key_index, encrypted_value = Crypto().encrypt(value, confidence_level)
     return {
-        "i": key_index,               # Allows for key change
-        "l": confidence_level,        # Some data is more confident that other data
-        "v": _encrypt(value, secret)  # The encrypted data
+        _KEY_INDEX: key_index,                # Allows for key rotation
+        _CONFIDENCE_LEVEL: confidence_level,  # Some data is more confident that other data
+        _VALUE: encrypted_value               # The encrypted data
     }
 
 
@@ -57,61 +59,9 @@ def decrypt(value):
     :param value:
     :return:
     """
-    key_index = value["i"]
-    confidence_level = value["l"]
-    secret = _get_decrypt_secret(key_index, confidence_level)
-    return _decrypt(value["v"], secret)
-
-
-# Use a strong and fast asymetric encryption algorithm like RSA, ECDH, ...
-
-
-def _get_encrypt_secret(confidence_level):
-    """
-    Get the secret and its index to encrypt a value with the given confidence level
-
-    :param confidence_level: confidence level of the value to encrypt
-    :return: secret
-    """
-    return demo["index"], demo["secret"]
-
-
-def _get_decrypt_secret(key_index, confidence_level):
-    """
-    Get the secret to decrypt an encrypted value with the given confidence level
-
-    :param key_index: index of the secret
-    :param confidence_level: confidence level of the encrypted value
-    :return:
-    """
-    return demo["secret"]
-
-
-def _encrypt(value, secret):
-    """
-    Encrypt a value using the give secret
-
-    :param value: value to encrypt
-    :param secret: secret to use to encrypt the value
-    :return: the encrypted value
-    """
-    return demo["encrypt"](value, secret)
-
-
-def _decrypt(value, secret):
-    """
-    Decrypt a valye using the given secret
-
-    :param value: value to decrypt
-    :param secret: secret to use to decrypt the value
-    :return: the decrypted value
-    """
-    # Use a strong and fast asymetric encryption mechanism
-    return demo["decrypt"](value, secret)
-
-
-# Use a safe symetric encryption algorithm within GOB
-# Or store it locally when used within one process cycle
+    key_index = value[_KEY_INDEX]
+    confidence_level = value[_CONFIDENCE_LEVEL]
+    return Crypto().decrypt(value[_VALUE], confidence_level, key_index)
 
 
 def read_protect(value, save_local=True):
@@ -127,7 +77,8 @@ def read_protect(value, save_local=True):
         _safe_storage[key] = value
         return key
     else:
-        return demo["encrypt"](json.dumps(value), None)
+        _, encrypted_value = Crypto().encrypt(value)
+        return encrypted_value
 
 
 def read_unprotect(value):
@@ -142,4 +93,4 @@ def read_unprotect(value):
         del _safe_storage[value]
         return saved_value
     else:
-        return json.loads(demo["decrypt"](value, None))
+        return Crypto().decrypt(value)
