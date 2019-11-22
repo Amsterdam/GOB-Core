@@ -4,7 +4,7 @@
 import random
 import json
 
-from gobcore.secure.fernet import Crypto
+from gobcore.secure.fernet.crypto import Crypto, DecryptionError
 
 
 _safe_storage = {}
@@ -12,6 +12,9 @@ _safe_storage = {}
 _KEY_INDEX = "i"
 _CONFIDENCE_LEVEL = "l"
 _VALUE = "v"
+
+# Special value to denote a None value
+_NONE = "___NONE___"
 
 
 def is_encrypted(value):
@@ -50,12 +53,14 @@ def encrypt(value, confidence_level):
     :param confidence_level:
     :return:
     """
+    if value is None:
+        value = _NONE
     key_index, encrypted_value = Crypto().encrypt(value, confidence_level)
     return json.dumps({
         _KEY_INDEX: key_index,                # Allows for key rotation
         _CONFIDENCE_LEVEL: confidence_level,  # Some data is more confident that other data
         _VALUE: encrypted_value               # The encrypted data
-    })
+    }, separators=(',', ':'))
 
 
 def decrypt(encrypted_value):
@@ -66,7 +71,14 @@ def decrypt(encrypted_value):
     :return:
     """
     encrypted_value = json.loads(str(encrypted_value))
-    return Crypto().decrypt(encrypted_value[_VALUE], encrypted_value[_CONFIDENCE_LEVEL], encrypted_value[_KEY_INDEX])
+    try:
+        value = Crypto().decrypt(encrypted_value[_VALUE],
+                                 encrypted_value[_CONFIDENCE_LEVEL],
+                                 encrypted_value[_KEY_INDEX])
+        return None if value == _NONE else value
+    except DecryptionError:
+        print("ERROR: decryption failed")
+        return None
 
 
 def read_protect(value, save_local=True):

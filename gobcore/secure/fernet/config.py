@@ -6,7 +6,7 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 
 
-def getenv():
+def _getenv():
     """
     Read password(s) and salt(s) from the environment
 
@@ -45,4 +45,4 @@ def get_keys():
 
     :return:
     """
-    return [_get_key(**{key: value.encode() for key, value in getenv().items()})]
+    return [_get_key(**{key: value.encode() for key, value in _getenv().items()})]

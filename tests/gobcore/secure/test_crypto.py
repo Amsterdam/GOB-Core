@@ -40,6 +40,23 @@ class TestCrypto(unittest.TestCase):
         self.assertEqual(decrypt(value), "value")
 
     @mock.patch('gobcore.secure.fernet.config.os.getenv', lambda s, *args: s)
+    def test_decrypt_error(self):
+        value = encrypt("value", 10)
+        # Manipulate value
+        value = json.loads(value)
+        value['v'] = f"_{value['v']}"
+        value = json.dumps(value)
+        self.assertIsNone(decrypt(value))
+
+    @mock.patch('gobcore.secure.fernet.config.os.getenv', lambda s, *args: s)
+    def test_encrypt_decrypt(self):
+        value = encrypt("value", 10)
+        self.assertEqual(decrypt(value), "value")
+
+        value = encrypt(None, 10)
+        self.assertIsNone(decrypt(value))
+
+    @mock.patch('gobcore.secure.fernet.config.os.getenv', lambda s, *args: s)
     def test_protect(self):
         value = read_protect("any value")
         self.assertEqual(read_unprotect(value), "any value")
