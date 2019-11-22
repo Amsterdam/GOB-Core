@@ -90,17 +90,17 @@
           },
           "secure_string": {
             "type": "GOB.SecureString",
-            "level": 10,
+            "level": 5,
             "description": "Secure string."
           },
           "secure_number": {
             "type": "GOB.SecureDecimal",
-            "level": 20,
+            "level": 5,
             "description": "Secure number."
           },
           "secure_datetime": {
             "type": "GOB.SecureDateTime",
-            "level": 30,
+            "level": 5,
             "description": "Secure date time."
           },
           "string": {

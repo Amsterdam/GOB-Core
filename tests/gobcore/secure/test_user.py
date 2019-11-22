@@ -1,5 +1,5 @@
 import unittest
-import mock
+import json
 
 from gobcore.secure.config import LEVELS, ROLES
 from gobcore.secure.user import User
@@ -18,13 +18,13 @@ class TestUser(unittest.TestCase):
     def test_has_access(self):
         user = User(None)
         user._roles = []
-        value = {"l": ROLES["user"]}
+        value = json.dumps({"l": ROLES["user"]})
         self.assertFalse(user.has_access_to(value))
 
         user._roles = ["user"]
-        value = {"l": ROLES["user"]}
+        value = json.dumps({"l": ROLES["user"]})
         self.assertTrue(user.has_access_to(value))
 
         user._roles = ["user"]
-        value = {"l": ROLES["admin"]}
-        self.assertFalse(user.has_access_to(value))
+        value = json.dumps({"l": ROLES["admin"]})
+        self.assertTrue(user.has_access_to(value))

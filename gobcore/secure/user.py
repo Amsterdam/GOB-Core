@@ -1,7 +1,8 @@
 import os
 
 from gobcore.secure.config import ROLES
-from gobcore.secure.crypto import confidence_level
+
+MIN_USER_LEVEL = 10
 
 
 class User:
@@ -23,5 +24,4 @@ class User:
         :param encrypted_value:
         :return:
         """
-        required_level = confidence_level(encrypted_value)
-        return any(ROLES.get(user_level, -1) >= required_level for user_level in self._roles)
+        return any(ROLES.get(user_level, -1) >= MIN_USER_LEVEL for user_level in self._roles)

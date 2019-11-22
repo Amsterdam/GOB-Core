@@ -27,7 +27,7 @@ class Crypto:
 
         :param value: any string value
         :param confidence_level: not used
-        :return: the encrypted value
+        :return: (key index (unused in multiFernet), the encrypted value)
         """
         return 0, self._fernet.encrypt(value.encode()).decode()
 
@@ -40,4 +40,5 @@ class Crypto:
         :param key_index: not used
         :return:
         """
-        return self._fernet.decrypt(value.encode()).decode()
+        value = self._fernet.decrypt(value.encode()).decode()
+        return None if value == "None" else value

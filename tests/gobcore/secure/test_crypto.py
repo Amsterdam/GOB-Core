@@ -1,5 +1,6 @@
 import unittest
 import mock
+import json
 
 from gobcore.secure.crypto import is_encrypted, confidence_level, encrypt, decrypt
 from gobcore.secure.crypto import read_protect, read_unprotect
@@ -20,22 +21,25 @@ class TestCrypto(unittest.TestCase):
         self.assertFalse(is_encrypted({"i": 0, "l": 0}))
         self.assertFalse(is_encrypted({"i": 0, "l": 0, "v": "value", "any": "other"}))
 
-        self.assertTrue(is_encrypted({"i": 0, "l": 0, "v": "value"}))
+        self.assertTrue(is_encrypted(json.dumps({"i": 0, "l": 0, "v": "value"})))
 
     def test_confidence_level(self):
-        self.assertEqual(confidence_level({"l": 10}), 10)
+        self.assertEqual(confidence_level(json.dumps({"l": 10})), 10)
 
+    @mock.patch('gobcore.secure.fernet.config.os.getenv', lambda s, *args: s)
     def test_encrypt(self):
-        self.assertEqual(encrypt("value", 10), {
+        self.assertEqual(json.loads(encrypt("value", 10)), {
             "i": mock.ANY,
             "l": 10,
             "v": mock.ANY
         })
 
+    @mock.patch('gobcore.secure.fernet.config.os.getenv', lambda s, *args: s)
     def test_decrypt(self):
         value = encrypt("value", 10)
         self.assertEqual(decrypt(value), "value")
 
+    @mock.patch('gobcore.secure.fernet.config.os.getenv', lambda s, *args: s)
     def test_protect(self):
         value = read_protect("any value")
         self.assertEqual(read_unprotect(value), "any value")

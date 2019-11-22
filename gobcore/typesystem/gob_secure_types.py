@@ -1,12 +1,10 @@
-import json
-
-from gobcore.typesystem.gob_types import JSON, String, Decimal, DateTime
+from gobcore.typesystem.gob_types import String, Decimal, DateTime
 from gobcore.secure.crypto import is_encrypted, encrypt, decrypt, read_unprotect
 
 
-class Secure(JSON):
+class Secure(String):
     """
-    Secure types are derived from the JSON type
+    Secure types are derived from the String type
     """
     name = "Secure"
     is_secure = True
@@ -23,7 +21,7 @@ class Secure(JSON):
         if not is_encrypted(value):
             assert level is not None, "Missing level to encrypt the given value"
             value = encrypt(str(value), confidence_level=level)
-        super().__init__(json.dumps(value))
+        super().__init__(value)
 
     @classmethod
     def from_value(cls, value, **kwargs):
@@ -65,7 +63,7 @@ class Secure(JSON):
         if user is None:
             has_access = False
         else:
-            value = json.loads(self._string)
+            value = self._string
             has_access = user.has_access_to(value)
 
         if has_access:

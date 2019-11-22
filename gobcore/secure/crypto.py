@@ -2,6 +2,7 @@
 
 """
 import random
+import json
 
 from gobcore.secure.fernet import Crypto
 
@@ -20,6 +21,10 @@ def is_encrypted(value):
     :param value: any value
     :return: True when the value is an encrypted value
     """
+    try:
+        value = json.loads(str(value))
+    except (json.JSONDecodeError, TypeError) as e:
+        return False
     keys = [_KEY_INDEX, _CONFIDENCE_LEVEL, _VALUE]
     return isinstance(value, dict) and \
         all([key in value for key in keys]) and \
@@ -33,6 +38,7 @@ def confidence_level(encrypted_value):
     :param encrypted_value: any encrypted value
     :return: the required confidence level to have access to the value
     """
+    encrypted_value = json.loads(encrypted_value)
     return encrypted_value[_CONFIDENCE_LEVEL]
 
 
@@ -45,23 +51,22 @@ def encrypt(value, confidence_level):
     :return:
     """
     key_index, encrypted_value = Crypto().encrypt(value, confidence_level)
-    return {
+    return json.dumps({
         _KEY_INDEX: key_index,                # Allows for key rotation
         _CONFIDENCE_LEVEL: confidence_level,  # Some data is more confident that other data
         _VALUE: encrypted_value               # The encrypted data
-    }
+    })
 
 
-def decrypt(value):
+def decrypt(encrypted_value):
     """
     Decrypt an encrypted value
 
-    :param value:
+    :param encrypted_value:
     :return:
     """
-    key_index = value[_KEY_INDEX]
-    confidence_level = value[_CONFIDENCE_LEVEL]
-    return Crypto().decrypt(value[_VALUE], confidence_level, key_index)
+    encrypted_value = json.loads(str(encrypted_value))
+    return Crypto().decrypt(encrypted_value[_VALUE], encrypted_value[_CONFIDENCE_LEVEL], encrypted_value[_KEY_INDEX])
 
 
 def read_protect(value, save_local=True):

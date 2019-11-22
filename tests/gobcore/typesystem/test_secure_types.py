@@ -12,6 +12,7 @@ class TestSecure(unittest.TestCase):
     class MockChild(Secure):
         pass
 
+    @mock.patch('gobcore.secure.fernet.config.os.getenv', lambda s, *args: s)
     def test_create(self):
         level = ROLES["user"]
         user = User(None)
