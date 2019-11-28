@@ -2482,7 +2482,7 @@
             "description": "Het Zakelijk recht waarover deze tenaamstelling gaat."
           },
           "is_gebaseerd_op_stukdeel": {
-            "type": "GOB.ManyReference",
+            "type": "GOB.Reference",
             "ref": "brk:stukdelen",
             "description": "Het Stukdeel waar deze tenaamstelling op gebaseerd is."
           },
