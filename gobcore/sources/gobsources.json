@@ -420,7 +420,7 @@
         },
         "is_gebaseerd_op_stukdeel": {
           "method": "equals",
-          "destination_attribute": "identificatie"
+          "destination_attribute": "id"
         }
       },
       "aantekeningenkadastraleobjecten": {
@@ -434,7 +434,7 @@
         },
         "is_gebaseerd_op_stukdeel": {
           "method": "equals",
-          "destination_attribute": "identificatie"
+          "destination_attribute": "id"
         }
       },
       "stukdelen": {
