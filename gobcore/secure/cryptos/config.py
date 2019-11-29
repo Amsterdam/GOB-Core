@@ -6,6 +6,10 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 
 
+class DecryptionError(Exception):
+    pass
+
+
 def _getenv():
     """
     Read password(s) and salt(s) from the environment

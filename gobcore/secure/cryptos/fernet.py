@@ -1,13 +1,9 @@
 from cryptography.fernet import Fernet, MultiFernet, InvalidToken
 
-from gobcore.secure.fernet.config import get_keys
+from gobcore.secure.cryptos.config import DecryptionError, get_keys
 
 
-class DecryptionError(Exception):
-    pass
-
-
-class Crypto:
+class FernetCrypto:
 
     _fernet = None
 
@@ -23,7 +19,7 @@ class Crypto:
         MultiFernet is chosen because it can handle key rotation
         """
         if not self._fernet:
-            Crypto._fernet = MultiFernet([Fernet(key) for key in get_keys()])
+            FernetCrypto._fernet = MultiFernet([Fernet(key) for key in get_keys()])
 
     def encrypt(self, value: str, confidence_level=None) -> str:
         """

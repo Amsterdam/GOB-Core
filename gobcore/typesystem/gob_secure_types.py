@@ -21,7 +21,7 @@ class Secure(String):
         if not is_encrypted(value):
             assert level is not None, "Missing level to encrypt the given value"
             value = None if value._string is None else str(value)
-            value = encrypt(value, confidence_level=level)
+            value = encrypt(value, level=level)
         super().__init__(value)
 
     @classmethod
