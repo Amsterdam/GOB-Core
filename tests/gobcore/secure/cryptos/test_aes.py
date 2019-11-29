@@ -29,6 +29,10 @@ class TestAES(unittest.TestCase):
         _, enc = AESCrypto().encrypt("any value")
         self.assertEqual(AESCrypto().decrypt(enc), "any value")
 
+        _, enc1 = AESCrypto().encrypt("any value")
+        _, enc2 = AESCrypto().encrypt("any value")
+        self.assertEqual(enc1, enc2)
+
         AESCrypto._ciphers = None
         mock_get_env.side_effect = lambda s, *args: f"_{s}"
         with self.assertRaises(DecryptionError):

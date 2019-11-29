@@ -27,6 +27,10 @@ class TestFernet(unittest.TestCase):
         _, enc = FernetCrypto().encrypt("any value")
         self.assertEqual(FernetCrypto().decrypt(enc), "any value")
 
+        _, enc1 = FernetCrypto().encrypt("any value")
+        _, enc2 = FernetCrypto().encrypt("any value")
+        self.assertNotEqual(enc1, enc2)
+
         FernetCrypto._fernet = None
         mock_get_env.side_effect = lambda s, *args: f"_{s}"
         with self.assertRaises(DecryptionError):
