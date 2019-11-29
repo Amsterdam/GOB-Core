@@ -29,7 +29,7 @@ class TestAES(unittest.TestCase):
         _, enc = AESCrypto().encrypt("any value")
         self.assertEqual(AESCrypto().decrypt(enc), "any value")
 
-        AESCrypto._fernet = None
+        AESCrypto._ciphers = None
         mock_get_env.side_effect = lambda s, *args: f"_{s}"
         with self.assertRaises(DecryptionError):
             AESCrypto().decrypt(enc)

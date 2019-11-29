@@ -18,6 +18,7 @@ _VALUE = "v"
 # Special value to denote a None value
 _NONE = "___NONE___"
 
+# Available encryptions
 _LEVELS = {
     4: AESCrypto,
     5: FernetCrypto

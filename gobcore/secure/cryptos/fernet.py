@@ -1,3 +1,23 @@
+"""
+Fernet encryption
+
+Conceptually, fernet takes
+- a user-provided message (an arbitrary sequence of bytes)
+- a key (256 bits)
+- and the current time
+and produces a token, which contains the message in a form that can't be read or altered without the key.
+
+Encryption is done with AES 128 in CBC mode.
+
+CBC stands for Cipher Block Chaining.
+In CBC mode, each block of plaintext is XORed with the previous ciphertext block before being encrypted.
+This way, each ciphertext block depends on all plaintext blocks processed up to that point.
+
+CBC is one of the most commonly used mode of operation.
+Its main drawback is that encryption is sequential (i.e., it cannot be parallelized).
+
+All base 64 encoding is done with the "URL and Filename Safe" variant, defined in RFC 4648 as "base64url".
+"""
 from cryptography.fernet import Fernet, MultiFernet, InvalidToken
 
 from gobcore.secure.cryptos.config import DecryptionError, get_keys
