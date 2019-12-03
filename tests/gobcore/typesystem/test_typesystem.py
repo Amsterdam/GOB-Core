@@ -99,3 +99,16 @@ class TestTypesystem(TestCase):
         }
         enhance_type_info(type_info)
         self.assertEqual(type_info['secure']['attr']['gob_type'], GOB.String)
+
+        type_info = {
+            'type': "GOB.String",
+            'some key': {
+                'secure': {
+                    'attr': {
+                        'type': "GOB.String"
+                    }
+                }
+            }
+        }
+        enhance_type_info(type_info)
+        self.assertEqual(type_info['some key']['secure']['attr']['gob_type'], GOB.String)

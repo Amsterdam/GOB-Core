@@ -84,8 +84,9 @@ def enhance_type_info(type_info):
     """
     if type_info.get("type"):
         type_info["gob_type"] = get_gob_type(type_info["type"])
-    if type_info.get("secure"):
-        for value in type_info["secure"].values():
+    for value in type_info.values():
+        # Recurse into type info to add type info for each "type" attribute
+        if isinstance(value, dict):
             enhance_type_info(value)
 
 
