@@ -90,6 +90,18 @@ def enhance_type_info(type_info):
             enhance_type_info(value)
 
 
+def get_gob_type_from_info(typeinfo):
+    """
+    Return the GOB type for the given type info
+    The type info is enhanced (adding GOB types to it)
+    :param typeinfo:
+    :return:
+    """
+    if not typeinfo.get("gob_type"):
+        enhance_type_info(typeinfo)
+    return typeinfo["gob_type"]
+
+
 def get_gob_type(name):
     """
     Get the type definition for a given type name

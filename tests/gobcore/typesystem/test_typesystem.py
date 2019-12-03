@@ -1,7 +1,8 @@
 from unittest import TestCase
 from unittest.mock import patch
 
-from gobcore.typesystem import get_modifications, get_value, is_gob_reference_type, GOB, _gob_types_dict, enhance_type_info
+from gobcore.typesystem import get_modifications, get_value, is_gob_reference_type, GOB, _gob_types_dict
+from gobcore.typesystem import enhance_type_info, get_gob_type_from_info
 
 
 class TestTypesystem(TestCase):
@@ -112,3 +113,9 @@ class TestTypesystem(TestCase):
         }
         enhance_type_info(type_info)
         self.assertEqual(type_info['some key']['secure']['attr']['gob_type'], GOB.String)
+
+    def test_gob_type_from_info(self):
+        type_info = {
+            'type': "GOB.String"
+        }
+        self.assertEqual(get_gob_type_from_info(type_info), GOB.String)
