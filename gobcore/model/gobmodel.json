@@ -2169,15 +2169,18 @@
             "description": "Het burgerservicenummer, bedoeld in artikel 1.1 van de Wet algemene bepalingen burgerservicenummer."
           },
           "voornamen": {
-            "type": "GOB.String",
+            "type": "GOB.SecureString",
+            "level": 5,
             "description": "Voornamen van het subject"
           },
           "voorvoegsels": {
-            "type": "GOB.String",
+            "type": "GOB.SecureString",
+            "level": 5,
             "description": "Voorvoegsels bij de geslachtsnaam"
           },
           "geslachtsnaam": {
-            "type": "GOB.String",
+            "type": "GOB.SecureString",
+            "level": 5,
             "description": "Geslachtsnaam van de geregistreerde persoon"
           },
           "geslacht": {
@@ -2205,7 +2208,8 @@
             }
           },
           "geboortedatum": {
-            "type": "GOB.String",
+            "type": "GOB.SecureString",
+            "level": 5,
             "description": "De datum waarop een natuurlijk persoon is geboren. Deze datum kan onvolledig zijn (alleen jaar, of alleen jaar en maand bekend)."
           },
           "geboorteplaats": {
@@ -2233,15 +2237,18 @@
             "description": "Indicatie of de persoon al dan niet overleden is. De datum van overlijden is soms niet bekend, maar wel dat iemand overleden is. Dat is uit dit attribuut af te leiden."
           },
           "voornamen_partner": {
-            "type": "GOB.String",
+            "type": "GOB.SecureString",
+            "level": 5,
             "description": "Voorna(a)m(en) van de gerigstreerde partner"
           },
           "voorvoegsels_partner": {
-            "type": "GOB.String",
+            "type": "GOB.SecureString",
+            "level": 5,
             "description": "Voorvoegsel van de geregistreerde partner"
           },
           "geslachtsnaam_partner": {
-            "type": "GOB.String",
+            "type": "GOB.SecureString",
+            "level": 5,
             "description": "Geslachtsna(a)m(en) van de geregistreerde partner"
           },
           "heeft_rsin_voor": {
