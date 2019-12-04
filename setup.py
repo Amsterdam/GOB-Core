@@ -21,7 +21,7 @@ setup(
         'pandas==0.23.4',
         'ijson==2.3',
         'cryptography==2.8',
-        'pycrypto==2.6.1'
+        'pycryptodome==3.9.4'
 
     ],
     packages=find_packages(exclude=['tests*']),
