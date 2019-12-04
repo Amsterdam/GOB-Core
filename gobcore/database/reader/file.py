@@ -10,15 +10,12 @@ def query_file(connection):
     """
     def convert_row(row):
         def convert(v):
-            if isinstance(v, float):
-                return None if pandas.isnull(v) else v
-            return v
+            return None if pandas.isnull(v) else v
 
         return {k: convert(v) for k, v in row.items()}
 
     for _, row in connection.iterrows():
-        row = convert_row(row)
-        yield row
+        yield convert_row(row)
 
 
 def read_from_file(connection):
