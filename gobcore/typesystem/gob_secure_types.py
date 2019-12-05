@@ -1,4 +1,4 @@
-from gobcore.typesystem.gob_types import String, Decimal, DateTime
+from gobcore.typesystem.gob_types import String, Decimal, DateTime, Date
 from gobcore.secure.crypto import is_encrypted, encrypt, decrypt, read_unprotect
 
 
@@ -87,6 +87,14 @@ class SecureDecimal(Secure):
 
     def get_typed_value(self, value):
         return float(value)
+
+
+class SecureDate(Secure):
+    name = "SecureDate"
+    BaseType = Date
+
+    def get_typed_value(self, value):
+        return Date.from_value(value).to_value
 
 
 class SecureDateTime(Secure):
