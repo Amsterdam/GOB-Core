@@ -79,6 +79,128 @@
           "filters": []
         }
       },
+      "rel_test_entity_a": {
+        "version": "0.1",
+        "description": "Entity to test relations. Has states.",
+        "abbreviation": "RTA",
+        "entity_id": "identificatie",
+        "has_states": true,
+        "attributes": {
+          "id": {
+            "type": "GOB.Integer",
+            "description": "Identifying attribute"
+          },
+          "identificatie": {
+            "type": "GOB.String",
+            "description": "Object identificatie"
+          },
+          "begin_geldigheid": {
+            "type": "GOB.DateTime",
+            "description": "De datum waarop het object is gecreëerd."
+          },
+          "eind_geldigheid": {
+            "type": "GOB.DateTime",
+            "description": "De datum waarop het object is komen te vervallen."
+          },
+          "ref_to_c": {
+            "type": "GOB.Reference",
+            "description": "Reference to RTC",
+            "ref": "test_catalogue:rel_test_entity_c"
+          },
+          "manyref_to_c": {
+            "type": "GOB.ManyReference",
+            "description": "ManyReference to RTC",
+            "ref": "test_catalogue:rel_test_entity_c"
+          },
+          "ref_to_d": {
+            "type": "GOB.Reference",
+            "description": "Reference to RTD",
+            "ref": "test_catalogue:rel_test_entity_d"
+          },
+          "manyref_to_d": {
+            "type": "GOB.ManyReference",
+            "description": "ManyReference to RTD",
+            "ref": "test_catalogue:rel_test_entity_d"
+          }
+        }
+      },
+      "rel_test_entity_b": {
+        "version": "0.1",
+        "description": "Entity to test relations. No states.",
+        "abbreviation": "RTB",
+        "entity_id": "identificatie",
+        "attributes": {
+          "id": {
+            "type": "GOB.Integer",
+            "description": "Identifying attribute"
+          },
+          "identificatie": {
+            "type": "GOB.String",
+            "description": "Object identificatie"
+          },
+          "ref_to_c": {
+            "type": "GOB.Reference",
+            "description": "Reference to RTC",
+            "ref": "test_catalogue:rel_test_entity_c"
+          },
+          "manyref_to_c": {
+            "type": "GOB.ManyReference",
+            "description": "ManyReference to RTC",
+            "ref": "test_catalogue:rel_test_entity_c"
+          },
+          "ref_to_d": {
+            "type": "GOB.Reference",
+            "description": "Reference to RTD",
+            "ref": "test_catalogue:rel_test_entity_d"
+          },
+          "manyref_to_d": {
+            "type": "GOB.ManyReference",
+            "description": "ManyReference to RTD",
+            "ref": "test_catalogue:rel_test_entity_d"
+          }
+        }
+      },
+      "rel_test_entity_c": {
+        "version": "0.1",
+        "description": "Entity to test relations. Has states.",
+        "abbreviation": "RTC",
+        "entity_id": "identificatie",
+        "has_states": true,
+        "attributes": {
+          "id": {
+            "type": "GOB.Integer",
+            "description": "Identifying attribute"
+          },
+          "identificatie": {
+            "type": "GOB.String",
+            "description": "Object identificatie"
+          },
+          "begin_geldigheid": {
+            "type": "GOB.DateTime",
+            "description": "De datum waarop het object is gecreëerd."
+          },
+          "eind_geldigheid": {
+            "type": "GOB.DateTime",
+            "description": "De datum waarop het object is komen te vervallen."
+          }
+        }
+      },
+      "rel_test_entity_d": {
+        "version": "0.1",
+        "description": "Entity to test relations. No states.",
+        "abbreviation": "RTD",
+        "entity_id": "identificatie",
+        "attributes": {
+          "id": {
+            "type": "GOB.Integer",
+            "description": "Identifying attribute"
+          },
+          "identificatie": {
+            "type": "GOB.String",
+            "description": "Object identificatie"
+          }
+        }
+      },
       "secure": {
         "version": "0.1",
         "abbreviation": "SEC",

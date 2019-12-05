@@ -20,7 +20,9 @@ setup(
         'psycopg2-binary==2.7.7',
         'pandas==0.23.4',
         'ijson==2.3',
-        'cryptography==2.8'
+        'cryptography==2.8',
+        'pycryptodome==3.9.4'
+
     ],
     packages=find_packages(exclude=['tests*']),
     dependency_links=[

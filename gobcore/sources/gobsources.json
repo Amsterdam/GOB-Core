@@ -1,4 +1,44 @@
 {
+  "REL": {
+    "test_catalogue": {
+      "rel_test_entity_a": {
+        "ref_to_c": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "manyref_to_c": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "ref_to_d": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "manyref_to_d": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        }
+      },
+      "rel_test_entity_b": {
+        "ref_to_c": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "manyref_to_c": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "ref_to_d": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "manyref_to_d": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        }
+      }
+    }
+  },
   "Grondslag": {
     "meetbouten": {
       "meetbouten": {

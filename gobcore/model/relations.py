@@ -65,6 +65,14 @@ def _get_relation(name):
             f"dst_{FIELD.SEQNR}": {
                 "type": "GOB.String",
                 "description": DESCRIPTION[FIELD.SEQNR]
+            },
+            FIELD.START_VALIDITY: {
+                "type": "GOB.DateTime",
+                "description": DESCRIPTION[FIELD.START_VALIDITY],
+            },
+            FIELD.END_VALIDITY: {
+                "type": "GOB.DateTime",
+                "description": DESCRIPTION[FIELD.END_VALIDITY],
             }
         }
     }

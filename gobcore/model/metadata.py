@@ -53,6 +53,8 @@ DESCRIPTION = {
     FIELD.HASH: "A hash of the values of all public fields for comparison",
     FIELD.EXPIRATION_DATE: "Timestamp telling when the entity will be or is expired.",
     FIELD.SOURCE_VALUE: "The original source value, used to resolve references.",
+    FIELD.START_VALIDITY: "Timestamp indicating the start of the validity of this object",
+    FIELD.END_VALIDITY: "Timestamp indicating the end of the validity of this object"
 }
 
 """Meta data that is registered for every entity"""

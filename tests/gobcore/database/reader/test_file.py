@@ -20,6 +20,7 @@ class TestFileReader(TestCase):
         expected_result = [
             {'id': 1, 'firstname': 'Sheldon', 'lastname': 'Cooper'},
             {'id': 2, 'firstname': 'Rajesh', 'lastname': 'Koothrappali'},
+            {'id': 3, 'firstname': None, 'lastname': None},
         ]
 
         result = [dict(row) for row in result]

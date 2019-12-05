@@ -118,7 +118,6 @@ def _default_indexes_for_columns(input_columns: list, table_type: str) -> dict:
         (FIELD.GOBID, FIELD.EXPIRATION_DATE),
         (FIELD.SOURCE,),
         (f"src{FIELD.ID}", f"src_{FIELD.SEQNR}", f"src{FIELD.SOURCE}", FIELD.SOURCE_VALUE, FIELD.APPLICATION),
-        (FIELD.APPLICATION, FIELD.START_VALIDITY, FIELD.END_VALIDITY),
         (f"src{FIELD.ID}", f"src_{FIELD.SEQNR}"),
         (f"dst{FIELD.ID}", f"dst_{FIELD.SEQNR}"),
     ]
