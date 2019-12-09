@@ -1,5 +1,4 @@
 SELECT
-    lps_0._gobid,
     lps_0.amsterdamse_sleutel,
     lps_0.begin_geldigheid,
     lps_0.eind_geldigheid,
@@ -9,42 +8,26 @@ SELECT
     lps_0.documentnummer,
     lps_0.status,
     ST_AsText(lps_0.geometrie) geometrie,
-    'bag' AS _catalog,
-    'ligplaatsen' AS _collection,
     json_build_object(
-        '_gobid', nag_0._gobid,
-        'identificatie', nag_0.identificatie,
+        'amsterdamse_sleutel', nag_0.amsterdamse_sleutel,
         'postcode', nag_0.postcode,
         'huisnummer', nag_0.huisnummer,
         'huisletter', nag_0.huisletter,
-        'huisnummertoevoeging', nag_0.huisnummertoevoeging,
-        '_catalog', 'bag', '_collection', 'nummeraanduidingen') _heeft_hoofdadres,
+        'huisnummertoevoeging', nag_0.huisnummertoevoeging) heeft_hoofdadres,
     json_build_object(
-        '_gobid', ore_0._gobid,
-        'identificatie', ore_0.identificatie,
         'straatcode', ore_0.straatcode,
         'straatnaam_ptt', ore_0.straatnaam_ptt,
         'naam', ore_0.naam,
-        'naam_nen', ore_0.naam_nen,
-        '_catalog', 'bag', '_collection', 'openbareruimtes') _ligt_aan_openbareruimte,
+        'naam_nen', ore_0.naam_nen) ligt_aan_openbareruimte,
     json_build_object(
-        '_gobid', wps_0._gobid,
-        'identificatie',wps_0.identificatie,
-        'naam', wps_0.naam,
-        '_catalog', 'bag', '_collection', 'woonplaatsen') _ligt_in_woonplaats,
+        'amsterdamse_sleutel',wps_0.amsterdamse_sleutel,
+        'naam', wps_0.naam) ligt_in_woonplaats,
     json_build_object(
-        '_gobid', brt_0._gobid,
         'code', brt_0.code,
-        'naam', brt_0.naam,
-        '_catalog', 'gebieden', '_collection', 'buurten') _ligt_in_buurt,
+        'naam', brt_0.naam) ligt_in_buurt,
     json_build_object(
-        '_gobid', wijk_0._gobid,
-        '_catalog', 'gebieden', '_collection', 'wijken') _ligt_in_wijk,
-    json_build_object(
-        '_gobid', sdl_0._gobid,
         'code', sdl_0.code,
-        'naam', sdl_0.naam,
-        '_catalog', 'gebieden', '_collection', 'stadsdelen') _ligt_in_stadsdeel
+        'naam', sdl_0.naam) ligt_in_stadsdeel
 FROM (
     SELECT *
     FROM bag_ligplaatsen
