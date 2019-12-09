@@ -3,17 +3,10 @@ User authorization levels and roles
 
 """
 
+# Keycloak header attributes
+AUTH_PATTERN = '^X-Auth-'
+REQUEST_USER = 'X-Auth-Userid'
+REQUEST_ROLES = 'X-Auth-Roles'
 
-LEVELS = {
-    10: "low",
-    20: "moderate",
-    30: "high"
-}
-
-
-ROLES = {
-    "anonymous": 0,
-    "user": 10,
-    "poweruser": 20,
-    "admin": 30
-}
+# Keycloak roles
+GOB_ADMIN = "gob_adm"

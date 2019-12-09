@@ -5,7 +5,7 @@ from gobcore.typesystem.gob_secure_types import SecureString, SecureDecimal, Sec
 from gobcore.typesystem.gob_types import JSON
 from gobcore.secure.crypto import read_protect
 from gobcore.secure.user import User
-from gobcore.secure.config import ROLES
+from gobcore.secure.config import REQUEST_ROLES, GOB_ADMIN
 
 
 class TestSecure(unittest.TestCase):
@@ -15,9 +15,11 @@ class TestSecure(unittest.TestCase):
 
     @mock.patch('gobcore.secure.cryptos.config.os.getenv', lambda s, *args: s)
     def test_create(self):
-        level = ROLES["user"]
-        user = User(None)
-        user._roles = ["user"]
+        mock_request = mock.MagicMock()
+        mock_request.headers = {
+            REQUEST_ROLES: GOB_ADMIN
+        }
+        user = User(mock_request)
 
         sec_string = SecureString.from_value(read_protect("some string"), level=5)
         self.assertTrue(isinstance(sec_string, SecureString))

@@ -1,8 +1,4 @@
-import os
-
-from gobcore.secure.config import ROLES
-
-MIN_USER_LEVEL = 10
+from gobcore.secure.config import REQUEST_ROLES, GOB_ADMIN
 
 
 class User:
@@ -13,8 +9,7 @@ class User:
 
         :param request:
         """
-        # roles = request.headers.get("X-Auth-Roles", "")
-        roles = os.getenv("ROLES", "")
+        roles = request.headers.get(REQUEST_ROLES, "")
         self._roles = roles.split(",")
 
     def has_access_to(self, encrypted_value):
@@ -24,4 +19,6 @@ class User:
         :param encrypted_value:
         :return:
         """
-        return any(ROLES.get(user_level, -1) >= MIN_USER_LEVEL for user_level in self._roles)
+
+        # For now only gob_adm has access to secure values
+        return GOB_ADMIN in self._roles
