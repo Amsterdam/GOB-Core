@@ -2,7 +2,7 @@ import unittest
 import mock
 import json
 
-from gobcore.secure.crypto import is_encrypted, confidence_level, encrypt, decrypt
+from gobcore.secure.crypto import is_encrypted, confidence_level, encrypt, decrypt, is_protected
 from gobcore.secure.crypto import read_protect, read_unprotect
 
 
@@ -60,3 +60,8 @@ class TestCrypto(unittest.TestCase):
     def test_protect(self):
         value = read_protect("any value")
         self.assertEqual(read_unprotect(value), "any value")
+
+    @mock.patch('gobcore.secure.crypto._safe_storage', {'a': 'a value'})
+    def test_is_protected(self):
+        self.assertTrue(is_protected('a'))
+        self.assertFalse(is_protected('b'))

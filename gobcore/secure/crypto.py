@@ -115,3 +115,10 @@ def read_unprotect(value):
         saved_value = _safe_storage[value]
         del _safe_storage[value]
         return saved_value
+
+
+def is_protected(value):
+    """
+    :param value: the key to the sensitive data or the encrypted value
+    """
+    return value in _safe_storage

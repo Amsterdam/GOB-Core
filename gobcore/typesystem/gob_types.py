@@ -23,6 +23,7 @@ from math import isnan
 import sqlalchemy
 
 from gobcore.exceptions import GOBTypeException
+from gobcore.model.metadata import FIELD
 
 
 class GOBType(metaclass=ABCMeta):
@@ -500,7 +501,7 @@ class JSON(GOBType):
 
 class Reference(JSON):
     name = "Reference"
-    exclude_keys = ('id')
+    exclude_keys = (FIELD.REFERENCE_ID, FIELD.SEQNR)
 
     def __eq__(self, other):
         """Internal representation is string, that is what we compare
@@ -523,7 +524,7 @@ class Reference(JSON):
 class ManyReference(Reference):
     name = "ManyReference"
 
-    def __eq__(self, other, exclude_keys=('id')):
+    def __eq__(self, other, exclude_keys=(FIELD.REFERENCE_ID, FIELD.SEQNR)):
         """Internal representation is string, that is what we compare
 
         :param other: other GOB Type to compare with

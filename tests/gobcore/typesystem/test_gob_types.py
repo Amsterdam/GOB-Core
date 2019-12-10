@@ -282,14 +282,14 @@ class TestGobTypes(unittest.TestCase):
         self.assertEqual(GobType.name, "Reference")
 
         # Test that a value of id is ignored when comparing references. Only test bronwaarde
-        self.assertEqual(GobType.from_value('{"bronwaarde": "123456"}'), GobType.from_value('{"bronwaarde": "123456", "id": "123456"}'))
+        self.assertEqual(GobType.from_value('{"bronwaarde": "123456"}'), GobType.from_value('{"bronwaarde": "123456", "id": "123456", "volgnummer": "1"}'))
 
     def test_many_reference(self):
         GobType = get_gob_type("GOB.ManyReference")
         self.assertEqual(GobType.name, "ManyReference")
 
         # Test that a value of id is ignored when comparing references. Only test bronwaarde
-        self.assertEqual(GobType.from_value('[{"bronwaarde": "123456"}, {"bronwaarde": "654321"}]'), GobType.from_value('[{"bronwaarde": "123456", "id": "123456"}, {"bronwaarde": "654321", "id": "654321"}]'))
+        self.assertEqual(GobType.from_value('[{"bronwaarde": "123456"}, {"bronwaarde": "654321"}]'), GobType.from_value('[{"bronwaarde": "123456", "id": "123456", "volgnummer": "1"}, {"bronwaarde": "654321", "id": "654321"}]'))
 
 
     def test_None_to_db(self):

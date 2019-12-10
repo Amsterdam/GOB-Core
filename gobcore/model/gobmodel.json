@@ -2312,15 +2312,18 @@
           },
           "voornamen": {
             "type": "GOB.SecureString",
-            "description": "Voornamen van het subject"
+            "description": "Voornamen van het subject",
+            "level": 5
           },
           "voorvoegsels": {
             "type": "GOB.SecureString",
-            "description": "Voorvoegsels bij de geslachtsnaam"
+            "description": "Voorvoegsels bij de geslachtsnaam",
+            "level": 5
           },
           "geslachtsnaam": {
             "type": "GOB.SecureString",
-            "description": "Geslachtsnaam van de geregistreerde persoon"
+            "description": "Geslachtsnaam van de geregistreerde persoon",
+            "level": 5
           },
           "geslacht": {
             "type": "GOB.JSON",
@@ -2348,7 +2351,8 @@
           },
           "geboortedatum": {
             "type": "GOB.SecureDate",
-            "description": "De datum waarop een natuurlijk persoon is geboren. Deze datum kan onvolledig zijn (alleen jaar, of alleen jaar en maand bekend)."
+            "description": "De datum waarop een natuurlijk persoon is geboren. Deze datum kan onvolledig zijn (alleen jaar, of alleen jaar en maand bekend).",
+            "level": 5
           },
           "geboorteplaats": {
             "type": "GOB.String",
@@ -2376,15 +2380,18 @@
           },
           "voornamen_partner": {
             "type": "GOB.SecureString",
-            "description": "Voorna(a)m(en) van de gerigstreerde partner"
+            "description": "Voorna(a)m(en) van de gerigstreerde partner",
+            "level": 5
           },
           "voorvoegsels_partner": {
             "type": "GOB.SecureString",
-            "description": "Voorvoegsel van de geregistreerde partner"
+            "description": "Voorvoegsel van de geregistreerde partner",
+            "level": 5
           },
           "geslachtsnaam_partner": {
             "type": "GOB.SecureString",
-            "description": "Geslachtsna(a)m(en) van de geregistreerde partner"
+            "description": "Geslachtsna(a)m(en) van de geregistreerde partner",
+            "level": 5
           },
           "heeft_rsin_voor": {
             "type": "GOB.Reference",

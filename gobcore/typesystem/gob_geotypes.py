@@ -80,19 +80,15 @@ class GEOType(GOBType):
     def to_value(self):
         return self._string
 
-
-class Point(GEOType):
-    name = "Point"
-    sql_type = geoalchemy2.Geometry('POINT')
-
     @classmethod  # noqa: C901
     def from_value(cls, value, **kwargs):
         """Instantiates the GOBType Point, with either a database value, a geojson or WKT string"""
 
         if isinstance(value, str):
-            regex = re.compile("^POINT\s*\([0-9\s\.]*\)$")
+            regex = re.compile(cls.regex)
             if not regex.match(value):
-                raise ValueError(f"Illegal Point WKT value: {value}")
+                raise ValueError(f"Illegal WKT {cls.name} value: {value}")
+            value = wkt.loads(value)
 
         if isinstance(value, geoalchemy2.elements.WKBElement):
             # Use shapely to construct wkt string and use wkt load to get correct precision
@@ -116,6 +112,12 @@ class Point(GEOType):
 
         # is wkt string
         return cls(value)
+
+
+class Point(GEOType):
+    name = "Point"
+    sql_type = geoalchemy2.Geometry('POINT')
+    regex = "^POINT\s*\([0-9\s\.]*\)$"
 
     @classmethod
     def from_values(cls, **values):
@@ -149,45 +151,7 @@ class Polygon(GEOType):
     # POLYGON ((115145.619264024 485115.91328199, ...))
     name = "Polygon"
     sql_type = geoalchemy2.Geometry('POLYGON')
-
-    @classmethod  # noqa: C901
-    def from_value(cls, value, **kwargs):
-        """Instantiates a Polygon from a value and optional arguments
-
-        Currently precision is supported as an optional argument
-
-        :param value: the value to convert to a polygon
-        :param kwargs: optional arguments
-        :return: Polygon
-        """
-
-        if isinstance(value, str):
-            regex = re.compile("^POLYGON\s*\([0-9\s\.,\(\)]*\)$")
-            if not regex.match(value):
-                raise ValueError(f"Illegal Polygon WKT value: {value}")
-
-        if isinstance(value, geoalchemy2.elements.WKBElement):
-            # Use shapely to construct wkt string and use wkt load to get correct precision
-            value = wkt.loads(to_shape(value).wkt)
-
-        if isinstance(value, dict):
-            # serialize possible geojson
-            value = json.dumps(value, cls=GobTypeJSONEncoder)
-
-        # if is geojson dump to wkt string
-        try:
-            precision = kwargs['precision'] if 'precision' in kwargs else cls._precision
-            wkt_string = wkt.dumps(json.loads(value), decimals=precision)
-            value = wkt_string
-
-            # it is not a to wkt_string dumpable json, let it pass:
-        except JSONDecodeError:
-            pass
-        except TypeError:
-            pass
-
-        # is wkt string
-        return cls(value)
+    regex = "^POLYGON\s*\([0-9\s\.,\(\)]*\)$"
 
     @classmethod
     def from_values(cls, **values):
@@ -229,49 +193,7 @@ class Geometry(GEOType):
     """
     name = "Geometry"
     sql_type = geoalchemy2.Geometry('GEOMETRY')
-
-    @classmethod  # noqa: C901
-    def from_value(cls, value, **kwargs):
-        """Instantiates a Geometry from a value and optional arguments
-
-        Currently precision is supported as an optional argument.
-
-        A rudimentary check on the validity of string values is performed.
-
-        :param value: the value to convert to a geometry
-        :param kwargs: optional arguments
-        :return: Geometry
-        """
-
-        if isinstance(value, str):
-            regex = re.compile("^[A-Z]+\s*\([A-Z0-9.,\s\(\)]+\)$")
-            if not regex.match(value):
-                raise ValueError(f"Illegal Geometry WKT value: {value}")
-            # Use wkt load to get correct precision
-            value = wkt.loads(value)
-
-        if isinstance(value, geoalchemy2.elements.WKBElement):
-            # Use shapely to construct wkt string and use wkt load to get correct precision
-            value = wkt.loads(to_shape(value).wkt)
-
-        if isinstance(value, dict):
-            # serialize possible geojson
-            value = json.dumps(value, cls=GobTypeJSONEncoder)
-
-        # if is geojson dump to wkt string
-        try:
-            precision = kwargs['precision'] if 'precision' in kwargs else cls._precision
-            wkt_string = wkt.dumps(json.loads(value), decimals=precision)
-            value = wkt_string
-
-            # it is not a to wkt_string dumpable json, let it pass:
-        except JSONDecodeError:
-            pass
-        except TypeError:
-            pass
-
-        # is wkt string
-        return cls(value)
+    regex = "^[A-Z]+\s*\([A-Z0-9.,\s\(\)]+\)$"
 
     @classmethod
     def from_values(cls, **values):

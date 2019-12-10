@@ -8,10 +8,15 @@ from gobcore.secure.user import User
 from gobcore.secure.config import REQUEST_ROLES, GOB_ADMIN
 
 
+class MockBaseType:
+    def from_value(self, *args, **kwargs):
+        return MockBaseType()
+
+
 class TestSecure(unittest.TestCase):
 
     class MockChild(Secure):
-        pass
+        BaseType = MockBaseType
 
     @mock.patch('gobcore.secure.cryptos.config.os.getenv', lambda s, *args: s)
     def test_create(self):
@@ -36,6 +41,13 @@ class TestSecure(unittest.TestCase):
     def test_from_value(self):
         res = self.MockChild.from_value('val', **{'kw': 'args'})
         self.assertIsInstance(res, type(self.MockChild('val')))
+
+    @mock.patch("gobcore.typesystem.gob_secure_types.is_encrypted", lambda x: False)
+    @mock.patch("gobcore.typesystem.gob_secure_types.is_protected", lambda x: False)
+    def test_from_value_not_encrypted_or_protected(self):
+        res = self.MockChild.from_value('val', **{'kw': 'args'})
+        self.assertNotIsInstance(res, type(self.MockChild))
+        self.assertIsInstance(res, type(MockBaseType()))
 
     @mock.patch("gobcore.typesystem.gob_secure_types.is_encrypted", lambda x: True)
     def test_get_value(self):

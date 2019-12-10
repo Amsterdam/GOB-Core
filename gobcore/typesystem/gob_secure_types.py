@@ -1,5 +1,5 @@
 from gobcore.typesystem.gob_types import String, Decimal, DateTime, Date
-from gobcore.secure.crypto import is_encrypted, encrypt, decrypt, read_unprotect
+from gobcore.secure.crypto import is_encrypted, encrypt, decrypt, read_unprotect, is_protected
 
 
 class Secure(String):
@@ -39,7 +39,7 @@ class Secure(String):
         """
         if is_encrypted(value):
             return cls(value)
-        else:
+        elif is_protected(value):
             assert "level" in kwargs, "Missing level to encrypt the given value"
             level = kwargs["level"]
             del kwargs["level"]
@@ -47,6 +47,8 @@ class Secure(String):
 
             value = cls.BaseType.from_value(value, **kwargs)
             return cls(value, level)
+        else:
+            return cls.BaseType.from_value(value, **kwargs)
 
     def get_value(self, user=None):
         """

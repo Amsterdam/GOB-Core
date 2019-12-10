@@ -35,7 +35,7 @@ class TestTypesystem(TestCase):
             {'key': 'field1', 'old_value': 'oldField1value', 'new_value': 'newField1value'},
         ]
         
-        mock_get_gob_type.return_value.from_value = lambda x: x
+        mock_get_gob_type.return_value.from_value = lambda x, **kwargs: x
         
         self.assertEqual(expected_result, get_modifications(entity, data, model))
 
