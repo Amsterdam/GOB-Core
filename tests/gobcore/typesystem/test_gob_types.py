@@ -272,6 +272,11 @@ class TestGobTypes(unittest.TestCase):
         # Python value is dict
         self.assertIsInstance(GobType.from_value('{"key": "value"}').to_value, dict)
 
+        self.assertEqual({"a": 1, "b": 2}, GobType.get_value(GobType('{"a": 1, "b": 2}')))
+        self.assertEqual({"a": {"c": 3}, "b": 2}, GobType.get_value(GobType('{"a": {"c": 3}, "b": 2}')))
+        self.assertEqual([{"a": 1}, {"b": 2}], GobType.get_value(GobType('[{"a": 1}, {"b": 2}]')))
+        self.assertEqual(None, GobType.get_value(GobType(None)))
+
     def test_reference(self):
         GobType = get_gob_type("GOB.Reference")
         self.assertEqual(GobType.name, "Reference")
