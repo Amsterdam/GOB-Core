@@ -25,8 +25,8 @@ class TestGobGeoTypes(unittest.TestCase):
         self.assertEqual('{"type": "Point", "coordinates": [52.3063972, 4.9627873]}',
                          GobType.from_values(x=52.3063972, y=4.9627873, precision=7).json)
 
-        self.assertEqual('POINT(112.0 22.0)', str(GobType.from_value('POINT(112.0 22.0)')))
-        self.assertEqual('POINT(52.3063972 4.9627873)', str(GobType.from_value('POINT(52.3063972 4.9627873)')))
+        self.assertEqual('POINT (112.000 22.000)', str(GobType.from_value('POINT(112.0 22.0)')))
+        self.assertEqual('POINT (52.3063972 4.9627873)', str(GobType.from_value('POINT(52.3063972 4.9627873)', precision=7)))
 
         empty_point = GobType('')
         self.assertEqual('null', empty_point.json)
@@ -36,21 +36,28 @@ class TestGobGeoTypes(unittest.TestCase):
         mock_db_field.data = '01010000204071000000000000f0abfd400000000050a11d41'
 
         self.assertEqual('POINT (121535.000 485460.000)', str(GobType.from_value(mock_db_field)))
+        self.assertEqual('POINT (1.000 2.000)', str(GobType.from_value('POINT (1 2)')))
 
     def test_gob_polygon(self):
         GobType = get_gob_type("GOB.Geo.Polygon")
         self.assertEqual(GobType.name, "Polygon")
 
-        self.assertEqual('POLYGON(112.0 22.0, 113.0 22.0, 113.0 21.0)', str(GobType.from_value('POLYGON(112.0 22.0, 113.0 22.0, 113.0 21.0)')))
+        self.assertEqual('POLYGON ((112.000 22.000, 113.000 22.000, 113.000 21.000))',
+                         str(GobType.from_value('POLYGON((112.0 22.0, 113.0 22.0, 113.0 21.0))')))
 
         empty_polygon = GobType('')
         self.assertEqual('null', empty_polygon.json)
+
+        self.assertEqual(str(GobType.from_value('POLYGON(( 112.0 22.0, 113.0 22.0, 113.0 21.0 ) )')),
+                         str(GobType.from_value('POLYGON ((112.000 22.000, 113.000 22.000, 113.000 21.000))')))
 
     def test_gob_geometry(self):
         GobType = get_gob_type("GOB.Geo.Geometry")
         self.assertEqual(GobType.name, "Geometry")
 
         self.assertEqual('POINT (1.000 2.000)', str(GobType.from_value('POINT (1 2)')))
+        self.assertEqual(str(GobType.from_value('POLYGON(( 112.0 22.0, 113.0 22.0, 113.0 21.0 ) )')),
+                         str(GobType.from_value('POLYGON ((112.000 22.000, 113.000 22.000, 113.000 21.000))')))
 
         empty_geometry = GobType('')
         self.assertEqual('null', empty_geometry.json)
