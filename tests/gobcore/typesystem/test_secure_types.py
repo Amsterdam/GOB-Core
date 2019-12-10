@@ -40,7 +40,7 @@ class TestSecure(unittest.TestCase):
     @mock.patch("gobcore.typesystem.gob_secure_types.is_encrypted", lambda x: True)
     def test_get_value(self):
         securetype = self.MockChild('value')
-        self.assertEqual('**********', securetype.get_value())
+        self.assertIsNone(securetype.get_value())
 
 
 class TestSecureDate(unittest.TestCase):

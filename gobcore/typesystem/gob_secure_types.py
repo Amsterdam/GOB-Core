@@ -70,7 +70,7 @@ class Secure(String):
             value = decrypt(value)
             return None if value is None else self.get_typed_value(value)
         else:
-            return "*" * 10
+            return None
 
 
 class SecureString(Secure):
