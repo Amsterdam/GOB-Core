@@ -16,7 +16,7 @@ FROM (
         g.naam AS gemeente,
         kg.identificatie AS kadastrale_gemeente,
         kgc.identificatie AS kadastrale_gemeentecode,
-        ks.identificatie AS kadastrale_sectie_code,
+        ks.code AS kadastrale_sectie_code,
         ST_MakeValid((ST_Dump(ks.geometrie)).geom) AS geometrie
       FROM brk_kadastralesecties ks
       LEFT JOIN brk_kadastralegemeentecodes kgc
