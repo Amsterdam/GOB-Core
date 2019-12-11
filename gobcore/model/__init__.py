@@ -36,6 +36,18 @@ EVENTS = {
 }
 
 
+class NotInModelException(Exception):
+    pass
+
+
+class NoSuchCatalogException(NotInModelException):
+    pass
+
+
+class NoSuchCollectionException(NotInModelException):
+    pass
+
+
 class GOBModel():
     inverse_relations = None
     _data = None
@@ -65,9 +77,12 @@ class GOBModel():
             **FIXED_FIELDS
         }
 
-        # Extract references for easy access in API
+        # Extract references for easy access in API. Add catalog and collection names to catalog and collection objects
         for catalog_name, catalog in self._data.items():
+            catalog['name'] = catalog_name
+
             for entity_name, model in catalog['collections'].items():
+                model['name'] = entity_name
                 model['references'] = self._extract_references(model['attributes'])
                 model['very_many_references'] = self._extract_very_many_references(model['attributes'])
 
@@ -317,6 +332,16 @@ class GOBModel():
         """
         return "_".join(self._split_table_name(table_name)[1:])
 
+    def get_catalog_from_abbr(self, catalog_abbr: str):
+        """Returns catalog from abbreviation
+
+        :param catalog_abbr:
+        """
+        try:
+            return [catalog for catalog in self._data.values() if catalog['abbreviation'].lower() == catalog_abbr][0]
+        except IndexError:
+            raise NoSuchCatalogException(catalog_abbr)
+
     def get_catalog_collection_from_abbr(self, catalog_abbr: str, collection_abbr: str):
         """Returns catalog and collection
 
@@ -324,12 +349,13 @@ class GOBModel():
         :param collection_abbr:
         :return:
         """
-        catalog = [catalog for catalog in self._data.values()
-                   if catalog['abbreviation'].lower() == catalog_abbr][0]
-        assert catalog, f"Catalog with abbreviation {catalog_abbr} does not exist"
 
-        collection = [collection for collection in catalog['collections'].values()
-                      if collection['abbreviation'].lower() == collection_abbr][0]
-        assert collection, f"Collection with abbreviation {collection_abbr} does not exist"
+        catalog = self.get_catalog_from_abbr(catalog_abbr)
+
+        try:
+            collection = [collection for collection in catalog['collections'].values()
+                          if collection['abbreviation'].lower() == collection_abbr][0]
+        except IndexError:
+            raise NoSuchCollectionException(collection_abbr)
 
         return catalog, collection

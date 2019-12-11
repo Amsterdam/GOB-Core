@@ -3,7 +3,7 @@ import copy
 from unittest.mock import MagicMock, patch
 
 from gobcore.exceptions import GOBException
-from gobcore.model import GOBModel
+from gobcore.model import GOBModel, NoSuchCollectionException, NoSuchCatalogException
 from gobcore.model.schema import SchemaException
 from tests.gobcore.fixtures import random_string
 
@@ -338,3 +338,26 @@ class TestModel(unittest.TestCase):
             'abbreviation': 'cob',
             'some other': 'data',
         }), model.get_catalog_collection_from_abbr('ca', 'cob'))
+
+        with self.assertRaises(NoSuchCatalogException):
+            model.get_catalog_collection_from_abbr('cc', 'cob')
+
+        with self.assertRaises(NoSuchCollectionException):
+            model.get_catalog_collection_from_abbr('ca', 'coc')
+
+
+    def test_catalog_from_abbr(self):
+        model = GOBModel()
+        model._data = {
+            'cat_a': {
+                'abbreviation': 'ca',
+                'collections': {
+                    'col_a': {}
+                }
+            }
+        }
+
+        self.assertEqual(model._data['cat_a'], model.get_catalog_from_abbr('ca'))
+
+        with self.assertRaises(NoSuchCatalogException):
+            model.get_catalog_from_abbr('nonexistent')
