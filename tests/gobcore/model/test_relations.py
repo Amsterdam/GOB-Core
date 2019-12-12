@@ -3,7 +3,7 @@ from unittest import mock
 
 from gobcore.model.relations import _get_relation, _get_relation_name, get_relation_name, get_relations, \
     create_relation, get_inverse_relations, get_fieldnames_for_missing_relations, _split_relation_table_name, \
-    get_reference_name_from_relation_table_name, _get_destination
+    get_reference_name_from_relation_table_name, _get_destination, get_relations_for_collection
 from gobcore.model import GOBModel
 from gobcore.exceptions import GOBException
 
@@ -293,3 +293,56 @@ class TestRelations(unittest.TestCase):
 
         model.get_catalog.side_effect = KeyError
         self.assertIsNone(_get_destination(model, 'cat', 'coll'))
+
+    @mock.patch('gobcore.model.relations._get_relation_name')
+    def test_get_relations_for_collection(self, mock_get_relation_name):
+        model = {
+            "cat": {
+                "collections": {
+                    "entity": {
+                        "attributes": {
+                            "refa": {
+                                "type": "GOB.Reference",
+                                "description": "",
+                                "ref": "some:ref"
+                            },
+                            "refb": {
+                                "type": "GOB.Reference",
+                                "description": "",
+                                "ref": "some:ref"
+                            },
+                            "refc": {
+                                "type": "GOB.Reference",
+                                "description": "",
+                                "ref": "some:ref"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        class MockModel:
+            gobmodel = GOBModel()
+            _data = model
+
+            def get_catalog(self, catalog_name):
+                return model[catalog_name]
+
+            def get_collection(self, catalog_name, collection_name):
+                return model[catalog_name]['collections'][collection_name]
+
+            # Wire original GOBModel _extract_references method
+            def _extract_references(self, attributes):
+                return self.gobmodel._extract_references(attributes)
+
+        mock_get_relation_name.return_value = 'name'
+
+        expected_result = {
+            "refa": "name",
+            "refb": "name",
+            "refc": "name",
+        }
+
+        result = get_relations_for_collection(MockModel(), 'cat', 'entity')
+        self.assertEqual(expected_result, result)

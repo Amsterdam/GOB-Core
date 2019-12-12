@@ -276,6 +276,23 @@ def get_inverse_relations(model):
     return inverse_relations
 
 
+def get_relations_for_collection(model, catalog_name, collection_name):
+    """
+    Return a dictionary with all relations and the table_name for a specified collection
+
+    :param model:
+    :param catalog_name:
+    :param collection_name:
+    :param derivation:
+    :return:
+    """
+    collection = model.get_collection(catalog_name, collection_name)
+    references = model._extract_references(collection['attributes'])
+    table_names = {reference_name: get_relation_name(model, catalog_name, collection_name, reference_name)
+                   for reference_name in references.keys()}
+    return table_names
+
+
 def create_relation(src, validity, dst, derivation):
     """
     Create a relation for the given specification items
