@@ -283,7 +283,6 @@ def get_relations_for_collection(model, catalog_name, collection_name):
     :param model:
     :param catalog_name:
     :param collection_name:
-    :param derivation:
     :return:
     """
     collection = model.get_collection(catalog_name, collection_name)
