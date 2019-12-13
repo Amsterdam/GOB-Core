@@ -20,7 +20,7 @@ SELECT
         'naam', ore_0.naam,
         'naam_nen', ore_0.naam_nen) ligt_aan_openbareruimte,
     json_build_object(
-        'amsterdamse_sleutel',wps_0.amsterdamse_sleutel,
+        'identificatie',wps_0.identificatie,
         'naam', wps_0.naam) ligt_in_woonplaats,
     json_build_object(
         'code', brt_0.code,
@@ -86,4 +86,4 @@ WHERE (nag_0._expiration_date IS NULL OR nag_0._expiration_date > NOW())
     AND (sdl_0._expiration_date IS NULL OR sdl_0._expiration_date > NOW())
     AND sdl_0._date_deleted IS null
 ORDER BY
-    lps_0._gobid;
+    lps_0._gobid
