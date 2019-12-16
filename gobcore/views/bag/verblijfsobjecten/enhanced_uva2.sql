@@ -74,7 +74,12 @@ LEFT JOIN mv_gbd_wijk_gbd_sdl_ligt_in_stadsdeel rel_5
     ON rel_5.src_id = wijk_0._id AND rel_5.src_volgnummer = wijk_0.volgnummer
 LEFT JOIN gebieden_stadsdelen sdl_0
     ON rel_5.dst_id = sdl_0._id AND rel_5.dst_volgnummer = sdl_0.volgnummer
-LEFT JOIN mv_bag_vot_bag_pnd_ligt_in_panden rel_6
+LEFT JOIN LATERAL (
+    SELECT DISTINCT ON (src_id)
+       src_id, dst_id, src_volgnummer, dst_volgnummer
+    FROM mv_bag_vot_bag_pnd_ligt_in_panden
+    ORDER BY src_id, src_volgnummer, dst_id
+) AS rel_6
     ON rel_6.src_id = vot_0._id AND rel_6.src_volgnummer = vot_0.volgnummer
 LEFT JOIN bag_panden pnd_0
     ON rel_6.dst_id = pnd_0._id AND rel_6.dst_volgnummer = pnd_0.volgnummer
