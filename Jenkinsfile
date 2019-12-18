@@ -17,7 +17,7 @@ def tryStep(String message, Closure block, Closure tearDown = null) {
 }
 
 
-node {
+node('GOBBUILD') {
     stage("Checkout") {
         checkout scm
     }
