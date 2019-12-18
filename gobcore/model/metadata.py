@@ -14,8 +14,6 @@ The auto-included attributes have the purpose of
 class FIELD:
     START_VALIDITY = "begin_geldigheid"
     END_VALIDITY = "eind_geldigheid"
-    START_VALIDITY_RELATION = "begin_geldigheid_relatie"
-    END_VALIDITY_RELATION = "eind_geldigheid_relatie"
     VERSION = "_version"
     DATE_CREATED = "_date_created"
     DATE_CONFIRMED = "_date_confirmed"
@@ -57,8 +55,6 @@ DESCRIPTION = {
     FIELD.SOURCE_VALUE: "The original source value, used to resolve references.",
     FIELD.START_VALIDITY: "Timestamp indicating the start of the validity of this object",
     FIELD.END_VALIDITY: "Timestamp indicating the end of the validity of this object",
-    FIELD.START_VALIDITY_RELATION: "Timestamp indicating the start of the validity of a relation",
-    FIELD.END_VALIDITY_RELATION: "Timestamp indicating the end of the validity of a relation"
 }
 
 """Meta data that is registered for every entity"""
