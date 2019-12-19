@@ -9,6 +9,8 @@ SELECT
     vot_0.status,
     ST_AsText(vot_0.geometrie) geometrie,
     vot_0.gebruiksdoel,
+    vot_0.gebruiksdoel_woonfunctie,
+    vot_0.gebruiksdoel_gezondheidszorgfunctie,
     vot_0.verdieping_toegang,
     vot_0.aantal_eenheden_complex,
     vot_0.aantal_bouwlagen,
