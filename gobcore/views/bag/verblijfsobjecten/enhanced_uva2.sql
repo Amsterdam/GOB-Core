@@ -8,6 +8,7 @@ SELECT
     eind_geldigheid_object.eind_geldigheid as eind_geldigheid_object,
     vot_0.status,
     ST_AsText(vot_0.geometrie) geometrie,
+    vot_0.oppervlakte,
     vot_0.gebruiksdoel,
     vot_0.gebruiksdoel_woonfunctie,
     vot_0.gebruiksdoel_gezondheidszorgfunctie,
