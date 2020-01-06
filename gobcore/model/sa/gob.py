@@ -8,6 +8,7 @@ import hashlib
 import re
 
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.schema import UniqueConstraint
 
 # Import data definitions
 from gobcore.model import GOBModel, EVENTS, EVENTS_DESCRIPTION
@@ -39,7 +40,7 @@ def get_column(column_name, column_specification):
     return column
 
 
-def columns_to_model(table_name, columns, has_states=False):
+def columns_to_model(table_name, columns, has_states=False, constraint_columns=None):
     """Create a model out of table_name and GOB column specification
 
     :param table_name: name of the table
@@ -50,12 +51,19 @@ def columns_to_model(table_name, columns, has_states=False):
     # Convert columns to SQLAlchemy Columns
     columns = {column_name: get_column(column_name, column_spec) for column_name, column_spec in columns.items()}
 
+    if not constraint_columns:
+        constraint_columns = [FIELD.ID, FIELD.SEQNR] if has_states else [FIELD.ID]
+
+    # Limit the table_name to prevent a key name of more than 63 characters
+    constraint_name = f"{table_name[:40]}_{'_'.join(constraint_columns)}_key"
+
     # Create model
     return type(table_name, (Base,), {
         "__tablename__": table_name,
         **columns,
         "__has_states__": has_states,
-        "__repr__": lambda self: f"{table_name}"
+        "__repr__": lambda self: f"{table_name}",
+        "__table_args__": (UniqueConstraint(*constraint_columns, name=constraint_name),)
     })
 
 
@@ -70,7 +78,7 @@ def _derive_models():
     }
 
     # Start with events
-    columns_to_model("events", columns_to_fields(EVENTS, EVENTS_DESCRIPTION))
+    columns_to_model("events", columns_to_fields(EVENTS, EVENTS_DESCRIPTION), constraint_columns=["eventid"])
 
     for catalog_name, catalog in model.get_catalogs().items():
         for collection_name, collection in model.get_collections(catalog_name).items():
