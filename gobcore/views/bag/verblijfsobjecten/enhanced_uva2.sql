@@ -82,10 +82,10 @@ LEFT JOIN LATERAL (
     SELECT DISTINCT ON (pnd.src_id)
        pnd.src_id, pnd.dst_id, pnd.src_volgnummer, pnd.dst_volgnummer
     FROM mv_bag_vot_bag_pnd_ligt_in_panden pnd
-    inner join (select src_id, max(src_volgnummer) src_volgnummer
-    			from mv_bag_vot_bag_pnd_ligt_in_panden
-    			group by src_id) max_pnd on pnd.src_id = max_pnd.src_id and pnd.src_volgnummer = max_pnd.src_volgnummer
-    			ORDER BY pnd.src_id, pnd.src_volgnummer, pnd.dst_id
+    INNER JOIN (SELECT src_id, max(src_volgnummer) src_volgnummer
+      FROM mv_bag_vot_bag_pnd_ligt_in_panden
+      GROUP BY src_id) max_pnd ON pnd.src_id = max_pnd.src_id AND pnd.src_volgnummer = max_pnd.src_volgnummer
+      ORDER BY pnd.src_id, pnd.src_volgnummer, pnd.dst_id
 ) AS rel_6
     ON rel_6.src_id = vot_0._id AND rel_6.src_volgnummer = vot_0.volgnummer
 LEFT JOIN bag_panden pnd_0
