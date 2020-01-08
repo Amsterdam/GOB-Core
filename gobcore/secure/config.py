@@ -10,5 +10,6 @@ REQUEST_ROLES = 'X-Auth-Roles'
 
 # Keycloak roles
 GOB_ADMIN = "gob_adm"
+GOB_DUMP = "gob_dump"
 BRK_DATA_TOTAAL = "brk_data_totaal"
 BRK_DATA_BEPERKT = "brk_data_beperkt"
