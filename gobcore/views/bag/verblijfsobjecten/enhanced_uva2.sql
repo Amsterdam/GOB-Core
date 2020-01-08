@@ -8,10 +8,7 @@ SELECT
     eind_geldigheid_object.eind_geldigheid as eind_geldigheid_object,
     vot_0.status,
     ST_AsText(vot_0.geometrie) geometrie,
-    vot_0.oppervlakte,
     vot_0.gebruiksdoel,
-    vot_0.gebruiksdoel_woonfunctie,
-    vot_0.gebruiksdoel_gezondheidszorgfunctie,
     vot_0.verdieping_toegang,
     vot_0.aantal_eenheden_complex,
     vot_0.aantal_bouwlagen,
@@ -42,6 +39,7 @@ SELECT
         'code', sdl_0.code,
         'naam', sdl_0.naam) ligt_in_stadsdeel,
     json_build_object(
+        'identificatie', pnd_0.identificatie,
         'type_woonobject', pnd_0.type_woonobject,
         'ligging', pnd_0.ligging,
         'oorspronkelijk_bouwjaar', pnd_0.oorspronkelijk_bouwjaar) ligt_in_panden,
@@ -78,10 +76,13 @@ LEFT JOIN mv_gbd_wijk_gbd_sdl_ligt_in_stadsdeel rel_5
 LEFT JOIN gebieden_stadsdelen sdl_0
     ON rel_5.dst_id = sdl_0._id AND rel_5.dst_volgnummer = sdl_0.volgnummer
 LEFT JOIN LATERAL (
-    SELECT DISTINCT ON (src_id)
-       src_id, dst_id, src_volgnummer, dst_volgnummer
-    FROM mv_bag_vot_bag_pnd_ligt_in_panden
-    ORDER BY src_id, src_volgnummer, dst_id
+    SELECT DISTINCT ON (pnd.src_id)
+       pnd.src_id, pnd.dst_id, pnd.src_volgnummer, pnd.dst_volgnummer
+    FROM mv_bag_vot_bag_pnd_ligt_in_panden pnd
+    inner join (select src_id, max(src_volgnummer) src_volgnummer
+    			from mv_bag_vot_bag_pnd_ligt_in_panden
+    			group by src_id) max_pnd on pnd.src_id = max_pnd.src_id and pnd.src_volgnummer = max_pnd.src_volgnummer
+    			ORDER BY pnd.src_id, pnd.src_volgnummer, pnd.dst_id
 ) AS rel_6
     ON rel_6.src_id = vot_0._id AND rel_6.src_volgnummer = vot_0.volgnummer
 LEFT JOIN bag_panden pnd_0
