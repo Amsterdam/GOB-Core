@@ -5,7 +5,6 @@ SELECT
     vot_0.begin_geldigheid,
     vot_0.eind_geldigheid,
     begin_geldigheid_object.begin_geldigheid as begin_geldigheid_object,
-    eind_geldigheid_object.eind_geldigheid as eind_geldigheid_object,
     vot_0.status,
     ST_AsText(vot_0.geometrie) geometrie,
     vot_0.oppervlakte,
@@ -82,9 +81,9 @@ LEFT JOIN LATERAL (
     SELECT DISTINCT ON (pnd.src_id)
        pnd.src_id, pnd.dst_id, pnd.src_volgnummer, pnd.dst_volgnummer
     FROM mv_bag_vot_bag_pnd_ligt_in_panden pnd
-    INNER JOIN (SELECT src_id, max(src_volgnummer) src_volgnummer
+    INNER JOIN (SELECT src_id, MAX(src_volgnummer::INTEGER) src_volgnummer
       FROM mv_bag_vot_bag_pnd_ligt_in_panden
-      GROUP BY src_id) max_pnd ON pnd.src_id = max_pnd.src_id AND pnd.src_volgnummer = max_pnd.src_volgnummer
+      GROUP BY src_id) max_pnd ON pnd.src_id = max_pnd.src_id AND pnd.src_volgnummer::INTEGER = max_pnd.src_volgnummer
       ORDER BY pnd.src_id, pnd.src_volgnummer, pnd.dst_id
 ) AS rel_6
     ON rel_6.src_id = vot_0._id AND rel_6.src_volgnummer = vot_0.volgnummer
@@ -101,13 +100,6 @@ JOIN LATERAL (
     ORDER BY amsterdamse_sleutel, volgnummer::INTEGER
 ) AS begin_geldigheid_object
 ON begin_geldigheid_object.amsterdamse_sleutel = vot_0.amsterdamse_sleutel
-JOIN LATERAL (
-    SELECT DISTINCT ON (amsterdamse_sleutel)
-       amsterdamse_sleutel, eind_geldigheid
-    FROM bag_verblijfsobjecten
-    ORDER BY amsterdamse_sleutel, volgnummer::INTEGER DESC
-) AS eind_geldigheid_object
-ON eind_geldigheid_object.amsterdamse_sleutel = vot_0.amsterdamse_sleutel
 WHERE (nag_0._expiration_date IS NULL OR nag_0._expiration_date > NOW())
     AND nag_0._date_deleted IS NULL
     AND (ore_0._expiration_date IS NULL OR ore_0._expiration_date > NOW())
