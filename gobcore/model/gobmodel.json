@@ -2313,17 +2313,17 @@
           "voornamen": {
             "type": "GOB.SecureString",
             "description": "Voornamen van het subject",
-            "level": 5
+            "level": 4
           },
           "voorvoegsels": {
             "type": "GOB.SecureString",
             "description": "Voorvoegsels bij de geslachtsnaam",
-            "level": 5
+            "level": 4
           },
           "geslachtsnaam": {
             "type": "GOB.SecureString",
             "description": "Geslachtsnaam van de geregistreerde persoon",
-            "level": 5
+            "level": 4
           },
           "geslacht": {
             "type": "GOB.JSON",
@@ -2352,7 +2352,7 @@
           "geboortedatum": {
             "type": "GOB.SecureDate",
             "description": "De datum waarop een natuurlijk persoon is geboren. Deze datum kan onvolledig zijn (alleen jaar, of alleen jaar en maand bekend).",
-            "level": 5
+            "level": 4
           },
           "geboorteplaats": {
             "type": "GOB.String",
@@ -2381,17 +2381,17 @@
           "voornamen_partner": {
             "type": "GOB.SecureString",
             "description": "Voorna(a)m(en) van de gerigstreerde partner",
-            "level": 5
+            "level": 4
           },
           "voorvoegsels_partner": {
             "type": "GOB.SecureString",
             "description": "Voorvoegsel van de geregistreerde partner",
-            "level": 5
+            "level": 4
           },
           "geslachtsnaam_partner": {
             "type": "GOB.SecureString",
             "description": "Geslachtsna(a)m(en) van de geregistreerde partner",
-            "level": 5
+            "level": 4
           },
           "heeft_rsin_voor": {
             "type": "GOB.Reference",
