@@ -91,6 +91,10 @@
       {
         "name": "collection",
         "description": "The name of the data collection (example: \"metingen\")"
+      },
+      {
+        "name": "attribute",
+        "description": "The name of the attribute containing the relation to relate (example: \"ligt_in_buurt\")"
       }
     ],
     "workflow": "relate"
