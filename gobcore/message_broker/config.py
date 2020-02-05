@@ -11,6 +11,11 @@ Two main queues are defined:
 import os
 import pika
 import tempfile
+import logging
+
+pika_logger = logging.getLogger("pika")
+pika_logger.propagate = False
+pika_logger.setLevel(logging.ERROR)
 
 
 def _build_key(*args):
