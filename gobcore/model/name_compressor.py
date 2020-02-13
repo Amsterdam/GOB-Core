@@ -6,7 +6,8 @@ class NameCompressor():
         "splitsing": "spl",
         "ontstaan_uit": "ont",
         "is_bron_voor": "brn",
-        "betrokken_bij": "btr"
+        "betrokken_bij": "btr",
+        "reference": "ref"
     }
 
     @classmethod

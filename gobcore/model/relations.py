@@ -6,6 +6,7 @@ Relations are automatically derived from the GOB Model specification.
 
 from collections import defaultdict
 from gobcore.model.metadata import FIELD, DESCRIPTION
+from gobcore.model.name_compressor import NameCompressor
 from gobcore.exceptions import GOBException
 
 # Derivation of relation
@@ -111,14 +112,16 @@ def _get_relation_name(src, dst, reference_name):
     """
     try:
         # Relations may exist to not yet existing other entities, catch exceptions
-        return (f"{src['catalog']['abbreviation']}_{src['collection']['abbreviation']}_" +
+        name = (f"{src['catalog']['abbreviation']}_{src['collection']['abbreviation']}_" +
                 f"{dst['catalog']['abbreviation']}_{dst['collection']['abbreviation']}_" +
                 f"{reference_name}").lower()
+        return NameCompressor.compress_name(name)
     except (TypeError, KeyError):
         return None
 
 
 def _split_relation_table_name(table_name: str):
+    table_name = NameCompressor.uncompress_name(table_name)
     split = table_name.split('_')
 
     if len(split) < 6:

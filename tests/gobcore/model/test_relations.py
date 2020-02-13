@@ -4,6 +4,7 @@ from unittest import mock
 from gobcore.model.relations import _get_relation, _get_relation_name, get_relation_name, get_relations, \
     create_relation, get_inverse_relations, get_fieldnames_for_missing_relations, _split_relation_table_name, \
     get_reference_name_from_relation_table_name, _get_destination, get_relations_for_collection
+from gobcore.model.name_compressor import NameCompressor
 from gobcore.model import GOBModel
 from gobcore.exceptions import GOBException
 
@@ -58,14 +59,16 @@ class TestRelations(unittest.TestCase):
             "collection_name": "collection"
         }
 
+        # Assert that NameCompressor is used
+        self.assertTrue("reference" in NameCompressor._CONVERSIONS.keys())
         name = _get_relation_name(src, dst, "reference")
-        expect = 'cat_col_dst_cat_dst_col_reference'
+        expect = 'cat_col_dst_cat_dst_col__ref_'
         self.assertEqual(name, expect)
 
         model.get_catalog.return_value = src['catalog']
         model.get_collection.return_value = src['collection']
         name = get_relation_name(model, "catalog", "collection", "reference")
-        expect = 'cat_col_cat_col_reference'
+        expect = 'cat_col_cat_col__ref_'
         self.assertEqual(name, expect)
 
     @mock.patch('gobcore.model.relations._get_relation_name')
@@ -103,7 +106,7 @@ class TestRelations(unittest.TestCase):
         self.assertEqual(len(relations['collections'].items()), 1)
 
     def test_split_relation_table_name(self):
-        test_case = "rel_srccat_srccol_dstcat_dstcol_relation_name"
+        test_case = "rel_srccat_srccol_dstcat_dstcol__ref_"
 
         res = _split_relation_table_name(test_case)
         self.assertEqual({
@@ -111,7 +114,7 @@ class TestRelations(unittest.TestCase):
             'src_col_abbr': 'srccol',
             'dst_cat_abbr': 'dstcat',
             'dst_col_abbr': 'dstcol',
-            'reference_name': 'relation_name'
+            'reference_name': 'reference'
         }, res)
 
         with self.assertRaisesRegexp(GOBException, "Invalid table name"):
