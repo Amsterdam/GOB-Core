@@ -2,7 +2,7 @@ import unittest
 from unittest import mock
 
 from gobcore.model.relations import _get_relation, _get_relation_name, get_relation_name, get_relations, \
-    create_relation, get_inverse_relations, get_fieldnames_for_missing_relations, _split_relation_table_name, \
+    create_relation, get_inverse_relations, get_fieldnames_for_missing_relations, split_relation_table_name, \
     get_reference_name_from_relation_table_name, _get_destination, get_relations_for_collection
 from gobcore.model.name_compressor import NameCompressor
 from gobcore.model import GOBModel
@@ -108,7 +108,7 @@ class TestRelations(unittest.TestCase):
     def test_split_relation_table_name(self):
         test_case = "rel_srccat_srccol_dstcat_dstcol__ref_"
 
-        res = _split_relation_table_name(test_case)
+        res = split_relation_table_name(test_case)
         self.assertEqual({
             'src_cat_abbr': 'srccat',
             'src_col_abbr': 'srccol',
@@ -118,7 +118,7 @@ class TestRelations(unittest.TestCase):
         }, res)
 
         with self.assertRaisesRegexp(GOBException, "Invalid table name"):
-            _split_relation_table_name("rel_srccat_srccol_dstcat_dstcol")
+            split_relation_table_name("rel_srccat_srccol_dstcat_dstcol")
 
     def test_get_reference_name_from_relation_table_name(self):
         test_case = "rel_srccat_srccol_dstcat_dstcol_relation_name"

@@ -120,7 +120,7 @@ def _get_relation_name(src, dst, reference_name):
         return None
 
 
-def _split_relation_table_name(table_name: str):
+def split_relation_table_name(table_name: str):
     table_name = NameCompressor.uncompress_name(table_name)
     split = table_name.split('_')
 
@@ -140,7 +140,7 @@ def _split_relation_table_name(table_name: str):
 
 
 def get_reference_name_from_relation_table_name(table_name: str):
-    return _split_relation_table_name(table_name)['reference_name']
+    return split_relation_table_name(table_name)['reference_name']
 
 
 def get_relation_name(model, catalog_name, collection_name, reference_name):
