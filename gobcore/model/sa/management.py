@@ -134,6 +134,13 @@ class ServiceTask(Base):
 
     is_alive = Column(Boolean)
 
+    __mapper_args__ = {
+        # Solves issue in workflow storage _update_servicetasks method
+        # SAWarning: DELETE statement on table 'service_tasks' expected to delete 1 row(s); 0 were matched.
+        # Please set confirm_deleted_rows=False within the mapper configuration to prevent this warning.
+        'confirm_deleted_rows': False
+    }
+
     def __repr__(self):
         return f'<ServiceTask {self.service_name}:{self.name}>'
 
