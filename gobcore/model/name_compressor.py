@@ -1,13 +1,13 @@
 class NameCompressor():
     _CONVERSIONS = {
-        "aantekening": "ant",
-        "kadastraal": "kad",
-        "appartements": "app",
-        "splitsing": "spl",
-        "ontstaan_uit": "ont",
-        "is_bron_voor": "brn",
-        "betrokken_bij": "btr",
-        "reference": "ref"
+        # "aantekening": "ant",
+        # "kadastraal": "kad",
+        # "appartements": "app",
+        # "splitsing": "spl",
+        # "ontstaan_uit": "ont",
+        # "is_bron_voor": "brn",
+        # "betrokken_bij": "btr",
+        # "reference": "ref"
     }
 
     @classmethod

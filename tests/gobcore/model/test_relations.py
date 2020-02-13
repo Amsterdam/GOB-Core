@@ -60,15 +60,15 @@ class TestRelations(unittest.TestCase):
         }
 
         # Assert that NameCompressor is used
-        self.assertTrue("reference" in NameCompressor._CONVERSIONS.keys())
+        # self.assertTrue("reference" in NameCompressor._CONVERSIONS.keys())
         name = _get_relation_name(src, dst, "reference")
-        expect = 'cat_col_dst_cat_dst_col__ref_'
+        expect = 'cat_col_dst_cat_dst_col_reference'
         self.assertEqual(name, expect)
 
         model.get_catalog.return_value = src['catalog']
         model.get_collection.return_value = src['collection']
         name = get_relation_name(model, "catalog", "collection", "reference")
-        expect = 'cat_col_cat_col__ref_'
+        expect = 'cat_col_cat_col_reference'
         self.assertEqual(name, expect)
 
     @mock.patch('gobcore.model.relations._get_relation_name')
@@ -106,7 +106,7 @@ class TestRelations(unittest.TestCase):
         self.assertEqual(len(relations['collections'].items()), 1)
 
     def test_split_relation_table_name(self):
-        test_case = "rel_srccat_srccol_dstcat_dstcol__ref_"
+        test_case = "rel_srccat_srccol_dstcat_dstcol_reference"
 
         res = split_relation_table_name(test_case)
         self.assertEqual({

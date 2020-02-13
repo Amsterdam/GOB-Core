@@ -6,6 +6,10 @@ from gobcore.model.name_compressor import NameCompressor
 class TestNameCompressor(unittest.TestCase):
 
     def test_conversions(self):
+        saved_conversions = NameCompressor._CONVERSIONS
+        NameCompressor._CONVERSIONS = {
+            "reference": "ref"
+        }
         names = [
             "",
             "is_bron_voor_aantekening_kadastraal_object",
@@ -25,3 +29,5 @@ class TestNameCompressor(unittest.TestCase):
             conversion = NameCompressor.compress_name(name)
             self.assertTrue(len(conversion) <= len(name))
             self.assertEqual(NameCompressor.uncompress_name(conversion), name)
+
+        NameCompressor._CONVERSIONS = saved_conversions
