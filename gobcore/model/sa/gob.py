@@ -40,7 +40,7 @@ def get_column(column_name, column_specification):
     return column
 
 
-def columns_to_model(table_name, columns, has_states=False, constraint_columns=None):
+def columns_to_model(catalog_name, table_name, columns, has_states=False, constraint_columns=None):
     """Create a model out of table_name and GOB column specification
 
     :param table_name: name of the table
@@ -51,11 +51,16 @@ def columns_to_model(table_name, columns, has_states=False, constraint_columns=N
     # Convert columns to SQLAlchemy Columns
     columns = {column_name: get_column(column_name, column_spec) for column_name, column_spec in columns.items()}
 
-    if not constraint_columns:
-        constraint_columns = [FIELD.ID, FIELD.SEQNR] if has_states else [FIELD.ID]
+    if catalog_name == "rel":
+        table_args = ()
+    else:
+        if not constraint_columns:
+            constraint_columns = [FIELD.ID, FIELD.SEQNR] if has_states else [FIELD.ID]
 
-    # Limit the table_name to prevent a key name of more than 63 characters
-    constraint_name = f"{table_name[:40]}_{'_'.join(constraint_columns)}_key"
+        # Limit the table_name to prevent a key name of more than 63 characters
+        constraint_name = f"{table_name[:40]}_{'_'.join(constraint_columns)}_key"
+
+        table_args = (UniqueConstraint(*constraint_columns, name=constraint_name),)
 
     # Create model
     return type(table_name, (Base,), {
@@ -63,7 +68,7 @@ def columns_to_model(table_name, columns, has_states=False, constraint_columns=N
         **columns,
         "__has_states__": has_states,
         "__repr__": lambda self: f"{table_name}",
-        "__table_args__": (UniqueConstraint(*constraint_columns, name=constraint_name),)
+        "__table_args__": table_args
     })
 
 
@@ -78,7 +83,7 @@ def _derive_models():
     }
 
     # Start with events
-    columns_to_model("events", columns_to_fields(EVENTS, EVENTS_DESCRIPTION), constraint_columns=["eventid"])
+    columns_to_model(None, "events", columns_to_fields(EVENTS, EVENTS_DESCRIPTION), constraint_columns=["eventid"])
 
     for catalog_name, catalog in model.get_catalogs().items():
         for collection_name, collection in model.get_collections(catalog_name).items():
@@ -92,7 +97,7 @@ def _derive_models():
 
             # the GOB model for the specified entity
             table_name = model.get_table_name(catalog_name, collection_name)
-            models[table_name] = columns_to_model(table_name, collection['all_fields'],
+            models[table_name] = columns_to_model(catalog_name, table_name, collection['all_fields'],
                                                   has_states=collection.get('has_states', False))
 
     return models
