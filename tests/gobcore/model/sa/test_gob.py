@@ -25,9 +25,11 @@ class TestGob(unittest.TestCase):
         collections = {
             'col1': {
                 'name': 'collection 1',
+                'very_many_references': {'very_many_reference': {}}
             },
             'col2': {
                 'name': 'collection 2',
+                'very_many_references': {}
             }
         }
         catalogs = {
@@ -71,6 +73,7 @@ class TestGob(unittest.TestCase):
             'src_col_abbr': 'col1',
             'dst_cat_abbr': 'cat2',
             'dst_col_abbr': 'col2',
+            'reference_name': 'reference'
         }
 
         self.assertEqual(mock_model_type.return_value, columns_to_model('rel', 'table_name', {
@@ -85,3 +88,29 @@ class TestGob(unittest.TestCase):
             self.MockForeignKeyConstraint('', '', 'table_name_sfk'),
             self.MockForeignKeyConstraint('', '', 'table_name_dfk'),
         ))
+
+    @patch("gobcore.model.sa.gob.GOBModel", MockModel)
+    @patch("gobcore.model.sa.gob.ForeignKeyConstraint", MockForeignKeyConstraint)
+    @patch("gobcore.model.sa.gob.NameCompressor.compress_name", lambda x: x)
+    @patch("gobcore.model.sa.gob.get_column")
+    @patch("gobcore.model.sa.gob.split_relation_table_name")
+    @patch("gobcore.model.sa.gob._create_model_type")
+    def test_columns_to_model_rel_vmr(self, mock_model_type, mock_split, mock_get_column):
+        mock_get_column.side_effect = lambda name, spec: spec
+        mock_split.return_value = {
+            'src_cat_abbr': 'cat1',
+            'src_col_abbr': 'col1',
+            'dst_cat_abbr': 'cat2',
+            'dst_col_abbr': 'col2',
+            'reference_name': 'very_many_reference'
+        }
+
+        self.assertEqual(mock_model_type.return_value, columns_to_model('rel', 'table_name', {
+            'column1': 'column1spec',
+            'column2': 'column2spec',
+        }))
+
+        mock_model_type.assert_called_with('table_name', {
+            'column1': 'column1spec',
+            'column2': 'column2spec',
+        }, False, None)

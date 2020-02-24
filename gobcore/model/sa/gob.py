@@ -110,10 +110,14 @@ def columns_to_model(catalog_name, table_name, columns, has_states=False, constr
                 name=f"{NameCompressor.compress_name(table_name)}_{srcdst[0]}fk"
             )
 
-        table_args = (
-            fk_constraint(src_catalog, src_collection, 'src'),
-            fk_constraint(dst_catalog, dst_collection, 'dst'),
-        )
+        if relation_info['reference_name'] in src_collection["very_many_references"].keys():
+            # Do not create FK constraints for very many references
+            table_args = None
+        else:
+            table_args = (
+                fk_constraint(src_catalog, src_collection, 'src'),
+                fk_constraint(dst_catalog, dst_collection, 'dst'),
+            )
 
     else:
         if not constraint_columns:
