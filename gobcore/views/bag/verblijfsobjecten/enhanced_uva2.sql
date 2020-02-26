@@ -50,33 +50,32 @@ SELECT
 FROM (
     SELECT *
     FROM bag_verblijfsobjecten
-    WHERE (_expiration_date IS NULL OR _expiration_date > NOW()) AND _date_deleted IS NULL
-    ORDER BY _gobid
+    WHERE (COALESCE(_expiration_date, '9999-12-31'::timestamp without time zone) > NOW()) AND _date_deleted IS NULL
 ) vot_0
 LEFT JOIN mv_bag_vot_bag_nag_heeft_hoofdadres rel_0
     ON rel_0.src_id = vot_0._id AND rel_0.src_volgnummer = vot_0.volgnummer
 LEFT JOIN bag_nummeraanduidingen nag_0
-    ON rel_0.dst_id = nag_0._id AND rel_0.dst_volgnummer = nag_0.volgnummer
+    ON rel_0.dst_id = nag_0._id AND rel_0.dst_volgnummer = nag_0.volgnummer AND COALESCE(nag_0._expiration_date, '9999-12-31'::timestamp without time zone) > NOW()
 LEFT JOIN mv_bag_nag_bag_ore_ligt_aan_openbareruimte rel_1
     ON rel_1.src_id = nag_0._id AND rel_1.src_volgnummer = nag_0.volgnummer
 LEFT JOIN bag_openbareruimtes ore_0
-    ON rel_1.dst_id = ore_0._id AND rel_1.dst_volgnummer = ore_0.volgnummer
+    ON rel_1.dst_id = ore_0._id AND rel_1.dst_volgnummer = ore_0.volgnummer AND COALESCE(ore_0._expiration_date, '9999-12-31'::timestamp without time zone) > NOW()
 LEFT JOIN mv_bag_ore_bag_wps_ligt_in_woonplaats rel_2
     ON rel_2.src_id = ore_0._id AND rel_2.src_volgnummer = ore_0.volgnummer
 LEFT JOIN bag_woonplaatsen wps_0
-    ON rel_2.dst_id = wps_0._id AND rel_2.dst_volgnummer = wps_0.volgnummer
+    ON rel_2.dst_id = wps_0._id AND rel_2.dst_volgnummer = wps_0.volgnummer AND COALESCE(wps_0._expiration_date, '9999-12-31'::timestamp without time zone) > NOW()
 LEFT JOIN mv_bag_vot_gbd_brt_ligt_in_buurt rel_3
     ON rel_3.src_id = vot_0._id AND rel_3.src_volgnummer = vot_0.volgnummer
 LEFT JOIN gebieden_buurten brt_0
-    ON rel_3.dst_id = brt_0._id AND rel_3.dst_volgnummer = brt_0.volgnummer
+    ON rel_3.dst_id = brt_0._id AND rel_3.dst_volgnummer = brt_0.volgnummer AND COALESCE(brt_0._expiration_date, '9999-12-31'::timestamp without time zone) > NOW()
 LEFT JOIN mv_gbd_brt_gbd_wijk_ligt_in_wijk rel_4
     ON rel_4.src_id = brt_0._id AND rel_4.src_volgnummer = brt_0.volgnummer
 LEFT JOIN gebieden_wijken wijk_0
-    ON rel_4.dst_id = wijk_0._id AND rel_4.dst_volgnummer = wijk_0.volgnummer
+    ON rel_4.dst_id = wijk_0._id AND rel_4.dst_volgnummer = wijk_0.volgnummer AND COALESCE(wijk_0._expiration_date, '9999-12-31'::timestamp without time zone) > NOW()
 LEFT JOIN mv_gbd_wijk_gbd_sdl_ligt_in_stadsdeel rel_5
     ON rel_5.src_id = wijk_0._id AND rel_5.src_volgnummer = wijk_0.volgnummer
 LEFT JOIN gebieden_stadsdelen sdl_0
-    ON rel_5.dst_id = sdl_0._id AND rel_5.dst_volgnummer = sdl_0.volgnummer
+    ON rel_5.dst_id = sdl_0._id AND rel_5.dst_volgnummer = sdl_0.volgnummer AND COALESCE(sdl_0._expiration_date, '9999-12-31'::timestamp without time zone) > NOW()
 LEFT JOIN LATERAL (
     SELECT DISTINCT ON (pnd.src_id)
        pnd.src_id, pnd.dst_id, pnd.src_volgnummer, pnd.dst_volgnummer
@@ -88,11 +87,11 @@ LEFT JOIN LATERAL (
 ) AS rel_6
     ON rel_6.src_id = vot_0._id AND rel_6.src_volgnummer = vot_0.volgnummer
 LEFT JOIN bag_panden pnd_0
-    ON rel_6.dst_id = pnd_0._id AND rel_6.dst_volgnummer = pnd_0.volgnummer
+    ON rel_6.dst_id = pnd_0._id AND rel_6.dst_volgnummer = pnd_0.volgnummer AND COALESCE(pnd_0._expiration_date, '9999-12-31'::timestamp without time zone) > NOW()
 LEFT JOIN mv_bag_pnd_gbd_bbk_ligt_in_bouwblok rel_7
     ON rel_7.src_id = pnd_0._id AND rel_7.src_volgnummer = pnd_0.volgnummer
 LEFT JOIN gebieden_bouwblokken bbk_0
-    ON rel_7.dst_id = bbk_0._id AND rel_7.dst_volgnummer = bbk_0.volgnummer
+    ON rel_7.dst_id = bbk_0._id AND rel_7.dst_volgnummer = bbk_0.volgnummer AND COALESCE(bbk_0._expiration_date, '9999-12-31'::timestamp without time zone) > NOW()
 JOIN LATERAL (
     SELECT DISTINCT ON (amsterdamse_sleutel)
        amsterdamse_sleutel, begin_geldigheid
@@ -100,21 +99,3 @@ JOIN LATERAL (
     ORDER BY amsterdamse_sleutel, volgnummer::INTEGER
 ) AS begin_geldigheid_object
 ON begin_geldigheid_object.amsterdamse_sleutel = vot_0.amsterdamse_sleutel
-WHERE (nag_0._expiration_date IS NULL OR nag_0._expiration_date > NOW())
-    AND nag_0._date_deleted IS NULL
-    AND (ore_0._expiration_date IS NULL OR ore_0._expiration_date > NOW())
-    AND ore_0._date_deleted IS NULL
-    AND (wps_0._expiration_date IS NULL OR wps_0._expiration_date > NOW())
-    AND wps_0._date_deleted IS NULL
-    AND (brt_0._expiration_date IS NULL OR brt_0._expiration_date > NOW())
-    AND brt_0._date_deleted IS NULL
-    AND (wijk_0._expiration_date IS NULL OR wijk_0._expiration_date > NOW())
-    AND wijk_0._date_deleted IS NULL
-    AND (sdl_0._expiration_date IS NULL OR sdl_0._expiration_date > NOW())
-    AND sdl_0._date_deleted IS NULL
-    AND (pnd_0._expiration_date IS NULL OR pnd_0._expiration_date > NOW())
-    AND pnd_0._date_deleted IS NULL
-    AND (bbk_0._expiration_date IS NULL OR bbk_0._expiration_date > NOW())
-    AND bbk_0._date_deleted IS NULL
-ORDER BY
-    vot_0._gobid
