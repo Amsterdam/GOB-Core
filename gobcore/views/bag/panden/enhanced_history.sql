@@ -91,4 +91,3 @@
       ligt_in_buurt._ligt_in_ggpgebied->>'id' = ligt_in_ggpgebied.identificatie AND
       ligt_in_buurt._ligt_in_ggpgebied->>'volgnummer' = ligt_in_ggpgebied.volgnummer
     WHERE pnd._date_deleted IS NULL
-    ORDER BY  pnd.identificatie, pnd.volgnummer

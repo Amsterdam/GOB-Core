@@ -100,4 +100,3 @@
       ) sps_adressen ON sps_adressen.dst_id = nag._id AND sps_adressen.dst_volgnummer = nag.volgnummer
     LEFT JOIN bag_standplaatsen adresseert_standplaats ON sps_adressen.src_id = adresseert_standplaats._id and sps_adressen.src_volgnummer = adresseert_standplaats.volgnummer
     WHERE nag._date_deleted IS NULL
-    ORDER BY  nag.identificatie, nag.volgnummer
