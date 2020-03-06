@@ -460,9 +460,13 @@
             "description": "Unieke identificatie van de meting"
           },
           "nabij_nummeraanduiding": {
-            "type": "GOB.Reference",
-            "description": "Een adres in de nabijheid van het referentiepunt",
-            "ref": "bag:nummeraanduidingen"
+            "type": "GOB.JSON",
+            "description": "Een adres in de nabijheid van de meetbout",
+            "attributes": {
+              "bronwaarde": {
+                "type": "GOB.String"
+              }
+            }
           },
           "locatie": {
             "type": "GOB.String",
