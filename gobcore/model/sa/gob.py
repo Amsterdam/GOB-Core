@@ -181,7 +181,7 @@ def _default_indexes_for_columns(input_columns: list, table_type: str) -> dict:
         (FIELD.EXPIRATION_DATE,),
         (FIELD.APPLICATION,),
         (FIELD.SOURCE_ID,),  # for application of events
-        (f"{FIELD.LAST_EVENT} DESC",)
+        (FIELD.LAST_EVENT,)
     ]
 
     entity_table_indexes = [
