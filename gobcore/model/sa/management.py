@@ -3,7 +3,8 @@
 SQLAlchemy Management Models
 
 """
-from sqlalchemy import Column, DateTime, Integer, JSON, ARRAY, String, Boolean, ForeignKey, Index
+from sqlalchemy import Column, DateTime, Integer, JSON, String, Boolean, ForeignKey, Index
+from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
