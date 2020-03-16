@@ -7,12 +7,12 @@
       nag.huisnummertoevoeging,
       nag.postcode,
       json_build_object(
-        'identificatie', ligt_aan_openbareruimte.identificatie,
-        'naam', ligt_aan_openbareruimte.naam
+        'identificatie', ore_0.identificatie,
+        'naam', ore_0.naam
       ) AS _ref_ligt_aan_openbareruimte_bag_ore,
       json_build_object(
-        'identificatie', ligt_in_woonplaats.identificatie,
-        'naam', ligt_in_woonplaats.naam
+        'identificatie', wps_0.identificatie,
+        'naam', wps_0.naam
       ) AS _ref_ligt_in_woonplaats_bag_wps,
       nag.begin_geldigheid,
       nag.eind_geldigheid,
@@ -33,17 +33,15 @@
     FROM
       bag_nummeraanduidingen AS nag
     -- SELECT ligt_aan_openbareruimte
-    LEFT JOIN
-      bag_openbareruimtes AS ligt_aan_openbareruimte
-    ON
-      nag.ligt_aan_openbareruimte->>'id' = ligt_aan_openbareruimte._id AND
-      (nag.ligt_aan_openbareruimte->>'volgnummer')::int = ligt_aan_openbareruimte.volgnummer
+    LEFT JOIN mv_bag_nag_bag_ore_ligt_aan_openbareruimte rel_0
+        ON rel_0.src_id = nag._id AND rel_0.src_volgnummer = nag.volgnummer
+    LEFT JOIN bag_openbareruimtes ore_0
+        ON rel_0.dst_id = ore_0._id AND rel_0.dst_volgnummer = ore_0.volgnummer AND COALESCE(ore_0._expiration_date, '9999-12-31'::timestamp without time zone) > NOW()
     -- SELECT ligt_in_woonplaats
-    LEFT JOIN
-      bag_woonplaatsen AS ligt_in_woonplaats
-    ON
-      nag.ligt_in_woonplaats->>'id' = ligt_in_woonplaats._id AND
-      (nag.ligt_in_woonplaats->>'volgnummer')::int = ligt_in_woonplaats.volgnummer
+    LEFT JOIN mv_bag_ore_bag_wps_ligt_in_woonplaats rel_1
+        ON rel_1.src_id = ore_0._id AND rel_1.src_volgnummer = ore_0.volgnummer
+    LEFT JOIN bag_woonplaatsen wps_0
+        ON rel_1.dst_id = wps_0._id AND rel_1.dst_volgnummer = wps_0.volgnummer AND COALESCE(wps_0._expiration_date, '9999-12-31'::timestamp without time zone) > NOW()
     -- SELECT adresseert_verblijfsobject
     LEFT JOIN (
           SELECT
