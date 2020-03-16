@@ -19,10 +19,10 @@ class TestEvents(unittest.TestCase):
 
         # Test entity meetbouten exists in catalog meetbouten and returns the correct value
         entities = self.views.get_entities('meetbouten')
-        self.assertIn('meetbouten', entities)
+        self.assertIn('referentiepunten', entities)
 
         # Test view enhanced exists in entity meetbouten and returns the correct value
-        views = self.views.get_views('meetbouten', 'meetbouten')
+        views = self.views.get_views('meetbouten', 'referentiepunten')
         self.assertIn('enhanced', views)
 
     def test_queries(self):
@@ -33,7 +33,7 @@ class TestEvents(unittest.TestCase):
                     self.assertIn('query', view)
 
     def test_get_view(self):
-        existing_view = self.views.get_view('meetbouten', 'meetbouten', 'enhanced')
-        self.assertEqual(existing_view['name'], 'meetbouten_meetbouten_enhanced')
+        existing_view = self.views.get_view('meetbouten', 'referentiepunten', 'enhanced')
+        self.assertEqual(existing_view['name'], 'meetbouten_referentiepunten_enhanced')
 
         self.assertIsNone(self.views.get_view('meetbouten', 'meetbouten', 'does not exist'))
