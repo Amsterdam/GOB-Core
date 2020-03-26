@@ -94,6 +94,25 @@
           }
         }
       },
+      "test_entity_autoid": {
+        "version": "0.1",
+        "entity_id": "identificatie",
+        "abbreviation": "TEA",
+        "attributes": {
+          "identificatie": {
+            "type": "GOB.String",
+            "description": "Object identificatie"
+          },
+          "code": {
+            "type": "GOB.String",
+            "description": "Object code"
+          },
+          "autoid": {
+            "type": "GOB.String",
+            "description": "autoid"
+          }
+        }
+      },
       "rel_test_entity_a": {
         "version": "0.1",
         "description": "Entity to test relations. Has states.",
