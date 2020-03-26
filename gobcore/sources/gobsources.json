@@ -1,12 +1,26 @@
 {
-  "REL": {
+  "ADD": {
     "test_catalogue": {
       "test_entity": {
         "reference": {
           "method": "equals",
           "destination_attribute": "string"
         }
-      },
+      }
+    }
+  },
+  "MODIFY1": {
+    "test_catalogue": {
+      "test_entity": {
+        "reference": {
+          "method": "equals",
+          "destination_attribute": "string"
+        }
+      }
+    }
+  },
+  "REL": {
+    "test_catalogue": {
       "rel_test_entity_a": {
         "ref_to_c": {
           "method": "equals",
