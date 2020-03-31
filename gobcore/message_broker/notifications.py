@@ -27,10 +27,10 @@ def listen_to_notifications(id, notification_type=None):
     :return:
     """
     queue = f"{NOTIFY_BASE_QUEUE}.{id}"
-    return listen_to_broadcasts(NOTIFY_EXCHANGE, queue, notification_type or '')
+    return _listen_to_notifications(NOTIFY_EXCHANGE, queue, notification_type or '')
 
 
-def contains_notifications(result_msg):
+def contains_notification(result_msg):
     """
     Tells wether the message includes any notifications
 
@@ -40,23 +40,23 @@ def contains_notifications(result_msg):
     return result_msg and result_msg.get(NOTIFICATION_KEY)
 
 
-def send_notifications(result_msg):
+def send_notification(result_msg):
     """
     Send any notifications that are contained in the result msg
 
     :param result_msg:
     :return:
     """
-    # If a notification has been specified then broadcast the notification
-    if contains_notifications(result_msg):
+    # If a notification has been specified then notification the notification
+    if contains_notification(result_msg):
         header_fields = NOTIFICATION_HEADER_FIELDS
         notification = result_msg[NOTIFICATION_KEY]
         notification = {
             'header': {key: result_msg['header'].get(key) for key in header_fields},
             **notification
         }
-        # Broadcast notification
-        send_broadcast(NOTIFY_EXCHANGE, notification_type=notification.get(NOTIFICATION_TYPE), msg=notification)
+        # Send notification
+        _send_notification(NOTIFY_EXCHANGE, notification_type=notification.get(NOTIFICATION_TYPE), msg=notification)
         # Delete when handled
         del result_msg[NOTIFICATION_KEY]
 
@@ -115,20 +115,9 @@ class EventNotification():
         return cls(**msg[NOTIFICATION_CONTENTS], header=msg['header'])
 
 
-def _create_broadcast_exchange(channel, exchange):
+def _send_notification(exchange, notification_type, msg):
     """
-    Create the broadcast exchange if it does not yet exist
-
-    :param channel:
-    :param exchange:
-    :return:
-    """
-    _create_exchange(channel=channel, exchange=exchange, durable=True)
-
-
-def send_broadcast(exchange, notification_type, msg):
-    """
-    Send a broadcast message of a specified type (None for unspecied) on the specified exchange
+    Send a notification message of a specified type (None for unspecied) on the specified exchange
 
     :param exchange:
     :param msg:
@@ -138,12 +127,12 @@ def send_broadcast(exchange, notification_type, msg):
         channel = connection.channel()
 
         # Create exchange if it does not yet exist
-        _create_broadcast_exchange(channel=channel, exchange=exchange)
+        _create_exchange(channel=channel, exchange=exchange, durable=True)
 
         # Convert the message to json
         json_msg = to_json(msg)
 
-        # Broadcast the message as a non-persistent message on the queue
+        # Send the message as a non-persistent message on the queue
         channel.basic_publish(
             exchange=exchange,
             routing_key=notification_type,
@@ -154,9 +143,9 @@ def send_broadcast(exchange, notification_type, msg):
         )
 
 
-def listen_to_broadcasts(exchange, queue, notification_type=None):
+def _listen_to_notifications(exchange, queue, notification_type=None):
     """
-    Listen to broadcast messages on the specified exchange and queue of a specified type (None for all)
+    Listen to notification messages on the specified exchange and queue of a specified type (None for all)
 
     :param exchange:
     :param queue:
@@ -166,7 +155,7 @@ def listen_to_broadcasts(exchange, queue, notification_type=None):
         channel = connection.channel()
 
         # Create exchange and queue if they do not yet exist
-        _create_broadcast_exchange(channel=channel, exchange=exchange)
+        _create_exchange(channel=channel, exchange=exchange, durable=True)
         _create_queue(channel=channel, queue=queue, durable=True)
         # Bind to the queue and listen to messages of the specifief type
         _bind_queue(channel=channel, exchange=exchange, queue=queue, key=notification_type or '')

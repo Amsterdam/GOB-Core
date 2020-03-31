@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, call
 from tests.gobcore import fixtures
 
 from gobcore.message_broker.async_message_broker import AsyncConnection
-from gobcore.message_broker.config import WORKFLOW_EXCHANGE, CONNECTION_PARAMS
+from gobcore.message_broker.config import CONNECTION_PARAMS
 from gobcore.message_broker import messagedriven_service
 from gobcore.message_broker.messagedriven_service import MessagedrivenService, _on_message, STATUS_FAIL
 
@@ -24,13 +24,13 @@ def mock_get_on_message(service):
 
 class TestMessageDrivenServiceFunctions(unittest.TestCase):
 
-    @mock.patch("gobcore.message_broker.messagedriven_service.contains_notifications")
-    @mock.patch("gobcore.message_broker.messagedriven_service.send_notifications")
-    def test_on_message(self, mock_send_notifications, mock_contains_notifications):
+    @mock.patch("gobcore.message_broker.messagedriven_service.contains_notification")
+    @mock.patch("gobcore.message_broker.messagedriven_service.send_notification")
+    def test_on_message(self, mock_send_notification, mock_contains_notification):
 
         global return_message
 
-        mock_contains_notifications = True
+        mock_contains_notification = True
 
         # setup mocks and fixtures
         mocked_handler = mock.Mock(wraps=handler)
@@ -58,7 +58,7 @@ class TestMessageDrivenServiceFunctions(unittest.TestCase):
             # The return message should be published on the return queue
             mocked_publish.assert_called_with(return_queue['exchange'], return_queue['key'], return_message)
 
-        mock_send_notifications.assert_called_with(return_message)
+        mock_send_notification.assert_called_with(return_message)
 
     @mock.patch("gobcore.message_broker.messagedriven_service.Heartbeat")
     def test_on_message_fail(self, mock_heartbeat):
