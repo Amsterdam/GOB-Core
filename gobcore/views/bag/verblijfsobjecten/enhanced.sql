@@ -96,16 +96,23 @@
     LEFT JOIN brk_gemeentes gme_0
         ON rel_3.dst_id = gme_0._id AND COALESCE(gme_0._expiration_date, '9999-12-31'::timestamp without time zone) > NOW()
     -- SELECT heeft_nevenadres
-    CROSS JOIN LATERAL (
+    LEFT JOIN (
       SELECT
+        src_id,
+        src_volgnummer,
         json_agg(
           json_build_object(
-            'identificatie', nevenadres.id
+            'identificatie', dst_id
           )
         ) AS _mref_heeft_nevenadres_bag_nag
       FROM
-        jsonb_to_recordset(vot.heeft_nevenadres) AS nevenadres(id text, volgnummer text)
-    ) AS heeft_nevenadres
+        mv_bag_vot_bag_nag_heeft_nevenadres mrel_0
+      WHERE
+          COALESCE(mrel_0.eind_geldigheid, '9999-12-31'::timestamp without time zone) > NOW()
+          AND dst_id IS NOT NULL
+      GROUP BY src_id, src_volgnummer
+    ) AS nvn_0
+    ON nvn_0.src_id = vot._id AND nvn_0.src_volgnummer = vot.volgnummer
     -- SELECT ligt_in_panden
     LEFT JOIN (
       SELECT
@@ -117,9 +124,9 @@
           )
         ) AS _mref_ligt_in_panden_bag_pnd
       FROM
-        mv_bag_vot_bag_pnd_ligt_in_panden mrel_0
+        mv_bag_vot_bag_pnd_ligt_in_panden mrel_1
       WHERE
-        COALESCE(mrel_0.eind_geldigheid, '9999-12-31'::timestamp without time zone) > NOW()
+        COALESCE(mrel_1.eind_geldigheid, '9999-12-31'::timestamp without time zone) > NOW()
         AND dst_id IS NOT NULL
       GROUP BY src_id, src_volgnummer
     ) AS pnd_0

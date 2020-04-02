@@ -17,30 +17,36 @@ SELECT
   pnd.type_woonobject,
   json_build_object(
     'identificatie', bbk_0.identificatie,
+    'volgnummer', bbk_0.volgnummer,
     'code', bbk_0.code
   ) AS _ref_ligt_in_bouwblok_gbd_bbk,
   json_build_object(
     'identificatie', brt_0.identificatie,
+    'volgnummer', brt_0.volgnummer,
     'code', brt_0.code,
     'naam', brt_0.naam
   ) AS _ref_ligt_in_buurt_gbd_brt,
   json_build_object(
     'identificatie', wijk_0.identificatie,
+    'volgnummer', wijk_0.volgnummer,
     'code', wijk_0.code,
     'naam', wijk_0.naam
   ) AS _ref_ligt_in_wijk_gbd_wijk,
   json_build_object(
     'identificatie', ggw_0.identificatie,
+    'volgnummer', ggw_0.volgnummer,
     'code', ggw_0.code,
     'naam', ggw_0.naam
   ) AS _ref_ligt_in_ggwgebied_gbd_ggw,
   json_build_object(
     'identificatie', sdl_0.identificatie,
+    'volgnummer', sdl_0.volgnummer,
     'code', sdl_0.code,
     'naam', sdl_0.naam
   ) AS _ref_ligt_in_stadsdeel_gbd_sdl,
   json_build_object(
     'identificatie', ggp_0.identificatie,
+    'volgnummer', ggp_0.volgnummer,
     'code', ggp_0.code,
     'naam', ggp_0.naam
   ) AS _ref_ligt_in_ggpgebied_gbd_ggp,
