@@ -158,8 +158,24 @@ class TestLogger(TestCase):
     def test_add_issue(self):
         logger = Logger()
         self.assertEqual(logger.get_issues(), [])
-        logger.add_issue("any issue")
-        self.assertEqual(logger.get_issues(), ["any issue"])
+        any_issue = MagicMock()
+        any_issue.get_id.return_value = 1
+
+        logger.add_issue(any_issue)
+        self.assertEqual(logger.get_issues(), [any_issue])
+
+        logger.add_issue(any_issue)
+        self.assertEqual(logger.get_issues(), [any_issue])
+
+        another_issue = MagicMock()
+        another_issue.get_id.return_value = 1
+
+        logger.add_issue(another_issue)
+        self.assertEqual(logger.get_issues(), [any_issue])
+
+        another_issue.get_id.return_value = 2
+        logger.add_issue(another_issue)
+        self.assertEqual(logger.get_issues(), [any_issue, another_issue])
 
 
 class TestRequestHandler(TestCase):

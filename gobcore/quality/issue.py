@@ -44,6 +44,14 @@ class Issue():
 
         self.explanation = None
 
+    def get_id(self):
+        return "_".join([str(value) for value in [self.entity_id, getattr(self, FIELD.SEQNR)] if value])
+
+    def join_issue(self, other_issue):
+        if self.get_id() != other_issue.get_id():
+            raise IssueException(f"Join issue requires same ID {self.get_id} <> {other_issue.get_id()}")
+        self.value = ", ".join([self._format_value(value) for value in [self.value, other_issue.value]])
+
     def _get_value(self, entity: dict, attribute: str):
         """
         Gets the value of an entity attribute

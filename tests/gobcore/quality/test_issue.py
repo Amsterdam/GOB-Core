@@ -164,6 +164,42 @@ class TestIssue(TestCase):
         issue.explanation = 'explanation'
         self.assertEqual(issue.get_explanation(), 'explanation')
 
+    def test_get_id(self):
+        entity = {
+            'id': 'any id',
+            'attr': 'any attr'
+        }
+        issue = Issue({'id': 'any_check'}, entity, 'id', 'attr')
+        self.assertEqual(issue.get_id(), 'any id')
+
+        entity = {
+            'id': 'any id',
+            'attr': 'any attr',
+            FIELD.SEQNR: 1
+        }
+        issue = Issue({'id': 'any_check'}, entity, 'id', 'attr')
+        self.assertEqual(issue.get_id(), 'any id_1')
+
+    def test_join_issue(self):
+        entity = {
+            'id': 'any id',
+            'attr': 5
+        }
+        issue = Issue({'id': 'any_check'}, entity, 'id', 'attr')
+        other_issue = Issue({'id': 'any_check'}, entity, 'id', 'attr')
+        issue.join_issue(other_issue)
+        self.assertEqual(issue.value, '5, 5')
+
+        entity['attr'] = None
+        issue = Issue({'id': 'any_check'}, entity, 'id', 'attr')
+        other_issue = Issue({'id': 'any_check'}, entity, 'id', 'attr')
+        issue.join_issue(other_issue)
+        self.assertEqual(issue.value, f"{Issue._NO_VALUE}, {Issue._NO_VALUE}")
+
+        other_issue.entity_id = 'other id'
+        with self.assertRaises(IssueException):
+            issue.join_issue(other_issue)
+
     def test_log_issue(self):
         entity = {
             'id': 'any id',

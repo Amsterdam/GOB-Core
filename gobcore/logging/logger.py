@@ -71,13 +71,19 @@ class Logger:
         self.clear_issues()
 
     def clear_issues(self):
-        self._issues = []
+        self._issues = {}
 
     def add_issue(self, issue):
-        self._issues.append(issue)
+        id = issue.get_id()
+        if self._issues.get(id):
+            # Join this issue with an already existing issue for the same entity
+            self._issues[id].join_issue(issue)
+        else:
+            # Add this issue as a new issue
+            self._issues[id] = issue
 
     def get_issues(self):
-        return self._issues
+        return list(self._issues.values())
 
     def _clear_logs(self):
         self.messages = {key: [] for key in Logger._SAVE_LOGS}
