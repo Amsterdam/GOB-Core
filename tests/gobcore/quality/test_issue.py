@@ -175,6 +175,17 @@ class TestIssue(TestCase):
         log_issue(mock_logger, QA_LEVEL.INFO, issue)
         mock_logger.add_issue.assert_called()
 
+    def test_log_issue_no_entity(self):
+        # Skip issues that are not linked to an entity
+        entity = {
+            'attr': 'any attr'
+        }
+        issue = Issue({'id': 'any_check', 'msg': 'any msg'}, entity, 'id', 'attr')
+        mock_logger = MagicMock()
+        mock_logger.get_name.return_value = "any name"
+        log_issue(mock_logger, QA_LEVEL.INFO, issue)
+        mock_logger.add_issue.assert_not_called()
+
     @patch("gobcore.quality.issue.logger")
     @patch("gobcore.quality.issue.start_workflow")
     def test_process_issues(self, mock_start_workflow, mock_logger):

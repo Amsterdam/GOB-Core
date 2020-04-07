@@ -118,7 +118,9 @@ def log_issue(logger: Logger, level: QA_LEVEL, issue: Issue) -> None:
         QA_LEVEL.INFO: logger.info
     }[level](issue.msg(), issue.log_args())
 
-    logger.add_issue(issue)
+    if issue.entity_id is not None:
+        # Only add issues that are linked to entities
+        logger.add_issue(issue)
 
 
 def process_issues(msg):
