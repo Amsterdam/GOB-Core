@@ -159,7 +159,7 @@ class TestLogger(TestCase):
         logger = Logger()
         self.assertEqual(logger.get_issues(), [])
         any_issue = MagicMock()
-        any_issue.get_id.return_value = 1
+        any_issue.get_unique_id.return_value = 1
 
         logger.add_issue(any_issue)
         self.assertEqual(logger.get_issues(), [any_issue])
@@ -168,12 +168,12 @@ class TestLogger(TestCase):
         self.assertEqual(logger.get_issues(), [any_issue])
 
         another_issue = MagicMock()
-        another_issue.get_id.return_value = 1
+        another_issue.get_unique_id.return_value = 1
 
         logger.add_issue(another_issue)
         self.assertEqual(logger.get_issues(), [any_issue])
 
-        another_issue.get_id.return_value = 2
+        another_issue.get_unique_id.return_value = 2
         logger.add_issue(another_issue)
         self.assertEqual(logger.get_issues(), [any_issue, another_issue])
 

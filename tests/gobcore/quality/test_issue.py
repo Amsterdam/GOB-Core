@@ -170,7 +170,7 @@ class TestIssue(TestCase):
             'attr': 'any attr'
         }
         issue = Issue({'id': 'any_check'}, entity, 'id', 'attr')
-        self.assertEqual(issue.get_id(), 'any id')
+        self.assertEqual(issue.get_unique_id(), 'any_check_attr_any id')
 
         entity = {
             'id': 'any id',
@@ -178,7 +178,7 @@ class TestIssue(TestCase):
             FIELD.SEQNR: 1
         }
         issue = Issue({'id': 'any_check'}, entity, 'id', 'attr')
-        self.assertEqual(issue.get_id(), 'any id_1')
+        self.assertEqual(issue.get_unique_id(), 'any_check_attr_any id_1')
 
     def test_join_issue(self):
         entity = {
@@ -199,6 +199,14 @@ class TestIssue(TestCase):
         other_issue.entity_id = 'other id'
         with self.assertRaises(IssueException):
             issue.join_issue(other_issue)
+
+    def test_sorted_value(self):
+        entities = [{'id': 'any_id', 'attr': value} for value in [1, 8, 7, 5, 9]]
+        issues = [Issue({'id': 'any_check'}, entity, 'id', 'attr') for entity in entities]
+        issue = issues[0]
+        for other_issue in issues[1:]:
+            issue.join_issue(other_issue)
+        self.assertEqual(issue.value, '1, 5, 7, 8, 9')
 
     def test_log_issue(self):
         entity = {

@@ -33,7 +33,7 @@ class Issue():
 
         # Concerned attribute and value
         self.attribute = attribute
-        self.value = self._get_value(entity, attribute)
+        self._values = [self._get_value(entity, attribute)]
 
         # Any concerned other attribute
         self.compared_to = compared_to
@@ -44,13 +44,27 @@ class Issue():
 
         self.explanation = None
 
-    def get_id(self):
-        return "_".join([str(value) for value in [self.entity_id, getattr(self, FIELD.SEQNR)] if value])
+    def get_unique_id(self):
+        # An issue if uniquely identified by the id of the failing check, the concerned attribute
+        # and the entity identification
+        return "_".join([str(value) for value in [
+            self.check_id,
+            self.attribute,
+            self.entity_id,
+            getattr(self, FIELD.SEQNR)
+        ] if value])
 
     def join_issue(self, other_issue):
-        if self.get_id() != other_issue.get_id():
-            raise IssueException(f"Join issue requires same ID {self.get_id} <> {other_issue.get_id()}")
-        self.value = ", ".join([self._format_value(value) for value in [self.value, other_issue.value]])
+        if self.get_unique_id() != other_issue.get_unique_id():
+            raise IssueException(f"Join issue requires same ID {self.get_unique_id} <> {other_issue.get_unique_id()}")
+        self._values.append(other_issue.value)
+
+    @property
+    def value(self):
+        if len(self._values) > 1:
+            return ", ".join(sorted([self._format_value(value) for value in self._values]))
+        else:
+            return self._values[0]
 
     def _get_value(self, entity: dict, attribute: str):
         """

@@ -74,9 +74,9 @@ class Logger:
         self._issues = {}
 
     def add_issue(self, issue):
-        id = issue.get_id()
+        id = issue.get_unique_id()
         if self._issues.get(id):
-            # Join this issue with an already existing issue for the same entity
+            # Join this issue with an already existing issue for the same check, attribute and entity
             self._issues[id].join_issue(issue)
         else:
             # Add this issue as a new issue
