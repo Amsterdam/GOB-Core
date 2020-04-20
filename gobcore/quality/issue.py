@@ -134,10 +134,10 @@ class Issue():
 def log_issue(logger: Logger, level: QA_LEVEL, issue: Issue) -> None:
     # Log the message
     {
-        QA_LEVEL.FATAL: logger.error,
-        QA_LEVEL.ERROR: logger.error,
-        QA_LEVEL.WARNING: logger.warning,
-        QA_LEVEL.INFO: logger.info
+        QA_LEVEL.FATAL: logger.data_error,
+        QA_LEVEL.ERROR: logger.data_error,
+        QA_LEVEL.WARNING: logger.data_warning,
+        QA_LEVEL.INFO: logger.data_info
     }[level](issue.msg(), issue.log_args())
 
     if issue.entity_id is not None:
