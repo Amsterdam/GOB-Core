@@ -15,6 +15,7 @@ setup(
         'geomet',
         'shapely',
         'cx-Oracle==7.1.2',
+        'xlrd==1.2.0',
         'datapunt-objectstore',
         'requests==2.20.0',
         'psycopg2-binary==2.7.7',
