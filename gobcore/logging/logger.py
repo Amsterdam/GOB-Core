@@ -16,7 +16,7 @@ from gobcore.logging.log_publisher import LogPublisher
 
 from gobcore.utils import gettotalsizeof
 
-
+# Custom log levels for data logging
 DATAINFO = 21
 DATAWARNING = 31
 DATAERROR = 41
