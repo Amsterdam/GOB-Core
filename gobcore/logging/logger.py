@@ -58,6 +58,13 @@ class ExtendedLogger(logging.Logger):
     DATAWARNING = logging.WARNING + 1
     DATAERROR = logging.ERROR + 1
 
+    @classmethod
+    def initialize(cls):
+        # Add custom logging levels for Data info, warnings and errors to distinguish between data and process logging
+        logging.addLevelName(ExtendedLogger.DATAINFO, 'DATAINFO')
+        logging.addLevelName(ExtendedLogger.DATAWARNING, 'DATAWARNING')
+        logging.addLevelName(ExtendedLogger.DATAERROR, 'DATAERROR')
+
     def data_info(self, msg, *args, **kwargs):
         if self.isEnabledFor(self.DATAINFO):
             self._log(self.DATAINFO, msg, args, **kwargs)
@@ -257,10 +264,8 @@ class LoggerManager:
 
 logger = LoggerManager()
 
+# Initialize the extended logger to add custom log levels to the logging module
+ExtendedLogger.initialize()
+
 # Use our ExtendedLogger with data logging as the default logger
 logging.setLoggerClass(ExtendedLogger)
-
-# Add custom logging levels for Data info, warnings and errors to distinguish between data and process logging
-logging.addLevelName(ExtendedLogger.DATAINFO, 'DATAINFO')
-logging.addLevelName(ExtendedLogger.DATAWARNING, 'DATAWARNING')
-logging.addLevelName(ExtendedLogger.DATAERROR, 'DATAERROR')
