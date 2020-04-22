@@ -16,11 +16,6 @@ from gobcore.logging.log_publisher import LogPublisher
 
 from gobcore.utils import gettotalsizeof
 
-# Custom log levels for data logging
-DATAINFO = 21
-DATAWARNING = 31
-DATAERROR = 41
-
 
 class RequestsHandler(logging.Handler):
 
@@ -53,17 +48,27 @@ class RequestsHandler(logging.Handler):
 
 
 class ExtendedLogger(logging.Logger):
+    """
+    ExtendedLogger was created to be able to log with custom log levels to
+    separate data logging from process logging within GOB.
+    """
+
+    # Custom log levels for data logging, based on the regular logging levels
+    DATAINFO = logging.INFO + 1
+    DATAWARNING = logging.WARNING + 1
+    DATAERROR = logging.ERROR + 1
+
     def data_info(self, msg, *args, **kwargs):
-        if self.isEnabledFor(DATAINFO):
-            self._log(DATAINFO, msg, args, **kwargs)
+        if self.isEnabledFor(self.DATAINFO):
+            self._log(self.DATAINFO, msg, args, **kwargs)
 
     def data_warning(self, msg, *args, **kwargs):
-        if self.isEnabledFor(DATAWARNING):
-            self._log(DATAWARNING, msg, args, **kwargs)
+        if self.isEnabledFor(self.DATAWARNING):
+            self._log(self.DATAWARNING, msg, args, **kwargs)
 
     def data_error(self, msg, *args, **kwargs):
-        if self.isEnabledFor(DATAERROR):
-            self._log(DATAERROR, msg, args, **kwargs)
+        if self.isEnabledFor(self.DATAERROR):
+            self._log(self.DATAERROR, msg, args, **kwargs)
 
 
 class Logger:
@@ -256,6 +261,6 @@ logger = LoggerManager()
 logging.setLoggerClass(ExtendedLogger)
 
 # Add custom logging levels for Data info, warnings and errors to distinguish between data and process logging
-logging.addLevelName(DATAINFO, 'DATAINFO')
-logging.addLevelName(DATAWARNING, 'DATAWARNING')
-logging.addLevelName(DATAERROR, 'DATAERROR')
+logging.addLevelName(ExtendedLogger.DATAINFO, 'DATAINFO')
+logging.addLevelName(ExtendedLogger.DATAWARNING, 'DATAWARNING')
+logging.addLevelName(ExtendedLogger.DATAERROR, 'DATAERROR')

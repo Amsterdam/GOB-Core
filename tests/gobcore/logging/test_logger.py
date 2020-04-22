@@ -4,7 +4,7 @@ from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
 from gobcore.logging.log_publisher import LogPublisher
-from gobcore.logging.logger import Logger, RequestsHandler, LoggerManager, DATAINFO, DATAWARNING, DATAERROR
+from gobcore.logging.logger import Logger, RequestsHandler, LoggerManager, ExtendedLogger
 
 
 class TestLogger(TestCase):
@@ -75,20 +75,20 @@ class TestLogger(TestCase):
 
     def test_data_info(self):
         logger = Logger("Data info logger")
-        with self.assertLogs(logger=Logger._logger[logger._name], level=DATAINFO) as result:
+        with self.assertLogs(logger=Logger._logger[logger._name], level=ExtendedLogger.DATAINFO) as result:
             logger.data_info("test")
         self.assertEqual(result.output, [f"DATAINFO:{logger._name}:test"])
 
     def test_data_warning(self):
         logger = Logger("Data warning logger")
-        with self.assertLogs(logger=Logger._logger[logger._name], level=DATAWARNING) as result:
+        with self.assertLogs(logger=Logger._logger[logger._name], level=ExtendedLogger.DATAWARNING) as result:
             logger.data_warning("test")
         self.assertEqual(result.output, [f"DATAWARNING:{logger._name}:test"])
 
     def test_data_error(self):
         logger = Logger("Data error logger")
         # RequestsHandler.LOG_PUBLISHER.publish.reset_mock()
-        with self.assertLogs(logger=Logger._logger[logger._name], level=DATAERROR) as result:
+        with self.assertLogs(logger=Logger._logger[logger._name], level=ExtendedLogger.DATAERROR) as result:
             logger.data_error("test")
         self.assertEqual(result.output, [f"DATAERROR:{logger._name}:test"])
 
