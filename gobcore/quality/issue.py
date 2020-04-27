@@ -5,6 +5,7 @@ from gobcore.quality.config import QA_LEVEL, QA_CHECK
 from gobcore.quality.quality_update import QualityUpdate
 from gobcore.logging.logger import Logger, logger
 from gobcore.workflow.start_workflow import start_workflow
+from gobcore.message_broker.config import IMPORT, COMPARE, RELATE, CHECK_RELATION
 
 
 class IssueException(Exception):
@@ -145,10 +146,20 @@ def log_issue(logger: Logger, level: QA_LEVEL, issue: Issue) -> None:
         logger.add_issue(issue)
 
 
+def is_functional_process(process):
+    """
+    A functional process is to import, comparem, relate of check relations
+    Other process steps like apply are technical and issues should not be logged for those steps
+
+    :param process:
+    :return:
+    """
+    functional_processes = [process.lower() for process in [IMPORT, COMPARE, RELATE, CHECK_RELATION]]
+    return process.lower() in functional_processes
+
+
 def process_issues(msg):
     issues = logger.get_issues()
-    if not issues:
-        return
 
     # Issues are processed as updates to the quality catalog
     quality_update = QualityUpdate(issues)
@@ -160,6 +171,14 @@ def process_issues(msg):
     header = msg.get('header', {})
     for attribute in ['source', 'application', 'catalogue', 'collection', 'attribute']:
         setattr(quality_update, attribute, header.get(f"original_{attribute}", header.get(attribute)))
+
+    # Don't Quality check yourself
+    if msg['header'].get('catalogue') == QualityUpdate.CATALOG:
+        return
+
+    # Only log quality for functional steps
+    if not is_functional_process(quality_update.proces):
+        return
 
     workflow = {
         'workflow_name': "import",

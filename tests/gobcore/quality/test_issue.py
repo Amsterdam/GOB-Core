@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch, ANY
 import datetime
 
 from gobcore.model import FIELD
-from gobcore.quality.issue import QA_LEVEL, Issue, IssueException, log_issue, process_issues
+from gobcore.quality.issue import QA_LEVEL, Issue, IssueException, log_issue, process_issues, is_functional_process
 
 class Mock_QA_CHECK():
     any_check = {
@@ -232,7 +232,8 @@ class TestIssue(TestCase):
 
     @patch("gobcore.quality.issue.logger")
     @patch("gobcore.quality.issue.start_workflow")
-    def test_process_issues(self, mock_start_workflow, mock_logger):
+    @patch("gobcore.quality.issue.is_functional_process")
+    def test_process_issues(self, mock_is_functional, mock_start_workflow, mock_logger):
         mock_logger.get_name.return_value = "any name"
         mock_issue = MagicMock()
         mock_logger.get_issues.return_value = [mock_issue]
@@ -248,6 +249,18 @@ class TestIssue(TestCase):
                 'mode': 'any mode'
             }
         }
+
+        mock_is_functional.return_value = False
+        process_issues(msg)
+        mock_start_workflow.assert_not_called()
+
+        mock_is_functional.return_value = True
+        msg['header']['catalogue'] = 'qa'
+        process_issues(msg)
+        mock_start_workflow.assert_not_called()
+
+        mock_is_functional.return_value = True
+        msg['header']['catalogue'] = 'any catalogue'
         process_issues(msg)
         mock_start_workflow.assert_called_with({
             'workflow_name': "import",
@@ -268,3 +281,10 @@ class TestIssue(TestCase):
                 'num_records': 1
             }
         })
+
+    def test_is_functional_process(self):
+        for process in ['aap', 'noot', '']:
+            self.assertFalse(is_functional_process(process))
+
+        for process in ['Import', 'import', 'ImporT', 'IMPORT', 'compare', 'relate']:
+            self.assertTrue(is_functional_process(process))

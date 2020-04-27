@@ -6,6 +6,8 @@ from gobcore.model.quality import QUALITY_CATALOG, get_entity_name
 
 class QualityUpdate():
 
+    CATALOG = QUALITY_CATALOG
+
     def __init__(self, issues):
         self.issues = issues if isinstance(issues, list) else [issues]
         self.source = None

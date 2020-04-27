@@ -26,7 +26,8 @@ class TestMessageDrivenServiceFunctions(unittest.TestCase):
 
     @mock.patch("gobcore.message_broker.messagedriven_service.contains_notification")
     @mock.patch("gobcore.message_broker.messagedriven_service.send_notification")
-    def test_on_message(self, mock_send_notification, mock_contains_notification):
+    @mock.patch("gobcore.message_broker.messagedriven_service.process_issues")
+    def test_on_message(self, mock_process_issues, mock_send_notification, mock_contains_notification):
 
         global return_message
 
@@ -58,6 +59,7 @@ class TestMessageDrivenServiceFunctions(unittest.TestCase):
             # The return message should be published on the return queue
             mocked_publish.assert_called_with(return_queue['exchange'], return_queue['key'], return_message)
 
+        mock_process_issues.assert_called_with(return_message)
         mock_send_notification.assert_called_with(return_message)
 
     @mock.patch("gobcore.message_broker.messagedriven_service.Heartbeat")
