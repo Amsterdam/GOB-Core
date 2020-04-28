@@ -148,7 +148,7 @@ def log_issue(logger: Logger, level: QA_LEVEL, issue: Issue) -> None:
 
 def is_functional_process(process):
     """
-    A functional process is to import, comparem, relate of check relations
+    A functional process is to import, compare, relate of check relations
     Other process steps like apply are technical and issues should not be logged for those steps
 
     :param process:
