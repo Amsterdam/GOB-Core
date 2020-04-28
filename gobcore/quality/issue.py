@@ -5,7 +5,7 @@ from gobcore.quality.config import QA_LEVEL, QA_CHECK
 from gobcore.quality.quality_update import QualityUpdate
 from gobcore.logging.logger import Logger, logger
 from gobcore.workflow.start_workflow import start_workflow
-from gobcore.message_broker.config import IMPORT, COMPARE, RELATE, CHECK_RELATION
+from gobcore.message_broker.config import IMPORT, CHECK_RELATION
 
 
 class IssueException(Exception):
@@ -27,10 +27,11 @@ class Issue():
         self.check = check
         self.check_id = check['id']
 
-        # Entity id and sequence number
+        # Entity id, sequence number, start- and end-validity
         self.entity_id_attribute = id_attribute or self._DEFAULT_ENTITY_ID
         self.entity_id = self._get_value(entity, self.entity_id_attribute)
-        setattr(self, FIELD.SEQNR, self._get_value(entity, FIELD.SEQNR))
+        for attr in [FIELD.SEQNR, FIELD.START_VALIDITY, FIELD.END_VALIDITY]:
+            setattr(self, attr, self._get_value(entity, attr))
 
         # Concerned attribute and value
         self.attribute = attribute
@@ -148,13 +149,13 @@ def log_issue(logger: Logger, level: QA_LEVEL, issue: Issue) -> None:
 
 def is_functional_process(process):
     """
-    A functional process is to import, compare, relate of check relations
-    Other process steps like apply are technical and issues should not be logged for those steps
+    A functional process is to import or check relations
+    Other process steps like compare, apply and store events are considered technical process steps
 
     :param process:
     :return:
     """
-    functional_processes = [process.lower() for process in [IMPORT, COMPARE, RELATE, CHECK_RELATION]]
+    functional_processes = [process.lower() for process in [IMPORT, CHECK_RELATION]]
     return process.lower() in functional_processes
 
 
@@ -177,7 +178,11 @@ def process_issues(msg):
         return
 
     # Only log quality for functional steps
-    if not is_functional_process(quality_update.proces):
+    # Otherwise only log issues if there are any issues
+    if not (is_functional_process(quality_update.proces) or issues):
+        # Functional process issues are always processed, even if they are empty
+        # Otherwise a check is made if there are any issues, if not then skip the empty set
+        # So even an non-functional process may report Issues
         return
 
     workflow = {

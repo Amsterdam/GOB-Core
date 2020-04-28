@@ -236,7 +236,6 @@ class TestIssue(TestCase):
     def test_process_issues(self, mock_is_functional, mock_start_workflow, mock_logger):
         mock_logger.get_name.return_value = "any name"
         mock_issue = MagicMock()
-        mock_logger.get_issues.return_value = [mock_issue]
 
         msg = {
             'header': {
@@ -250,17 +249,38 @@ class TestIssue(TestCase):
             }
         }
 
+        # Skip empty issues for non-functional process steps
+        mock_logger.get_issues.return_value = []
         mock_is_functional.return_value = False
         process_issues(msg)
         mock_start_workflow.assert_not_called()
 
+        # Always skip any issues of the QA catalog itself
+        mock_logger.get_issues.return_value = [mock_issue]
         mock_is_functional.return_value = True
         msg['header']['catalogue'] = 'qa'
         process_issues(msg)
         mock_start_workflow.assert_not_called()
 
-        mock_is_functional.return_value = True
+        # Non-functional processes might report issues
+        # In that case they will not be skipped and handled as regular issues
+        mock_logger.get_issues.return_value = [mock_issue]
+        mock_is_functional.return_value = False
         msg['header']['catalogue'] = 'any catalogue'
+        process_issues(msg)
+        mock_start_workflow.assert_called()
+        mock_start_workflow.reset_mock()
+
+        # Do not skip empty issues for functional process steps
+        mock_logger.get_issues.return_value = []
+        mock_is_functional.return_value = True
+        process_issues(msg)
+        mock_start_workflow.assert_called()
+        mock_start_workflow.reset_mock()
+
+        # The regular case is a functional process step that has any issues to report
+        mock_logger.get_issues.return_value = [mock_issue]
+        mock_is_functional.return_value = True
         process_issues(msg)
         mock_start_workflow.assert_called_with({
             'workflow_name': "import",
@@ -282,9 +302,29 @@ class TestIssue(TestCase):
             }
         })
 
+    def test_state_attributes(self):
+        entity = {
+            'id': 'any id',
+            'attr': 'any attr',
+            FIELD.SEQNR: 'any seqnr',
+            FIELD.START_VALIDITY: 'any start validity',
+            FIELD.END_VALIDITY: 'any end validity'
+        }
+        issue = Issue({'id': 'any_check', 'msg': 'any msg'}, entity, 'id', 'attr')
+        for attr in [FIELD.SEQNR, FIELD.START_VALIDITY, FIELD.END_VALIDITY]:
+            self.assertEqual(getattr(issue, attr), entity[attr])
+
+        entity = {
+            'id': 'any id',
+            'attr': 'any attr'
+        }
+        issue = Issue({'id': 'any_check', 'msg': 'any msg'}, entity, 'id', 'attr')
+        for attr in [FIELD.SEQNR, FIELD.START_VALIDITY, FIELD.END_VALIDITY]:
+            self.assertEqual(getattr(issue, attr), None)
+
     def test_is_functional_process(self):
         for process in ['aap', 'noot', '']:
             self.assertFalse(is_functional_process(process))
 
-        for process in ['Import', 'import', 'ImporT', 'IMPORT', 'compare', 'relate']:
+        for process in ['Import', 'import', 'ImporT', 'IMPORT', 'check_relation']:
             self.assertTrue(is_functional_process(process))

@@ -31,6 +31,14 @@ def _get_qa(catalog, collection):
                 "type": "GOB.String",
                 "description": "Volgnummer van het object waarop de melding van toepassing is"
             },
+            "begin_geldigheid": {
+                "type": "GOB.DateTime",
+                "description": "De datum waarop het object waarop de melding van toepassing is is gecreëerd."
+            },
+            "eind_geldigheid": {
+                "type": "GOB.DateTime",
+                "description": "De datum waarop het object waarop de melding van toepassing is is komen te vervallen."
+            },
             "betwijfelde_waarde": {
                 "type": "GOB.String",
                 "description": "De waarde van het attribuut waar aan wordt getwijfeld"
