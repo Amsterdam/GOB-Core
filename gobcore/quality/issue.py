@@ -23,6 +23,48 @@ class Issue():
 
     def __init__(self, check: dict, entity: dict, id_attribute: str, attribute: str,
                  compared_to: str=None, compared_to_value=None):
+        """
+        Initialises an Issue
+
+        1. Bind issue to a Quality Assurance Check
+        An issue has to be related to a check.
+        Checks are defined in the QA_CHECK class.
+        The first step is to find the corresponding check for the issue
+        The issue is so bound to QA check
+
+        2. Bind issue to a data entity
+        An issue is about an entity
+        The entity is identified by an id.
+        The attribute of the id is the id_attribute parameter: entity[id_attribute]
+        The default attribute for for the id is 'identificatie': entity[identificatie]
+        The issue is so bound to an entity and its id, sequence number and validity dates are registered in the issue.
+
+        3. Bind issue to a data entity attribute
+        An issue is about a specific attribute of the data entity
+        The name of the attribute is specified by the attribute parameter
+        The value to be reported by the issue will be entity[attribute]
+
+        4. Optional: Relate the issue to another value
+        An issue can relate to another value, for example when a data is expected to lie after another date
+        In this case the name of the attribute to which the data is compared and optionally its value
+        can be specified in the compared_to and compared_to_value attribute.
+        If no compared_to_value is specified the value is retrieved from the entity: entity[compared_to]
+
+        Result
+
+        The Issue describes a Quality Issue where:
+        - it is related to a predefined QA Check
+        - it is related to an entity by id, sequence nr, start- and end-validity
+        - it contains the name and value of the failing attribute
+        - optionally it contains the name and value of the attribute to which it has been compared
+
+        :param dict check: The dictionary that specifies the QA check that has failed
+        :param dict entity: The dictionary that contains the entity that failed to pass a QA check
+        :param str id_attribute: The name of the entity ID attribute
+        :param str attribute: The name of the entity attribute that caused the failure
+        :param str compared_to: Optional, name of the attribute to which the issues relates
+        :param compared_to_value: Optional, name of the attribute to which the issues relates
+        """
         if not hasattr(QA_CHECK, check.get('id') or ""):
             raise IssueException(f"Issue reported for undefined check: {check}")
         self.check = check
@@ -189,6 +231,10 @@ def process_issues(msg):
 
     # Enrich bevinding with logger info
     quality_update.proces = logger.get_name()
+
+    # Don't process issues of unnamed process
+    if quality_update.proces is None:
+        return
 
     # Enrich bevinding with msg info
     header = msg.get('header', {})

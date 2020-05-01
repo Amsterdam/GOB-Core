@@ -234,7 +234,6 @@ class TestIssue(TestCase):
     @patch("gobcore.quality.issue.start_workflow")
     @patch("gobcore.quality.issue.is_functional_process")
     def test_process_issues(self, mock_is_functional, mock_start_workflow, mock_logger):
-        mock_logger.get_name.return_value = "any name"
         mock_issue = MagicMock()
 
         msg = {
@@ -248,6 +247,13 @@ class TestIssue(TestCase):
                 'mode': 'any mode'
             }
         }
+
+        # Skip issues for unnamed process steps
+        mock_logger.get_name.return_value = None
+        process_issues(msg)
+        mock_start_workflow.assert_not_called()
+
+        mock_logger.get_name.return_value = "any name"
 
         # Skip empty issues for non-functional process steps
         mock_logger.get_issues.return_value = []

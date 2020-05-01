@@ -172,7 +172,7 @@ class Logger:
         self._init_logger(name)
 
     def get_name(self):
-        return self._name
+        return getattr(self, '_name', None)
 
     def set_default_args(self, default_args):
         self._default_args = default_args
