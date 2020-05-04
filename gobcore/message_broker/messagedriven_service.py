@@ -35,15 +35,16 @@ def _on_message(connection, service, msg):
         # re-raise the exception, further handling is done in the message broker
         raise err
 
-    process_issues(result_msg)
+    if result_msg:
+        process_issues(result_msg)
 
-    if contains_notification(result_msg):
-        send_notification(result_msg)
+        if contains_notification(result_msg):
+            send_notification(result_msg)
 
-    # If a report_queue is defined, report the result message (if any)
-    if 'report' in service and result_msg is not None:
-        report = service['report']
-        connection.publish(report['exchange'], report['key'], result_msg)
+        # If a report_queue is defined, report the result message
+        if 'report' in service:
+            report = service['report']
+            connection.publish(report['exchange'], report['key'], result_msg)
 
     # Remove the message from the queue by returning true
     return True
