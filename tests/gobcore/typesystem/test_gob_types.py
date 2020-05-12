@@ -282,15 +282,34 @@ class TestGobTypes(unittest.TestCase):
         self.assertEqual(GobType.name, "Reference")
 
         # Test that a value of id is ignored when comparing references. Only test bronwaarde
-        self.assertEqual(GobType.from_value('{"bronwaarde": "123456"}'), GobType.from_value('{"bronwaarde": "123456", "id": "123456", "volgnummer": "1"}'))
+        v1 = GobType.from_value('{"bronwaarde": "123456"}')
+        v2 = GobType.from_value('{"bronwaarde": "123456", "id": "123456", "volgnummer": "1"}')
+        self.assertEqual(v1, v2)
+
+        # Test that None value is accepted
+        self.assertTrue(GobType.from_value(None) == GobType.from_value(None))
+        self.assertTrue(GobType.from_value({}) == GobType.from_value({}))
+        self.assertTrue(GobType.from_value(None) != GobType.from_value({}))
+        self.assertTrue(GobType.from_value({}) != GobType.from_value(None))
+        self.assertTrue(GobType.from_value(v1) != GobType.from_value(None))
+        self.assertTrue(GobType.from_value(None) != GobType.from_value(v1))
 
     def test_many_reference(self):
         GobType = get_gob_type("GOB.ManyReference")
         self.assertEqual(GobType.name, "ManyReference")
 
         # Test that a value of id is ignored when comparing references. Only test bronwaarde
-        self.assertEqual(GobType.from_value('[{"bronwaarde": "123456"}, {"bronwaarde": "654321"}]'), GobType.from_value('[{"bronwaarde": "123456", "id": "123456", "volgnummer": "1"}, {"bronwaarde": "654321", "id": "654321"}]'))
+        v1 = GobType.from_value('[{"bronwaarde": "123456"}, {"bronwaarde": "654321"}]')
+        v2 = GobType.from_value('[{"bronwaarde": "123456", "id": "123456", "volgnummer": "1"}, {"bronwaarde": "654321", "id": "654321"}]')
+        self.assertEqual(v1, v2)
 
+        # Test that None value is accepted
+        self.assertTrue(GobType.from_value(None) == GobType.from_value(None))
+        self.assertTrue(GobType.from_value([]) == GobType.from_value([]))
+        self.assertTrue(GobType.from_value(None) != GobType.from_value([]))
+        self.assertTrue(GobType.from_value([]) != GobType.from_value(None))
+        self.assertTrue(GobType.from_value(v1) != GobType.from_value(None))
+        self.assertTrue(GobType.from_value(None) != GobType.from_value(v1))
 
     def test_None_to_db(self):
         from gobcore.typesystem import gob_types, gob_geotypes

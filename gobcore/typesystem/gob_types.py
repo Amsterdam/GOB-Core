@@ -510,13 +510,13 @@ class Reference(JSON):
         :return: True or False
         """
         cleaned_self = self._filter_reference(self._string)
-        cleaned_other = self._filter_reference(other)
+        cleaned_other = self._filter_reference(other._string)
 
         return cleaned_self == cleaned_other
 
     def _filter_reference(self, value):
-        if isinstance(value, GOBType):
-            value = str(value)
+        if value is None:
+            return value
         item = json.loads(value) if isinstance(value, str) else value
         return {k: v for k, v in item.items() if k not in self.exclude_keys}
 
@@ -531,11 +531,13 @@ class ManyReference(Reference):
         :return: True or False
         """
         cleaned_self = self._filter_references(self._string)
-        cleaned_other = self._filter_references(other)
+        cleaned_other = self._filter_references(other._string)
 
         return cleaned_self == cleaned_other
 
     def _filter_references(self, value):
+        if value is None:
+            return value
         return [self._filter_reference(item) for item in json.loads(str(value))]
 
 
