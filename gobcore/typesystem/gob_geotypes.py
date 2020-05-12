@@ -1,9 +1,7 @@
 import os
 import json
-import re
 
 from abc import abstractmethod
-from json import JSONDecodeError
 
 import sqlalchemy
 import geoalchemy2
@@ -82,36 +80,35 @@ class GEOType(GOBType):
 
     @classmethod  # noqa: C901
     def from_value(cls, value, **kwargs):
-        """Instantiates the GOBType Point, with either a database value, a geojson or WKT string"""
+        """
+        Instantiates the GOBGeoType, with either a database value, a geojson or WKT string
+        """
 
         if isinstance(value, str):
-            regex = re.compile(cls.regex)
-            if not regex.match(value):
-                raise ValueError(f"Illegal WKT {cls.name} value: {value}")
-            value = wkt.loads(value)
+            # WKT => GeoJSON, raises ValueError if fails
+            geo_json_value = wkt.loads(value)
+        elif isinstance(value, geoalchemy2.elements.WKBElement):
+            # DB value => GeoJSON
+            # Use shapely to construct wkt string
+            # use wkt.load to get correct precision
+            geo_json_value = wkt.loads(to_shape(value).wkt)
+        elif isinstance(value, dict):
+            # GeoJSON, leave value as-is
+            geo_json_value = value
+        else:
+            raise ValueError("WKT, DB value or GeoJSON expected")
 
-        if isinstance(value, geoalchemy2.elements.WKBElement):
-            # Use shapely to construct wkt string and use wkt load to get correct precision
-            value = wkt.loads(to_shape(value).wkt)
+        precision = kwargs['precision'] if 'precision' in kwargs else cls._precision
 
-        if isinstance(value, dict):
-            # serialize possible geojson
-            value = json.dumps(value, cls=GobTypeJSONEncoder)
-
-        # if is geojson dump to wkt string
+        # Convert GeoJSON to WKT with given precision
         try:
-            precision = kwargs['precision'] if 'precision' in kwargs else cls._precision
-            wkt_string = wkt.dumps(json.loads(value), decimals=precision)
-            value = wkt_string
-
-            # it is not a to wkt_string dumpable json, let it pass:
-        except JSONDecodeError:
-            pass
-        except TypeError:
-            pass
+            wkt_value = wkt.dumps(geo_json_value, decimals=precision)
+        except Exception:
+            # Initialize with plain string value
+            wkt_value = json.dumps(value, cls=GobTypeJSONEncoder)
 
         # is wkt string
-        return cls(value)
+        return cls(wkt_value)
 
 
 class Point(GEOType):

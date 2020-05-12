@@ -144,6 +144,10 @@ class TestPolygon(unittest.TestCase):
         Polygon.from_value({'dict': 'value'})
         mock_dumps.assert_called_with({'dict': 'value'}, cls=GobTypeJSONEncoder)
 
+    def test_from_value_other_type(self):
+        with self.assertRaises(ValueError):
+            Polygon.from_value(5)
+
     def test_from_values(self):
         with self.assertRaises(ValueError):
             Polygon.from_values()
