@@ -70,7 +70,10 @@ class OracleDatastore(SqlDatastore):
 
         :return: a list of data
         """
+        FETCH_PER = 1000  # Fetch contents in chunks, default chunk size = 100
+
         cursor = self.connection.cursor()
+        cursor.arraysize = FETCH_PER
         self.connection.outputtypehandler = self._output_type_handler
         cursor.execute(query)
         cursor.rowfactory = self._makedict(cursor)

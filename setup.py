@@ -14,7 +14,7 @@ setup(
         'geoalchemy2',
         'geomet',
         'shapely',
-        'cx-Oracle==7.1.2',
+        'cx-Oracle==7.3.0',
         'xlrd==1.2.0',
         'datapunt-objectstore',
         'requests==2.20.0',

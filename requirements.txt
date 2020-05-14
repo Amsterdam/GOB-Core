@@ -4,7 +4,7 @@ click==6.7
 coverage==4.5.1
 cryptography==2.8
 pycryptodome==3.9.4
-cx-Oracle==7.1.2
+cx-Oracle==7.3.0
 xlrd==1.2.0
 flake8==3.5.0
 GeoAlchemy2==0.5.0
