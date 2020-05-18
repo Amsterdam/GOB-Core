@@ -87,7 +87,8 @@ class Logger:
     LOGFORMAT = "%(asctime)s %(name)-12s %(levelname)-8s %(message)s"
     LOGLEVEL = logging.INFO
 
-    _SAVE_LOGS = ['warning', 'error']  # Save these messages to report at end of msg handling
+    # Save these messages to report at end of msg handling
+    _SAVE_LOGS = ['warning', 'error', 'data_warning', 'data_error']
 
     MAX_SIZE = 10000
     SHORT_MESSAGE_SIZE = 1000
@@ -124,10 +125,10 @@ class Logger:
             self.messages[level].append(msg)
 
     def get_warnings(self):
-        return self.messages['warning']
+        return self.messages['warning'] + self.messages['data_warning']
 
     def get_errors(self):
-        return self.messages['error']
+        return self.messages['error'] + self.messages['data_error']
 
     def _log(self, level, msg, kwargs=None):
         """

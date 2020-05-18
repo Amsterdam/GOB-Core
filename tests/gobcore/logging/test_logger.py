@@ -24,13 +24,17 @@ class TestLogger(TestCase):
 
     def test_get_warnings(self):
         logger = Logger()
-        logger.messages['warning'] = 'warning messages'
-        self.assertEqual('warning messages', logger.get_warnings())
+        logger.messages['warning'] = ['warning messages']
+        self.assertEqual(['warning messages'], logger.get_warnings())
+        logger.messages['data_warning'] = ['data warning messages']
+        self.assertEqual(['warning messages', 'data warning messages'], logger.get_warnings())
 
     def test_get_errors(self):
         logger = Logger()
-        logger.messages['error'] = 'error messages'
-        self.assertEqual('error messages', logger.get_errors())
+        logger.messages['error'] = ['error messages']
+        self.assertEqual(['error messages'], logger.get_errors())
+        logger.messages['data_error'] = ['data error messages']
+        self.assertEqual(['error messages', 'data error messages'], logger.get_errors())
 
     def test_log(self):
         mock_level_logger = MagicMock()
