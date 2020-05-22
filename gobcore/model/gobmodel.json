@@ -113,6 +113,34 @@
           }
         }
       },
+      "test_entity_autoid_states": {
+        "version": "0.1",
+        "entity_id": "identificatie",
+        "abbreviation": "TEA",
+        "has_states": true,
+        "attributes": {
+          "identificatie": {
+            "type": "GOB.String",
+            "description": "Object identificatie"
+          },
+          "begin_geldigheid": {
+            "type": "GOB.DateTime",
+            "description": "De datum waarop het object is gecreëerd."
+          },
+          "eind_geldigheid": {
+            "type": "GOB.DateTime",
+            "description": "De datum waarop het object is komen te vervallen."
+          },
+          "code": {
+            "type": "GOB.String",
+            "description": "Object code"
+          },
+          "autoid": {
+            "type": "GOB.String",
+            "description": "autoid"
+          }
+        }
+      },
       "rel_test_entity_a": {
         "version": "0.1",
         "description": "Entity to test relations. Has states.",
