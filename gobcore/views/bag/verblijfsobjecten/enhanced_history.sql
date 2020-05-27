@@ -1,6 +1,7 @@
 SELECT
   vot.identificatie,
   vot.volgnummer,
+  vot.registratiedatum,
   vot.aanduiding_in_onderzoek,
   vot.geconstateerd,
   json_build_object(

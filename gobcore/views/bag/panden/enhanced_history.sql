@@ -1,6 +1,7 @@
 SELECT
   pnd.identificatie,
   pnd.volgnummer,
+  pnd.registratiedatum,
   pnd.aanduiding_in_onderzoek,
   pnd.geconstateerd,
   pnd.oorspronkelijk_bouwjaar,
