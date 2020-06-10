@@ -17,8 +17,8 @@ class QualityUpdate():
         self.attribute = None
         self.proces = None
 
-    def _combined_key(self, values):
-        return "_".join([str(value) for value in values if value is not None])
+    def _combined_key(self, values, join='_'):
+        return join.join([str(value).strip() for value in values if value is not None])
 
     def get_unique_id(self, issue):
         """
@@ -27,10 +27,12 @@ class QualityUpdate():
         :return:
         """
         return self._combined_key([
+            self.proces,
             issue.check_id,
             issue.attribute,
             issue.entity_id,
-            getattr(issue, FIELD.SEQNR)])
+            getattr(issue, FIELD.SEQNR)
+        ], '.')
 
     def get_source(self):
         return self._combined_key([

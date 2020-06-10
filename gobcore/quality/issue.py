@@ -6,7 +6,7 @@ from gobcore.quality.config import QA_LEVEL, QA_CHECK
 from gobcore.quality.quality_update import QualityUpdate
 from gobcore.logging.logger import Logger, logger
 from gobcore.workflow.start_workflow import start_workflow
-from gobcore.message_broker.config import IMPORT, RELATE_CHECK
+from gobcore.message_broker.config import IMPORT, RELATE, RELATE_CHECK
 
 
 class IssueException(Exception):
@@ -223,7 +223,7 @@ def is_functional_process(process):
     :param process:
     :return:
     """
-    functional_processes = [process.lower() for process in [IMPORT, RELATE_CHECK]]
+    functional_processes = [process.lower() for process in [IMPORT, RELATE, RELATE_CHECK]]
     return process.lower() in functional_processes
 
 
