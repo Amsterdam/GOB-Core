@@ -1707,7 +1707,14 @@
           "gebruiksdoel": {
             "type": "GOB.JSON",
             "description": "Een categorisering van de gebruiksdoelen van het betreffende verblijfsobject, zoals dit door de overheid als zodanig is toegestaan.",
-            "attributes": {}
+            "attributes": {
+              "code": {
+                "type": "GOB.String"
+              },
+              "omschrijving": {
+                "type": "GOB.String"
+              }
+            }
           },
           "oppervlakte": {
             "type": "GOB.Integer",
@@ -1758,12 +1765,26 @@
           "gebruiksdoel_woonfunctie": {
             "type": "GOB.JSON",
             "description": "Amsterdamse uitbreiding op Gebruiksdoel verblijfsobject.",
-            "attributes": {}
+            "attributes": {
+              "code": {
+                "type": "GOB.String"
+              },
+              "omschrijving": {
+                "type": "GOB.String"
+              }
+            }
           },
           "gebruiksdoel_gezondheidszorgfunctie": {
             "type": "GOB.JSON",
             "description": "Amsterdamse uitbreiding op Gebruiksdoel verblijfsobject.",
-            "attributes": {}
+            "attributes": {
+              "code": {
+                "type": "GOB.String"
+              },
+              "omschrijving": {
+                "type": "GOB.String"
+              }
+            }
           },
           "aantal_eenheden_complex": {
             "type": "GOB.Integer",
