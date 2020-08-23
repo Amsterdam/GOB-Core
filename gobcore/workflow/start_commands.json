@@ -154,5 +154,21 @@
     "description": "Run BRP API regression tests",
     "workflow": "brp_regression_test",
     "args": []
+  },
+  "distribute": {
+    "description": "Distribute a catalogue or collection",
+    "workflow": "distribute",
+    "args": [
+      {
+        "name": "catalogue",
+        "required": true,
+        "description": "The name of the data catalogue (example: \"meetbouten\")"
+      },
+      {
+        "name": "collection",
+        "required": false,
+        "description": "The name of the data collection (example: \"metingen\")"
+      }
+    ]
   }
 }
