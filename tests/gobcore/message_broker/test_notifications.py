@@ -10,7 +10,8 @@ from gobcore.message_broker.notifications import listen_to_notifications,\
     EventNotification,\
     _send_notification,\
     _listen_to_notifications,\
-    DumpNotification
+    DumpNotification,\
+    ExportTestNotification
 
 @patch("gobcore.message_broker.notifications.NOTIFY_EXCHANGE", 'notification exchange')
 @patch("gobcore.message_broker.notifications.NOTIFY_BASE_QUEUE", 'base queue')
@@ -133,3 +134,22 @@ class TestDumpNotification(TestCase):
         self.assertEqual('SOME CAT', notification.contents.get('catalog'))
         self.assertEqual('SOME COLL', notification.contents.get('collection'))
 
+
+class TestExportTestNotification(TestCase):
+
+    def test_from_msg(self):
+        msg = {
+            'type': 'export_test',
+            'header': {'some': 'header'},
+            'contents': {
+                'catalogue': 'SOME CAT',
+                'collection': 'SOME COLL',
+                'product': 'SOME PRODUCT',
+            }
+        }
+        notification = get_notification(msg)
+        self.assertIsInstance(notification, ExportTestNotification)
+        self.assertEqual({'some': 'header'}, notification.header)
+        self.assertEqual('SOME CAT', notification.contents.get('catalogue'))
+        self.assertEqual('SOME COLL', notification.contents.get('collection'))
+        self.assertEqual('SOME PRODUCT', notification.contents.get('product'))
