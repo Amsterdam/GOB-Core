@@ -218,3 +218,19 @@ class TestObjectDatastore(TestCase):
 
         store = ObjectDatastore({}, {})
         self.assertEqual(expected_result, list(store._yield_rows(iterrows, file_info, config)))
+
+    @patch("gobcore.datastore.objectstore.get_connection")
+    @patch("builtins.open")
+    def test_put_file(self, mock_open, mock_get_connection):
+        mock_connection = mock_get_connection.return_value
+
+        store = ObjectDatastore(self.config)
+        store.connect()
+
+        with self.assertRaises(AssertionError):
+            store.put_file('any src', 'any dest')
+
+        mock_file = mock_open.return_value.__enter__.return_value
+
+        store.put_file('any src', 'any dest', **{'container_name': 'any container_name'})
+        mock_connection.put_object.assert_called_with('any container_name', 'any dest', contents=mock_file)

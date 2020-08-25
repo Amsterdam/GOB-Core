@@ -134,3 +134,9 @@ class ObjectDatastore(Datastore):
                 if "lowercase_keys" in config.get("operators", []):
                     row = {key.lower(): value for key, value in row.items()}
                 yield row
+
+    def put_file(self, src, dest, **kwargs):
+        assert 'container_name' in kwargs, "container_name should be provided"
+
+        with open(src, 'rb') as file:
+            self.connection.put_object(kwargs['container_name'], dest, contents=file)
