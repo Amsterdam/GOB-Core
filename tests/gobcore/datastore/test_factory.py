@@ -23,14 +23,16 @@ class TestDatastoreFactory(TestCase):
     @patch("gobcore.datastore.factory.ObjectDatastore")
     @patch("gobcore.datastore.factory.WfsDatastore")
     @patch("gobcore.datastore.factory.FileDatastore")
-    def test_get_datastore(self, mock_file_store, mock_wfs_store, mock_object_store, mock_postgres_store,
-                           mock_oracle_store):
+    @patch("gobcore.datastore.factory.SFTPDatastore")
+    def test_get_datastore(self, mock_sftp_store, mock_file_store, mock_wfs_store, mock_object_store, 
+                           mock_postgres_store, mock_oracle_store):
 
         self.get_datastore_test('oracle', mock_oracle_store)
         self.get_datastore_test('postgres', mock_postgres_store)
         self.get_datastore_test('objectstore', mock_object_store)
         self.get_datastore_test('wfs', mock_wfs_store)
         self.get_datastore_test('file', mock_file_store)
+        self.get_datastore_test('sftp', mock_sftp_store)
 
         with self.assertRaises(NotImplementedError):
             DatastoreFactory.get_datastore({'type': 'invalid'}, {})

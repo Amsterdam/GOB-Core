@@ -1,10 +1,10 @@
-from gobcore.datastore.datastore import Datastore, ORACLE, POSTGRES, OBJECTSTORE, WFS, FILE, FTP
+from gobcore.datastore.datastore import Datastore, ORACLE, POSTGRES, OBJECTSTORE, WFS, FILE, SFTP
 from gobcore.datastore.oracle import OracleDatastore
 from gobcore.datastore.postgres import PostgresDatastore
 from gobcore.datastore.objectstore import ObjectDatastore
 from gobcore.datastore.wfs import WfsDatastore
 from gobcore.datastore.file import FileDatastore
-from gobcore.datastore.ftp import FTPDatastore
+from gobcore.datastore.sftp import SFTPDatastore
 
 
 class DatastoreFactory:
@@ -17,7 +17,7 @@ class DatastoreFactory:
             OBJECTSTORE: ObjectDatastore,
             WFS: WfsDatastore,
             FILE: FileDatastore,
-            FTP: FTPDatastore,
+            SFTP: SFTPDatastore,
         }
 
         store = stores.get(config.pop('type'))

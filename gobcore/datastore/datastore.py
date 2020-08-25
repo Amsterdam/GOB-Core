@@ -6,7 +6,7 @@ POSTGRES = 'postgres'
 OBJECTSTORE = 'objectstore'
 WFS = 'wfs'
 FILE = 'file'
-FTP = 'ftp'
+SFTP = 'sftp'
 
 
 class Datastore(ABC):
