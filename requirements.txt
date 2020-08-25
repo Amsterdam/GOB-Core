@@ -15,6 +15,7 @@ mccabe==0.6.1
 mock==2.0.0
 more-itertools==4.3.0
 pandas==0.23.4
+paramiko==2.7.1
 pbr==4.2.0
 pika==0.12.0
 pluggy==0.7.1
