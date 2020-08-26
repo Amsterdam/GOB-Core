@@ -824,11 +824,13 @@
         },
         "is_bron_voor_aantekening_kadastraal_object": {
           "method": "equals",
-          "destination_attribute": "identificatie"
+          "destination_attribute": "identificatie",
+          "none_allowed":  true
         },
         "is_bron_voor_aantekening_recht": {
           "method": "equals",
-          "destination_attribute": "identificatie"
+          "destination_attribute": "identificatie",
+          "none_allowed":  true
         },
         "is_bron_voor_zakelijk_recht": {
           "method": "equals",
