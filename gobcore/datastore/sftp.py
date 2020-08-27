@@ -26,5 +26,4 @@ class SFTPDatastore(Datastore):
         pass  # pragma: no cover
 
     def put_file(self, src, dest):
-        print(self.connection)
         self.connection.put(src, dest)
