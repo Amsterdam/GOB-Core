@@ -230,6 +230,14 @@ class TestLogger(TestCase):
         self.assertEqual(logger.get_issues(), [any_issue, another_issue])
         self.assertEqual(1, logger._data_msg_count['data_error'])
 
+        logger = Logger()
+        another_issue.get_unique_id.return_value = 1
+
+        logger.add_issue(any_issue, 'info')
+        logger.add_issue(another_issue, 'info')
+        self.assertEqual(1, logger._data_msg_count['data_info'])
+        any_issue.join_issue.asert_called_with(another_issue)
+
 
 class TestRequestHandler(TestCase):
 
