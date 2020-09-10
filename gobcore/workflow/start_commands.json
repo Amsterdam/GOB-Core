@@ -105,6 +105,7 @@
       },
       {
         "name": "mode",
+        "named": true,
         "required": false,
         "description": "The mode to use. Defaults to update",
         "default": "update",
