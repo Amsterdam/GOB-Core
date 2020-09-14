@@ -101,6 +101,10 @@ class QA_CHECK:
         "pattern": "^.+$",
         "msg": "value should not be empty",
     }
+    Value_brondocument_coding = {
+        "pattern": "^[a-zA-Z]{2}[0-9]{8}_[a-zA-Z]{2}[0-9]{2}[a-zA-Z]{2}\.[a-zA-Z]{3}",
+        "msg": "brondocument does not match required coding",
+    }
     Value_not_in_future = {
         "msg": "value should not be in the future",
     }
