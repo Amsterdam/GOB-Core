@@ -159,12 +159,16 @@ class MessagedrivenService:
             print(f"Queue connection for {id} stopped.")
 
     def start(self):
-        queues = [service['queue'] for service in self.services.values()]
+        asynchronous_queues = [service['queue'] for service in self.services.values()
+                               if self.thread_per_service or service.get('own_thread')]
+        synchronous_queues = [service['queue'] for service in self.services.values()
+                              if not service['queue'] in asynchronous_queues]
 
-        if self.thread_per_service:
-            self._start_threads(queues)
-        else:
-            self._start_thread(queues)
+        if asynchronous_queues:
+            self._start_threads(asynchronous_queues)
+
+        if synchronous_queues:
+            self._start_thread(synchronous_queues)
 
         self._heartbeat_loop()
 
