@@ -35,7 +35,7 @@ class QA_CHECK:
 
     # Format requirements
     Format_N8 = {
-        "pattern": "^\d{8}$",
+        "pattern": r"^\d{8}$",
         "msg": "value should consist of 8 numeric characters",
     }
     Format_numeric = {
@@ -102,7 +102,7 @@ class QA_CHECK:
         "msg": "value should not be empty",
     }
     Value_brondocument_coding = {
-        "pattern": "^[a-zA-Z]{2}[0-9]{8}_[a-zA-Z]{2}[0-9]{2}[a-zA-Z]{2}\.[a-zA-Z]{3}",
+        "pattern": r"^[a-zA-Z]{2}[0-9]{8}_[a-zA-Z]{2}[0-9]{2}[a-zA-Z]{2}\.[a-zA-Z]{3}",
         "msg": "brondocument does not match required coding",
     }
     Value_not_in_future = {
