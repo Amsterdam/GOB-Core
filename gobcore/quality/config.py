@@ -55,7 +55,7 @@ class QA_CHECK:
         "msg": "value should be 2 characters and 2 digits",
     }
     Format_AAN_AANN = {
-        "pattern": "(.*)/([a-zA-Z]{2}\d{1,2}).(.*)",
+        "pattern": "^[a-zA-Z]{2}\d{1,2}$",
         "msg": "value should be 2 characters and 1 or 2 digits",
     }
     Format_4_2_2_2_6_HEX = {
