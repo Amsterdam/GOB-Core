@@ -39,45 +39,45 @@ class QA_CHECK:
         "msg": "value should consist of 8 numeric characters",
     }
     Format_numeric = {
-        "pattern": "^\d+$",
+        "pattern": r"^\d+$",
         "msg": "value should be a valid positive integer",
     }
     Format_alphabetic = {
-        "pattern": "^[^0-9]+$",
+        "pattern": r"^[^0-9]+$",
         "msg": "value should only contain characters",
     }
     Format_ANN = {
-        "pattern": "^[a-zA-Z]{1}\d{2}$",
+        "pattern": r"^[a-zA-Z]{1}\d{2}$",
         "msg": "value should be 1 character and 2 digits",
     }
     Format_AANN = {
-        "pattern": "^[a-zA-Z]{2}\d{2}$",
+        "pattern": r"^[a-zA-Z]{2}\d{2}$",
         "msg": "value should be 2 characters and 2 digits",
     }
     Format_AAN_AANN = {
-        "pattern": "^[a-zA-Z]{2}\d{1,2}$",
+        "pattern": r"^[a-zA-Z]{2}\d{1,2}$",
         "msg": "value should be 2 characters and 1 or 2 digits",
     }
     Format_4_2_2_2_6_HEX = {
-        "pattern": "^{[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}}$",
+        "pattern": r"^{[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}}$",
         "msg": "value should be a 4-2-2-2-6 bytes hexidecimal value",
     }
 
     # Value requirements
     Value_1_2_3 = {
-        "pattern": "^[1,2,3]$",
+        "pattern": r"^[1,2,3]$",
         "msg": "value should be one of [1,2,3]",
     }
     Value_wind_direction_NOZW = {
-        "pattern": "^(N|NO|O|ZO|Z|ZW|W|NW)$",
+        "pattern": r"^(N|NO|O|ZO|Z|ZW|W|NW)$",
         "msg": "value should be one of [N,NO,O,ZO,Z,ZW,W,NW]",
     }
     Value_1_0 = {
-        "pattern": "^[1,0]$",
+        "pattern": r"^[1,0]$",
         "msg": "value should be one of 1 or 0",
     }
     Value_J_N = {
-        "pattern": "^[J,N]$",
+        "pattern": r"^[J,N]$",
         "msg": "value should be one of J or N",
     }
     Value_height_6_15 = {
@@ -98,7 +98,7 @@ class QA_CHECK:
         "msg": f"value should be between {_NL_X_MIN}-{_NL_X_MAX} and {_NL_Y_MIN}-{_NL_Y_MAX}",
     }
     Value_not_empty = {
-        "pattern": "^.+$",
+        "pattern": r"^.+$",
         "msg": "value should not be empty",
     }
     Value_brondocument_coding = {
