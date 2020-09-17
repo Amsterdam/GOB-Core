@@ -25,6 +25,30 @@ class TestConfig(TestCase):
             # Key is name, value is tuple ([should pass regex], [should fail regex])
             'Format_N8': (['01234567', '98765432'],
                           ['0123456', '9786543', '012345678', '987654321', 'abcdefghi', '0123456a', 'a1234567']),
+            'Format_numeric': (['1', '2', '52432134', '0134234'],
+                               ['-1', 'abc', '0123456a', 'a1234567']),
+            'Format_alphabetic': (['a', 'abc', 'AaBb'],
+                                  ['-1', '1', '0123456a', 'a1234567']),
+            'Format_ANN': (['a12', 'A12', 'Z43'],
+                           ['abc', '12a', '1a22', 'a1', 'a1234567']),
+            'Format_AANN': (['ab12', 'AB12', 'xZ43', 'Xz00'],
+                            ['abc', '12ab', '1az22', '12ab', 'a1']),
+            'Format_AAN_AANN': (['AA31', 'aa11', 'Aa1'],
+                                ['abc', '1az22', '12ab', 'b12', 'AB']),
+            'Format_4_2_2_2_6_HEX': (['{012345AB-6789-0ABC-DEF1-23456789ABCD}', '{012345ab-6789-0abc-def1-23456789abcd}'],
+                                     ['012345AB-6789-0ABC-DEF1-23456789ABCD', '{Z12345AB-6789-0ABC-DEF1-23456789ABCD}']),
+            'Value_1_2_3': (['1', '2', '3'],
+                            ['4', 'a', '0']),
+            'Value_wind_direction_NOZW': (['N', 'NO', 'O', 'ZO', 'Z', 'ZW', 'W', 'NW'],
+                                          ['n', 'NZ', '0']),
+            'Value_1_0': (['1', '0'],
+                          ['true', 'a', '2']),
+            'Value_J_N': (['J', 'N'],
+                          ['true', '1', 'M']),
+            'Value_not_empty': (['J', '1', 'abcd', 'a1b2'],
+                                ['']),
+            'Value_brondocument_coding': (['AB12345678_AB12AB.abc', 'ab12345678_ab12ab.ABC', 'SV12345678_OV12VL.dgn'],
+                                          ['AB12345678AB12AB.abc', 'AB123456789_AB12AB.abc'])
         }
 
         # Get all dicts defined in the class
@@ -40,7 +64,7 @@ class TestConfig(TestCase):
                 should_pass, should_fail = regex_tests[qa_def]
 
                 for s in should_pass:
-                    self.assertIsNotNone(re.match(d['pattern'], s))
+                    self.assertIsNotNone(re.match(d['pattern'], s),s)
 
                 for s in should_fail:
                     self.assertIsNone(re.match(d['pattern'], s))
