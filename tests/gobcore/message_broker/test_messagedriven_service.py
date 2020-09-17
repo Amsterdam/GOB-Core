@@ -7,7 +7,7 @@ from tests.gobcore import fixtures
 from gobcore.message_broker.async_message_broker import AsyncConnection
 from gobcore.message_broker.config import CONNECTION_PARAMS
 from gobcore.message_broker import messagedriven_service
-from gobcore.message_broker.messagedriven_service import MessagedrivenService, _on_message, STATUS_FAIL
+from gobcore.message_broker.messagedriven_service import MessagedrivenService, _on_message, STATUS_FAIL, RUNS_IN_OWN_THREAD
 
 
 def handler(msg):
@@ -146,6 +146,61 @@ class TestMessageDrivenService(unittest.TestCase):
         mock_init_broker.assert_called_with()
         messagedriven_service._heartbeat_loop.assert_called_once()
         messagedriven_service._start_threads.assert_called_once()
+
+    def test_messagedriven_service_start(self, mock_init_broker):
+        services = {
+            "s1": {
+                'queue': "q1",
+                'handler': MagicMock(),
+                'report': {
+                    'exchange': "e1",
+                    'key': "k1"
+                }
+            },
+            "s2": {
+                'queue': "q2",
+                'handler': MagicMock(),
+                RUNS_IN_OWN_THREAD: True,
+                'report': {
+                    'exchange': "e2",
+                    'key': "k2"
+                }
+            },
+            "s3": {
+                'queue': "q3",
+                'handler': MagicMock(),
+                RUNS_IN_OWN_THREAD: False,
+                'report': {
+                    'exchange': "e3",
+                    'key': "k3"
+                }
+            },
+        }
+        messagedriven_service = MessagedrivenService(services, 'Some name', {'thread_per_service': True})
+
+        messagedriven_service._init = MagicMock()
+        messagedriven_service._heartbeat_loop = MagicMock()
+        messagedriven_service.keep_running = False
+
+        messagedriven_service._start_threads = MagicMock()
+        messagedriven_service._start_thread = MagicMock()
+        messagedriven_service.start()
+
+        messagedriven_service._start_threads.assert_called_with(['q1', 'q2', 'q3'])
+        messagedriven_service._start_thread.assert_not_called()
+
+        messagedriven_service = MessagedrivenService(services, 'Some name')
+
+        messagedriven_service._init = MagicMock()
+        messagedriven_service._heartbeat_loop = MagicMock()
+        messagedriven_service.keep_running = False
+
+        messagedriven_service._start_threads = MagicMock()
+        messagedriven_service._start_thread = MagicMock()
+        messagedriven_service.start()
+
+        messagedriven_service._start_threads.assert_called_with(['q2'])
+        messagedriven_service._start_thread.assert_called_with(['q1', 'q3'])
 
     def test_messagedriven_service_startthreads(self, mock_init_broker):
         messagedriven_service = MessagedrivenService({}, 'Some name', {'thread_per_service': True})

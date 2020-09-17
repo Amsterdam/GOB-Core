@@ -9,7 +9,8 @@ from gobcore.message_broker.initialise_queues import initialize_message_broker
 from gobcore.message_broker.notifications import contains_notification, send_notification
 from gobcore.quality.issue import process_issues
 
-CHECK_CONNECTION = 5    # Check connection every n seconds
+CHECK_CONNECTION = 5                # Check connection every n seconds
+RUNS_IN_OWN_THREAD = "own_thread"   # Service that runs in a separate thread
 
 # Assure that heartbeats are sent at every HEARTBEAT_INTERVAL
 assert(HEARTBEAT_INTERVAL % CHECK_CONNECTION == 0)
@@ -160,7 +161,7 @@ class MessagedrivenService:
 
     def start(self):
         asynchronous_queues = [service['queue'] for service in self.services.values()
-                               if self.thread_per_service or service.get('own_thread')]
+                               if self.thread_per_service or service.get(RUNS_IN_OWN_THREAD)]
         synchronous_queues = [service['queue'] for service in self.services.values()
                               if not service['queue'] in asynchronous_queues]
 
