@@ -239,3 +239,36 @@ class TestObjectDatastore(TestCase):
 
         store.put_file('any src', 'any dest')
         mock_connection.put_object.assert_called_with('any container_name', 'any dest', contents=mock_file)
+
+    @patch("gobcore.datastore.objectstore.get_full_container_list")
+    def test_list_files(self, mock_get_list):
+        mock_get_list.return_value = [
+            {'name': 'a/b/c/file.txt'},
+            {'name': 'a/b/file.txt'},
+            {'name': 'a/file.txt'},
+            {'name': 'b/file.txt'},
+            {'name': 'a/b/c/file2.txt'},
+        ]
+
+        store = ObjectDatastore({})
+        self.assertEqual([
+            'a/b/c/file.txt',
+            'a/b/file.txt',
+            'a/b/c/file2.txt',
+        ], list(store.list_files('a/b')))
+
+        self.assertEqual([
+            'a/b/c/file.txt',
+            'a/b/file.txt',
+            'a/file.txt',
+            'b/file.txt',
+            'a/b/c/file2.txt',
+        ], list(store.list_files()))
+
+    def test_delete_file(self):
+        store = ObjectDatastore({})
+        store.connection = MagicMock()
+        store.container_name = 'container'
+
+        store.delete_file('some file')
+        store.connection.delete_object.assert_called_with('container', 'some file')

@@ -4,12 +4,12 @@ import os
 import pandas
 
 from objectstore.objectstore import get_connection, get_full_container_list, get_object
-from gobcore.datastore.datastore import Datastore
+from gobcore.datastore.datastore import Datastore, ListEnabledDatastore, PutEnabledDatastore, DeleteEnabledDatastore
 
 from gobcore.exceptions import GOBException
 
 
-class ObjectDatastore(Datastore):
+class ObjectDatastore(Datastore, ListEnabledDatastore, PutEnabledDatastore, DeleteEnabledDatastore):
 
     def __init__(self, connection_config: dict, read_config: dict = None):
         super(ObjectDatastore, self).__init__(connection_config, read_config)
@@ -135,6 +135,15 @@ class ObjectDatastore(Datastore):
                     row = {key.lower(): value for key, value in row.items()}
                 yield row
 
-    def put_file(self, src, dest):
-        with open(src, 'rb') as file:
-            self.connection.put_object(self.container_name, dest, contents=file)
+    def put_file(self, local_file_path: str, dst_path: str):
+        with open(local_file_path, 'rb') as file:
+            self.connection.put_object(self.container_name, dst_path, contents=file)
+
+    def list_files(self, path=None):
+        for f in get_full_container_list(self.connection, self.container_name):
+
+            if path is None or f['name'].startswith(path):
+                yield f['name']
+
+    def delete_file(self, filename: str):
+        self.connection.delete_object(self.container_name, filename)
