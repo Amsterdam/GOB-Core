@@ -22,7 +22,7 @@ setup(
         'pandas==0.23.4',
         'paramiko==2.7.1',
         'ijson==2.3',
-        'cryptography==2.8',
+        'cryptography==3.2',
         'pycryptodome==3.9.4'
     ],
     packages=find_packages(exclude=['tests*']),
