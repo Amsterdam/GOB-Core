@@ -15,7 +15,8 @@ import pika
 
 from gobcore.message_broker.config import CONNECTION_PARAMS,\
                                           MESSAGE_BROKER, MESSAGE_BROKER_PORT, MESSAGE_BROKER_VHOST,\
-                                          MESSAGE_BROKER_USER, MESSAGE_BROKER_PASSWORD, QUEUE_CONFIGURATION
+                                          MESSAGE_BROKER_USER, MESSAGE_BROKER_PASSWORD, QUEUE_CONFIGURATION,\
+                                          EXCHANGES
 
 
 def _create_vhost(vhost):
@@ -85,9 +86,11 @@ def _bind_queue(channel, exchange, queue, key):
 
 
 def _initialize_queues(channel, queue_configuration):
-    for exchange, queues in queue_configuration.items():
+    # First create all exchanges (some exchanges may not be included in queue_configuration below)
+    for exchange in EXCHANGES:
         _create_exchange(channel=channel, exchange=exchange, durable=True)
 
+    for exchange, queues in queue_configuration.items():
         for queue, keys in queues.items():
             _create_queue(channel=channel, queue=queue, durable=True)
 

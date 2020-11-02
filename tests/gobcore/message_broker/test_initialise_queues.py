@@ -53,6 +53,7 @@ class TestInitialiseQueues(TestCase):
             routing_key='key',
         )
 
+    @patch("gobcore.message_broker.initialise_queues.EXCHANGES", ['exchange1', 'exchange2', 'exchange3', 'exchange99'])
     @patch("gobcore.message_broker.initialise_queues._create_exchange")
     @patch("gobcore.message_broker.initialise_queues._create_queue")
     @patch("gobcore.message_broker.initialise_queues._bind_queue")
@@ -72,6 +73,8 @@ class TestInitialiseQueues(TestCase):
         mock_create_exchange.assert_has_calls([
             call(channel=channel, exchange='exchange1', durable=True),
             call(channel=channel, exchange='exchange2', durable=True),
+            call(channel=channel, exchange='exchange3', durable=True),
+            call(channel=channel, exchange='exchange99', durable=True),
         ])
 
         mock_create_queue.assert_has_calls([
