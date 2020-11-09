@@ -14,6 +14,7 @@ import traceback
 
 import pika
 
+from gobcore.message_broker.config import NEVER_DROP_MESSAGES_EXHANGES
 from gobcore.message_broker.offline_contents import offload_message, end_message
 from gobcore.message_broker.utils import to_json, get_message_from_body
 
@@ -288,12 +289,12 @@ class AsyncConnection(object):
                     # Print error message, the message that caused the error and a short stacktrace
                     stacktrace = traceback.format_exc(limit=-10)
                     print(f"Message handling has failed: {str(e)}, message: {str(body)}", stacktrace)
-                    if basic_deliver.redelivered:
+                    if basic_deliver.redelivered and basic_deliver.exchange not in NEVER_DROP_MESSAGES_EXHANGES:
                         # When a message is redelivered then remove the message from the queue
                         print("Message handling has failed on second try, removing message")
                     else:
                         # Fatal fail program on first try
-                        print("Message handling has failed on first try, terminating program")
+                        print("Message handling has failed, terminating program")
                         os._exit(os.EX_TEMPFAIL)
 
                 if msg is not None:

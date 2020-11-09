@@ -10,8 +10,8 @@ Two main queues are defined:
 """
 import os
 import pika
-import tempfile
 import logging
+from pathlib import Path
 
 pika_logger = logging.getLogger("pika")
 pika_logger.propagate = False
@@ -26,7 +26,7 @@ def _build_queuename(*args):
     return _build_key(*args, 'queue')
 
 
-GOB_SHARED_DIR = os.getenv("GOB_SHARED_DIR", tempfile.gettempdir())
+GOB_SHARED_DIR = os.getenv("GOB_SHARED_DIR", Path.home().joinpath("gob-volume"))
 
 MESSAGE_BROKER = os.getenv("MESSAGE_BROKER_ADDRESS", "localhost")
 MESSAGE_BROKER_PORT = os.getenv("MESSAGE_BROKER_PORT", 15672)
@@ -59,6 +59,9 @@ EXCHANGES = [
     EVENT_EXCHANGE,
 ]
 
+NEVER_DROP_MESSAGES_EXHANGES = [
+    EVENT_EXCHANGE,  # Should never drop events
+]
 
 COMPARE = 'compare'
 EXPORT = 'export'

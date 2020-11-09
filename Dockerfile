@@ -11,6 +11,7 @@ COPY test.sh /app/
 COPY requirements.txt /app/
 RUN pip3 install --no-cache-dir -r requirements.txt
 RUN rm requirements.txt
+RUN mkdir -m 777 -p /root/gob-volume/message_broker
 
 # Copy gobcore module
 COPY gobcore gobcore
