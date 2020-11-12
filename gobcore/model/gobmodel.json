@@ -3432,7 +3432,7 @@
             "description": "Aanduiding van het soort object ten behoeve van een correcte bepaling van de waarde.",
             "attributes": {
               "code": {
-                "type": "GOB.Integer"
+                "type": "GOB.String"
               },
               "omschrijving": {
                 "type": "GOB.String"
