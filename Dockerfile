@@ -4,7 +4,7 @@ MAINTAINER datapunt@amsterdam.nl
 # Install gobworkflow in /app folder
 WORKDIR /app
 
-RUN apt-get -y --no-install-recommends install unixodbc-dev
+RUN apt-get update && apt-get -y --no-install-recommends install unixodbc-dev
 
 # Copy testscript to where jenkins expect them
 COPY test.sh /app/
