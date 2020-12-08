@@ -3444,6 +3444,10 @@
             "type": "GOB.Date",
             "description": "De begindatum van een periode waarin één of meer gegevens die worden bijgehouden over een WOZ-object, een wijziging hebben ondergaan"
           },
+          "eind_geldigheid": {
+            "type": "GOB.Date",
+            "description": "De einddatum van een periode waarin één of meer gegevens die worden bijgehouden over een WOZ-object, een wijziging hebben ondergaan"
+          },
           "bevat_kadastraalobject": {
             "type": "GOB.ManyReference",
             "description": "Relatie naar kadastraal object",
@@ -3489,6 +3493,10 @@
           "begin_geldigheid": {
             "type": "GOB.Date",
             "description": "Een aanduiding op welk tijdstip het object is ontstaan"
+          },
+          "eind_geldigheid": {
+            "type": "GOB.Date",
+            "description": "Een aanduiding op welk tijdstip het object is beëindigd"
           },
           "is_verbonden_met_verblijfsobject": {
             "type": "GOB.Reference",
