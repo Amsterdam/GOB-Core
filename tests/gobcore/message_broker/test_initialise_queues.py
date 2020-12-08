@@ -14,7 +14,7 @@ class TestInitialiseQueues(TestCase):
         _create_vhost(vhost)
 
         mock_put.assert_called_with(
-            url='http://localhost:15672/api/vhosts/thevhost',
+            url='http://localhost:5672/api/vhosts/thevhost',
             headers={'content-type': 'application/json'},
             auth=('guest', 'guest')
         )
