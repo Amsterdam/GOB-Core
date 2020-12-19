@@ -12,6 +12,7 @@ import json
 from gobcore.exceptions import GOBException
 from gobcore.events import import_events
 from gobcore.events.import_message import MessageMetaData
+from gobcore.events.import_events import ImportEvent
 from gobcore.model import GOBModel
 from gobcore.model.migrations import GOBMigrations
 
@@ -140,11 +141,10 @@ def GobEvent(event_message, metadata):
     return _get_event(event_name)(data, metadata)
 
 
-def database_to_gobevent(event):
+def database_to_gobevent(event) -> ImportEvent:
     """Reconstruct the original event out of the stored event
 
     :param event: the database event
-    :param data: the data that is associated with the event
     :return: a ADD, MODIFY, CONFIRM or DELETE event
     """
     # Parse the json data of the event
