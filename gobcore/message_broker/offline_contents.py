@@ -100,7 +100,7 @@ def offload_message(msg, converter):
         size = gettotalsizeof(contents)
         if size > _MAX_CONTENTS_SIZE:
             unique_name = get_unique_name()
-            filename = get_filename(unique_name)
+            filename = get_filename(unique_name, _MESSAGE_BROKER_FOLDER)
             try:
                 with open(filename, 'w') as file:
                     file.write(converter(contents))
@@ -124,7 +124,7 @@ def load_message(msg, converter, params):
     unique_name = None
     if _CONTENTS_REF in msg:
         unique_name = msg[_CONTENTS_REF]
-        filename = get_filename(unique_name)
+        filename = get_filename(unique_name, _MESSAGE_BROKER_FOLDER)
         if params['stream_contents']:
             reader = ContentsReader(filename)
             msg[_CONTENTS] = reader.items()
@@ -150,7 +150,7 @@ def end_message(msg, unique_name):
             reader.close()
 
         try:
-            filename = get_filename(unique_name)
+            filename = get_filename(unique_name, _MESSAGE_BROKER_FOLDER)
             os.remove(filename)
         except Exception as e:
             print(f"Remove failed ({str(e)})", filename)

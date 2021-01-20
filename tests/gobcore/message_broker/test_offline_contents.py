@@ -42,7 +42,7 @@ class TestOfflineContents(unittest.TestCase):
 
         # End message with contents_ref gets the filename and removes it
         self.assertEqual(oc.end_message({}, "x"), None)
-        mocked_filename.assert_called_with("x")
+        mocked_filename.assert_called_with("x", "message_broker")
         mocked_remove.assert_called_with("filename")
 
     @mock.patch('gobcore.message_broker.offline_contents.get_filename', return_value="filename")
