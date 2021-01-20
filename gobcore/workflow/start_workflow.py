@@ -16,14 +16,16 @@ def start_workflow(workflow, arguments):
     # Store all arguments in the header if no header specified
     header = arguments.get('header', arguments)
     contents = arguments.get('contents', {})
-    contents_ref = arguments.get('contents_ref', {})
+    contents_ref = arguments.get('contents_ref', None)
 
     msg = {
         'header': header,
         'contents': contents,
-        'contents_ref': contents_ref,
         'workflow': workflow
     }
+
+    if contents_ref:
+        msg['contents_ref'] = contents_ref
 
     with pika.BlockingConnection(CONNECTION_PARAMS) as connection:
         channel = connection.channel()
