@@ -1175,7 +1175,7 @@
     "description": "De lijst met kenmerken bestaat uit kenmerken die landelijk zijn vastgesteld, en uit kenmerken die als extra gegevens (de BAG+ gegevens) voor de procesvoering van de gemeente Amsterdam worden bijgehouden.",
     "collections": {
       "woonplaatsen": {
-        "version": "0.1",
+        "version": "0.2",
         "abbreviation": "WPS",
         "entity_id": "identificatie",
         "has_states": true,
@@ -1183,10 +1183,6 @@
           "identificatie": {
             "type": "GOB.String",
             "description": "Landelijke identificerende code 3594."
-          },
-          "amsterdamse_sleutel": {
-            "type": "GOB.String",
-            "description": "Amsterdamse identificerende code."
           },
           "woonplaats_ptt": {
             "type": "GOB.String",
@@ -1262,7 +1258,7 @@
         }
       },
       "standplaatsen": {
-        "version": "0.3",
+        "version": "0.4",
         "abbreviation": "SPS",
         "entity_id": "identificatie",
         "has_states": true,
@@ -1270,10 +1266,6 @@
           "identificatie": {
             "type": "GOB.String",
             "description": "Landelijke identificerende sleutel."
-          },
-          "amsterdamse_sleutel": {
-            "type": "GOB.String",
-            "description": "Amsterdamse identificerende code."
           },
           "geconstateerd": {
             "type": "GOB.Boolean",
@@ -1364,7 +1356,7 @@
         }
       },
       "ligplaatsen": {
-        "version": "0.2",
+        "version": "0.3",
         "abbreviation": "LPS",
         "entity_id": "identificatie",
         "has_states": true,
@@ -1372,10 +1364,6 @@
           "identificatie": {
             "type": "GOB.String",
             "description": "Landelijke identificerende sleutel."
-          },
-          "amsterdamse_sleutel": {
-            "type": "GOB.String",
-            "description": "Amsterdamse identificerende code."
           },
           "geconstateerd": {
             "type": "GOB.Boolean",
@@ -1466,7 +1454,7 @@
         }
       },
       "openbareruimtes": {
-        "version": "0.2",
+        "version": "0.3",
         "entity_id": "identificatie",
         "abbreviation": "ORE",
         "has_states": true,
@@ -1474,10 +1462,6 @@
           "identificatie": {
             "type": "GOB.String",
             "description": "Landelijke identificerende sleutel."
-          },
-          "amsterdamse_sleutel": {
-            "type": "GOB.String",
-            "description": "Amsterdamse identificerende code."
           },
           "straatcode": {
             "type": "GOB.String",
@@ -1577,7 +1561,7 @@
         }
       },
       "nummeraanduidingen": {
-        "version": "0.2",
+        "version": "0.3",
         "abbreviation": "NAG",
         "entity_id": "identificatie",
         "has_states": true,
@@ -1585,10 +1569,6 @@
           "identificatie": {
             "type": "GOB.String",
             "description": "Landelijke identificerende sleutel."
-          },
-          "amsterdamse_sleutel": {
-            "type": "GOB.String",
-            "description": "Amsterdamse identificerende code."
           },
           "huisnummer": {
             "type": "GOB.Integer",
@@ -1704,7 +1684,7 @@
         }
       },
       "verblijfsobjecten": {
-        "version": "0.2",
+        "version": "0.3",
         "abbreviation": "VOT",
         "entity_id": "identificatie",
         "has_states": true,
@@ -1712,10 +1692,6 @@
           "identificatie": {
             "type": "GOB.String",
             "description": "Landelijke identificerende sleutel."
-          },
-          "amsterdamse_sleutel": {
-            "type": "GOB.String",
-            "description": "Amsterdamse identificerende code."
           },
           "cbs_nummer": {
             "type": "GOB.String",
@@ -1944,7 +1920,7 @@
         }
       },
       "panden": {
-        "version": "0.2",
+        "version": "0.3",
         "abbreviation": "PND",
         "entity_id": "identificatie",
         "has_states": true,
@@ -1952,10 +1928,6 @@
           "identificatie": {
             "type": "GOB.String",
             "description": "Landelijke identificerende sleutel."
-          },
-          "amsterdamse_sleutel": {
-            "type": "GOB.String",
-            "description": "Amsterdamse identificerende code."
           },
           "geconstateerd": {
             "type": "GOB.Boolean",

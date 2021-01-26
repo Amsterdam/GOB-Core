@@ -32,6 +32,15 @@
             "column": "feitelijk_gebruik"
           }
         ]
+      },
+      "0.3": {
+        "target_version": "0.4",
+        "conversions": [
+          {
+            "action": "delete",
+            "column": "amsterdamse_sleutel"
+          }
+        ]
       }
     },
     "ligplaatsen": {
@@ -41,6 +50,15 @@
           {
             "action": "delete",
             "column": "feitelijk_gebruik"
+          }
+        ]
+      },
+      "0.2": {
+        "target_version": "0.3",
+        "conversions": [
+          {
+            "action": "delete",
+            "column": "amsterdamse_sleutel"
           }
         ]
       }
@@ -54,6 +72,15 @@
             "column": "aanduiding_in_onderzoek"
           }
         ]
+      },
+      "0.2": {
+        "target_version": "0.3",
+        "conversions": [
+          {
+            "action": "delete",
+            "column": "amsterdamse_sleutel"
+          }
+        ]
       }
     },
     "nummeraanduidingen": {
@@ -63,6 +90,15 @@
           {
             "action": "delete",
             "column": "aanduiding_in_onderzoek"
+          }
+        ]
+      },
+      "0.2": {
+        "target_version": "0.3",
+        "conversions": [
+          {
+            "action": "delete",
+            "column": "amsterdamse_sleutel"
           }
         ]
       }
@@ -76,6 +112,15 @@
             "column": "aanduiding_in_onderzoek"
           }
         ]
+      },
+      "0.2": {
+        "target_version": "0.3",
+        "conversions": [
+          {
+            "action": "delete",
+            "column": "amsterdamse_sleutel"
+          }
+        ]
       }
     },
     "openbareruimtes": {
@@ -85,6 +130,15 @@
           {
             "action": "delete",
             "column": "aanduiding_in_onderzoek"
+          }
+        ]
+      },
+      "0.2": {
+        "target_version": "0.3",
+        "conversions": [
+          {
+            "action": "delete",
+            "column": "amsterdamse_sleutel"
           }
         ]
       }
