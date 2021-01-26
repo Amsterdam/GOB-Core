@@ -1,18 +1,18 @@
-import re
 import io
 import os
+import re
 import xml.etree.ElementTree as ET
 from collections import defaultdict
-
-from osgeo import ogr
-from typing import List
 from tempfile import TemporaryDirectory
+from typing import List
 from zipfile import ZipFile
+
+from objectstore.objectstore import get_object
+from osgeo import ogr
 
 from gobcore.datastore.datastore import Datastore
 from gobcore.datastore.objectstore import ObjectDatastore
 from gobcore.exceptions import GOBException
-from objectstore.objectstore import get_object
 
 
 def _extract_nested_zip(zip_file, nested_zip_files: List[str], destination_dir: str):
@@ -51,6 +51,9 @@ def _extract_nested_zip(zip_file, nested_zip_files: List[str], destination_dir: 
 
 
 class BagExtractDatastore(Datastore):
+    MUTATIONS_MODE = "mutations"
+    FULL_MODE = "full"
+
     ns_pattern = re.compile(r'{.*}')
     namespaces = {
         # We could extract namespaces from the file, but this way we're sure they won't change in the source.
@@ -59,6 +62,8 @@ class BagExtractDatastore(Datastore):
         'gml': 'http://www.opengis.net/gml/3.2',
         'Historie': 'www.kadaster.nl/schemas/lvbag/imbag/historie/v20200601',
         'Objecten-ref': 'www.kadaster.nl/schemas/lvbag/imbag/objecten-ref/v20200601',
+        'ml': 'http://www.kadaster.nl/schemas/mutatielevering-generiek/1.0',
+        'mlm': 'http://www.kadaster.nl/schemas/lvbag/extract-deelbestand-mutaties-lvc/v20200601',
         'nen5825': 'www.kadaster.nl/schemas/lvbag/imbag/nen5825/v20200601',
         'KenmerkInOnderzoek': 'www.kadaster.nl/schemas/lvbag/imbag/kenmerkinonderzoek/v20200601',
         'selecties-extract': 'http://www.kadaster.nl/schemas/lvbag/extract-selecties/v20200601',
@@ -76,12 +81,24 @@ class BagExtractDatastore(Datastore):
 
         self._check_config()
 
-    def _check_config(self):
-        if not self.read_config.get('object_type'):
-            raise GOBException("Missing object_type in read_config")
+        xml_object = self.read_config.get('xml_object')
+        self.full_xml_path = f"./sl:standBestand/sl:stand/sl-bag-extract:bagObject/Objecten:{xml_object}"
+        self.mutation_xml_paths = [
+            f"./ml:mutatieBericht/ml:mutatieGroep/ml:toevoeging/ml:wordt/mlm:bagObject/Objecten:{xml_object}",
+            f"./ml:mutatieBericht/ml:mutatieGroep/ml:wijziging/ml:wordt/mlm:bagObject/Objecten:{xml_object}",
+        ]
 
-    def connect(self):
-        file_location = self._download_file()
+        self.mode = self.read_config['mode']
+
+    def _check_config(self):
+        for key in ('object_type', 'xml_object', 'mode', 'gemeentes'):
+            if not self.read_config.get(key):
+                raise GOBException(f"Missing {key} in read_config")
+
+        if self.read_config['mode'] not in (self.FULL_MODE, self.MUTATIONS_MODE):
+            raise GOBException(f"Invalid mode: {self.read_config['mode']}")
+
+    def _download_and_extract_full_file(self, file_location: str):
         filename = file_location.split('/')[-1]
         match = re.match(r'^BAGGEM(\d{4})L-(\d{8}).zip$', filename)
 
@@ -96,13 +113,37 @@ class BagExtractDatastore(Datastore):
             f"{gemeente}{self.read_config['object_type']}{datestr}.zip",
         ], self.tmp_dir.name)
 
-        self.files = [os.path.join(self.tmp_dir.name, f)
-                      for f in sorted(os.listdir(self.tmp_dir.name)) if f.endswith('.xml')]
+        return [os.path.join(self.tmp_dir.name, f)
+                for f in sorted(os.listdir(self.tmp_dir.name)) if f.endswith('.xml')]
+
+    def _download_and_extract_mutations_file(self, file_location: str):
+        filename = file_location.split('/')[-1]
+        match = re.match(r'^BAGNLDM-(\d{8}-\d{8}).zip$', filename)
+
+        if not match:
+            raise GOBException(f"Unexpected filename format: {filename}")
+
+        daterange = match.group(1)
+        _extract_nested_zip(file_location, [
+            f"9999MUT{daterange}.zip",
+        ], self.tmp_dir.name)
+
+        return [os.path.join(self.tmp_dir.name, f)
+                for f in sorted(os.listdir(self.tmp_dir.name)) if f.endswith('.xml')]
+
+    def connect(self):
+
+        if self.mode == self.FULL_MODE:
+            file_location = self._download_file('tmp_weesp/BAGGEM0457L-15112020.zip')
+            self.files = self._download_and_extract_full_file(file_location)
+        else:
+            file_location = self._download_file('tmp_weesp/BAGNLDM-31122020-01012021.zip')
+            self.files = self._download_and_extract_mutations_file(file_location)
 
     def disconnect(self):
         pass  # pragma: no cover
 
-    def _download_file(self):
+    def _download_file(self, file_location: str):
         """Downloads source file and returns file location
 
         TODO: This file is now temporarily downloaded from a fixed location from the object store. This file will later
@@ -110,7 +151,6 @@ class BagExtractDatastore(Datastore):
 
         :return:
         """
-        file_location = 'tmp_weesp/BAGGEM0457L-15112020.zip'
 
         # ObjectDatastore is hardcoded for now, as Core does not have direct access to Config, this is the easy temp
         # solution.
@@ -237,12 +277,28 @@ class BagExtractDatastore(Datastore):
         else:
             return element.text.strip()
 
+    def _get_elements_full(self, xmlroot):
+        yield from xmlroot.iterfind(self.full_xml_path, self.namespaces)
+
+    def _get_elements_mutations(self, xmlroot):
+        gemeentes = self.read_config.get('gemeentes', [])
+        for path in self.mutation_xml_paths:
+
+            for element in xmlroot.iterfind(path, self.namespaces):
+                identificatie = element.find("./Objecten:identificatie", self.namespaces)
+
+                if identificatie is not None and identificatie.text.strip()[:4] in gemeentes:
+                    # Filter only gemeentes we are interested in
+                    yield element
+
     def query(self, query):
+        get_elements_fn = self._get_elements_full if self.mode == self.FULL_MODE else self._get_elements_mutations
+
         for file in self.files:
             tree = ET.parse(file)
             root = tree.getroot()
-            elements = root.iterfind('./sl:standBestand/sl:stand/sl-bag-extract:bagObject/Objecten:Verblijfsobject',
-                                     self.namespaces)
+
+            elements = get_elements_fn(root)
 
             for element in elements:
                 yield self._flatten_dict(self._element_to_dict(element))
