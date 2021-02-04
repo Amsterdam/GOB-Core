@@ -19,7 +19,7 @@ setup(
         'pandas==1.1.4',
         'paramiko==2.7.1',
         'pika==0.12.0',
-        'psycopg2-binary==2.7.7',
+        'psycopg2-binary==2.8.6',
         'pycryptodome==3.9.4',
         'pyjwt==1.7.1',
         'pyodbc==4.0.30',
