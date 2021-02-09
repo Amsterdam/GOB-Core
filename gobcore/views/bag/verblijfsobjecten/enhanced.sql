@@ -1,4 +1,4 @@
-    SELECT
+SELECT
       vot.identificatie,
       CASE WHEN ozk.src_id IS NOT NULL THEN 'J' ELSE 'N' END AS aanduiding_in_onderzoek,
       vot.geconstateerd,
@@ -42,6 +42,7 @@
       vot.eigendomsverhouding,
       vot.redenopvoer,
       vot.redenafvoer,
+	  wdt.soortobject,
       pnd_0._mref_ligt_in_panden_bag_pnd,
       json_build_object(
         'identificatie', bbk_0.identificatie,
@@ -185,6 +186,17 @@
                      AND COALESCE(ozk._expiration_date, '9999-12-31'::timestamp without time zone) > NOW()
           GROUP BY rel.src_id, rel.src_volgnummer
     ) ozk ON vot._id = ozk.src_id AND vot.volgnummer = ozk.src_volgnummer
+    -- SELECT wdt.soortobject (inv)
+	LEFT JOIN (
+		SELECT dst_id, dst_volgnummer, json_agg(wdt.soortobject) soortobject
+		FROM mv_woz_wdt_bag_vot_is_verbonden_met_verblijfsobject rel
+		LEFT JOIN woz_wozdeelobjecten wdt 
+			ON rel.src_id = wdt._id AND rel.src_volgnummer = wdt.volgnummer
+			AND COALESCE(wdt._expiration_date, '9999-12-31'::timestamp without time zone) > NOW()
+		GROUP BY dst_id, dst_volgnummer
+	) wdt ON 
+		vot._id = wdt.dst_id AND vot.volgnummer = wdt.dst_volgnummer
+
     WHERE
       COALESCE(vot._expiration_date, '9999-12-31'::timestamp without time zone) > NOW()
       AND vot._date_deleted IS NULL
