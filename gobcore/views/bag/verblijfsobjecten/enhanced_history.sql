@@ -198,7 +198,6 @@ LEFT JOIN (
     FROM mv_woz_wdt_bag_vot_is_verbonden_met_verblijfsobject rel
     LEFT JOIN woz_wozdeelobjecten wdt
         ON rel.src_id = wdt._id AND rel.src_volgnummer = wdt.volgnummer
-        AND COALESCE(wdt._expiration_date, '9999-12-31'::timestamp without time zone) > NOW()
     GROUP BY dst_id, dst_volgnummer
 ) wdt ON
     vot._id = wdt.dst_id AND vot.volgnummer = wdt.dst_volgnummer
