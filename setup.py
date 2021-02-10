@@ -10,7 +10,7 @@ setup(
     license='MPL-2.0',
     install_requires=[
         'GDAL==2.4.4',
-        'cryptography==3.2.1',
+        'cryptography==3.3.2',
         'cx-Oracle==7.3.0',
         'datapunt-objectstore==2020.9.7',
         'geoalchemy2',

@@ -2,7 +2,7 @@ atomicwrites==1.2.1
 attrs==18.2.0
 click==6.7
 coverage==4.5.1
-cryptography==3.2.1
+cryptography==3.3.2
 pycryptodome==3.9.4
 cx-Oracle==7.3.0
 xlrd==1.2.0
