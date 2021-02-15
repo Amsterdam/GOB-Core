@@ -35,7 +35,7 @@
                         <Objecten:Verblijfsobject>
                             <Objecten:heeftAlsHoofdadres>
                                 <Objecten-ref:NummeraanduidingRef domein="NL.IMBAG.Nummeraanduiding">
-                                    0457200000199376
+                                    0458200000199376
                                     This object should be ignored, because there's a newer modification for this same
                                     object.
                                 </Objecten-ref:NummeraanduidingRef>
@@ -85,7 +85,7 @@
                         <Objecten:Verblijfsobject>
                             <Objecten:heeftAlsHoofdadres>
                                 <Objecten-ref:NummeraanduidingRef domein="NL.IMBAG.Nummeraanduiding">
-                                    0457200000199376
+                                    0458200000199376
                                     This object should be ignored, because there's a newer modification for this same
                                     object.
                                 </Objecten-ref:NummeraanduidingRef>
@@ -135,7 +135,7 @@
                         <Objecten:Verblijfsobject>
                             <Objecten:heeftAlsHoofdadres>
                                 <Objecten-ref:NummeraanduidingRef domein="NL.IMBAG.Nummeraanduiding">
-                                    0457200000199376
+                                    0458200000199376
                                 </Objecten-ref:NummeraanduidingRef>
                             </Objecten:heeftAlsHoofdadres>
                             <Objecten:voorkomen>
@@ -182,7 +182,7 @@
                         <Objecten:Verblijfsobject>
                             <Objecten:heeftAlsHoofdadres>
                                 <Objecten-ref:NummeraanduidingRef domein="NL.IMBAG.Nummeraanduiding">
-                                    0457200000199376
+                                    0458200000199376
                                 </Objecten-ref:NummeraanduidingRef>
                             </Objecten:heeftAlsHoofdadres>
                             <Objecten:voorkomen>

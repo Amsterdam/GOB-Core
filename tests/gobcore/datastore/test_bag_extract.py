@@ -2,9 +2,9 @@ from unittest import TestCase
 
 import os
 from tempfile import TemporaryDirectory
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, call, patch
 
-from gobcore.datastore.bag_extract import BagExtractDatastore, GOBException, _extract_nested_zip
+from gobcore.datastore.bag_extract import BagExtractDatastore, GOBException, _extract_nested_zip, ElementFormatter
 from gobcore.enum import ImportMode
 
 
@@ -20,6 +20,24 @@ class TestModuleFunctions(TestCase):
             'some_file1.txt',
             'some_file2.txt'
         }, set(os.listdir(tmpdir.name)))
+
+
+class TestElementFormatter(TestCase):
+    """Class is mostly tested with the test_query_full and test_query_mutations methods in the class below
+
+    """
+
+    @patch("gobcore.datastore.bag_extract.ogr.CreateGeometryFromGML")
+    @patch("gobcore.datastore.bag_extract.ET")
+    def test_gml_to_wkt(self, mock_et, mock_create_geometry):
+        ef = ElementFormatter('')
+
+        res = ef._gml_to_wkt('elm')
+
+        mock_create_geometry.assert_called_with(mock_et.tostring().decode())
+        mock_create_geometry.return_value.FlattenTo2D.assert_called_once()
+        mock_create_geometry.return_value.ExportToWkt.assert_called_once()
+        self.assertEqual(mock_create_geometry().ExportToWkt(), res)
 
 
 class TestBagExtractDatastore(TestCase):
@@ -60,6 +78,15 @@ class TestBagExtractDatastore(TestCase):
         with self.assertRaises(AssertionError):
             ds = BagExtractDatastore({}, minimal_read_config)
 
+        minimal_read_config['mode'] = ImportMode.MUTATIONS
+
+        with self.assertRaisesRegexp(GOBException, "Missing last_full_download_location in read_config"):
+            ds = BagExtractDatastore({}, minimal_read_config)
+
+        minimal_read_config['last_full_download_location'] = 'last full download location'
+        # Should not fail
+        BagExtractDatastore({}, minimal_read_config)
+
     def test_init(self):
         ds = self.get_test_object()
         self.assertEqual(ImportMode.FULL, ds.mode)
@@ -87,11 +114,11 @@ class TestBagExtractDatastore(TestCase):
                 '1234GEM12345678.zip',
                 '1234OBJT12345678.zip',
             ],
-            "/tmp_dir_name",
+            "/tmp_dir_name/full",
         )
         self.assertEqual([
-            "/tmp_dir_name/fileA0001.xml",
-            "/tmp_dir_name/fileA0002.xml",
+            "/tmp_dir_name/full/fileA0001.xml",
+            "/tmp_dir_name/full/fileA0002.xml",
         ], res)
 
         # Invalid filename
@@ -115,32 +142,58 @@ class TestBagExtractDatastore(TestCase):
             file_location, [
                 "9999MUT12345678-12345679.zip"
             ],
-            "/tmp_dir_name",
+            "/tmp_dir_name/mutations",
         )
         self.assertEqual([
-            "/tmp_dir_name/fileA0001.xml",
-            "/tmp_dir_name/fileA0002.xml",
+            "/tmp_dir_name/mutations/fileA0001.xml",
+            "/tmp_dir_name/mutations/fileA0002.xml",
         ], res)
 
         # Invalid filename
         with self.assertRaises(GOBException):
             ds._extract_mutations_file("thepath/to/BAGNLDM-12345678-123.zip")
 
+    @patch("gobcore.datastore.bag_extract.ET")
+    def test_get_mutation_ids(self, mock_et):
+        class MockElm:
+            def __init__(self, text):
+                self.text = text
+
+        ds = self.get_test_object()
+        ds._download_file = MagicMock()
+        ds._extract_full_file = MagicMock(return_value=['file1', 'file2'])
+
+        ds.read_config['last_full_download_location'] = 'last/full/download/location'
+        mock_et.parse.return_value.getroot.return_value.iterfind.return_value = [MockElm('id1'), MockElm('id2')]
+
+        self.assertEqual(['id1', 'id2', 'id1', 'id2'], ds._get_mutation_ids())
+        ds._get_mutation_ids()
+        mock_et.parse.assert_has_calls([
+            call('file1'),
+            call('file2'),
+        ], any_order=True)
+        ds._download_file.assert_called_with('last/full/download/location')
+        ds._extract_full_file.assert_called_with(ds._download_file.return_value)
+
     def test_connect(self):
         ds = self.get_test_object()
         ds._download_file = MagicMock()
         ds._extract_full_file = MagicMock()
         ds._extract_mutations_file = MagicMock()
+        ds._get_mutation_ids = MagicMock()
 
         ds.connect()
         self.assertEqual(ds._extract_full_file.return_value, ds.files)
         ds._download_file.assert_called_with(ds.read_config['download_location'])
         ds._extract_full_file.assert_called_with(ds._download_file.return_value)
+        ds._get_mutation_ids.assert_not_called()
+        self.assertIsNone(ds.ids)
 
         ds.mode = ImportMode.MUTATIONS
         ds.connect()
         self.assertEqual(ds._extract_mutations_file.return_value, ds.files)
         ds._extract_mutations_file.assert_called_with(ds._download_file.return_value)
+        self.assertEqual(ds._get_mutation_ids.return_value, ds.ids)
 
     @patch("builtins.open")
     @patch("gobcore.datastore.bag_extract.os.getenv", lambda x: x)
@@ -155,18 +208,6 @@ class TestBagExtractDatastore(TestCase):
         mock_open.assert_called_with('/tmp_dir_name/BAGGEM0457L-15112020.zip', 'wb')
         mock_open.return_value.__enter__.return_value.write.assert_called_with(mock_requests.get.return_value.content)
         mock_requests.get.return_value.raise_for_status.assert_called_once()
-
-    @patch("gobcore.datastore.bag_extract.ogr.CreateGeometryFromGML")
-    @patch("gobcore.datastore.bag_extract.ET")
-    def test_gml_to_wkt(self, mock_et, mock_create_geometry):
-        ds = self.get_test_object()
-
-        res = ds._gml_to_wkt('elm')
-
-        mock_create_geometry.assert_called_with(mock_et.tostring().decode())
-        mock_create_geometry.return_value.FlattenTo2D.assert_called_once()
-        mock_create_geometry.return_value.ExportToWkt.assert_called_once()
-        self.assertEqual(mock_create_geometry().ExportToWkt(), res)
 
     def test_query_full(self):
         """Tests query, _element_to_dict, _flatten_dict, _flatten_nested_list and _gml_to_wkt
@@ -216,9 +257,11 @@ class TestBagExtractDatastore(TestCase):
             'mode': ImportMode.MUTATIONS,
             'gemeentes': ['0457'],
             'download_location': 'the location',
+            'last_full_download_location': 'last full download',
         }
         ds = BagExtractDatastore({}, read_config)
         ds.files = [os.path.join(os.path.dirname(__file__), 'bag_extract_fixtures', 'mutations.xml')]
+        ds.ids = ['0458200000199376']
         res = list(ds.query(None))
 
         expected = [{
@@ -227,7 +270,7 @@ class TestBagExtractDatastore(TestCase):
             'gebruiksdoel': 'kantoorfunctie',
             'geconstateerd': 'N',
             'geometrie/punt': 'POINT (129955.346 481542.434)',
-            'heeftAlsHoofdadres/NummeraanduidingRef': '0457200000199376',
+            'heeftAlsHoofdadres/NummeraanduidingRef': '0458200000199376',
             'identificatie': '0457010000059153123123123',
             'maaktDeelUitVan/PandRef': '0457100000056661',
             'oppervlakte': '45',
