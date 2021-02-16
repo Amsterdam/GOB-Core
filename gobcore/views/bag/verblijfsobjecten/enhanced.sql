@@ -188,7 +188,7 @@
     ) ozk ON vot._id = ozk.src_id AND vot.volgnummer = ozk.src_volgnummer
     -- SELECT wdt.soortobject (inv)
     LEFT JOIN (
-        SELECT dst_id, dst_volgnummer, json_agg(wdt.soortobject) soortobject
+        SELECT dst_id, dst_volgnummer, jsonb_strip_nulls(jsonb_agg(distinct wdt.soortobject)) soortobject
         FROM mv_woz_wdt_bag_vot_is_verbonden_met_verblijfsobject rel
         LEFT JOIN woz_wozdeelobjecten wdt
             ON rel.src_id = wdt._id AND rel.src_volgnummer = wdt.volgnummer
