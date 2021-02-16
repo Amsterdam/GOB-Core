@@ -188,11 +188,12 @@
     ) ozk ON vot._id = ozk.src_id AND vot.volgnummer = ozk.src_volgnummer
     -- SELECT wdt.soortobject (inv)
     LEFT JOIN (
-        SELECT dst_id, dst_volgnummer, jsonb_strip_nulls(jsonb_agg(distinct wdt.soortobject)) soortobject
+        SELECT dst_id, dst_volgnummer, jsonb_agg(distinct wdt.soortobject) soortobject
         FROM mv_woz_wdt_bag_vot_is_verbonden_met_verblijfsobject rel
         LEFT JOIN woz_wozdeelobjecten wdt
             ON rel.src_id = wdt._id AND rel.src_volgnummer = wdt.volgnummer
             AND (wdt._expiration_date IS NULL OR wdt._expiration_date > NOW())
+        WHERE wdt.soortobject->>'code' IS NOT NULL
         GROUP BY dst_id, dst_volgnummer
     ) wdt ON
         vot._id = wdt.dst_id AND vot.volgnummer = wdt.dst_volgnummer
