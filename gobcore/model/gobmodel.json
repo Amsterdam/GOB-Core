@@ -3566,7 +3566,7 @@
             "description": "Communicatienummer is het telefoon- of faxnummer. Zowel het netnummer als het abonneenummer worden teruggegeven in het nummer. De internationale toegangscode van het land waarop het nummer (telefoon of fax) betrekking heeft staat in het veld toegangscode.",
             "attributes": {
               "toegangscode": {
-                "type": "GOB.Integer"
+                "type": "GOB.String"
               },
               "nummer": {
                 "type": "GOB.String"
