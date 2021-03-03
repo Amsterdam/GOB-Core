@@ -3525,7 +3525,7 @@
     "abbreviation": "HR",
     "description": "Het Handelsregister (HR) bevat gegevens over personen die deelnemen aan het economische en maatschappelijke verkeer.",
     "collections": {
-      "maatschappelijke_activiteiten": {
+      "maatschappelijkeactiviteiten": {
         "version": "0.1",
         "abbreviation": "MAC",
         "description": "De Maatschappelijke Activiteit is het totaal van alle activiteiten uitgeoefend door een Natuurlijk Persoon of een Niet-natuurlijk Persoon. Een Maatschappelijke Activiteit kan ook als Onderneming voorkomen.",
@@ -3613,7 +3613,7 @@
           },
           "heeft_sbi_activiteiten_voor_maatschappelijke_activiteit": {
             "type": "GOB.ManyReference",
-            "ref": "hr:sbi_activiteiten",
+            "ref": "hr:sbiactiviteiten",
             "description": "De omschrijving van de activiteiten die de maatschappelijke activiteit uitoefent."
           },
           "registratie_tijdstip_onderneming": {
@@ -3650,7 +3650,7 @@
           },
           "heeft_sbi_activiteiten_voor_onderneming": {
             "type": "GOB.ManyReference",
-            "ref": "hr:sbi_activiteiten",
+            "ref": "hr:sbiactiviteiten",
             "description": "De omschrijving van de activiteiten die de onderneming uitoefent."
           },
           "wordt_uitgeoefend_in_commerciele_vestiging": {
