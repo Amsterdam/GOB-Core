@@ -1,6 +1,6 @@
 import psycopg2
 from psycopg2.extras import DictCursor
-from typing import List
+from typing import List, Optional
 
 from psycopg2 import Error
 from psycopg2.extras import execute_values
@@ -57,7 +57,7 @@ class PostgresDatastore(SqlDatastore):
         except psycopg2.Error as e:
             raise GOBException(f'Error executing query: {query[:80]}. Error: {e}')
 
-    def write_rows(self, table: str, rows: List[list]) -> None:
+    def write_rows(self, table: str, rows: List[list], columns: Optional[list] = None) -> None:
         """
         Writes rows to Postgres table using the optimised execute_values function from psycopg2, which
         combines all inserts into one query.
@@ -65,9 +65,17 @@ class PostgresDatastore(SqlDatastore):
         :param connection:
         :param table:
         :param rows:
+        :param columns: columns in each row, first column item is the unique id
         :return:
         """
-        query = f"INSERT INTO {table} VALUES %s"
+        if columns:
+            id_name = columns[0]
+            query = f"INSERT INTO {table} ({','.join(columns)}) VALUES %s " \
+                f"ON CONFLICT({id_name}) " \
+                f"DO UPDATE SET " \
+                f"{','.join([ col + '=EXCLUDED.' + col for col in columns[1:]])}"
+        else:
+            query = f"INSERT INTO {table} VALUES %s"
         try:
             with self.connection.cursor() as cursor:
                 execute_values(cursor, query, rows)

@@ -139,6 +139,25 @@ class TestPostgresDatastore(TestCase):
         with self.assertRaises(GOBException):
             store.write_rows('some table', rows)
 
+    @patch("gobcore.datastore.postgres.execute_values")
+    def test_write_rows_with_columns(self, mock_execute_values):
+        rows = [
+            ['a', 'b', 'c'],
+            ['d', 'e', 'f']
+        ]
+        store = PostgresDatastore({})
+        store.connection = MagicMock()
+        columns = ['col_id', 'col_a', 'col_b']
+        store.write_rows('some table', rows, columns)
+
+        mock_execute_values.assert_called_with(
+            store.connection.cursor.return_value.__enter__.return_value,
+            "INSERT INTO some table (col_id,col_a,col_b) VALUES %s "
+            "ON CONFLICT(col_id) DO UPDATE SET col_a=EXCLUDED.col_a,col_b=EXCLUDED.col_b",
+            rows
+        )
+        store.connection.commit.assert_called_once()
+
     def test_execute(self):
         store = PostgresDatastore({})
         store.connection = MagicMock()
