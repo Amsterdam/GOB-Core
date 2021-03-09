@@ -30,7 +30,7 @@ class ImportEvent(metaclass=ABCMeta):
 
     @classmethod
     @abstractmethod
-    def create_event(cls, _source_id, _entity_source_id, data):
+    def create_event(cls, _source_id, _entity_source_id, data, version):
         """Creates the event dict for the given parameters
 
         :param _source_id: the source id of the data this event is based on
@@ -42,7 +42,7 @@ class ImportEvent(metaclass=ABCMeta):
         data["_source_id"] = _source_id
         data["_entity_source_id"] = _entity_source_id
 
-        return {"event": cls.name, "data": data}
+        return {"event": cls.name, "data": data, "version": version}
 
     @classmethod
     def last_event(cls, data):
@@ -127,7 +127,7 @@ class ADD(ImportEvent):
         super().apply_to(entity)
 
     @classmethod
-    def create_event(cls, _source_id, _entity_source_id, data):
+    def create_event(cls, _source_id, _entity_source_id, data, version):
         #   ADD has no modifications, only data
         if modifications_key in data:
             data.pop(modifications_key)
@@ -137,7 +137,7 @@ class ADD(ImportEvent):
             **(cls.last_event(data))
         }
 
-        return super().create_event(_source_id, _entity_source_id, event_data)
+        return super().create_event(_source_id, _entity_source_id, event_data, version)
 
     def get_attribute_dict(self):
         # The data for the add event is in the entity attribute
@@ -194,7 +194,7 @@ class MODIFY(ImportEvent):
         return modified_attributes
 
     @classmethod
-    def create_event(cls, _source_id, _entity_source_id, data):
+    def create_event(cls, _source_id, _entity_source_id, data, version):
         #   MODIFY has no data attributes only modifications
         if modifications_key not in data:
             raise GOBException("MODIFY event requires modifications")
@@ -204,7 +204,7 @@ class MODIFY(ImportEvent):
             **(cls.last_event(data))
         }
 
-        return super().create_event(_source_id, _entity_source_id, mods)
+        return super().create_event(_source_id, _entity_source_id, mods, version)
 
 
 class DELETE(ImportEvent):
@@ -222,9 +222,9 @@ class DELETE(ImportEvent):
     timestamp_field = "_date_deleted"
 
     @classmethod
-    def create_event(cls, _source_id, _entity_source_id, data):
+    def create_event(cls, _source_id, _entity_source_id, data, version):
         #  DELETE has no data, except reference to entity age
-        return super().create_event(_source_id, _entity_source_id, cls.last_event(data))
+        return super().create_event(_source_id, _entity_source_id, cls.last_event(data), version)
 
 
 class CONFIRM(ImportEvent):
@@ -242,9 +242,9 @@ class CONFIRM(ImportEvent):
     timestamp_field = "_date_confirmed"
 
     @classmethod
-    def create_event(cls, _source_id, _entity_source_id, data):
+    def create_event(cls, _source_id, _entity_source_id, data, version):
         #  CONFIRM has no data, except reference to entity age
-        return super().create_event(_source_id, _entity_source_id, cls.last_event(data))
+        return super().create_event(_source_id, _entity_source_id, cls.last_event(data), version)
 
 
 class BULKCONFIRM(ImportEvent):
@@ -269,14 +269,14 @@ class BULKCONFIRM(ImportEvent):
     timestamp_field = "_date_confirmed"
 
     @classmethod
-    def create_event(cls, confirms):
+    def create_event(cls, confirms, version):
         #  BULKCONFIRM has a list of dicts with source_id and last_event
         data = {
             'confirms': confirms,
             '_source_id': None,
             '_entity_source_id': None
         }
-        return {"event": cls.name, "data": data}
+        return {"event": cls.name, "data": data, "version": version}
 
     @property
     def action(self):

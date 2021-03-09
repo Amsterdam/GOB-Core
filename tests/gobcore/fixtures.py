@@ -50,7 +50,7 @@ def get_event_data_fixture(gob_event):
 def get_event_fixture():
     gob_event = random_gob_event()
     data = get_event_data_fixture(gob_event)
-    return gob_event.create_event(random_string(), random_string(), data)
+    return gob_event.create_event(random_string(), random_string(), data, '0.9')
 
 
 def get_data_fixture():

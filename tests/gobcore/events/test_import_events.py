@@ -12,39 +12,45 @@ class TestImportEvents(unittest.TestCase):
 
     def test_add_create_event(self):
         source_id = fixtures.random_string()
-        event = import_events.ADD.create_event(source_id, source_id, {})
+        event = import_events.ADD.create_event(source_id, source_id, {}, '0.9')
         self.assertEqual(event['event'], 'ADD')
+        self.assertEqual(event['version'], '0.9')
 
     def test_modify_create_event(self):
         source_id = fixtures.random_string()
         event = import_events.MODIFY.create_event(source_id, source_id,
-                                                  {'modifications': [], '_hash': fixtures.random_string()})
+                                                  {'modifications': [], '_hash': fixtures.random_string()}, '0.9')
         self.assertEqual(event['event'], 'MODIFY')
+        self.assertEqual(event['version'], '0.9')
 
     def test_modify_create_event_without_modifications(self):
         source_id = fixtures.random_string()
 
         with self.assertRaises(GOBException):
-            event = import_events.MODIFY.create_event(source_id, source_id, {'_hash': fixtures.random_string()})
+            event = import_events.MODIFY.create_event(source_id, source_id, {'_hash': fixtures.random_string()}, '0.9')
 
     def test_delete_create_event(self):
         source_id = fixtures.random_string()
-        event = import_events.DELETE.create_event(source_id, source_id, {})
+        event = import_events.DELETE.create_event(source_id, source_id, {}, '0.9')
         self.assertEqual(event['event'], 'DELETE')
+        self.assertEqual(event['version'], '0.9')
 
     def test_confirm_create_event(self):
         source_id = fixtures.random_string()
-        event = import_events.CONFIRM.create_event(source_id, source_id, {})
+        event = import_events.CONFIRM.create_event(source_id, source_id, {}, '0.9')
         self.assertEqual(event['event'], 'CONFIRM')
+        self.assertEqual(event['version'], '0.9')
 
     def test_bulkconfirm_create_event(self):
         source_id = fixtures.random_string()
-        event = import_events.BULKCONFIRM.create_event([])
+        event = import_events.BULKCONFIRM.create_event([], '0.9')
         self.assertEqual(event['event'], 'BULKCONFIRM')
+        self.assertEqual(event['version'], '0.9')
 
     def test_add_apply_to(self):
         source_id = fixtures.random_string()
-        event = import_events.ADD.create_event(source_id, source_id, {'identificatie': source_id})
+        event = import_events.ADD.create_event(source_id, source_id, {'identificatie': source_id}, '0.9')
+        self.assertEqual(event['version'], '0.9')
 
         metadata = fixtures.get_metadata_fixture()
         entity = fixtures.get_entity_fixture(event['data'])
@@ -66,7 +72,7 @@ class TestImportEvents(unittest.TestCase):
                 'old_value': 'old identificatie',
             }]
         }
-        event = import_events.MODIFY.create_event(source_id, source_id, data)
+        event = import_events.MODIFY.create_event(source_id, source_id, data, '0.9')
         entity = fixtures.get_entity_fixture({
             'identificatie': 'old identificatie',
         })
@@ -75,6 +81,7 @@ class TestImportEvents(unittest.TestCase):
         gob_event.apply_to(entity)
 
         self.assertEqual(entity.identificatie, 'new identificatie')
+        self.assertEqual(event['version'], '0.9')
 
     def test_modify_extract_modifications(self):
         modifications = [{

@@ -30,32 +30,36 @@ class TestEvents(unittest.TestCase):
         new_data = fixtures.get_data_fixture()
         modifications = []
 
-        event = events.get_event_for(old_data, new_data, modifications)
+        event = events.get_event_for(old_data, new_data, modifications, '0.9')
         self.assertEqual(event["event"], "ADD")
+        self.assertEqual(event['version'], '0.9')
 
     def test_get_event_for_creates_confirm(self):
         new_data = fixtures.get_data_fixture()
         old_data = fixtures.get_entity_fixture(new_data)
         modifications = []
 
-        event = events.get_event_for(old_data, new_data, modifications)
+        event = events.get_event_for(old_data, new_data, modifications, '0.9')
         self.assertEqual(event["event"], "CONFIRM")
+        self.assertEqual(event['version'], '0.9')
 
     def test_get_event_for_creates_modify(self):
         new_data = fixtures.get_data_fixture()
         old_data = fixtures.get_entity_fixture(fixtures.get_data_fixture())
         modifications = [{'key': 'value'}]
 
-        event = events.get_event_for(old_data, new_data, modifications)
+        event = events.get_event_for(old_data, new_data, modifications, '0.9')
         self.assertEqual(event["event"], "MODIFY")
+        self.assertEqual(event['version'], '0.9')
 
     def test_get_event_for_creates_delete(self):
         new_data = None
         old_data = fixtures.get_entity_fixture(fixtures.get_data_fixture())
         modifications = []
 
-        event = events.get_event_for(old_data, new_data, modifications)
+        event = events.get_event_for(old_data, new_data, modifications, '0.9')
         self.assertEqual(event["event"], "DELETE")
+        self.assertEqual(event['version'], '0.9')
 
     def test_get_event_class_for(self):
         with self.assertRaises(GOBException):

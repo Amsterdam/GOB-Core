@@ -340,7 +340,6 @@ class TestModel(unittest.TestCase):
         with self.assertRaises(NoSuchCollectionException):
             model.get_catalog_collection_from_abbr('ca', 'coc')
 
-
     def test_catalog_from_abbr(self):
         model = GOBModel()
         model._data = {
@@ -356,3 +355,22 @@ class TestModel(unittest.TestCase):
 
         with self.assertRaises(NoSuchCatalogException):
             model.get_catalog_from_abbr('nonexistent')
+
+    def test_collections_no_underscore(self):
+        ignore_catalogs = {'test_catalogue', 'qa', 'rel'}
+        catalogs = [cat for cat in self.model.get_catalog_names() if cat not in ignore_catalogs]
+
+        for cat in catalogs:
+            for collection in self.model.get_collection_names(cat):
+                self.assertNotIn('_', collection)
+
+    def test_reference_no_underscore(self):
+        ignore_catalogs = {'test_catalogue', 'qa', 'rel'}
+        catalogs = [cat for cat in self.model.get_catalog_names() if cat not in ignore_catalogs]
+
+        for cat in catalogs:
+            for collection in self.model.get_collections(cat):
+                refs = self.model.get_collection(cat, collection)['references']
+
+                for attr, ref in refs.items():
+                    self.assertNotIn('_', ref['ref'], msg=f"{cat}.{collection}.{attr}")

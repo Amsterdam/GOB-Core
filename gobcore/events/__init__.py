@@ -45,7 +45,7 @@ def _get_event(name):
         raise GOBException(f"{name} is an invalid GOB event")
 
 
-def get_event_for(old_data, new_data, modifications):
+def get_event_for(old_data, new_data, modifications, version):
     """
     Get the event for the given entity, source-data, metadata and calculated modifications
 
@@ -97,7 +97,7 @@ def get_event_for(old_data, new_data, modifications):
         # The ultimate event class will filter either the modifications (MODIFY) or the new data (ADD)
         data.update(new_data)
 
-    return gob_event.create_event(_source_id, _entity_source_id, data)
+    return gob_event.create_event(_source_id, _entity_source_id, data, version)
 
 
 def _get_event_class_for(has_old_state, has_new_state, has_modifications):
