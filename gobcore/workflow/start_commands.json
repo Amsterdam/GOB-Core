@@ -15,6 +15,22 @@
     ],
     "workflow": "update_model"
   },
+  "bag_extract": {
+    "description": "Start a bag extract for a collection",
+    "args": [
+      {
+        "name": "catalogue",
+        "required": true,
+        "description": "The name of the data catalogue (example: \"bag\")"
+      },
+      {
+        "name": "collection",
+        "required": true,
+        "description": "The name of the data collection (example: \"panden\")"
+      }
+    ],
+    "workflow": "bag_extract"
+  },
   "import": {
     "description": "Start an import job for a collection",
     "args": [

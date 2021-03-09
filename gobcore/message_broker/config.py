@@ -212,6 +212,9 @@ QUEUE_CONFIGURATION = {
         APPLY_QUEUE: [
             APPLY_REQUEST_KEY,
         ],
+        BAG_EXTRACT_QUEUE: [
+            BAG_EXTRACT_REQUEST_KEY,
+        ],
         IMPORT_QUEUE: [
             IMPORT_REQUEST_KEY,
         ],
