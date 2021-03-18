@@ -287,7 +287,7 @@ class Boolean(GOBType):
     def __init__(self, value):
         if value is not None:
             if value.lower() not in ['true', 'false']:
-                raise GOBTypeException(f"Boolean should be False, True or None")
+                raise GOBTypeException("Boolean should be False, True or None")
         super().__init__(value)
 
     @classmethod

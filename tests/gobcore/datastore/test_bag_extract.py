@@ -70,7 +70,7 @@ class TestBagExtractDatastore(TestCase):
             missing_key_config = {**minimal_read_config}
             del missing_key_config[k]
 
-            with self.assertRaisesRegexp(GOBException, f"Missing {k} in read_config"):
+            with self.assertRaisesRegex(GOBException, f"Missing {k} in read_config"):
                 ds = BagExtractDatastore({}, missing_key_config)
 
         minimal_read_config['mode'] = 'invalid mode'
@@ -80,7 +80,7 @@ class TestBagExtractDatastore(TestCase):
 
         minimal_read_config['mode'] = ImportMode.MUTATIONS
 
-        with self.assertRaisesRegexp(GOBException, "Missing last_full_download_location in read_config"):
+        with self.assertRaisesRegex(GOBException, "Missing last_full_download_location in read_config"):
             ds = BagExtractDatastore({}, minimal_read_config)
 
         minimal_read_config['last_full_download_location'] = 'last full download location'

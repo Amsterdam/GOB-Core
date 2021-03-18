@@ -115,7 +115,7 @@ class GOBModel():
                 if model.get('schema') is not None:
                     try:
                         model['attributes'] = load_schema(model['schema'], catalog_name, entity_name)
-                    except SchemaException as e:
+                    except SchemaException:
                         # Use a fallback scenario as long as the schemas are still in development
                         print(f"ERROR: failed to load schema {model['schema']} for {catalog_name}:{entity_name}")
                         model['attributes'] = model["_attributes"]

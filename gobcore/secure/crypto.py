@@ -34,7 +34,7 @@ def is_encrypted(value):
     """
     try:
         value = json.loads(str(value))
-    except (json.JSONDecodeError, TypeError) as e:
+    except (json.JSONDecodeError, TypeError):
         return False
     keys = [_KEY_INDEX, _LEVEL, _VALUE]
     return isinstance(value, dict) and \

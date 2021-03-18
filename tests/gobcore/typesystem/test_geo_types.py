@@ -119,7 +119,7 @@ class TestPoint(unittest.TestCase):
         res = Point.from_value('POINT(112.0 22.0)')
 
     def test_from_values(self):
-        with self.assertRaisesRegexp(GOBException, "Missing required key"):
+        with self.assertRaisesRegex(GOBException, "Missing required key"):
             Point.from_values()
 
 

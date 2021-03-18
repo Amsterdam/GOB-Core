@@ -9,8 +9,8 @@ class TestTypesystem(TestCase):
    
     @patch('gobcore.typesystem.get_gob_type')
     def test_get_modifications(self, mock_get_gob_type):
-        self.assertEquals([], get_modifications(None, 'data', 'model'), 'Should return empty list when model is None')
-        self.assertEquals([], get_modifications('entity', None, 'model'), 'Should return empty list when data is None')
+        self.assertEqual([], get_modifications(None, 'data', 'model'), 'Should return empty list when model is None')
+        self.assertEqual([], get_modifications('entity', None, 'model'), 'Should return empty list when data is None')
         
         model = {
             'field1': {

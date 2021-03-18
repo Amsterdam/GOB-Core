@@ -23,7 +23,7 @@ class OracleDatastore(SqlDatastore):
         url = URL(**{k: v for k, v in self.connection_config.items() if k != 'name'})
 
         # The Oracle driver can accept a service name instead of a SID
-        service_name_pattern = re.compile("^\w+\.\w+\.\w+$")
+        service_name_pattern = re.compile(r"^\w+\.\w+\.\w+$")
         if service_name_pattern.match(self.connection_config["database"]):
             # Replace the SID by the service name
             url = str(url).replace(self.connection_config["database"],

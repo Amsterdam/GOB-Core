@@ -204,7 +204,7 @@ class BagExtractDatastore(Datastore):
 
         if self.read_config['mode'] == ImportMode.MUTATIONS:
             if not self.read_config.get("last_full_download_location"):
-                raise GOBException(f"Missing last_full_download_location in read_config")
+                raise GOBException("Missing last_full_download_location in read_config")
 
     def _extract_full_file(self, file_location: str):
         filename = file_location.split('/')[-1]

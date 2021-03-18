@@ -78,8 +78,8 @@ class GEOType(GOBType):
     def to_value(self):
         return self._string
 
-    @classmethod  # noqa: C901
-    def from_value(cls, value, **kwargs):
+    @classmethod
+    def from_value(cls, value, **kwargs):  # noqa: C901
         """
         Instantiates the GOBGeoType, with either a database value, a geojson or WKT string
         """
@@ -116,7 +116,7 @@ class GEOType(GOBType):
 class Point(GEOType):
     name = "Point"
     sql_type = geoalchemy2.Geometry('POINT')
-    regex = "^POINT\s*\([0-9\s\.]*\)$"
+    regex = r"^POINT\s*\([0-9\s\.]*\)$"
 
     @classmethod
     def from_values(cls, **values):
@@ -150,7 +150,7 @@ class Polygon(GEOType):
     # POLYGON ((115145.619264024 485115.91328199, ...))
     name = "Polygon"
     sql_type = geoalchemy2.Geometry('POLYGON')
-    regex = "^POLYGON\s*\([0-9\s\.,\(\)]*\)$"
+    regex = r"^POLYGON\s*\([0-9\s\.,\(\)]*\)$"
 
     @classmethod
     def from_values(cls, **values):
@@ -160,7 +160,7 @@ class Polygon(GEOType):
         :raises ValueError because the method is not implemented
         :return None
         """
-        raise ValueError(f"NYI")
+        raise ValueError("NYI")
 
     @classmethod
     def get_column_definition(cls, column_name, **kwargs):
@@ -192,7 +192,7 @@ class Geometry(GEOType):
     """
     name = "Geometry"
     sql_type = geoalchemy2.Geometry('GEOMETRY')
-    regex = "^[A-Z]+\s*\([A-Z0-9.,\s\(\)]+\)$"
+    regex = r"^[A-Z]+\s*\([A-Z0-9.,\s\(\)]+\)$"
 
     @classmethod
     def from_values(cls, **values):
@@ -202,7 +202,7 @@ class Geometry(GEOType):
         :raises ValueError because the method is not implemented
         :return None
         """
-        raise ValueError(f"NYI")
+        raise ValueError("NYI")
 
     @classmethod
     def get_column_definition(cls, column_name, **kwargs):

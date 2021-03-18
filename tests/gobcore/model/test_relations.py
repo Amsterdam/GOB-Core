@@ -120,7 +120,7 @@ class TestRelations(unittest.TestCase):
             'reference_name': 'reference'
         }, res)
 
-        with self.assertRaisesRegexp(GOBException, "Invalid table name"):
+        with self.assertRaisesRegex(GOBException, "Invalid table name"):
             split_relation_table_name("rel_srccat_srccol_dstcat_dstcol")
 
     def test_get_reference_name_from_relation_table_name(self):

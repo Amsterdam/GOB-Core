@@ -159,7 +159,7 @@ class TestModel(unittest.TestCase):
         for arg, result in testcases:
             self.assertEqual(result, model.get_catalog_from_table_name(arg))
 
-        with self.assertRaisesRegexp(GOBException, "Invalid table name"):
+        with self.assertRaisesRegex(GOBException, "Invalid table name"):
             model.get_catalog_from_table_name('brk_')
 
     def test_get_collection_from_table_name(self):
@@ -172,7 +172,7 @@ class TestModel(unittest.TestCase):
         for arg, result in testcases:
             self.assertEqual(result, model.get_collection_from_table_name(arg))
 
-        with self.assertRaisesRegexp(GOBException, "Invalid table name"):
+        with self.assertRaisesRegex(GOBException, "Invalid table name"):
             model.get_collection_from_table_name('brk_')
 
     def test_split_table_name(self):
@@ -186,7 +186,7 @@ class TestModel(unittest.TestCase):
         ]
 
         for testcase in testcases:
-            with self.assertRaisesRegexp(GOBException, "Invalid table name"):
+            with self.assertRaisesRegex(GOBException, "Invalid table name"):
                 model._split_table_name(testcase)
 
     def test_get_collection_by_name(self):
