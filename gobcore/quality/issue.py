@@ -1,6 +1,7 @@
 import datetime
 from dateutil import parser
 import json
+import os
 
 from gobcore.message_broker.config import IMPORT, RELATE, RELATE_CHECK
 from gobcore.message_broker.offline_contents import ContentsWriter
@@ -325,6 +326,7 @@ def _start_issue_workflow(header, issues, quality_update):
             ProgressTicker(f"Process issues {catalogue} {collection}", 10000) as progress:
 
         num_records = 0
+        filename = writer.filename
 
         for json_issue in issues:
             progress.tick()
@@ -342,10 +344,14 @@ def _start_issue_workflow(header, issues, quality_update):
 
             wf_msg = {
                 'header': quality_update.get_header(header),
-                'contents_ref': writer.filename,
+                'contents_ref': filename,
                 'summary': {
                     'num_records': num_records
                 }
             }
 
             start_workflow(workflow, wf_msg)
+
+    if not num_records:
+        # no offloading, delete file
+        os.remove(filename)
