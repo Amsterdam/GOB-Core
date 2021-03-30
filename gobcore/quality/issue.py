@@ -353,5 +353,5 @@ def _start_issue_workflow(header, issues, quality_update):
             start_workflow(workflow, wf_msg)
 
     if not num_records:
-        # no offloading, delete file
+        # no offloading, delete empty file
         os.remove(filename)
