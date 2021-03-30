@@ -354,4 +354,7 @@ def _start_issue_workflow(header, issues, quality_update):
 
     if not num_records:
         # no offloading, delete empty file
-        os.remove(filename)
+        try:
+            os.remove(filename)
+        except Exception as e:
+            print(f"Remove failed ({str(e)})", filename)
