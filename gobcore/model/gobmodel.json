@@ -3788,6 +3788,11 @@
             "type": "GOB.ManyReference",
             "ref": "hr:vestigingen",
             "description": "Dit legt de relatie van de afgesloten vestiging met de samengevoegde vestiging."
+          },
+          "is_een_uitoefening_van": {
+            "type": "GOB.Reference",
+            "ref": "hr:maatschappelijkeactiviteiten",
+            "description": "Maatschappelijke activiteit die bij deze vestiging hoort."
           }
         }
       }

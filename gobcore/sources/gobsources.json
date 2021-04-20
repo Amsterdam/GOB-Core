@@ -1099,6 +1099,10 @@
         "heeft_als_bezoekadres": {
           "method": "equals",
           "destination_attribute": "identificatie"
+        },
+        "is_een_uitoefening_van": {
+          "method": "equals",
+          "destination_attribute": "kvknummer"
         }
       },
       "locaties": {
