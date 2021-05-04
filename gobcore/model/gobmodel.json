@@ -3388,11 +3388,11 @@
             "description": "Betreft het identificerende gegeven voor de Maatschappelijke Activiteit, het KvK-nummer."
           },
           "datum_aanvang_maatschappelijke_activiteit": {
-            "type": "GOB.Date",
+            "type": "GOB.IncompleteDate",
             "description": "De datum waarbij de Maatschappelijke Activiteit in de echte wereld is ontstaan."
           },
           "datum_einde_maatschappelijke_activiteit": {
-            "type": "GOB.Date",
+            "type": "GOB.IncompleteDate",
             "description": "De datum waarbij de Maatschappelijke Activiteit in de echte wereld is beëindigd."
           },
           "registratie_tijdstip_maatschappelijke_activiteit": {
@@ -3473,11 +3473,11 @@
             "description": "Het tijdstip waarop de maatschappelijke activiteit bij de KvK in het handelsregistere is geregistreerd. Indien het registratietijdstip om (migratie)redenen niet bekend is wordt de waarde 'vastgesteldOnbekend' opgenomen."
           },
           "datum_aanvang_onderneming": {
-            "type": "GOB.Date",
+            "type": "GOB.IncompleteDate",
             "description": "De datum van aanvang van de Onderneming."
           },
           "datum_einde_onderneming": {
-            "type": "GOB.Date",
+            "type": "GOB.IncompleteDate",
             "description": "De datum van beëindiging van de Onderneming."
           },
           "is_overdracht_voortzetting_onderneming": {
@@ -3485,7 +3485,7 @@
             "description": "Indicatie of de Onderneming is voortgezet of is overgedragen. Nee betekent Overdracht, Ja betekent Voortzetting."
           },
           "datum_overdracht_voortzetting_onderneming": {
-            "type": "GOB.Date",
+            "type": "GOB.IncompleteDate",
             "description": "De datum waarop de onderneming is overgedragen of voortgezet."
           },
           "totaal_werkzame_personen": {
@@ -3523,13 +3523,13 @@
                 "type": "GOB.String"
               },
               "tijdstip_registratie": {
-                "type": "GOB.Date"
+                "type": "GOB.DateTime"
               },
               "datum_aanvang_handelsnaam": {
-                "type": "GOB.Date"
+                "type": "GOB.IncompleteDate"
               },
               "datum_einde_handelsnaam": {
-                "type": "GOB.Date"
+                "type": "GOB.IncompleteDate"
               },
               "volgorde": {
                 "type": "GOB.Integer"
@@ -3555,11 +3555,11 @@
             "description": "De datum waarop de locatie bij de KvK in het handelsregister is geregistreerd."
           },
           "datum_aanvang": {
-            "type": "GOB.Date",
+            "type": "GOB.IncompleteDate",
             "description": "De datum waarbij de locatie is ontstaan."
           },
           "datum_einde": {
-            "type": "GOB.Date",
+            "type": "GOB.IncompleteDate",
             "description": "De datum waarbij de locatie is beëindigd."
           },
           "afgeschermd": {
@@ -3655,15 +3655,15 @@
             "description": "De datum waarop de vestiging bij de KvK in het handelsregister is geregistreerd."
           },
           "datum_aanvang": {
-            "type": "GOB.Date",
+            "type": "GOB.IncompleteDate",
             "description": "De datum waarbij de vestiging is ontstaan."
           },
           "datum_einde": {
-            "type": "GOB.Date",
+            "type": "GOB.IncompleteDate",
             "description": "De datum waarbij de vestiging is beëindigd."
           },
           "datum_voortzetting": {
-            "type": "GOB.Date",
+            "type": "GOB.IncompleteDate",
             "description": "Datum voortzetting van de vestiging."
           },
           "is_commerciele_vestiging": {
@@ -3741,13 +3741,13 @@
                 "type": "GOB.String"
               },
               "tijdstip_registratie": {
-                "type": "GOB.Date"
+                "type": "GOB.DateTime"
               },
               "datum_aanvang_handelsnaam": {
-                "type": "GOB.Date"
+                "type": "GOB.IncompleteDate"
               },
               "datum_einde_handelsnaam": {
-                "type": "GOB.Date"
+                "type": "GOB.IncompleteDate"
               },
               "volgorde": {
                 "type": "GOB.Integer"
