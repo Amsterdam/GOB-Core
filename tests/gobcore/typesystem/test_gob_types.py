@@ -322,6 +322,9 @@ class TestGobTypes(unittest.TestCase):
             self.assertEqual(day, t.day)
             self.assertEqual(json.dumps({'year': year, 'month': month, 'day': day, 'formatted': formatted}, sort_keys=True), t._string)
 
+        t = GobType.from_value(None)
+        self.assertIsNone(t.to_value)
+
         t = GobType.from_value("2020-03-21")
         test_result(t, 2020, 3, 21, '2020-03-21')
         t = GobType.from_value({'year': 2020, 'month': 3, 'day': 21})

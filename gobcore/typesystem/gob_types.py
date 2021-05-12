@@ -578,25 +578,25 @@ class IncompleteDate(JSON):
 
         :param value:
         """
+        if value is not None:
+            if isinstance(value, str) and re.match(self.pattern, value):
+                self.year, self.month, self.day = self.__init_from_str(value)
+            else:
+                if isinstance(value, str):
+                    try:
+                        value = json.loads(value)
+                    except json.JSONDecodeError:
+                        raise GOBTypeException(f"Could not decode value '{value}'")
 
-        if isinstance(value, str) and re.match(self.pattern, value):
-            self.year, self.month, self.day = self.__init_from_str(value)
-        else:
-            if isinstance(value, str):
-                try:
-                    value = json.loads(value)
-                except json.JSONDecodeError:
-                    raise GOBTypeException(f"Could not decode value '{value}'")
-
-            assert isinstance(value, dict), "Value should be of type dict"
-            self.year, self.month, self.day = self.__init_from_dict(value)
+                    assert isinstance(value, dict), "Value should be of type dict"
+                self.year, self.month, self.day = self.__init_from_dict(value)
 
         super().__init__(json.dumps({
             'year': self.year,
             'month': self.month,
             'day': self.day,
             'formatted': self._formatted,
-        }))
+        }) if value is not None else value)
 
     def __init_from_dict(self, value) -> Tuple[Optional[int], Optional[int], Optional[int]]:
         if not all([v in value for v in ['year', 'month', 'day']]):
