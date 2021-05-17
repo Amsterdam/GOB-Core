@@ -1,3 +1,4 @@
+import os
 from setuptools import setup, find_packages
 
 setup(
@@ -9,7 +10,7 @@ setup(
     author_email='',
     license='MPL-2.0',
     install_requires=[
-        'GDAL==2.4.4',
+        f'GDAL=={os.environ["LIBGDAL_VERSION"]}',
         'cryptography==3.3.2',
         'cx-Oracle==7.3.0',
         'datapunt-objectstore==2020.9.7',

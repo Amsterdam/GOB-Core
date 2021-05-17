@@ -1,4 +1,4 @@
-import collections
+import collections.abc
 import requests
 import re
 
@@ -41,13 +41,13 @@ def _do_resolve(node, resolver):
     :param resolver:
     :return: resolved node
     """
-    if isinstance(node, collections.Mapping) and '$ref' in node:
+    if isinstance(node, collections.abc.Mapping) and '$ref' in node:
         resolved_node = {}
         resolved_node.update(node)
         with resolver.resolving(node['$ref']) as resolved:
             resolved_node.update(resolved)
             return resolved_node
-    elif isinstance(node, collections.Mapping):
+    elif isinstance(node, collections.abc.Mapping):
         for k, v in node.items():
             node[k] = _do_resolve(v, resolver)
     elif isinstance(node, (list, tuple)):
