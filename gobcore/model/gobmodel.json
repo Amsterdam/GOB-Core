@@ -25,6 +25,10 @@
             "type": "GOB.Integer",
             "description": "Integer value."
           },
+          "biginteger": {
+            "type": "GOB.BigInteger",
+            "description": "BigInteger value."
+          },
           "point": {
             "type": "GOB.Geo.Point",
             "srid": "RD",
@@ -2227,7 +2231,7 @@
             "description": "Indicatie of de geometrie (kadastrale grens) voorlopig is of niet J N"
           },
           "koopsom": {
-            "type": "GOB.Integer",
+            "type": "GOB.BigInteger",
             "description": "Het in een ter inschrijving aangeboden stuk vermelde bedrag, waarvoor 1 of meer onroerende zaken zijn verkregen."
           },
           "koopsom_valutacode": {

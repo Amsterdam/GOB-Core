@@ -227,6 +227,11 @@ class Integer(String):
         return int(self._string) if self._string else None
 
 
+class BigInteger(Integer):
+    name = "BigInteger"
+    sql_type = sqlalchemy.BigInteger
+
+
 class PKInteger(Integer):
     name = "PKInteger"
     is_pk = True

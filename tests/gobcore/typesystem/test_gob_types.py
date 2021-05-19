@@ -102,6 +102,29 @@ class TestGobTypes(unittest.TestCase):
         with self.assertRaises(GOBException):
             GobType.from_value('Overtime')
 
+    def test_bigint(self):
+        GobType = get_gob_type("GOB.BigInteger")
+        self.assertEqual(GobType.name, "BigInteger")
+        self.assertEqual('null', GobType.from_value(None).json)
+        self.assertEqual('null', GobType.from_value("nan").json)
+        self.assertEqual('123', GobType.from_value(123).json)
+        self.assertEqual('123', GobType.from_value("123").json)
+
+        # DB ouptut is int
+        self.assertIsInstance(GobType.from_value('123').to_db, int)
+
+        # Python value is int
+        self.assertIsInstance(GobType.from_value('123').to_value, int)
+
+        with self.assertRaises(GOBException):
+            GobType.from_value('N')
+        with self.assertRaises(GOBException):
+            GobType.from_value(True)
+        with self.assertRaises(GOBException):
+            GobType.from_value(1.3)
+        with self.assertRaises(GOBException):
+            GobType.from_value('Overtime')
+
     def test_decimal(self):
         GobType = get_gob_type("GOB.Decimal")
         self.assertEqual(GobType.name, "Decimal")
