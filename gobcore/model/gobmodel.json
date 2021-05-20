@@ -3393,11 +3393,39 @@
           },
           "datum_aanvang_maatschappelijke_activiteit": {
             "type": "GOB.IncompleteDate",
-            "description": "De datum waarbij de Maatschappelijke Activiteit in de echte wereld is ontstaan."
+            "description": "De datum waarbij de Maatschappelijke Activiteit in de echte wereld is ontstaan.",
+            "attributes": {
+              "year": {
+                "type": "GOB.String"
+              },
+              "month": {
+                "type": "GOB.String"
+              },
+              "day": {
+                "type": "GOB.String"
+              },
+              "formatted": {
+                "type": "GOB.String"
+              }
+            }
           },
           "datum_einde_maatschappelijke_activiteit": {
             "type": "GOB.IncompleteDate",
-            "description": "De datum waarbij de Maatschappelijke Activiteit in de echte wereld is beëindigd."
+            "description": "De datum waarbij de Maatschappelijke Activiteit in de echte wereld is beëindigd.",
+            "attributes": {
+              "year": {
+                "type": "GOB.String"
+              },
+              "month": {
+                "type": "GOB.String"
+              },
+              "day": {
+                "type": "GOB.String"
+              },
+              "formatted": {
+                "type": "GOB.String"
+              }
+            }
           },
           "registratie_tijdstip_maatschappelijke_activiteit": {
             "type": "GOB.DateTime",
@@ -3478,11 +3506,39 @@
           },
           "datum_aanvang_onderneming": {
             "type": "GOB.IncompleteDate",
-            "description": "De datum van aanvang van de Onderneming."
+            "description": "De datum van aanvang van de Onderneming.",
+            "attributes": {
+              "year": {
+                "type": "GOB.String"
+              },
+              "month": {
+                "type": "GOB.String"
+              },
+              "day": {
+                "type": "GOB.String"
+              },
+              "formatted": {
+                "type": "GOB.String"
+              }
+            }
           },
           "datum_einde_onderneming": {
             "type": "GOB.IncompleteDate",
-            "description": "De datum van beëindiging van de Onderneming."
+            "description": "De datum van beëindiging van de Onderneming.",
+            "attributes": {
+              "year": {
+                "type": "GOB.String"
+              },
+              "month": {
+                "type": "GOB.String"
+              },
+              "day": {
+                "type": "GOB.String"
+              },
+              "formatted": {
+                "type": "GOB.String"
+              }
+            }
           },
           "is_overdracht_voortzetting_onderneming": {
             "type": "GOB.Boolean",
@@ -3490,7 +3546,21 @@
           },
           "datum_overdracht_voortzetting_onderneming": {
             "type": "GOB.IncompleteDate",
-            "description": "De datum waarop de onderneming is overgedragen of voortgezet."
+            "description": "De datum waarop de onderneming is overgedragen of voortgezet.",
+            "attributes": {
+              "year": {
+                "type": "GOB.String"
+              },
+              "month": {
+                "type": "GOB.String"
+              },
+              "day": {
+                "type": "GOB.String"
+              },
+              "formatted": {
+                "type": "GOB.String"
+              }
+            }
           },
           "totaal_werkzame_personen": {
             "type": "GOB.Integer",
@@ -3530,10 +3600,38 @@
                 "type": "GOB.DateTime"
               },
               "datum_aanvang_handelsnaam": {
-                "type": "GOB.IncompleteDate"
+                "type": "GOB.IncompleteDate",
+                "attributes": {
+                  "year": {
+                    "type": "GOB.String"
+                  },
+                  "month": {
+                    "type": "GOB.String"
+                  },
+                  "day": {
+                    "type": "GOB.String"
+                  },
+                  "formatted": {
+                    "type": "GOB.String"
+                  }
+                }
               },
               "datum_einde_handelsnaam": {
-                "type": "GOB.IncompleteDate"
+                "type": "GOB.IncompleteDate",
+                "attributes": {
+                  "year": {
+                    "type": "GOB.String"
+                  },
+                  "month": {
+                    "type": "GOB.String"
+                  },
+                  "day": {
+                    "type": "GOB.String"
+                  },
+                  "formatted": {
+                    "type": "GOB.String"
+                  }
+                }
               },
               "volgorde": {
                 "type": "GOB.Integer"
@@ -3560,11 +3658,39 @@
           },
           "datum_aanvang": {
             "type": "GOB.IncompleteDate",
-            "description": "De datum waarbij de locatie is ontstaan."
+            "description": "De datum waarbij de locatie is ontstaan.",
+            "attributes": {
+              "year": {
+                "type": "GOB.String"
+              },
+              "month": {
+                "type": "GOB.String"
+              },
+              "day": {
+                "type": "GOB.String"
+              },
+              "formatted": {
+                "type": "GOB.String"
+              }
+            }
           },
           "datum_einde": {
             "type": "GOB.IncompleteDate",
-            "description": "De datum waarbij de locatie is beëindigd."
+            "description": "De datum waarbij de locatie is beëindigd.",
+            "attributes": {
+              "year": {
+                "type": "GOB.String"
+              },
+              "month": {
+                "type": "GOB.String"
+              },
+              "day": {
+                "type": "GOB.String"
+              },
+              "formatted": {
+                "type": "GOB.String"
+              }
+            }
           },
           "afgeschermd": {
             "type": "GOB.Boolean",
@@ -3660,15 +3786,57 @@
           },
           "datum_aanvang": {
             "type": "GOB.IncompleteDate",
-            "description": "De datum waarbij de vestiging is ontstaan."
+            "description": "De datum waarbij de vestiging is ontstaan.",
+            "attributes": {
+              "year": {
+                "type": "GOB.String"
+              },
+              "month": {
+                "type": "GOB.String"
+              },
+              "day": {
+                "type": "GOB.String"
+              },
+              "formatted": {
+                "type": "GOB.String"
+              }
+            }
           },
           "datum_einde": {
             "type": "GOB.IncompleteDate",
-            "description": "De datum waarbij de vestiging is beëindigd."
+            "description": "De datum waarbij de vestiging is beëindigd.",
+            "attributes": {
+              "year": {
+                "type": "GOB.String"
+              },
+              "month": {
+                "type": "GOB.String"
+              },
+              "day": {
+                "type": "GOB.String"
+              },
+              "formatted": {
+                "type": "GOB.String"
+              }
+            }
           },
           "datum_voortzetting": {
             "type": "GOB.IncompleteDate",
-            "description": "Datum voortzetting van de vestiging."
+            "description": "Datum voortzetting van de vestiging.",
+            "attributes": {
+              "year": {
+                "type": "GOB.String"
+              },
+              "month": {
+                "type": "GOB.String"
+              },
+              "day": {
+                "type": "GOB.String"
+              },
+              "formatted": {
+                "type": "GOB.String"
+              }
+            }
           },
           "is_commerciele_vestiging": {
             "type": "GOB.Boolean",
@@ -3748,10 +3916,38 @@
                 "type": "GOB.DateTime"
               },
               "datum_aanvang_handelsnaam": {
-                "type": "GOB.IncompleteDate"
+                "type": "GOB.IncompleteDate",
+                "attributes": {
+                  "year": {
+                    "type": "GOB.String"
+                  },
+                  "month": {
+                    "type": "GOB.String"
+                  },
+                  "day": {
+                    "type": "GOB.String"
+                  },
+                  "formatted": {
+                    "type": "GOB.String"
+                  }
+                }
               },
               "datum_einde_handelsnaam": {
-                "type": "GOB.IncompleteDate"
+                "type": "GOB.IncompleteDate",
+                "attributes": {
+                  "year": {
+                    "type": "GOB.String"
+                  },
+                  "month": {
+                    "type": "GOB.String"
+                  },
+                  "day": {
+                    "type": "GOB.String"
+                  },
+                  "formatted": {
+                    "type": "GOB.String"
+                  }
+                }
               },
               "volgorde": {
                 "type": "GOB.Integer"
