@@ -1887,6 +1887,11 @@
             "ref": "gebieden:bouwblokken",
             "description": "Het bouwblok waarin het pand ligt."
           },
+          "ligt_in_buurt": {
+            "type": "GOB.Reference",
+            "ref": "gebieden:buurten",
+            "description": "De buurt waarin het pand ligt."
+          },
           "aantal_bouwlagen": {
             "type": "GOB.Integer",
             "description": "Aantal bouwlagen van een pand."
