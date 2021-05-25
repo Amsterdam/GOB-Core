@@ -3398,11 +3398,21 @@
           },
           "datum_aanvang_maatschappelijke_activiteit": {
             "type": "GOB.IncompleteDate",
-            "description": "De datum waarbij de Maatschappelijke Activiteit in de echte wereld is ontstaan."
+            "description": "De datum waarbij de Maatschappelijke Activiteit in de echte wereld is ontstaan.",
+            "attributes": {
+              "formatted": {
+                "type": "GOB.String"
+              }
+            }
           },
           "datum_einde_maatschappelijke_activiteit": {
             "type": "GOB.IncompleteDate",
-            "description": "De datum waarbij de Maatschappelijke Activiteit in de echte wereld is beëindigd."
+            "description": "De datum waarbij de Maatschappelijke Activiteit in de echte wereld is beëindigd.",
+            "attributes": {
+              "formatted": {
+                "type": "GOB.String"
+              }
+            }
           },
           "registratie_tijdstip_maatschappelijke_activiteit": {
             "type": "GOB.DateTime",
@@ -3483,11 +3493,21 @@
           },
           "datum_aanvang_onderneming": {
             "type": "GOB.IncompleteDate",
-            "description": "De datum van aanvang van de Onderneming."
+            "description": "De datum van aanvang van de Onderneming.",
+            "attributes": {
+              "formatted": {
+                "type": "GOB.String"
+              }
+            }
           },
           "datum_einde_onderneming": {
             "type": "GOB.IncompleteDate",
-            "description": "De datum van beëindiging van de Onderneming."
+            "description": "De datum van beëindiging van de Onderneming.",
+            "attributes": {
+              "formatted": {
+                "type": "GOB.String"
+              }
+            }
           },
           "is_overdracht_voortzetting_onderneming": {
             "type": "GOB.Boolean",
@@ -3495,7 +3515,12 @@
           },
           "datum_overdracht_voortzetting_onderneming": {
             "type": "GOB.IncompleteDate",
-            "description": "De datum waarop de onderneming is overgedragen of voortgezet."
+            "description": "De datum waarop de onderneming is overgedragen of voortgezet.",
+            "attributes": {
+              "formatted": {
+                "type": "GOB.String"
+              }
+            }
           },
           "totaal_werkzame_personen": {
             "type": "GOB.Integer",
@@ -3535,10 +3560,20 @@
                 "type": "GOB.DateTime"
               },
               "datum_aanvang_handelsnaam": {
-                "type": "GOB.IncompleteDate"
+                "type": "GOB.IncompleteDate",
+                "attributes": {
+                  "formatted": {
+                    "type": "GOB.String"
+                  }
+                }
               },
               "datum_einde_handelsnaam": {
-                "type": "GOB.IncompleteDate"
+                "type": "GOB.IncompleteDate",
+                "attributes": {
+                  "formatted": {
+                    "type": "GOB.String"
+                  }
+                }
               },
               "volgorde": {
                 "type": "GOB.Integer"
@@ -3565,11 +3600,21 @@
           },
           "datum_aanvang": {
             "type": "GOB.IncompleteDate",
-            "description": "De datum waarbij de locatie is ontstaan."
+            "description": "De datum waarbij de locatie is ontstaan.",
+            "attributes": {
+              "formatted": {
+                "type": "GOB.String"
+              }
+            }
           },
           "datum_einde": {
             "type": "GOB.IncompleteDate",
-            "description": "De datum waarbij de locatie is beëindigd."
+            "description": "De datum waarbij de locatie is beëindigd.",
+            "attributes": {
+              "formatted": {
+                "type": "GOB.String"
+              }
+            }
           },
           "afgeschermd": {
             "type": "GOB.Boolean",
@@ -3665,15 +3710,30 @@
           },
           "datum_aanvang": {
             "type": "GOB.IncompleteDate",
-            "description": "De datum waarbij de vestiging is ontstaan."
+            "description": "De datum waarbij de vestiging is ontstaan.",
+            "attributes": {
+              "formatted": {
+                "type": "GOB.String"
+              }
+            }
           },
           "datum_einde": {
             "type": "GOB.IncompleteDate",
-            "description": "De datum waarbij de vestiging is beëindigd."
+            "description": "De datum waarbij de vestiging is beëindigd.",
+            "attributes": {
+              "formatted": {
+                "type": "GOB.String"
+              }
+            }
           },
           "datum_voortzetting": {
             "type": "GOB.IncompleteDate",
-            "description": "Datum voortzetting van de vestiging."
+            "description": "Datum voortzetting van de vestiging.",
+            "attributes": {
+              "formatted": {
+                "type": "GOB.String"
+              }
+            }
           },
           "is_commerciele_vestiging": {
             "type": "GOB.Boolean",
@@ -3753,10 +3813,20 @@
                 "type": "GOB.DateTime"
               },
               "datum_aanvang_handelsnaam": {
-                "type": "GOB.IncompleteDate"
+                "type": "GOB.IncompleteDate",
+                "attributes": {
+                  "formatted": {
+                    "type": "GOB.String"
+                  }
+                }
               },
               "datum_einde_handelsnaam": {
-                "type": "GOB.IncompleteDate"
+                "type": "GOB.IncompleteDate",
+                "attributes": {
+                  "formatted": {
+                    "type": "GOB.String"
+                  }
+                }
               },
               "volgorde": {
                 "type": "GOB.Integer"
@@ -3802,6 +3872,71 @@
             "type": "GOB.Reference",
             "ref": "hr:maatschappelijkeactiviteiten",
             "description": "Maatschappelijke activiteit die bij deze vestiging hoort."
+          }
+        }
+      },
+      "sbiactiviteiten": {
+        "version": "0.1",
+        "abbreviation": "SAC",
+        "description": "Een SBIactiviteit is een codering ",
+        "entity_id": "sbi_activiteit_nummer",
+        "attributes": {
+          "sbi_activiteit_nummer": {
+            "type": "GOB.String",
+            "description": "Betreft het identificerende gegeven voor een SBIactiviteit."
+          },
+          "sbi_code": {
+            "type": "GOB.String",
+            "description": "Codering van activiteiten binnen HR volgens de standaard bedrijfsindeling (SBI) 2008."
+          },
+          "omschrijving": {
+            "type": "GOB.String",
+            "description": "De omschrijving van de SBIcode."
+          },
+          "hoofdactiviteit": {
+            "type": "GOB.Boolean",
+            "description": "Is de SBI activiteit de hoofdactiviteit. Bij vestiging of rechtspersoon is een hoofdactiviteit aanwezig. Bij MAC of onderneming kunnen meerdere hoofdactiviteiten zijn."
+          },
+          "volgorde": {
+            "type": "GOB.Integer",
+            "description": "De volgorde van de (hoofd) SBIactiviteit."
+          },
+          "datum_aanvang_sbiactiviteit": {
+            "type": "GOB.IncompleteDate",
+            "description": "De datum waarop de SBIactiviteit is gestart of geregistreerd.",
+            "attributes": {
+              "formatted": {
+                "type": "GOB.String"
+              }
+            }
+          },
+          "datum_einde_sbiactiviteit": {
+            "type": "GOB.IncompleteDate",
+            "description": "De datum waarop de SBIactiviteit is beëindigd.",
+            "attributes": {
+              "formatted": {
+                "type": "GOB.String"
+              }
+            }
+          },
+          "tijdstip_registratie": {
+            "type": "GOB.DateTime",
+            "description": "De datum/tijd waarop de SBIactiviteit is geregistreerd."
+          },
+          "heeft_als_maatschappelijkactiviteit": {
+            "type": "GOB.Reference",
+            "ref": "hr:maatschappelijkeactiviteiten",
+            "description": "Maatschappelijke activiteit (of onderneming) die bij deze SBIactiviteit hoort."
+          },
+          "heeft_als_vestiging": {
+            "type": "GOB.Reference",
+            "ref": "hr:vestigingen",
+            "description": "De commerciele of niet-commerciele vestiging die bij deze SBIactiviteit hoort."
+          },
+          "heeft_als_rechtspersoon": {
+            "type": "GOB.Reference",
+            "ref": "hr:rechtspersoon",
+            "description": "De rechtspersoon die bij deze SBIactiviteit hoort ({RSIN of BSN})."
           }
         }
       }

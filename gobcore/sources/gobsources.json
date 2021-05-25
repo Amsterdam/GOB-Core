@@ -825,12 +825,12 @@
         "is_bron_voor_aantekening_kadastraal_object": {
           "method": "equals",
           "destination_attribute": "identificatie",
-          "none_allowed":  true
+          "none_allowed": true
         },
         "is_bron_voor_aantekening_recht": {
           "method": "equals",
           "destination_attribute": "identificatie",
-          "none_allowed":  true
+          "none_allowed": true
         },
         "is_bron_voor_zakelijk_recht": {
           "method": "equals",
@@ -873,22 +873,22 @@
         "is_verbonden_met_verblijfsobject": {
           "method": "equals",
           "destination_attribute": "identificatie",
-          "none_allowed":  true
+          "none_allowed": true
         },
         "is_verbonden_met_ligplaats": {
           "method": "equals",
           "destination_attribute": "identificatie",
-          "none_allowed":  true
+          "none_allowed": true
         },
         "is_verbonden_met_standplaats": {
           "method": "equals",
           "destination_attribute": "identificatie",
-          "none_allowed":  true
+          "none_allowed": true
         },
         "heeft_pand": {
           "method": "equals",
           "destination_attribute": "identificatie",
-          "none_allowed":  true
+          "none_allowed": true
         }
       }
     }
@@ -1126,6 +1126,16 @@
         "heeft_standplaats": {
           "method": "equals",
           "destination_attribute": "identificatie"
+        }
+      },
+      "sbiactiviteiten": {
+        "heeft_als_maatschappelijkactiviteit": {
+          "method": "equals",
+          "destination_attribute": "kvknummer"
+        },
+        "heeft_als_vestiging": {
+          "method": "equals",
+          "destination_attribute": "vestigingsnummer"
         }
       }
     }
