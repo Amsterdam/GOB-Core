@@ -50,32 +50,32 @@
     LEFT JOIN mv_bag_pnd_gbd_bbk_ligt_in_bouwblok rel_0
         ON rel_0.src_id = pnd._id AND rel_0.src_volgnummer = pnd.volgnummer
     LEFT JOIN gebieden_bouwblokken bbk_0
-        ON rel_0.dst_id = bbk_0._id AND rel_0.dst_volgnummer = bbk_0.volgnummer AND COALESCE(bbk_0._expiration_date, '9999-12-31'::timestamp without time zone) > NOW()
+        ON rel_0.dst_id = bbk_0._id AND rel_0.dst_volgnummer = bbk_0.volgnummer AND (bbk_0._expiration_date IS NULL OR bbk_0._expiration_date > NOW())
     -- SELECT ligt_in_buurt
-    LEFT JOIN mv_gbd_bbk_gbd_brt_ligt_in_buurt rel_1
-        ON rel_1.src_id = bbk_0._id AND rel_1.src_volgnummer = bbk_0.volgnummer
+    LEFT JOIN mv_bag_pnd_gbd_brt_ligt_in_buurt rel_1
+        ON rel_1.src_id = pnd._id AND rel_1.src_volgnummer = pnd.volgnummer
     LEFT JOIN gebieden_buurten brt_0
-        ON rel_1.dst_id = brt_0._id AND rel_1.dst_volgnummer = brt_0.volgnummer AND COALESCE(brt_0._expiration_date, '9999-12-31'::timestamp without time zone) > NOW()
+        ON rel_1.dst_id = brt_0._id AND rel_1.dst_volgnummer = brt_0.volgnummer AND (brt_0._expiration_date IS NULL OR brt_0._expiration_date > NOW())
     -- SELECT ligt_in_wijk
     LEFT JOIN mv_gbd_brt_gbd_wijk_ligt_in_wijk rel_2
         ON rel_2.src_id = brt_0._id AND rel_2.src_volgnummer = brt_0.volgnummer
     LEFT JOIN gebieden_wijken wijk_0
-        ON rel_2.dst_id = wijk_0._id AND rel_2.dst_volgnummer = wijk_0.volgnummer AND COALESCE(brt_0._expiration_date, '9999-12-31'::timestamp without time zone) > NOW()
+        ON rel_2.dst_id = wijk_0._id AND rel_2.dst_volgnummer = wijk_0.volgnummer AND (wijk_0._expiration_date IS NULL OR wijk_0._expiration_date > NOW())
     -- SELECT ligt_in_stadsdeel
     LEFT JOIN mv_gbd_wijk_gbd_sdl_ligt_in_stadsdeel rel_3
         ON rel_3.src_id = wijk_0._id AND rel_3.src_volgnummer = wijk_0.volgnummer
     LEFT JOIN gebieden_stadsdelen sdl_0
-        ON rel_3.dst_id = sdl_0._id AND rel_3.dst_volgnummer = sdl_0.volgnummer AND COALESCE(sdl_0._expiration_date, '9999-12-31'::timestamp without time zone) > NOW()
+        ON rel_3.dst_id = sdl_0._id AND rel_3.dst_volgnummer = sdl_0.volgnummer AND (sdl_0._expiration_date IS NULL OR sdl_0._expiration_date > NOW())
     -- SELECT _ligt_in_ggwgebied
     LEFT JOIN mv_gbd_brt_gbd_ggw__ligt_in_ggwgebied rel_4
         ON rel_4.src_id = brt_0._id AND rel_4.src_volgnummer = brt_0.volgnummer
     LEFT JOIN gebieden_ggwgebieden ggw_0
-        ON rel_4.dst_id = ggw_0._id AND rel_4.dst_volgnummer = ggw_0.volgnummer AND COALESCE(ggw_0._expiration_date, '9999-12-31'::timestamp without time zone) > NOW()
+        ON rel_4.dst_id = ggw_0._id AND rel_4.dst_volgnummer = ggw_0.volgnummer AND (ggw_0._expiration_date IS NULL OR ggw_0._expiration_date > NOW())
     -- SELECT _ligt_in_ggpgebied
     LEFT JOIN mv_gbd_brt_gbd_ggp__ligt_in_ggpgebied rel_5
         ON rel_5.src_id = brt_0._id AND rel_5.src_volgnummer = brt_0.volgnummer
     LEFT JOIN gebieden_ggpgebieden ggp_0
-        ON rel_5.dst_id = ggp_0._id AND rel_5.dst_volgnummer = ggp_0.volgnummer AND COALESCE(ggp_0._expiration_date, '9999-12-31'::timestamp without time zone) > NOW()
+        ON rel_5.dst_id = ggp_0._id AND rel_5.dst_volgnummer = ggp_0.volgnummer AND (ggp_0._expiration_date IS NULL OR ggp_0._expiration_date > NOW())
     LEFT JOIN (
           SELECT
               src_id, src_volgnummer
@@ -84,9 +84,9 @@
               ON rel.dst_id = ozk._id
                      AND rel.dst_volgnummer = ozk.volgnummer
                      AND ozk.in_onderzoek = 'J'
-                     AND COALESCE(ozk._expiration_date, '9999-12-31'::timestamp without time zone) > NOW()
+                     AND (ozk._expiration_date IS NULL OR ozk._expiration_date > NOW())
           GROUP BY rel.src_id, rel.src_volgnummer
     ) ozk ON pnd._id = ozk.src_id AND pnd.volgnummer = ozk.src_volgnummer
     WHERE
-      COALESCE(pnd._expiration_date, '9999-12-31'::timestamp without time zone) > NOW()
+      (pnd._expiration_date IS NULL OR pnd._expiration_date > NOW())
       AND pnd._date_deleted IS NULL
