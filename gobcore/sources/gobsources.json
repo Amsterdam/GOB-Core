@@ -672,6 +672,11 @@
           "source_attribute": "geometrie",
           "destination_attribute": "geometrie"
         },
+        "ligt_in_buurt": {
+          "method": "lies_in",
+          "source_attribute": "geometrie",
+          "destination_attribute": "geometrie"
+        },
         "heeft_dossier": {
           "method": "equals",
           "destination_attribute": "dossier"
