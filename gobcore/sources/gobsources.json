@@ -896,6 +896,35 @@
           "none_allowed": true
         }
       }
+    },
+    "brp": {
+      "personen": {
+        "heeft_verblijfplaatsen": {
+          "method": "equals",
+          "destination_attribute": "identificatie",
+          "multiple_allowed": true
+        }
+      },
+      "heeft_verblijfplaats": {
+        "van_persoon": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "met_verblijfplaats": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        }
+      },
+      "verblijfplaatsen": {
+        "heeft_verblijfsobject": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "heeft_nummeraanduiding": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        }
+      }
     }
   },
   "BAGExtract": {
