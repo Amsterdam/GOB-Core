@@ -39,6 +39,7 @@ GOB_SECURE_TYPES = [
     SEC.SecureDecimal,
     SEC.SecureDateTime,
     SEC.SecureDate,
+    SEC.SecureIncompleteDate
 ]
 
 GEO_TYPES = [
