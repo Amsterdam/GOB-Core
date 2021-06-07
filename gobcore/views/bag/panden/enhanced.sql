@@ -52,10 +52,10 @@
     LEFT JOIN gebieden_bouwblokken bbk_0
         ON rel_0.dst_id = bbk_0._id AND rel_0.dst_volgnummer = bbk_0.volgnummer AND (bbk_0._expiration_date IS NULL OR bbk_0._expiration_date > NOW())
     -- SELECT ligt_in_buurt
-    LEFT JOIN mv_bag_pnd_gbd_brt_ligt_in_buurt rel_1
-        ON rel_1.src_id = pnd._id AND rel_1.src_volgnummer = pnd.volgnummer
+    LEFT JOIN mv_bag_pnd_gbd_brt_ligt_in_buurt pnd_ligt_in_buurt 
+    	ON pnd_ligt_in_buurt.src_id = pnd._id AND pnd_ligt_in_buurt.src_volgnummer = pnd.volgnummer
     LEFT JOIN gebieden_buurten brt_0
-        ON rel_1.dst_id = brt_0._id AND rel_1.dst_volgnummer = brt_0.volgnummer AND (brt_0._expiration_date IS NULL OR brt_0._expiration_date > NOW())
+        ON pnd_ligt_in_buurt.dst_id = brt_0._id AND pnd_ligt_in_buurt.dst_volgnummer = brt_0.volgnummer AND (brt_0._expiration_date IS NULL OR brt_0._expiration_date > NOW())
     -- SELECT ligt_in_wijk
     LEFT JOIN mv_gbd_brt_gbd_wijk_ligt_in_wijk rel_2
         ON rel_2.src_id = brt_0._id AND rel_2.src_volgnummer = brt_0.volgnummer

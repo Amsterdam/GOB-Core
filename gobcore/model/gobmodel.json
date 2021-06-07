@@ -4032,20 +4032,21 @@
               "formatted": "GOB.String"
             }
           },
-          "geboorteplaats": {
+          "heeft_geboorteplaats_nederland": {
+            "type": "GOB.Reference",
+            "description": "Code in tabel 33 van alle Nederlandse gemeenten",
+            "ref": "brp:gemeenten",
+            "secure": {
+              "bronwaarde": {
+                "type": "GOB.SecureString",
+                "level": 4
+              }
+            }
+          },
+          "heeft_geboorteplaats_buitenland": {
             "type": "GOB.JSON",
-            "description": "De gemeenteplaats van een nederlandse (BRK) gemeente of een locatieaanduiding van een plaats in het buitenland",
+            "description": "Een locatieaanduiding van een plaats in het buitenland",
             "attributes": {
-              "heeft_gemeentecode": {
-                "type": "GOB.Reference",
-                "ref": "brk:gemeentes",
-                "secure": {
-                  "bronwaarde": {
-                    "type": "GOB.SecureString",
-                    "level": 4
-                  }
-                }
-              },
               "plaats_in_buitenland": {
                 "type": "GOB.SecureString",
                 "level": 4
@@ -4056,7 +4057,7 @@
               }
             }
           },
-          "geboorteland": {
+          "heeft_geboorteland": {
             "type": "GOB.Reference",
             "ref": "brp:landen",
             "description": "Een land uit tabel 34 landen van de BRP",
