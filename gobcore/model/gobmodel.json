@@ -3806,5 +3806,192 @@
         }
       }
     }
+  },
+  "brp": {
+    "version": "0.1",
+    "abbreviation": "BRP",
+    "description": "De basisregistratie Personen.",
+    "collections": {
+      "personen": {
+        "version": "0.1",
+        "abbreviation": "PRS",
+        "entity_id": "identificatie",
+        "attributes": {
+          "identificatie": {
+            "type": "GOB.Integer",
+            "description": "Interne sleutel ten behoeve van het uniek identificeren van alle personen, ook diegene zonder BSN en a-nummer (=sleutelverzendend richting afnemers)."
+          },
+          "burgerservicenummer": {
+            "type": "GOB.SecureString",
+            "description": "Het burgerservicenummer, bedoeld in artikel 1.1 van de Wet algemene bepalingen burgerservicenummer.",
+            "level": 4
+          },
+          "a_nummer": {
+            "type": "GOB.SecureString",
+            "description": "Het administratienummer, bedoeld in artikel 50 van de Wet GBA.",
+            "level": 4
+          },
+          "voornamen": {
+            "type": "GOB.SecureString",
+            "description": "Voornamen van het subject",
+            "level": 4
+          },
+          "voorvoegsels": {
+            "type": "GOB.SecureString",
+            "description": "De verzameling namen die, gescheiden door spaties, aan de geslachtsnaam voorafgaat. Indien aanwezig, wordt het predicaat.",
+            "level": 4
+          },
+          "adellijketitel_predicaat": {
+            "type": "GOB.JSON",
+            "description": "Adellijke titel/predicaat, die aangeeft welke titel of welk predicaat behoort tot de naam (bij adellijke titel geslachtsnaam, bij predicaat voornaam).",
+            "attributes": {
+              "code": {
+                "type": "GOB.SecureString",
+                "level": 4
+              },
+              "omschrijving": {
+                "type": "GOB.SecureString",
+                "level": 4
+              },
+              "soort": {
+                "type": "GOB.SecureString",
+                "level": 4
+              }
+            }
+          },
+          "geslachtsnaam": {
+            "type": "GOB.SecureString",
+            "description": "De (geslachts)naam waarvan de eventueel aanwezige voorvoegsels en adellijke titel zijn afgesplitst.",
+            "level": 4
+          },
+          "geslachtsaanduiding": {
+            "type": "GOB.JSON",
+            "description": "Gegevens over het geslacht van respectievelijk de persoon, de ouder, de echtgenoot/geregistreerd partner, de eerdere echtgenoot/geregistreerd partner.",
+            "attributes": {
+              "code": {
+                "type": "GOB.String",
+                "description": "Kan de waarde 'M', 'V' of 'O' bevatten"
+              },
+              "omschrijving": {
+                "type": "GOB.String"
+              }
+            }
+          },
+          "aanduiding_naamgebruik": {
+            "type": "GOB.JSON",
+            "description": "Een aanduiding voor de wijze van aanschrijving van de ingeschrevene.",
+            "attributes": {
+              "code": {
+                "type": "GOB.String"
+              },
+              "omschrijving": {
+                "type": "GOB.String"
+              }
+            }
+          },
+          "geboortedatum": {
+            "type": "GOB.SecureIncompleteDate",
+            "description": "De datum van geboorte",
+            "level": 4,
+            "attributes": {
+              "formatted": "GOB.String"
+            }
+          },
+          "geboorteplaats": {
+            "type": "GOB.JSON",
+            "description": "De gemeenteplaats van een nederlandse (BRK) gemeente of een locatieaanduiding van een plaats in het buitenland",
+            "attributes": {
+              "heeft_gemeentecode": {
+                "type": "GOB.Reference",
+                "ref": "brk:gemeentes",
+                "secure": {
+                  "bronwaarde": {
+                    "type": "GOB.SecureString",
+                    "level": 4
+                  }
+                }
+              },
+              "plaats_in_buitenland": {
+                "type": "GOB.SecureString",
+                "level": 4
+              },
+              "omschrijving": {
+                "type": "GOB.SecureString",
+                "level": 4
+              }
+            }
+          },
+          "geboorteland": {
+            "type": "GOB.Reference",
+            "ref": "brp:landen",
+            "description": "Een land uit tabel 34 landen van de BRP",
+            "secure": {
+              "bronwaarde": {
+                "type": "GOB.SecureString",
+                "level": 4
+              }
+            }
+          },
+          "nationaliteit": {
+            "type": "GOB.JSON",
+            "description": "Nationaliteit van de ingezetene.",
+            "attributes": {
+              "code": {
+                "type": "GOB.Integer",
+                "description": "Code van nationaliteit confom tabel 32, nationaliteitentabel"
+              },
+              "omschrijving": {
+                "type": "GOB.String",
+                "descriptsion": "Omschrijving van nationaliteit confom tabel 32, nationaliteitentabel"
+              }
+            }
+          },
+          "code_burgerlijke_staat": {
+            "type": "GOB.String",
+            "description": "De omschrijving van de burgelijke staat van de ingeschrevene"
+          },
+          "gezinsrelatie": {
+            "type": "GOB.JSON",
+            "description": "PLUS: de gezinsrelatie van de ingeschrevene",
+            "attributes": {
+              "code": {
+                "type": "GOB.String"
+              },
+              "omschrijving": {
+                "type": "GOB.String"
+              }
+            }
+          },
+          "aantal_kinderen": {
+            "type": "GOB.Integer",
+            "description": "PLUS: Het totaal aantal kinderen van de ingeschrevene."
+          },
+          "aantal_minderjarige_kinderen": {
+            "type": "GOB.String",
+            "description": "PLUS: Het totaal aantal minderjarige kinderen van de ingeschrevene."
+          },
+          "heeft_verblijfplaatsen": {
+            "type": "GOB.Reference",
+            "ref": "brp:verblijfplaatsen",
+            "description": "Een verwijzing naar de actuele of historische verblijfplaatsen van een persoon."
+          },
+          "heeft_overlijden_gegevens": {
+            "type": "GOB.Reference",
+            "ref": "brp:overlijden",
+            "description": "Een verwijzing naar de gegevens van het eventueel overlijden van de persoon."
+          },
+          "heeft_verbintenis": {
+            "type": "GOB.Reference",
+            "ref": "brp:verbintenissen",
+            "description": "Een verwijzing naar de huwelijks of geregistreerd partner relatie."
+          },
+          "heeft_inschrijving": {
+            "type": "GOB.Reference",
+            "ref": "brp:inschrijvingen",
+            "description": "De eerste inschrijving in het GBA of RNI"
+          }
+        }
+      }
+    }
   }
 }
