@@ -3878,7 +3878,7 @@
       "sbiactiviteiten": {
         "version": "0.1",
         "abbreviation": "SAC",
-        "description": "Een SBIactiviteit is een codering ",
+        "description": "Een SBIactivteit is een hiërarchische indeling van economische activiteiten om bedrijfseenheden in te delen naar hun hoofdactiviteit.",
         "entity_id": "sbi_activiteit_nummer",
         "attributes": {
           "sbi_activiteit_nummer": {
@@ -3893,7 +3893,7 @@
             "type": "GOB.String",
             "description": "De omschrijving van de SBIcode."
           },
-          "hoofdactiviteit": {
+          "is_hoofdactiviteit": {
             "type": "GOB.Boolean",
             "description": "Is de SBI activiteit de hoofdactiviteit. Bij vestiging of rechtspersoon is een hoofdactiviteit aanwezig. Bij MAC of onderneming kunnen meerdere hoofdactiviteiten zijn."
           },
