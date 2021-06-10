@@ -3888,7 +3888,7 @@
         "attributes": {
           "sbi_activiteit_nummer": {
             "type": "GOB.String",
-            "description": "Betreft het identificerende gegeven voor een SBIactiviteit."
+            "description": "Samenstelling van KvK-nummer en/of Vestigingsnummer of {BSN- of RSIN-nummer}"
           },
           "sbi_code": {
             "type": "GOB.String",
