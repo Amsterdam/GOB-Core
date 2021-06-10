@@ -3958,7 +3958,7 @@
         "entity_id": "identificatie",
         "attributes": {
           "identificatie": {
-            "type": "GOB.Integer",
+            "type": "GOB.String",
             "description": "Interne sleutel ten behoeve van het uniek identificeren van alle personen, ook diegene zonder BSN en a-nummer (=sleutelverzendend richting afnemers)."
           },
           "burgerservicenummer": {
@@ -3973,7 +3973,7 @@
           },
           "voornamen": {
             "type": "GOB.SecureString",
-            "description": "Voornamen van het subject",
+            "description": "Voornamen van het subject.",
             "level": 4
           },
           "voorvoegsels": {
@@ -4010,7 +4010,7 @@
             "attributes": {
               "code": {
                 "type": "GOB.String",
-                "description": "Kan de waarde 'M', 'V' of 'O' bevatten"
+                "description": "Kan de waarde 'M', 'V' of 'O' bevatten."
               },
               "omschrijving": {
                 "type": "GOB.String"
@@ -4031,7 +4031,7 @@
           },
           "geboortedatum": {
             "type": "GOB.SecureIncompleteDate",
-            "description": "De datum van geboorte",
+            "description": "De datum van geboorte.",
             "level": 4,
             "attributes": {
               "formatted": "GOB.String"
@@ -4039,7 +4039,7 @@
           },
           "heeft_geboorteplaats_nederland": {
             "type": "GOB.Reference",
-            "description": "Code in tabel 33 van alle Nederlandse gemeenten",
+            "description": "Code in tabel 33 van alle Nederlandse gemeenten.",
             "ref": "brp:gemeenten",
             "secure": {
               "bronwaarde": {
@@ -4050,7 +4050,7 @@
           },
           "heeft_geboorteplaats_buitenland": {
             "type": "GOB.JSON",
-            "description": "Een locatieaanduiding van een plaats in het buitenland",
+            "description": "Een locatieaanduiding van een plaats in het buitenland.",
             "attributes": {
               "plaats_in_buitenland": {
                 "type": "GOB.SecureString",
@@ -4065,7 +4065,7 @@
           "heeft_geboorteland": {
             "type": "GOB.Reference",
             "ref": "brp:landen",
-            "description": "Een land uit tabel 34 landen van de BRP",
+            "description": "Een land uit tabel 34 landen van de BRP.",
             "secure": {
               "bronwaarde": {
                 "type": "GOB.SecureString",
@@ -4079,21 +4079,21 @@
             "attributes": {
               "code": {
                 "type": "GOB.Integer",
-                "description": "Code van nationaliteit confom tabel 32, nationaliteitentabel"
+                "description": "Code van nationaliteit confom tabel 32, nationaliteitentabel."
               },
               "omschrijving": {
                 "type": "GOB.String",
-                "descriptsion": "Omschrijving van nationaliteit confom tabel 32, nationaliteitentabel"
+                "descriptsion": "Omschrijving van nationaliteit confom tabel 32, nationaliteitentabel."
               }
             }
           },
           "code_burgerlijke_staat": {
             "type": "GOB.String",
-            "description": "De omschrijving van de burgelijke staat van de ingeschrevene"
+            "description": "De omschrijving van de burgelijke staat van de ingeschrevene."
           },
           "gezinsrelatie": {
             "type": "GOB.JSON",
-            "description": "PLUS: de gezinsrelatie van de ingeschrevene",
+            "description": "PLUS: de gezinsrelatie van de ingeschrevene.",
             "attributes": {
               "code": {
                 "type": "GOB.String"
@@ -4108,11 +4108,11 @@
             "description": "PLUS: Het totaal aantal kinderen van de ingeschrevene."
           },
           "aantal_minderjarige_kinderen": {
-            "type": "GOB.String",
+            "type": "GOB.Integer",
             "description": "PLUS: Het totaal aantal minderjarige kinderen van de ingeschrevene."
           },
           "heeft_verblijfplaatsen": {
-            "type": "GOB.Reference",
+            "type": "GOB.ManyReference",
             "ref": "brp:verblijfplaatsen",
             "description": "Een verwijzing naar de actuele of historische verblijfplaatsen van een persoon."
           },
@@ -4129,7 +4129,199 @@
           "heeft_inschrijving": {
             "type": "GOB.Reference",
             "ref": "brp:inschrijvingen",
-            "description": "De eerste inschrijving in het GBA of RNI"
+            "description": "De eerste inschrijving in het GBA of RNI."
+          }
+        }
+      },
+      "verblijfplaatsen": {
+        "version": "0.1",
+        "abbreviation": "VBL",
+        "entity_id": "identificatie",
+        "attributes": {
+          "identificatie": {
+            "type": "GOB.String",
+            "description": "Interne sleutel ten behoeve van het uniek opslaan van de gegevens."
+          },
+          "straatnaam": {
+            "type": "GOB.String",
+            "description": "De officiële straatnaam zoals door het gemeentebestuur is vastgesteld dan wel een kopie van de inhoud van element 11.15 Naam openbare ruimte. Voor gegevens opgenomen voor datum inwerkingtreding LO 3.10 wordt afgekort conform de specificaties van de BOCO-norm. Voor gegevens opgenomen op of na datum inwerkingtreding LO 3.10 wordt afgekort conform de specificaties van de NEN-5825 [2002] norm."
+          },
+          "openbare_ruimte": {
+            "type": "GOB.String",
+            "description": "Een naam die aan een openbare ruimte is toegekend in een daartoe strekkend formeel gemeentelijk besluit. Een openbare ruimte is een door het bevoegde gemeentelijke orgaan als zodanig aangewezen benaming van een binnen ��n woonplaats gelegen buitenruimte. Voor �Naam openbare ruimte� mag �offici�le straatnaam� gelezen worden."
+          },
+          "huisnummer": {
+            "type": "GOB.Integer",
+            "description": "De numerieke aanduiding zoals deze door het gemeentebestuur aan het object is toegekend dan wel een door of namens het bevoegde gemeentelijke orgaan ten aanzien van een adresseerbaar object toegekende nummering."
+          },
+          "huisletter": {
+            "type": "GOB.String",
+            "description": "Een alfabetisch teken achter het huisnummer zoals dit door het gemeentebestuur is toegekend dan wel een door of namens het bevoegde gemeentelijke orgaan ten aanzien van een adresseerbaar object toegekende toevoeging aan een huisnummer in de vorm van een alfabetisch teken."
+          },
+          "huisnummertoevoeging": {
+            "type": "GOB.String",
+            "description": "Die letters of tekens die noodzakelijk zijn om, naast huisnummer en -letter, de brievenbus te vinden dan wel een door of namens het bevoegde gemeentelijke orgaan ten aanzien van een adresseerbaar object toegekende toevoeging aan een huisnummer of een combinatie van huisletter en huisnummer."
+          },
+          "aanduidinghuisnummer": {
+            "type": "GOB.String",
+            "description": "De aanduiding die wordt gebruikt voor adressen die niet zijn voorzien van de gebruikelijke straatnaam en huisnummeraanduidingen."
+          },
+          "postcode": {
+            "type": "GOB.String",
+            "description": "De door de landelijk aangestelde instantie vastgestelde code behorend bij de straatnaam en het huisnummerdan wel de door de landelijk aangestelde instantie vastgestelde code behorende bij een bepaalde combinatie van een naam openbare ruimte en een huisnummer."
+          },
+          "adres_compleet": {
+            "type": "GOB.String",
+            "description": "PLUS: Het complete adres samengesteld uit straatnaam, huisnummer, huisletter, huisnummertoevoeging en aanduidinghuisnmmmer."
+          },
+          "ligt_in_woonplaats": {
+            "type": "GOB.String",
+            "description": "Een woonplaatsnaam is de naam van een door het bevoegde gemeentelijke orgaan als zodanig aangewezen gedeelte van het gemeentelijk grondgebied."
+          },
+          "locatiebeschrijving": {
+            "type": "GOB.String",
+            "description": "Beschrijving van de locatie indien geen adres kan worden aangegeven."
+          },
+          "heeft_verblijfsobject": {
+            "type": "GOB.Reference",
+            "ref": "bag:verblijfsobjecten",
+            "description": "Het verblijfsobject (landelijke identificatie) dat door de nummeraanduiding wordt aangeduid."
+          },
+          "heeft_nummeraanduiding": {
+            "type": "GOB.Reference",
+            "ref": "bag:nummeraanduidingen",
+            "description": "De unieke identificatie/aanduiding van een nummeraanduiding. Een nummeraanduiding is een door het bevoegde gemeentelijke orgaan als zodanig toegekende aanduiding van een adresseerbaar object. De Identificatiecode nummeraanduiding is een combinatie van een viercijferige gemeentecode, de tweecijferige objecttypecode 20 die aangeeft dat het om een nummeraanduiding gaat en een voor het betreffende objecttype binnen een gemeente uniek tiencijferig volgnummer."
+          },
+          "verblijft_in_land": {
+            "type": "GOB.Reference",
+            "ref": "brp:landen",
+            "description": "Een code, opgenomen in Tabel34, Landentabel, die het land (buiten Nederland) aangeeft alwaarde ingeschrevene verblijft. Bij het ingaan van een Ministerieel besluit dient hier de standaardwaarde opgenomen te worden."
+          },
+          "buitenland_regel_1": {
+            "type": "GOB.String",
+            "description": "Eerste deel van het adres in het buitenland, met uitzondering van het land."
+          },
+          "buitenland_regel_2": {
+            "type": "GOB.String",
+            "description": "Tweede deel van het adres in het buitenland, met uitzondering van het land."
+          },
+          "buitenland_regel_3": {
+            "type": "GOB.String",
+            "description": "Derde deel van het adres in het buitenland, met uitzondering van het land."
+          },
+          "datum_aanvang_adres_buitenland": {
+            "type": "GOB.IncompleteDate",
+            "description": "De datum van aangifte of ambtshalve melding van verblijf op het buitenlands adres.",
+            "attributes": {
+              "formatted": "GOB.String"
+            }
+          },
+          "aanduiding_gegevens_in_onderzoek": {
+            "type": "GOB.String",
+            "description": "Numerieke waarde (met voorloopnullen) van een groep of element in een categorie van de BRP, waarvan wordt onderzocht of ze onjuist of in strijd met de openbare orde zijn."
+          },
+          "datum_ingang_onderzoek": {
+            "type": "GOB.IncompleteDate",
+            "description": "De datum van inschrijving in Nederland.",
+            "attributes": {
+              "formatted": "GOB.String"
+            }
+          },
+          "datum_einde_onderzoek": {
+            "type": "GOB.IncompleteDate",
+            "description": "De datum van inschrijving in Nederland.",
+            "attributes": {
+              "formatted": "GOB.String"
+            }
+          },
+          "aantal_keren_in_onderzoek": {
+            "type": "GOB.Integer",
+            "description": "PLUS: Het totaal aantal keren dat deze verblijfplaats in onderzoek was/is."
+          }
+        }
+      },
+      "heeftverblijfplaats": {
+        "version": "0.1",
+        "abbreviation": "HVE",
+        "entity_id": "identificatie",
+        "attributes": {
+          "identificatie": {
+            "type": "GOB.String",
+            "description": "Interne sleutel ten behoeve van het uniek opslaan van de gegevens."
+          },
+          "van_persoon": {
+            "type": "GOB.Reference",
+            "ref": "brp:personen",
+            "description": "Relatie naar persoonsgegevens dmv systeem nummer."
+          },
+          "met_verblijfplaats": {
+            "type": "GOB.Reference",
+            "ref": "brp:verblijfplaatsen",
+            "description": "Relatie naar verblijfplaats(en) van persoon."
+          },
+          "functieadres": {
+            "type": "GOB.String",
+            "description": "Afhankelijk van inschrijving in GBA of RNI code B (Brief) of W (Woon) adres."
+          },
+          "gemeente_inschrijving": {
+            "type": "GOB.Reference",
+            "ref": "brp:gemeenten",
+            "description": "De gemeente van inschrijving of doorverwijzing naar volgende of 1ste gemeente van inschrijving."
+          },
+          "datum_inschrijving_gemeente": {
+            "type": "GOB.IncompleteDate",
+            "description": "De datum van inschrijving in de gemeente.",
+            "attributes": {
+              "formatted": "GOB.String"
+            }
+          },
+          "datum_aanvang_adreshouding": {
+            "type": "GOB.IncompleteDate",
+            "description": "De datum van aangifte of ambtshalve melding van verblijf en adres.",
+            "attributes": {
+              "formatted": "GOB.String"
+            }
+          },
+          "eind_datum_bewoning": {
+            "type": "GOB.Date",
+            "description": "PLUS: Een afgeleid gegeven waarin de einddatum van de bewoning is vastgelegd door verhuizing, emigratie of overlijden."
+          },
+          "reden_einde_bewoning": {
+            "type": "GOB.String",
+            "description": "PLUS: Reden van einde bewoning (waaronder vertrek, adreswijziging en overlijden)."
+          },
+          "datum_uitschrijving_gemeente": {
+            "type": "GOB.Date",
+            "description": "PLUS: Een afgeleid gegeven met de datum van uitschrijving uit de gemeente (door vertrek of emigratie)."
+          },
+          "gemeente_waarnaar_vertrokken": {
+            "type": "GOB.String",
+            "description": "PLUS: De gemeente of RNI waar naar vertrokken is bij reden_einde_bewoning = Vertrek."
+          },
+          "indicatie_actueel_historisch": {
+            "type": "GOB.String",
+            "description": "PLUS: Een afgeleid of de verblijfplaats actueel (A) of historisch (H) is."
+          },
+          "land_vanwaar_ingeschreven": {
+            "type": "GOB.Reference",
+            "ref": "brp:landen",
+            "description": "Een code, opgenomen in Tabel 34, Landentabel, die het land aangeeft waar de ingeschrevene verblijf hield voor (her)vestiging in Nederland."
+          },
+          "datum_vertrek_Nederland": {
+            "type": "GOB.Date",
+            "description": "De datum van vertrek uit Nederland."
+          },
+          "land_waarnaar_vertrokken": {
+            "type": "GOB.Reference",
+            "ref": "brp:landen",
+            "description": "Een code, opgenomen in Tabel 34, Landentabel, die het land waar de ingeschrevene heen is vertrokken uit Nederland."
+          },
+          "datum_vestiging_nederland": {
+            "type": "GOB.IncompleteDate",
+            "description": "De datum van inschrijving in Nederland.",
+            "attributes": {
+              "formatted": "GOB.String"
+            }
           }
         }
       }
