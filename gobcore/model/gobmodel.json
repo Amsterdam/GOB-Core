@@ -84,7 +84,12 @@
           },
           "incomplete_date": {
             "type": "GOB.IncompleteDate",
-            "description": "Incomplete date value"
+            "description": "Incomplete date value",
+            "attributes": {
+              "formatted": {
+                "type": "GOB.String"
+              }
+            }
           }
         },
         "api": {
