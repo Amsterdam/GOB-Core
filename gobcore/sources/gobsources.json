@@ -905,7 +905,7 @@
           "multiple_allowed": true
         }
       },
-      "heeftverblijfplaats": {
+      "persoonsverblijfplaatsen": {
         "van_persoon": {
           "method": "equals",
           "destination_attribute": "identificatie"
@@ -916,7 +916,15 @@
         }
       },
       "verblijfplaatsen": {
-        "heeft_verblijfsobject": {
+        "is_verblijfsobject": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "is_ligplaats": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "is_standplaats": {
           "method": "equals",
           "destination_attribute": "identificatie"
         },

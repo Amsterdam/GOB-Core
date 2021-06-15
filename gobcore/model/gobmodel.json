@@ -4182,10 +4182,20 @@
             "type": "GOB.String",
             "description": "Beschrijving van de locatie indien geen adres kan worden aangegeven."
           },
-          "heeft_verblijfsobject": {
+          "is_verblijfsobject": {
             "type": "GOB.Reference",
             "ref": "bag:verblijfsobjecten",
             "description": "Het verblijfsobject (landelijke identificatie) dat door de nummeraanduiding wordt aangeduid."
+          },
+          "is_ligplaats": {
+            "type": "GOB.Reference",
+            "ref": "bag:ligplaatsen",
+            "description": "De unieke identificatie/aanduiding van een ligplaats."
+          },
+          "is_standplaats": {
+            "type": "GOB.Reference",
+            "ref": "bag:standplaatsen",
+            "description": "De unieke identificatie/aanduiding van een standplaats."
           },
           "heeft_nummeraanduiding": {
             "type": "GOB.Reference",
@@ -4240,9 +4250,9 @@
           }
         }
       },
-      "heeftverblijfplaats": {
+      "persoonsverblijfplaatsen": {
         "version": "0.1",
-        "abbreviation": "HVE",
+        "abbreviation": "PVB",
         "entity_id": "identificatie",
         "attributes": {
           "identificatie": {
