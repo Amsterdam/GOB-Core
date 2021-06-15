@@ -4083,7 +4083,7 @@
               },
               "omschrijving": {
                 "type": "GOB.String",
-                "descriptsion": "Omschrijving van nationaliteit confom tabel 32, nationaliteitentabel."
+                "description": "Omschrijving van nationaliteit confom tabel 32, nationaliteitentabel."
               }
             }
           },
@@ -4317,7 +4317,7 @@
             "ref": "brp:landen",
             "description": "Een code, opgenomen in Tabel 34, Landentabel, die het land aangeeft waar de ingeschrevene verblijf hield voor (her)vestiging in Nederland."
           },
-          "datum_vertrek_Nederland": {
+          "datum_vertrek_nederland": {
             "type": "GOB.Date",
             "description": "De datum van vertrek uit Nederland."
           },
