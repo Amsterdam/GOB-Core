@@ -1,7 +1,7 @@
 from unittest import TestCase
 from unittest.mock import patch, MagicMock
 
-from gobcore.datastore.oracle import OracleDatastore, GOBException
+from gobcore.datastore.oracle import DSN_FAILOVER_ADDRESS_TEMPLATE, DSN_FAILOVER_TEMPLATE, OracleDatastore, GOBException
 
 
 class MockConnection():
@@ -47,13 +47,53 @@ class TestOracleDatastore(TestCase):
             'username': "username",
             'password': "password",
             'host': "host",
-            'port': 1234,
+            'port': "1234",
             'database': 'x.y.z'
         }
 
         store = OracleDatastore(config)
         self.assertEqual("oracle+cx_oracle://username:password@host:1234/?service_name=x.y.z",
                          str(store.connection_config['url']))
+
+    def test_get_dsn(self):
+        args = {
+            'host': 'localhost',
+            'port': '1234',
+            'database' : 'db'
+        }
+        address_list = [
+            DSN_FAILOVER_ADDRESS_TEMPLATE.format(host='localhost', port='1234'),
+        ]
+        exp_res = DSN_FAILOVER_TEMPLATE.format(
+            failover='off',
+            address_list='\n'.join(address_list),
+            database='db'
+        )
+        self.assertEqual(OracleDatastore._get_dsn(**args), exp_res)
+        args['host'] = 'localhost1,localhost2'
+        address_list = [
+            DSN_FAILOVER_ADDRESS_TEMPLATE.format(host='localhost1', port='1234'),
+            DSN_FAILOVER_ADDRESS_TEMPLATE.format(host='localhost2', port='1234')
+        ]
+        exp_res = DSN_FAILOVER_TEMPLATE.format(
+            failover='on',
+            address_list='\n'.join(address_list),
+            database='db'
+        )
+        self.assertEqual(exp_res, OracleDatastore._get_dsn(**args))
+        args['host'] = 'localhost'
+        args['port'] = '1234,1235'
+        address_list=[
+            DSN_FAILOVER_ADDRESS_TEMPLATE.format(host='localhost', port='1234'),
+            DSN_FAILOVER_ADDRESS_TEMPLATE.format(host='localhost', port='1235')
+        ]
+        exp_res = DSN_FAILOVER_TEMPLATE.format(
+            failover='on',
+            address_list='\n'.join(address_list),
+            database='db'
+        )
+        self.assertEqual(exp_res, OracleDatastore._get_dsn(**args))
+
 
     @patch("gobcore.datastore.oracle.cx_Oracle")
     def test_connect(self, mock_cx_oracle):
@@ -71,7 +111,12 @@ class TestOracleDatastore(TestCase):
         store.connect()
         self.assertEqual("(user@db)", store.user)
         self.assertEqual({"connected": True}, store.connection)
-        mock_cx_oracle.Connection.assert_called_with('user/pw@localhost:9999/db')
+        dsn = DSN_FAILOVER_TEMPLATE.format(
+            failover='off',
+            address_list=DSN_FAILOVER_ADDRESS_TEMPLATE.format(host=config['host'], port=config['port']),
+            database=config['database']
+        )
+        mock_cx_oracle.Connection.assert_called_with(user='user', password='pw', dsn = dsn)
 
         config = {
             'username': 'user',

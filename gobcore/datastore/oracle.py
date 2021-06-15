@@ -10,6 +10,16 @@ from gobcore.exceptions import GOBException
 
 ORACLE_DRIVER = 'oracle+cx_oracle'
 
+DSN_FAILOVER_TEMPLATE = """
+(DESCRIPTION=
+    (FAILOVER={failover})
+    (LOAD_BALANCE=off)
+    (CONNECT_TIMEOUT=3)
+    (RETRY_COUNT=3)
+    (ADDRESS_LIST={address_list})
+    (CONNECT_DATA=(SERVICE_NAME={database})))"""
+DSN_FAILOVER_ADDRESS_TEMPLATE = '(ADDRESS=(PROTOCOL=tcp)(HOST={host})(PORT={port}))'
+
 
 class OracleDatastore(SqlDatastore):
 
@@ -20,7 +30,10 @@ class OracleDatastore(SqlDatastore):
         self.connection_config['url'] = self.get_url()
 
     def get_url(self):
-        url = URL(**{k: v for k, v in self.connection_config.items() if k != 'name'})
+        # Allow mutiple hosts speciefied, comma separated
+        items = {k: str(v).split(',')[0] if k in ('host', 'port') else v
+                 for k, v in self.connection_config.items() if k != 'name'}
+        url = URL(**items)
 
         # The Oracle driver can accept a service name instead of a SID
         service_name_pattern = re.compile(r"^\w+\.\w+\.\w+$")
@@ -29,6 +42,28 @@ class OracleDatastore(SqlDatastore):
             url = str(url).replace(self.connection_config["database"],
                                    '?service_name=' + self.connection_config['database'])
         return url
+
+    @staticmethod
+    def _get_dsn(host: str, port: str, database: str):
+        '''
+          Return dsn in Oracle easyconnect string or a description string.
+          The later if multiple hosts or ports are specified.
+        '''
+        def strech_list(a, b_len):
+            '''
+              Return list a streched to b_len filled with the last element of a
+            '''
+            return a + [a[-1]] * max(b_len - len(a), 0)
+
+        hosts, ports = host.split(','), port.split(',')
+        ports = strech_list(ports, len(hosts))
+        hosts = strech_list(hosts, len(ports))
+        address_list = [DSN_FAILOVER_ADDRESS_TEMPLATE.format(host=h, port=p) for h, p in zip(hosts, ports)]
+        return DSN_FAILOVER_TEMPLATE.format(
+                        failover='off' if len(address_list) == 1 else 'on',
+                        address_list='\n'.join(address_list),
+                        database=database
+                    )
 
     def connect(self):
         """Connect to the datasource
@@ -39,13 +74,12 @@ class OracleDatastore(SqlDatastore):
         """
         # Set the NLS_LANG variable to UTF-8 to get the correct encoding
         os.environ["NLS_LANG"] = ".UTF8"
-
         try:
-            self.user = f"({self.connection_config['username']}@{self.connection_config['database']})"
-            self.connection = cx_Oracle.Connection(
-                f"{self.connection_config['username']}/{self.connection_config['password']}"
-                f"@{self.connection_config['host']}:{self.connection_config['port']}"
-                f"/{self.connection_config['database']}")
+            items = ('database', 'username', 'password', 'port', 'host')
+            database, username, password, port, host = [str(self.connection_config[k]) for k in items]
+            self.user = f"({username}@{database})"
+            dsn = self._get_dsn(host, port, database)
+            self.connection = cx_Oracle.Connection(user=username, password=password, dsn=dsn)
         except KeyError as e:
             raise GOBException(f'Missing configuration for source {self.connection_config["name"]}. Error: {e}')
 
