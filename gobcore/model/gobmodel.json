@@ -4185,7 +4185,7 @@
           "is_verblijfsobject": {
             "type": "GOB.Reference",
             "ref": "bag:verblijfsobjecten",
-            "description": "Het verblijfsobject (landelijke identificatie) dat door de nummeraanduiding wordt aangeduid."
+            "description": "De unieke identificatie van een verblijfsobject."
           },
           "is_ligplaats": {
             "type": "GOB.Reference",
@@ -4226,27 +4226,27 @@
               "formatted": "GOB.String"
             }
           },
-          "aanduiding_gegevens_in_onderzoek": {
+          "aanduiding_persoongegevens_in_onderzoek": {
             "type": "GOB.String",
             "description": "Numerieke waarde (met voorloopnullen) van een groep of element in een categorie van de BRP, waarvan wordt onderzocht of ze onjuist of in strijd met de openbare orde zijn."
           },
-          "datum_ingang_onderzoek": {
+          "datum_ingang_persoononderzoek": {
             "type": "GOB.IncompleteDate",
-            "description": "De datum van inschrijving in Nederland.",
+            "description": "De datum aanvang persoononderzoek.",
             "attributes": {
               "formatted": "GOB.String"
             }
           },
-          "datum_einde_onderzoek": {
+          "datum_einde_persoononderzoek": {
             "type": "GOB.IncompleteDate",
-            "description": "De datum van inschrijving in Nederland.",
+            "description": "De datum einde persoononderzoek.",
             "attributes": {
               "formatted": "GOB.String"
             }
           },
-          "aantal_keren_in_onderzoek": {
+          "aantal_keren_persoon_in_onderzoek": {
             "type": "GOB.Integer",
-            "description": "PLUS: Het totaal aantal keren dat deze verblijfplaats in onderzoek was/is."
+            "description": "PLUS: het totaal aantal keren dat deze persoon in onderzoek was/is."
           }
         }
       },
