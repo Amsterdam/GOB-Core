@@ -3,12 +3,15 @@ from typing import List
 import re
 import os
 import cx_Oracle
+import tempfile
+import shutil
 
 from sqlalchemy.engine.url import URL
 from gobcore.datastore.sql import SqlDatastore
 from gobcore.exceptions import GOBException
 
 ORACLE_DRIVER = 'oracle+cx_oracle'
+
 
 DSN_FAILOVER_TEMPLATE = """
 (DESCRIPTION=
@@ -20,6 +23,13 @@ DSN_FAILOVER_TEMPLATE = """
     (CONNECT_DATA=(SERVICE_NAME={database})))"""
 DSN_FAILOVER_ADDRESS_TEMPLATE = '(ADDRESS=(PROTOCOL=tcp)(HOST={host})(PORT={port}))'
 
+ORACLE_CONFIG = """
+SQLNET.CRYPTO_CHECKSUM_CLIENT = required
+SQLNET.CRYPTO_CHECKSUM_TYPES_CLIENT = (SHA512)
+SQLNET.ENCRYPTION_CLIENT = required
+SQLNET.ENCRYPTION_TYPES_CLIENT = (AES256)
+"""
+
 
 class OracleDatastore(SqlDatastore):
 
@@ -28,6 +38,25 @@ class OracleDatastore(SqlDatastore):
 
         self.connection_config['drivername'] = ORACLE_DRIVER
         self.connection_config['url'] = self.get_url()
+        self.oracle_config_dir = tempfile.mkdtemp()
+        # Reuire encryption on TCP level.
+        # If th encryption is enabled, the follwoing SQL gives output
+        #
+        #  select NETWORK_SERVICE_BANNER from v$session_connect_info where
+        #    SID = sys_context('USERENV','SID')
+        #    AND NETWORK_SERVICE_BANNER LIKE '%ncryption service adapter%'
+        #
+        # Which will display something like:
+        #   [{'network_service_banner':
+        #     'AES256 Encryption service adapter for Linux: Version 19.0.0.0.0 - Production'}]
+        #
+        oracle_config = os.path.join(self.oracle_config_dir, 'sqlnet.ora')
+        with open(oracle_config, 'w') as f:
+            f.write(ORACLE_CONFIG)
+        os.environ['TNS_ADMIN'] = self.oracle_config_dir
+
+    def __del__(self):
+        shutil.rmtree(self.oracle_config_dir)
 
     def get_url(self):
         # Allow mutiple hosts speciefied, comma separated
