@@ -4034,7 +4034,9 @@
             "description": "De datum van geboorte.",
             "level": 4,
             "attributes": {
-              "formatted": "GOB.String"
+              "formatted": {
+                "type": "GOB.String"
+              }
             }
           },
           "heeft_geboorteplaats_nederland": {
@@ -4223,7 +4225,9 @@
             "type": "GOB.IncompleteDate",
             "description": "De datum van aangifte of ambtshalve melding van verblijf op het buitenlands adres.",
             "attributes": {
-              "formatted": "GOB.String"
+              "formatted": {
+                "type": "GOB.String"
+              }
             }
           },
           "aanduiding_persoongegevens_in_onderzoek": {
@@ -4234,14 +4238,18 @@
             "type": "GOB.IncompleteDate",
             "description": "De datum aanvang persoononderzoek.",
             "attributes": {
-              "formatted": "GOB.String"
+              "formatted": {
+                "type": "GOB.String"
+              }
             }
           },
           "datum_einde_persoononderzoek": {
             "type": "GOB.IncompleteDate",
             "description": "De datum einde persoononderzoek.",
             "attributes": {
-              "formatted": "GOB.String"
+              "formatted": {
+                "type": "GOB.String"
+              }
             }
           },
           "aantal_keren_persoon_in_onderzoek": {
@@ -4282,14 +4290,18 @@
             "type": "GOB.IncompleteDate",
             "description": "De datum van inschrijving in de gemeente.",
             "attributes": {
-              "formatted": "GOB.String"
+              "formatted": {
+                "type": "GOB.String"
+              }
             }
           },
           "datum_aanvang_adreshouding": {
             "type": "GOB.IncompleteDate",
             "description": "De datum van aangifte of ambtshalve melding van verblijf en adres.",
             "attributes": {
-              "formatted": "GOB.String"
+              "formatted": {
+                "type": "GOB.String"
+              }
             }
           },
           "eind_datum_bewoning": {
@@ -4330,7 +4342,9 @@
             "type": "GOB.IncompleteDate",
             "description": "De datum van inschrijving in Nederland.",
             "attributes": {
-              "formatted": "GOB.String"
+              "formatted": {
+                "type": "GOB.String"
+              }
             }
           }
         }
