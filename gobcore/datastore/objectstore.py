@@ -1,12 +1,150 @@
+"""
+We use the objectstore to get/upload the latest and greatest.
+
+import objectstore
+
+give example config:
+
+    OBJECTSTORE = dict(
+       VERSION='2.0',
+       AUTHURL='https://identity.stack.cloudvps.com/v2.0',
+       TENANT_NAME='BGE000081_Handelsregister',
+       TENANT_ID='0efc828b88584759893253f563b35f9b',
+       USER=os.getenv('OBJECTSTORE_USER', 'handelsregister'),
+       PASSWORD=os.getenv('HANDELSREGISTER_OBJECTSTORE_PASSWORD'),
+       REGION_NAME='NL',
+    )
+
+    connection = objectstore.get_connection(OBJECTSTORE)
+
+    loop over all items in 'container/dirname'
+
+    meta_data = connection.get_full_container_list(connection, 'dirname')
+
+    now you can loop over meta data of files
+
+    for file_info in meta_data:
+        if file_info['name'].endswith(expected_file):
+
+        LOG.debug('Downloading: %s', (expected_file))
+
+        new_data = objectstore.get_object(
+            connection, o_info, container)
+
+"""
 import io
-import re
+import logging
 import os
+import re
+from typing import Tuple
+
 import pandas
+from swiftclient.client import Connection
 
-from objectstore.objectstore import get_connection, get_full_container_list, get_object
 from gobcore.datastore.datastore import Datastore, ListEnabledDatastore, PutEnabledDatastore, DeleteEnabledDatastore
-
 from gobcore.exceptions import GOBException
+
+LOG = logging.getLogger('objectstore')
+
+logging.getLogger("requests").setLevel(logging.WARNING)
+logging.getLogger("urllib3").setLevel(logging.WARNING)
+logging.getLogger("swiftclient").setLevel(logging.WARNING)
+
+
+def make_config_from_env():
+    OBJECTSTORE = dict(
+        VERSION='2.0',
+        AUTHURL='https://identity.stack.cloudvps.com/v2.0',
+        TENANT_NAME=os.getenv('TENANT_NAME'),
+        TENANT_ID=os.getenv('TENANT_ID'),
+        USER=os.getenv('OBJECTSTORE_USER'),
+        PASSWORD=os.getenv('OBJECTSTORE_PASSWORD'),
+        REGION_NAME='NL',
+    )
+    return OBJECTSTORE
+
+
+def get_connection(store_settings: dict = None) -> Connection:
+    """
+    get an objectstore connection
+    """
+    store = store_settings or make_config_from_env()
+
+    os_options = {
+        'tenant_id': store['TENANT_ID'],
+        'region_name': store['REGION_NAME'],
+    }
+
+    # when we are running in cloudvps we should use internal urls
+    use_internal = os.getenv('OBJECTSTORE_LOCAL', '')
+    if use_internal:
+        os_options['endpoint_type'] = 'internalURL'
+
+    connection = Connection(
+        authurl=store['AUTHURL'],
+        user=store['USER'],
+        key=store['PASSWORD'],
+        tenant_name=store['TENANT_NAME'],
+        auth_version=store['VERSION'],
+        os_options=os_options
+    )
+
+    return connection
+
+
+def get_full_container_list(conn, container, **kwargs) -> list:
+    limit = kwargs.get('limit', 10000)
+
+    # fetch first limit number of objects
+    _, objects = conn.get_container(container, **kwargs)
+    for object_info in objects:
+        yield object_info
+
+    # continue to fetch next limit number of objects
+    # until all objects will be fetched
+    while len(objects) == limit:
+        kwargs['marker'] = objects[-1]['name']
+        _, objects = conn.get_container(container, **kwargs)
+        for object_info in objects:
+            yield object_info
+
+
+def get_object(connection, object_meta_data: dict, dirname: str, chunk_size: int = 50_000_000,
+               max_chunks: int = None, **kwargs) -> bytes:
+    """
+    Download object from objectstore using chunks with `chunk_size`. (default 50mb)
+    Use chunks to workaround bug: https://bugs.python.org/issue42853
+    object_meta_data is an object retured when using 'get_full_container_list'
+    """
+    _, chunks = connection.get_object(dirname, object_meta_data['name'], resp_chunk_size=chunk_size, **kwargs)
+    result = bytearray()
+
+    for idx, chunk in enumerate(chunks, start=1):
+        result += chunk
+
+        if max_chunks and idx == max_chunks:
+            break
+
+    return bytes(result)
+
+
+def put_object(connection, container: str, object_name: str, contents, content_type: str, **kwargs):
+    """
+    Put file to objectstore
+
+    container == "path/in/store"
+    object_name = "your_file_name.txt"
+    contents=thefiledata (fileobject) open('ourfile', 'rb')
+    content_type='csv'  / 'application/json' .. etc
+    """
+    connection.put_object(container, object_name, contents=contents, content_type=content_type, **kwargs)
+
+
+def delete_object(connection, container: str, object_meta_data: dict, **kwargs):
+    """
+    Delete single object from objectstore
+    """
+    connection.delete_object(container, object_meta_data['name'], **kwargs)
 
 
 class ObjectDatastore(Datastore, ListEnabledDatastore, PutEnabledDatastore, DeleteEnabledDatastore):
@@ -149,6 +287,12 @@ class ObjectDatastore(Datastore, ListEnabledDatastore, PutEnabledDatastore, Dele
 
             if path is None or f['name'].startswith(path):
                 yield f['name']
+
+    def list_filesizes(self, path=None) -> Tuple[str, int]:
+        """Yield combination of filepath and filesize."""
+        for f in get_full_container_list(self.connection, self.container_name):
+            if path is None or f['name'].startswith(path):
+                yield f['name'], int(f['bytes'])
 
     def delete_file(self, filename: str):
         self.connection.delete_object(self.container_name, filename)

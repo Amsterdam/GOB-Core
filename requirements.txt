@@ -8,7 +8,9 @@ flake8==3.8.4
 GDAL==${LIBGDAL_VERSION}
 GeoAlchemy2==0.5.0
 geomet==0.2.0.post2
-datapunt-objectstore==2020.9.7
+python-swiftclient==3.12.0
+python-keystoneclient==4.2.0
+jsonschema==3.2.0
 ijson==2.3
 mock==2.0.0
 more-itertools==4.3.0

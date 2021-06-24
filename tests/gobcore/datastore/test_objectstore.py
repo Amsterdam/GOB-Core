@@ -1,7 +1,8 @@
 from unittest import TestCase
 from unittest.mock import patch, MagicMock
 
-from gobcore.datastore.objectstore import ObjectDatastore, GOBException
+from gobcore.datastore.objectstore import ObjectDatastore, GOBException, make_config_from_env, get_object, \
+    get_connection, put_object, get_full_container_list, delete_object
 
 
 class MockExcel():
@@ -26,6 +27,80 @@ class MockUVA2():
         return [
             (0, {"a": 1})
         ]
+
+
+@patch("gobcore.datastore.objectstore.os.getenv", lambda *args: "containerfromenv")
+class TestConnection(TestCase):
+
+    def setUp(self) -> None:
+        self.cfg = make_config_from_env()
+
+    def test_make_config(self):
+        cfg = make_config_from_env()
+        expected = {
+            'VERSION': '2.0',
+            'AUTHURL': 'https://identity.stack.cloudvps.com/v2.0',
+            'TENANT_NAME': 'containerfromenv',
+            'TENANT_ID': 'containerfromenv',
+            'USER': 'containerfromenv',
+            'PASSWORD': 'containerfromenv',
+            'REGION_NAME': 'NL'
+        }
+        self.assertDictEqual(cfg, expected)
+
+    @patch("gobcore.datastore.objectstore.Connection")
+    def test_get_connection(self, mock_conn):
+        get_connection(self.cfg)
+
+        mock_conn.assert_called_with(
+            authurl=self.cfg['AUTHURL'],
+            user=self.cfg['USER'],
+            key=self.cfg['PASSWORD'],
+            tenant_name=self.cfg['TENANT_NAME'],
+            auth_version=self.cfg['VERSION'],
+            os_options={
+                'tenant_id': self.cfg['TENANT_ID'],
+                'region_name': self.cfg['REGION_NAME'],
+                'endpoint_type': 'internalURL'
+            }
+        )
+
+    @patch("gobcore.datastore.objectstore.Connection")
+    def test_get_full_container_list(self, mock_conn):
+        container = 'cont'
+
+        obj = {'name': 'naam'}
+
+        mock_conn.get_container.return_value = ('header', [obj])
+        result = get_full_container_list(mock_conn, container, limit=1)
+
+        self.assertEqual(next(result), obj)
+        self.assertEqual(next(result), obj)
+
+    @patch("gobcore.datastore.objectstore.Connection")
+    def test_get_object(self, mock_conn):
+        mock_conn.get_object.return_value = ('', [b'chunk1'])
+
+        metadata = {'name': 'naam'}
+        dirname = 'dir'
+
+        self.assertEqual(get_object(mock_conn, metadata, dirname), b'chunk1')
+        self.assertEqual(get_object(mock_conn, metadata, dirname, max_chunks=1), b'chunk1')
+
+    @patch("gobcore.datastore.objectstore.Connection")
+    def test_put_object(self, mock_conn):
+        kwargs = {
+            'contents': b'contents',
+            'content_type': 'het type'
+        }
+        put_object(mock_conn, 'de container', 'naam', **kwargs)
+        mock_conn.put_object.assert_called_with('de container', 'naam', **kwargs)
+
+    @patch("gobcore.datastore.objectstore.Connection")
+    def test_delete_object(self, mock_conn):
+        metadata = {'name': 'naam'}
+        delete_object(mock_conn, 'de container', metadata)
+        mock_conn.delete_object.assert_called_with('de container', 'naam')
 
 
 @patch("gobcore.datastore.objectstore.Datastore", MagicMock)
@@ -273,6 +348,16 @@ class TestObjectDatastore(TestCase):
             'b/file.txt',
             'a/b/c/file2.txt',
         ], list(store.list_files()))
+
+    @patch("gobcore.datastore.objectstore.get_full_container_list")
+    def test_list_filesizes(self, mock_get_list):
+        mock_get_list.return_value = [
+            {'name': 'a/b/c/file.txt', 'bytes': 10},
+            {'name': 'a/b/file.txt', 'bytes': 11}
+        ]
+        store = ObjectDatastore({})
+        expected = [('a/b/c/file.txt', 10), ('a/b/file.txt', 11)]
+        self.assertEqual(list(store.list_filesizes('a/b')), expected)
 
     def test_delete_file(self):
         store = ObjectDatastore({})
