@@ -51,24 +51,22 @@ logging.getLogger("urllib3").setLevel(logging.WARNING)
 logging.getLogger("swiftclient").setLevel(logging.WARNING)
 
 
-def make_config_from_env():
-    OBJECTSTORE = dict(
-        VERSION='2.0',
-        AUTHURL='https://identity.stack.cloudvps.com/v2.0',
-        TENANT_NAME=os.getenv('TENANT_NAME'),
-        TENANT_ID=os.getenv('TENANT_ID'),
-        USER=os.getenv('OBJECTSTORE_USER'),
-        PASSWORD=os.getenv('OBJECTSTORE_PASSWORD'),
-        REGION_NAME='NL',
-    )
-    return OBJECTSTORE
+OBJECTSTORE = {
+    'VERSION': '2.0',
+    'AUTHURL': 'https://identity.stack.cloudvps.com/v2.0',
+    'TENANT_NAME': os.getenv('TENANT_NAME'),
+    'TENANT_ID': os.getenv('TENANT_ID'),
+    'USER': os.getenv('OBJECTSTORE_USER'),
+    'PASSWORD': os.getenv('OBJECTSTORE_PASSWORD'),
+    'REGION_NAME': 'NL'
+}
 
 
 def get_connection(store_settings: dict = None) -> Connection:
     """
     get an objectstore connection
     """
-    store = store_settings or make_config_from_env()
+    store = store_settings or OBJECTSTORE
 
     os_options = {
         'tenant_id': store['TENANT_ID'],
@@ -93,24 +91,23 @@ def get_connection(store_settings: dict = None) -> Connection:
 
 
 def get_full_container_list(conn, container, **kwargs) -> list:
-    limit = kwargs.get('limit', 10000)
+    marker = kwargs.pop('marker', None)
+    limit = kwargs.pop('limit', 10_000)
 
-    # fetch first limit number of objects
-    _, objects = conn.get_container(container, **kwargs)
-    for object_info in objects:
-        yield object_info
+    while True:
+        _, objects = conn.get_container(container, marker=marker, limit=limit, **kwargs)
 
-    # continue to fetch next limit number of objects
-    # until all objects will be fetched
-    while len(objects) == limit:
-        kwargs['marker'] = objects[-1]['name']
-        _, objects = conn.get_container(container, **kwargs)
         for object_info in objects:
             yield object_info
 
+        if not objects or len(objects) != limit:
+            break
+
+        marker = objects[-1]['name']
+
 
 def get_object(connection, object_meta_data: dict, dirname: str, chunk_size: int = 50_000_000,
-               max_chunks: int = None, **kwargs) -> bytes:
+               **kwargs) -> bytes:
     """
     Download object from objectstore using chunks with `chunk_size`. (default 50mb)
     Use chunks to workaround bug: https://bugs.python.org/issue42853
@@ -119,11 +116,8 @@ def get_object(connection, object_meta_data: dict, dirname: str, chunk_size: int
     _, chunks = connection.get_object(dirname, object_meta_data['name'], resp_chunk_size=chunk_size, **kwargs)
     result = bytearray()
 
-    for idx, chunk in enumerate(chunks, start=1):
+    for chunk in chunks:
         result += chunk
-
-        if max_chunks and idx == max_chunks:
-            break
 
     return bytes(result)
 

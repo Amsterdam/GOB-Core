@@ -1,19 +1,11 @@
 from unittest import TestCase
 from unittest.mock import patch, MagicMock
 
-from gobcore.datastore.objectstore import ObjectDatastore, GOBException, make_config_from_env, get_object, \
-    get_connection, put_object, get_full_container_list, delete_object
+from gobcore.datastore.objectstore import ObjectDatastore, GOBException, get_object, \
+    get_connection, put_object, get_full_container_list, delete_object, OBJECTSTORE
 
 
-class MockExcel():
-
-    def iterrows(self):
-        return [
-            (0, {"a": 1})
-        ]
-
-
-class MockCSV():
+class MockExcel:
 
     def iterrows(self):
         return [
@@ -21,7 +13,7 @@ class MockCSV():
         ]
 
 
-class MockUVA2():
+class MockCSV:
 
     def iterrows(self):
         return [
@@ -29,38 +21,41 @@ class MockUVA2():
         ]
 
 
-@patch("gobcore.datastore.objectstore.os.getenv", lambda *args: "containerfromenv")
+class MockUVA2:
+
+    def iterrows(self):
+        return [
+            (0, {"a": 1})
+        ]
+
+
 class TestConnection(TestCase):
 
-    def setUp(self) -> None:
-        self.cfg = make_config_from_env()
-
     def test_make_config(self):
-        cfg = make_config_from_env()
         expected = {
             'VERSION': '2.0',
             'AUTHURL': 'https://identity.stack.cloudvps.com/v2.0',
-            'TENANT_NAME': 'containerfromenv',
-            'TENANT_ID': 'containerfromenv',
-            'USER': 'containerfromenv',
-            'PASSWORD': 'containerfromenv',
+            'TENANT_NAME': 'ten_name',
+            'TENANT_ID': 'ten_id',
+            'USER': 'user',
+            'PASSWORD': 'pw',
             'REGION_NAME': 'NL'
         }
-        self.assertDictEqual(cfg, expected)
+        self.assertDictEqual(OBJECTSTORE, expected)
 
     @patch("gobcore.datastore.objectstore.Connection")
     def test_get_connection(self, mock_conn):
-        get_connection(self.cfg)
+        get_connection(OBJECTSTORE)
 
         mock_conn.assert_called_with(
-            authurl=self.cfg['AUTHURL'],
-            user=self.cfg['USER'],
-            key=self.cfg['PASSWORD'],
-            tenant_name=self.cfg['TENANT_NAME'],
-            auth_version=self.cfg['VERSION'],
+            authurl=OBJECTSTORE['AUTHURL'],
+            user=OBJECTSTORE['USER'],
+            key=OBJECTSTORE['PASSWORD'],
+            tenant_name=OBJECTSTORE['TENANT_NAME'],
+            auth_version=OBJECTSTORE['VERSION'],
             os_options={
-                'tenant_id': self.cfg['TENANT_ID'],
-                'region_name': self.cfg['REGION_NAME'],
+                'tenant_id': OBJECTSTORE['TENANT_ID'],
+                'region_name': OBJECTSTORE['REGION_NAME'],
                 'endpoint_type': 'internalURL'
             }
         )
@@ -71,11 +66,16 @@ class TestConnection(TestCase):
 
         obj = {'name': 'naam'}
 
-        mock_conn.get_container.return_value = ('header', [obj])
-        result = get_full_container_list(mock_conn, container, limit=1)
+        mock_conn.get_container.return_value = ('header', [obj, obj])
+        result = get_full_container_list(mock_conn, container, limit=2)
+        self.assertEqual(next(result), obj)
+        self.assertEqual(next(result), obj)
 
+        mock_conn.get_container.return_value = ('header', [obj])
         self.assertEqual(next(result), obj)
-        self.assertEqual(next(result), obj)
+        mock_conn.get_container.assert_called_with('cont', marker='naam', limit=2)
+
+        self.assertRaises(StopIteration, next, result)
 
     @patch("gobcore.datastore.objectstore.Connection")
     def test_get_object(self, mock_conn):
