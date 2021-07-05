@@ -3046,7 +3046,7 @@
         "entity_id": "id",
         "attributes": {
           "id": {
-            "type": "GOB.Integer",
+            "type": "GOB.String",
             "description": ""
           },
           "kennisgevingsdatum": {
