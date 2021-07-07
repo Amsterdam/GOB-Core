@@ -4113,9 +4113,9 @@
             "type": "GOB.Integer",
             "description": "PLUS: Het totaal aantal minderjarige kinderen van de ingeschrevene."
           },
-          "heeft_verblijfplaatsen": {
+          "heeft_persoonsverblijfplaatsen": {
             "type": "GOB.ManyReference",
-            "ref": "brp:verblijfplaatsen",
+            "ref": "brp:persoonsverblijfplaatsen",
             "description": "Een verwijzing naar de actuele of historische verblijfplaatsen van een persoon."
           },
           "heeft_overlijden_gegevens": {
@@ -4255,7 +4255,12 @@
           "aantal_keren_persoon_in_onderzoek": {
             "type": "GOB.Integer",
             "description": "PLUS: het totaal aantal keren dat deze persoon in onderzoek was/is."
-          }
+          },
+          "heeft_persoonsverblijfplaatsen": {
+            "type": "GOB.ManyReference",
+            "ref": "brp:persoonsverblijfplaatsen",
+            "description": "Een verwijzing naar de actuele of historische personen van een verblijfplaats."
+          }          
         }
       },
       "persoonsverblijfplaatsen": {
@@ -4268,14 +4273,12 @@
             "description": "Interne sleutel ten behoeve van het uniek opslaan van de gegevens."
           },
           "van_persoon": {
-            "type": "GOB.Reference",
-            "ref": "brp:personen",
-            "description": "Relatie naar persoonsgegevens dmv systeem nummer."
+            "type": "GOB.String",
+            "description": "(Relatie naar) persoonsgegevens dmv systeem nummer."
           },
           "met_verblijfplaats": {
-            "type": "GOB.Reference",
-            "ref": "brp:verblijfplaatsen",
-            "description": "Relatie naar verblijfplaats(en) van persoon."
+            "type": "GOB.String",
+            "description": "(Relatie naar) verblijfplaats(en) van persoon."
           },
           "functieadres": {
             "type": "GOB.String",

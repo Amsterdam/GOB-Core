@@ -899,20 +899,10 @@
     },
     "brp": {
       "personen": {
-        "heeft_verblijfplaatsen": {
+        "heeft_persoonsverblijfplaatsen": {
           "method": "equals",
-          "destination_attribute": "identificatie",
+          "destination_attribute": "van_persoon",
           "multiple_allowed": true
-        }
-      },
-      "persoonsverblijfplaatsen": {
-        "van_persoon": {
-          "method": "equals",
-          "destination_attribute": "identificatie"
-        },
-        "met_verblijfplaats": {
-          "method": "equals",
-          "destination_attribute": "identificatie"
         }
       },
       "verblijfplaatsen": {
@@ -931,6 +921,11 @@
         "heeft_nummeraanduiding": {
           "method": "equals",
           "destination_attribute": "identificatie"
+        },
+        "heeft_persoonsverblijfplaatsen": {
+          "method": "equals",
+          "destination_attribute": "met_verblijfplaats",
+          "multiple_allowed": true
         }
       }
     }
