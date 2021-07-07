@@ -2386,7 +2386,7 @@
         "entity_id": "identificatie",
         "attributes": {
           "id": {
-            "type": "GOB.Integer",
+            "type": "GOB.String",
             "description": "Neuron ID"
           },
           "identificatie": {
@@ -3136,7 +3136,7 @@
             "description": "Uniek nummer waarmee de beperking is genummerd. (in Neuron applicatie bekend als inschrijfnummer)"
           },
           "volgnummer": {
-            "type": "GOB.String",
+            "type": "GOB.Integer",
             "description": "Volgnummer van de beperking."
           },
           "beperking": {
