@@ -16,31 +16,12 @@ RUNS_IN_OWN_THREAD = "own_thread"   # Service that runs in a separate thread
 assert(HEARTBEAT_INTERVAL % CHECK_CONNECTION == 0)
 
 
-def _on_message(connection, service, msg):
-    """Called on every message receipt
-
-    :param connection: the connection with the message broker
-    :param service: the service definition for the message
-    :param msg: the contents of the message
-
-    :return:
+def _handle_result_msg(connection, service, result_msg) -> bool:
     """
-    handler = service['handler']
-    result_msg = None
-    try:
-        Heartbeat.progress(connection, service, msg, STATUS_START)
-        result_msg = handler(msg)
-        Heartbeat.progress(connection, service, msg, STATUS_OK)
-    except Exception as err:
-        Heartbeat.progress(connection, service, msg, STATUS_FAIL, str(err))
-        # re-raise the exception, further handling is done in the message broker
-        raise err
-
-    # Don't acknowledge messages which explicitely return False, in all other cases do acknowledge.
-    if result_msg is False:
-        return False
-
-    elif result_msg:
+    Processes issues, notifications and reports from result message if available.
+    Return False if result_msg is False, else True
+    """
+    if result_msg:
         process_issues(result_msg)
 
         if contains_notification(result_msg):
@@ -51,8 +32,37 @@ def _on_message(connection, service, msg):
             report = service['report']
             connection.publish(report['exchange'], report['key'], result_msg)
 
-    # Remove the message from the queue by returning true
-    return True
+    # Don't acknowledge messages which explicitely return False, in all other cases do acknowledge.
+    return result_msg is not False
+
+
+def _on_message(connection, service, msg):
+    """Called on every message receipt
+
+    :param connection: the connection with the message broker
+    :param service: the service definition for the message
+    :param msg: the contents of the message
+
+    :return:
+    """
+    handler = service['handler']
+
+    try:
+        Heartbeat.progress(connection, service, msg, STATUS_START)
+        result_msg = handler(msg)
+        result = _handle_result_msg(connection, service, result_msg)
+
+        if result:
+            Heartbeat.progress(connection, service, msg, STATUS_OK)
+
+    except Exception as err:
+        Heartbeat.progress(connection, service, msg, STATUS_FAIL, str(err))
+        # re-raise the exception, further handling is done in the message broker
+        raise err
+
+    else:
+        # Remove the message from the queue by returning true
+        return result
 
 
 class MessagedrivenService:
