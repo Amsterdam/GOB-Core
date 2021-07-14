@@ -36,7 +36,11 @@ def _on_message(connection, service, msg):
         # re-raise the exception, further handling is done in the message broker
         raise err
 
-    if result_msg:
+    # Don't acknowledge messages which explicitely return False, in all other cases do acknowledge.
+    if result_msg is False:
+        return False
+
+    elif result_msg:
         process_issues(result_msg)
 
         if contains_notification(result_msg):

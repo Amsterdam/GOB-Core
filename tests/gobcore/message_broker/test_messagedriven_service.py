@@ -59,6 +59,11 @@ class TestMessageDrivenServiceFunctions(unittest.TestCase):
             # The return message should be published on the return queue
             mocked_publish.assert_called_with(return_queue['exchange'], return_queue['key'], return_message)
 
+            # Handler can return false, assert False is returned
+            mocked_handler.return_value = False
+            result = messagedriven_service._on_message(connection, single_service, message)
+            self.assertFalse(result)
+
         mock_process_issues.assert_called_with(return_message)
         mock_send_notification.assert_called_with(return_message)
 
