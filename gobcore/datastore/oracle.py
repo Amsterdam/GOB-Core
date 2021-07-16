@@ -20,7 +20,8 @@ DSN_FAILOVER_TEMPLATE = """
     (CONNECT_TIMEOUT=3)
     (RETRY_COUNT=3)
     (ADDRESS_LIST={address_list})
-    (CONNECT_DATA=(SERVICE_NAME={database})))"""
+    (CONNECT_DATA=(SERVICE_NAME={database})))
+"""
 DSN_FAILOVER_ADDRESS_TEMPLATE = '(ADDRESS=(PROTOCOL=tcp)(HOST={host})(PORT={port}))'
 
 ORACLE_CONFIG = """
@@ -84,15 +85,21 @@ class OracleDatastore(SqlDatastore):
             '''
             return a + [a[-1]] * max(b_len - len(a), 0)
 
+        def filter_whitespace(text: str):
+            return ''.join(text.split())
+
         hosts, ports = host.split(','), port.split(',')
         ports = strech_list(ports, len(hosts))
         hosts = strech_list(hosts, len(ports))
         address_list = [DSN_FAILOVER_ADDRESS_TEMPLATE.format(host=h, port=p) for h, p in zip(hosts, ports)]
-        return DSN_FAILOVER_TEMPLATE.format(
-                        failover='off' if len(address_list) == 1 else 'on',
-                        address_list='\n'.join(address_list),
-                        database=database
-                    )
+
+        return filter_whitespace(
+            DSN_FAILOVER_TEMPLATE.format(
+                failover='off' if len(address_list) == 1 else 'on',
+                address_list=''.join(address_list),
+                database=database
+            )
+        )
 
     def connect(self):
         """Connect to the datasource

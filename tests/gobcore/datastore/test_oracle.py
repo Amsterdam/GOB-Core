@@ -64,34 +64,30 @@ class TestOracleDatastore(TestCase):
         address_list = [
             DSN_FAILOVER_ADDRESS_TEMPLATE.format(host='localhost', port='1234'),
         ]
-        exp_res = DSN_FAILOVER_TEMPLATE.format(
-            failover='off',
-            address_list='\n'.join(address_list),
-            database='db'
-        )
+        exp_res = '(DESCRIPTION=(FAILOVER=off)(LOAD_BALANCE=off)(CONNECT_TIMEOUT=3)(RETRY_COUNT=3)' \
+                  f'(ADDRESS_LIST={address_list[0]})' \
+                  '(CONNECT_DATA=(SERVICE_NAME=db)))'
         self.assertEqual(OracleDatastore._get_dsn(**args), exp_res)
+
         args['host'] = 'localhost1,localhost2'
         address_list = [
             DSN_FAILOVER_ADDRESS_TEMPLATE.format(host='localhost1', port='1234'),
             DSN_FAILOVER_ADDRESS_TEMPLATE.format(host='localhost2', port='1234')
         ]
-        exp_res = DSN_FAILOVER_TEMPLATE.format(
-            failover='on',
-            address_list='\n'.join(address_list),
-            database='db'
-        )
+        exp_res = '(DESCRIPTION=(FAILOVER=on)(LOAD_BALANCE=off)(CONNECT_TIMEOUT=3)(RETRY_COUNT=3)' \
+                  f'(ADDRESS_LIST={"".join(address_list)})' \
+                  '(CONNECT_DATA=(SERVICE_NAME=db)))'
         self.assertEqual(exp_res, OracleDatastore._get_dsn(**args))
+
         args['host'] = 'localhost'
         args['port'] = '1234,1235'
         address_list=[
             DSN_FAILOVER_ADDRESS_TEMPLATE.format(host='localhost', port='1234'),
             DSN_FAILOVER_ADDRESS_TEMPLATE.format(host='localhost', port='1235')
         ]
-        exp_res = DSN_FAILOVER_TEMPLATE.format(
-            failover='on',
-            address_list='\n'.join(address_list),
-            database='db'
-        )
+        exp_res = '(DESCRIPTION=(FAILOVER=on)(LOAD_BALANCE=off)(CONNECT_TIMEOUT=3)(RETRY_COUNT=3)' \
+                  f'(ADDRESS_LIST={"".join(address_list)})' \
+                  '(CONNECT_DATA=(SERVICE_NAME=db)))'
         self.assertEqual(exp_res, OracleDatastore._get_dsn(**args))
 
 
@@ -111,11 +107,11 @@ class TestOracleDatastore(TestCase):
         store.connect()
         self.assertEqual("(user@db)", store.user)
         self.assertEqual({"connected": True}, store.connection)
-        dsn = DSN_FAILOVER_TEMPLATE.format(
-            failover='off',
-            address_list=DSN_FAILOVER_ADDRESS_TEMPLATE.format(host=config['host'], port=config['port']),
-            database=config['database']
-        )
+
+        address_list = DSN_FAILOVER_ADDRESS_TEMPLATE.format(host=config['host'], port=config['port'])
+        dsn = '(DESCRIPTION=(FAILOVER=off)(LOAD_BALANCE=off)(CONNECT_TIMEOUT=3)(RETRY_COUNT=3)' \
+                  f'(ADDRESS_LIST={"".join(address_list)})' \
+                  '(CONNECT_DATA=(SERVICE_NAME=db)))'
         mock_cx_oracle.Connection.assert_called_with(user='user', password='pw', dsn = dsn)
 
         config = {
