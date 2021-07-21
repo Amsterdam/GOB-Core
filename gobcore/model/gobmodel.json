@@ -4433,11 +4433,11 @@
               "plaats_in_buitenland": {
                 "type": "GOB.SecureString",
                 "level": 4
+              },
+              "omschrijving": {
+                "type": "GOB.SecureString",
+                "level": 4
               }
-            },
-            "omschrijving": {
-              "type": "GOB.SecureString",
-              "level": 4
             }
           },
           "heeft_geboorteland": {
