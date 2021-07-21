@@ -4417,14 +4417,9 @@
             }
           },
           "heeft_geboorteplaats_nederland": {
-            "type": "GOB.String",
+            "type": "GOB.SecureString",
             "description": "Plaats in Nederland.",
-            "secure": {
-              "bronwaarde": {
-                "type": "GOB.SecureString",
-                "level": 4
-              }
-            }
+            "level": 4
           },
           "heeft_geboorteplaats_buitenland": {
             "type": "GOB.JSON",
@@ -4441,14 +4436,9 @@
             }
           },
           "heeft_geboorteland": {
-            "type": "GOB.String",
+            "type": "GOB.SecureString",
             "description": "Een land uit de BRP.",
-            "secure": {
-              "bronwaarde": {
-                "type": "GOB.SecureString",
-                "level": 4
-              }
-            }
+            "level": 4
           }
         }
       },
