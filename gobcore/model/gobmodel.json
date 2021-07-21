@@ -4132,6 +4132,16 @@
             "type": "GOB.Reference",
             "ref": "brp:inschrijvingen",
             "description": "De eerste inschrijving in het GBA of RNI."
+          },
+          "heeft_ouder1": {
+            "type": "GOB.Reference",
+            "ref": "brp:ouders",
+            "description": "De ouder 1 van de persoon."
+          },
+          "heeft_ouder2": {
+            "type": "GOB.Reference",
+            "ref": "brp:ouders",
+            "description": "De ouder 2 van de persoon."
           }
         }
       },
@@ -4351,7 +4361,182 @@
             }
           }
         }
+      },
+      "ouders": { 
+        "version": "0.1",
+        "abbreviation": "OUD",
+        "entity_id": "identificatie",
+        "attributes": {
+          "identificatie": {
+            "type": "GOB.String",
+            "description": "Unieke identificatie van een ouder"
+          },
+          "burgerservicenummer": {
+          "type": "GOB.SecureString",
+          "description": "Het burgerservicenummer van de ouder, bedoeld in artikel 1.1 van de Wet algemene bepalingen burgerservicenummer.",
+          "level": 4
+          },
+          "voornamen": {
+          "type": "GOB.SecureString",
+          "description": "Voornamen van het subject.",
+          "level": 4
+          },
+          "voorvoegsels": {
+          "type": "GOB.SecureString",
+          "description": "De verzameling namen die, gescheiden door spaties, aan de geslachtsnaam voorafgaat. Indien aanwezig, wordt het predicaat.",
+          "level": 4
+          },
+          "geslachtsnaam": {
+          "type": "GOB.SecureString",
+          "description": "De (geslachts)naam waarvan de eventueel aanwezige voorvoegsels en adellijke titel zijn afgesplitst.",
+          "level": 4
+          },
+          "geslachtsaanduiding_code": {
+            "type": "GOB.JSON",
+            "description": "Gegevens over het geslacht van respectievelijk de persoon, de ouder, de echtgenoot/geregistreerd partner, de eerdere echtgenoot/geregistreerd partner.",
+            "attributes": {
+              "code": {
+                "type": "GOB.String",
+                "description": "Kan de waarde 'M', 'V' of 'O' bevatten."
+              },
+              "omschrijving": {
+                "type": "GOB.String"
+              }
+            }
+          },
+          "geslachtsaanduiding_oms": {
+              "type": "GOB.String",
+              "description": "De beschrijving van de geslchtsaanduiding"
+          },
+          "geboortedatum": {
+          "type": "GOB.SecureIncompleteDate",
+          "description": "De datum van geboorte.",
+          "level": 4,
+          "attributes": {
+            "formatted": "GOB.String"
+          }
+          },
+          "heeft_geboorteplaats_nederland": {
+          "type": "GOB.String",
+          "description": "Plaats in Nederland.",
+          "secure": {
+          "bronwaarde": {
+            "type": "GOB.SecureString",
+            "level": 4
+          }
+        }
+          },
+          "heeft_geboorteplaats_buitenland": {
+        "type": "GOB.JSON",
+        "description": "Een locatieaanduiding van een plaats in het buitenland.",
+        "attributes": {
+          "plaats_in_buitenland": {
+            "type": "GOB.SecureString",
+            "level": 4
+          },
+          "omschrijving": {
+            "type": "GOB.SecureString",
+            "level": 4
+          }
+        }
+          },
+          "heeft_geboorteland": {
+        "type": "GOB.String",
+        "description": "Een land uit de BRP.",
+        "secure": {
+          "bronwaarde": {
+            "type": "GOB.SecureString",
+            "level": 4
+          }
+        }      
+          }
+        }
+      },
+      "overlijden": {
+        "version": "0.1",
+        "abbreviation": "OLN",
+        "entity_id": "identificatie",
+        "attributes": {
+          "identificatie": {
+            "type": "GOB.String",
+            "description": "Unieke identificatie van een overlijden"
+          },
+          "datum_overlijden": {
+            "type": "GOB.IncompleteDate",
+            "description": "De datum van het overlijden",
+            "attributes": {
+              "formatted":  {
+                "type": "GOB.String"
+              }
+            }
+          },
+          "plaats_overlijden": {
+            "type": "GOB.String",
+            "description": "De plaats (of omschrijving van de locatie) van het overlijden."
+          },
+          "land_overlijden": {
+            "type": "GOB.String",
+            "description": "Het land van overlijden"
+          }
+        }
+      },
+      "verbintenissen": {
+        "version": "0.1",
+        "abbreviation": "VBI",
+        "entity_id": "identificatie",
+        "attributes": {
+          "identificatie": {
+            "type": "GOB.String",
+            "description": "Unieke identificatie van een persoon"
+          },
+          "identificatie_persoon2": {
+            "type": "GOB.String",
+            "description": "Unieke identificatie van de persoon waarmee een verbintenis bestaat"
+          },
+          "datum_sluiting": {
+            "type": "GOB.IncompleteDate",
+            "description": "De datum van het sluiten van de verbintenis",
+            "attributes": {
+              "formatted":  {
+                "type": "GOB.String"
+              }
+            }
+          },
+          "datum_ontbinding": {
+            "type": "GOB.IncompleteDate",
+            "description": "De datum van het ontbinden van de verbintenis",
+            "attributes": {
+              "formatted":  {
+                "type": "GOB.String"
+              }
+            }
+          }
+        }
+      },
+      "inschrijvingen": {
+        "version": "0.1",
+        "abbreviation": "VBI",
+        "entity_id": "identificatie",
+        "attributes": {
+          "identificatie": {
+            "type": "GOB.String",
+            "description": "Unieke identificatie van een persoon."
+          },
+          "burgerservicenummer": {
+            "type": "GOB.String",
+            "description": "HEt BSN nummer van de persoon."
+          },
+          "datum_eerste_inschrijving_GBA_RNI": {
+            "type": "GOB.Date",
+            "description": "De datum waarop de persoon de 1ste keer in de BRP of RNI is ingeschreven."
+          },
+          "code_geheim": {
+            "type": "GOB.String",
+            "description": "Codering of de inschrijving geheim is (7) of niet (0)."
+          }
+        }
       }
     }
   }
 }
+
