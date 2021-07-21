@@ -304,6 +304,11 @@ class AsyncConnection(object):
                     # Default is to acknowledge message
                     # Only on an explicit return value of False the message keeps unacked.
                     channel.basic_ack(basic_deliver.delivery_tag)
+                else:
+                    # This prevents a task queue from executing the same message twice due to concurrency
+                    # The original message should be handled
+                    print("Message not acknowlegded, discarding message")
+                    channel.basic_nack(basic_deliver.delivery_tag, requeue=False)
 
             if self._message_handler_thread is not None:
                 # Wait for any not yet terminated thread

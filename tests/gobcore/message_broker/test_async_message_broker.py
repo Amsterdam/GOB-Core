@@ -198,3 +198,21 @@ class TestAsyncConnection(TestCase):
         print_msg = mock_print.call_args[0][0]
 
         self.assertTrue(print_msg.startswith('Message handling has failed on second try'))
+
+    @patch('builtins.print')
+    @patch("gobcore.message_broker.async_message_broker.threading.Thread")
+    def test_on_message_nack(self, mock_thread, mock_print):
+        msg = {'some': 'message'}
+        message_handler = MagicMock(return_value=False)
+        on_message = self.async_connection.on_message('some queue', message_handler)
+        channel = MagicMock()
+        basic_deliver = MagicMock()
+
+        on_message(channel, basic_deliver, {}, json.dumps(msg))
+
+        thread_target = mock_thread.call_args[1]['target']
+        thread_target()
+
+        print_msg = mock_print.call_args[0][0]
+
+        self.assertEqual(print_msg, "Message not acknowlegded, discarding message")
