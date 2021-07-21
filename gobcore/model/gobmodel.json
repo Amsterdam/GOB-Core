@@ -4372,24 +4372,24 @@
             "description": "Unieke identificatie van een ouder"
           },
           "burgerservicenummer": {
-          "type": "GOB.SecureString",
-          "description": "Het burgerservicenummer van de ouder, bedoeld in artikel 1.1 van de Wet algemene bepalingen burgerservicenummer.",
-          "level": 4
+            "type": "GOB.SecureString",
+            "description": "Het burgerservicenummer van de ouder, bedoeld in artikel 1.1 van de Wet algemene bepalingen burgerservicenummer.",
+            "level": 4
           },
           "voornamen": {
-          "type": "GOB.SecureString",
-          "description": "Voornamen van het subject.",
-          "level": 4
+            "type": "GOB.SecureString",
+            "description": "Voornamen van het subject.",
+            "level": 4
           },
           "voorvoegsels": {
-          "type": "GOB.SecureString",
-          "description": "De verzameling namen die, gescheiden door spaties, aan de geslachtsnaam voorafgaat. Indien aanwezig, wordt het predicaat.",
-          "level": 4
+            "type": "GOB.SecureString",
+            "description": "De verzameling namen die, gescheiden door spaties, aan de geslachtsnaam voorafgaat. Indien aanwezig, wordt het predicaat.",
+            "level": 4
           },
           "geslachtsnaam": {
-          "type": "GOB.SecureString",
-          "description": "De (geslachts)naam waarvan de eventueel aanwezige voorvoegsels en adellijke titel zijn afgesplitst.",
-          "level": 4
+            "type": "GOB.SecureString",
+            "description": "De (geslachts)naam waarvan de eventueel aanwezige voorvoegsels en adellijke titel zijn afgesplitst.",
+            "level": 4
           },
           "geslachtsaanduiding_code": {
             "type": "GOB.JSON",
@@ -4523,8 +4523,9 @@
             "description": "Unieke identificatie van een persoon."
           },
           "burgerservicenummer": {
-            "type": "GOB.String",
-            "description": "HEt BSN nummer van de persoon."
+            "type": "GOB.SecureString",
+            "description": "Het BSN nummer van de persoon.",
+            "level": 4
           },
           "datum_eerste_inschrijving_GBA_RNI": {
             "type": "GOB.Date",
