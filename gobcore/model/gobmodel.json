@@ -4362,7 +4362,7 @@
           }
         }
       },
-      "ouders": { 
+      "ouders": {
         "version": "0.1",
         "abbreviation": "OUD",
         "entity_id": "identificatie",
@@ -4405,50 +4405,50 @@
             }
           },
           "geslachtsaanduiding_oms": {
-              "type": "GOB.String",
-              "description": "De beschrijving van de geslchtsaanduiding"
+            "type": "GOB.String",
+            "description": "De beschrijving van de geslchtsaanduiding"
           },
           "geboortedatum": {
-          "type": "GOB.SecureIncompleteDate",
-          "description": "De datum van geboorte.",
-          "level": 4,
-          "attributes": {
-            "formatted": "GOB.String"
-          }
+            "type": "GOB.SecureIncompleteDate",
+            "description": "De datum van geboorte.",
+            "level": 4,
+            "attributes": {
+              "formatted": "GOB.String"
+            }
           },
           "heeft_geboorteplaats_nederland": {
-          "type": "GOB.String",
-          "description": "Plaats in Nederland.",
-          "secure": {
-          "bronwaarde": {
-            "type": "GOB.SecureString",
-            "level": 4
-          }
-        }
+            "type": "GOB.String",
+            "description": "Plaats in Nederland.",
+            "secure": {
+              "bronwaarde": {
+                "type": "GOB.SecureString",
+                "level": 4
+              }
+            }
           },
           "heeft_geboorteplaats_buitenland": {
-        "type": "GOB.JSON",
-        "description": "Een locatieaanduiding van een plaats in het buitenland.",
-        "attributes": {
-          "plaats_in_buitenland": {
-            "type": "GOB.SecureString",
-            "level": 4
-          },
-          "omschrijving": {
-            "type": "GOB.SecureString",
-            "level": 4
-          }
-        }
+            "type": "GOB.JSON",
+            "description": "Een locatieaanduiding van een plaats in het buitenland.",
+            "attributes": {
+              "plaats_in_buitenland": {
+                "type": "GOB.SecureString",
+                "level": 4
+              }
+            },
+            "omschrijving": {
+              "type": "GOB.SecureString",
+              "level": 4
+            }
           },
           "heeft_geboorteland": {
-        "type": "GOB.String",
-        "description": "Een land uit de BRP.",
-        "secure": {
-          "bronwaarde": {
-            "type": "GOB.SecureString",
-            "level": 4
-          }
-        }      
+            "type": "GOB.String",
+            "description": "Een land uit de BRP.",
+            "secure": {
+              "bronwaarde": {
+                "type": "GOB.SecureString",
+                "level": 4
+              }
+            }
           }
         }
       },
