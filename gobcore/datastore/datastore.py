@@ -33,7 +33,7 @@ class Datastore(ABC):
         pass  # pragma: no cover
 
     @abstractmethod
-    def query(self, query):
+    def query(self, query, **kwargs):
         pass  # pragma: no cover
 
     def read(self, query):
