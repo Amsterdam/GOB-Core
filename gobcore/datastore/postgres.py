@@ -33,8 +33,9 @@ class PostgresDatastore(SqlDatastore):
             raise GOBException(f'Missing configuration for source {self.connection_config["name"]}. Error: {e}')
 
     def disconnect(self):
-        if self.connection:
-            self.connection.close()
+        if hasattr(self, 'connection'):
+            if self.connection:
+                self.connection.close()
             del self.connection
 
     def query(self, query, yield_per=None):

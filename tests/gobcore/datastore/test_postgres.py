@@ -8,8 +8,8 @@ from psycopg2 import OperationalError, Error
 from gobcore.datastore.postgres import PostgresDatastore, GOBException
 
 
-class MockConnection():
-    class Cursor():
+class MockConnection:
+    class Cursor:
         def __init__(self, expected_result):
             self.expected_result = expected_result
 
@@ -22,13 +22,7 @@ class MockConnection():
         def __iter__(self):
             return iter(self.expected_result)
 
-        def __enter__(self):
-            return self
-
-        def __exit__(self, *args):
-            pass
-
-    commit_obj = MagicMock()
+    commit_obj = MagicMock(return_value='hoi')
 
     def __init__(self, expected_result):
         self.cursor_obj = self.Cursor(expected_result)
@@ -37,7 +31,7 @@ class MockConnection():
         return self.cursor_obj
 
     def commit(self):
-        return
+        return self.commit_obj
 
 
 @patch("gobcore.datastore.postgres.SqlDatastore", MagicMock)
@@ -91,7 +85,7 @@ class TestPostgresDatastore(TestCase):
         store.connection = connection
         store.disconnect()
         connection.close.assert_called_once()
-        self.assertIsNone(store.connection)
+        self.assertFalse(hasattr(store, 'connection'))
         store.disconnect()
 
     def test_query(self):
@@ -110,7 +104,7 @@ class TestPostgresDatastore(TestCase):
         connection.cursor_obj.execute.assert_called_with(query)
 
         connection = MockConnection([i for i in range(10)])
-        connection.cursor = MagicMock(side_effect=Error)
+        connection.cursor().execute = MagicMock(side_effect=Error)
         store.connection = connection
 
         with self.assertRaises(GOBException):
@@ -124,11 +118,12 @@ class TestPostgresDatastore(TestCase):
         ]
 
         store = PostgresDatastore({})
-        store.connection = MagicMock()
+        store.connection = MockConnection(['expected'])
+        store.connection.commit = MagicMock()
         store.write_rows('some table', rows)
 
         mock_execute_values.assert_called_with(
-            store.connection.cursor.return_value.__enter__.return_value,
+            store.connection.cursor(),
             "INSERT INTO some table VALUES %s",
             rows
         )
@@ -142,7 +137,7 @@ class TestPostgresDatastore(TestCase):
     def test_execute(self):
         store = PostgresDatastore({})
         store.connection = MagicMock()
-        mocked_cursor = store.connection.cursor.return_value.__enter__.return_value
+        mocked_cursor = store.connection.cursor()
 
         store.execute('some query')
         mocked_cursor.execute.assert_called_with('some query')
@@ -168,5 +163,3 @@ class TestPostgresDatastore(TestCase):
         store.execute = MagicMock()
         store.rename_schema('old schema', 'new schema')
         store.execute.assert_called_with('ALTER SCHEMA "old schema" RENAME TO "new schema"')
-
-

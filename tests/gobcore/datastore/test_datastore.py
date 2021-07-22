@@ -16,7 +16,7 @@ class DatastoreImpl(Datastore):
     def disconnect(self):
         pass
 
-    def query(self, query):
+    def query(self, query, **kwargs):
         pass
 
 
@@ -30,7 +30,7 @@ class DatastoreImplPut(Datastore, PutEnabledDatastore):
     def disconnect(self):
         pass
 
-    def query(self, query):
+    def query(self, query, **kwargs):
         pass
 
     def put_file(self, local_file_path: str, dst_path: str):
@@ -48,7 +48,7 @@ class DatastoreImplDelete(Datastore, DeleteEnabledDatastore):
     def disconnect(self):
         pass
 
-    def query(self, query):
+    def query(self, query, **kwargs):
         pass
 
     def delete_file(self, filename: str):
@@ -66,7 +66,7 @@ class DatatoreImplList(Datastore, ListEnabledDatastore):
     def disconnect(self):
         pass
 
-    def query(self, query):
+    def query(self, query, **kwargs):
         pass
 
     def list_files(self, path=None) -> List[str]:
