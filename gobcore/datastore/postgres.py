@@ -38,7 +38,7 @@ class PostgresDatastore(SqlDatastore):
                 self.connection.close()
             del self.connection
 
-    def query(self, query, yield_per=None):
+    def query(self, query, yield_per=None, **kwargs):
         """Query Postgres
 
         :param query:

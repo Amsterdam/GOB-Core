@@ -29,7 +29,7 @@ class FileDatastore(Datastore):
     def disconnect(self):
         pass  # pragma: no cover
 
-    def query(self, query):
+    def query(self, query, **kwargs):
         """Reads from the file connection
 
         The pandas library is used to iterate through the items
