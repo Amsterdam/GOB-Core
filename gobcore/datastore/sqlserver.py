@@ -28,7 +28,7 @@ class SqlServerDatastore(SqlDatastore):
             self.connection.close()
             self.connection = None
 
-    def query(self, query):
+    def query(self, query, **kwargs):
         cursor = self.connection.cursor()
         with self.connection:
             cursor.execute(query)

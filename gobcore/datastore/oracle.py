@@ -138,7 +138,7 @@ class OracleDatastore(SqlDatastore):
         if defaultType == cx_Oracle.CLOB:
             return cursor.var(cx_Oracle.LONG_STRING, arraysize=cursor.arraysize)
 
-    def query(self, query):
+    def query(self, query, **kwargs):
         """Reads from the database
 
         The cx_Oracle library is used to connect to the data source for databases

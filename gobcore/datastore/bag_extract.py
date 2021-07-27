@@ -313,7 +313,7 @@ class BagExtractDatastore(Datastore):
         for mutation in mutations.values():
             yield mutation
 
-    def query(self, query):
+    def query(self, query, **kwargs):
         get_elements_fn = self._get_elements_full if self.mode == ImportMode.FULL else self._get_elements_mutations
 
         for file in self.files:

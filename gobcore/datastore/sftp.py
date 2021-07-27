@@ -33,7 +33,7 @@ class SFTPDatastore(Datastore, PutEnabledDatastore, ListEnabledDatastore, Delete
             self.transport = None
             self.connection = None
 
-    def query(self):
+    def query(self, **kwargs):
         pass  # pragma: no cover
 
     def _create_directories(self, path: str):

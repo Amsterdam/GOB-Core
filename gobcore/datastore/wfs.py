@@ -24,7 +24,7 @@ class WfsDatastore(Datastore):
     def disconnect(self):
         pass  # pragma: no cover
 
-    def query(self, query):
+    def query(self, query, **kwargs):
         """Reads from the response
 
         The requests library is used to iterate through the items

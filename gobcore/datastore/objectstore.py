@@ -165,7 +165,7 @@ class ObjectDatastore(Datastore, ListEnabledDatastore, PutEnabledDatastore, Dele
             self.connection.close()
             self.connection = None
 
-    def query(self, query):
+    def query(self, query, **kwargs):
         """Reads from the objectstore
 
         The Amsterdam/objectstore library is used to connect to the container

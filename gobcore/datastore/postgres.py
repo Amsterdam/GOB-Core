@@ -1,9 +1,5 @@
 import psycopg2
-from psycopg2.extras import DictCursor
-from typing import List
-
-from psycopg2 import Error
-from psycopg2.extras import execute_values
+from psycopg2.extras import DictCursor, execute_values
 
 from gobcore.datastore.sql import SqlDatastore
 from gobcore.exceptions import GOBException
@@ -37,27 +33,33 @@ class PostgresDatastore(SqlDatastore):
             raise GOBException(f'Missing configuration for source {self.connection_config["name"]}. Error: {e}')
 
     def disconnect(self):
-        if self.connection:
-            self.connection.close()
-            self.connection = None
+        if hasattr(self, 'connection'):
+            if self.connection:
+                self.connection.close()
+            del self.connection
 
-    def query(self, query):
+    def query(self, query, **kwargs):
         """Query Postgres
 
         :param query:
         :return:
         """
-        try:
-            with self.connection.cursor(cursor_factory=DictCursor) as cursor:
-                cursor.execute(query)
-                self.connection.commit()
+        arraysize = kwargs.pop('arraysize', None)
 
-                for row in cursor:
-                    yield row
+        try:
+            with self.connection.cursor(cursor_factory=DictCursor, **kwargs) as cur:
+                if arraysize:
+                    cur.arraysize = arraysize
+
+                cur.execute(query)
+                while results := cur.fetchmany():
+                    yield from results
+
+            self.connection.commit()
         except psycopg2.Error as e:
             raise GOBException(f'Error executing query: {query[:80]}. Error: {e}')
 
-    def write_rows(self, table: str, rows: List[list]) -> None:
+    def write_rows(self, table: str, rows: list[list]) -> int:
         """
         Writes rows to Postgres table using the optimised execute_values function from psycopg2, which
         combines all inserts into one query.
@@ -69,11 +71,13 @@ class PostgresDatastore(SqlDatastore):
         """
         query = f"INSERT INTO {table} VALUES %s"
         try:
-            with self.connection.cursor() as cursor:
-                execute_values(cursor, query, rows)
-                self.connection.commit()
-        except Error as e:
+            with self.connection.cursor() as cur:
+                execute_values(cur, query, rows)
+            self.connection.commit()
+        except psycopg2.Error as e:
             raise GOBException(f'Error writing rows to table {table}. Error: {e}')
+        else:
+            return len(rows)
 
     def execute(self, query: str) -> None:
         """Executes Postgres query
@@ -82,15 +86,15 @@ class PostgresDatastore(SqlDatastore):
         :return:
         """
         try:
-            with self.connection.cursor() as cursor:
-                cursor.execute(query)
-                self.connection.commit()
-        except Error as e:
+            with self.connection.cursor() as cur:
+                cur.execute(query)
+            self.connection.commit()
+        except psycopg2.Error as e:
             raise GOBException(f'Error executing query: {query[:80]}. Error: {e}')
 
-    def list_tables_for_schema(self, schema: str) -> List[str]:
+    def list_tables_for_schema(self, schema: str) -> list[str]:
         query = f"SELECT table_name FROM information_schema.tables WHERE table_schema='{schema}'"
-        result = self.query(query)
+        result = self.query(query, name=None)
         return [row['table_name'] for row in result]
 
     def rename_schema(self, schema: str, new_name: str) -> None:
