@@ -4040,15 +4040,9 @@
             }
           },
           "heeft_geboorteplaats_nederland": {
-            "type": "GOB.Reference",
-            "description": "Code in tabel 33 van alle Nederlandse gemeenten.",
-            "ref": "brp:gemeenten",
-            "secure": {
-              "bronwaarde": {
-                "type": "GOB.SecureString",
-                "level": 4
-              }
-            }
+            "type": "GOB.SecureString",
+            "description": "Plaats in Nederland.",
+            "level": 4
           },
           "heeft_geboorteplaats_buitenland": {
             "type": "GOB.JSON",
@@ -4065,15 +4059,9 @@
             }
           },
           "heeft_geboorteland": {
-            "type": "GOB.Reference",
-            "ref": "brp:landen",
+            "type": "GOB.SecureString",
             "description": "Een land uit tabel 34 landen van de BRP.",
-            "secure": {
-              "bronwaarde": {
-                "type": "GOB.SecureString",
-                "level": 4
-              }
-            }
+            "level": 4
           },
           "nationaliteit": {
             "type": "GOB.JSON",
@@ -4215,8 +4203,7 @@
             "description": "De unieke identificatie/aanduiding van een nummeraanduiding. Een nummeraanduiding is een door het bevoegde gemeentelijke orgaan als zodanig toegekende aanduiding van een adresseerbaar object. De Identificatiecode nummeraanduiding is een combinatie van een viercijferige gemeentecode, de tweecijferige objecttypecode 20 die aangeeft dat het om een nummeraanduiding gaat en een voor het betreffende objecttype binnen een gemeente uniek tiencijferig volgnummer."
           },
           "verblijft_in_land": {
-            "type": "GOB.Reference",
-            "ref": "brp:landen",
+            "type": "GOB.String",
             "description": "Een code, opgenomen in Tabel34, Landentabel, die het land (buiten Nederland) aangeeft alwaarde ingeschrevene verblijft. Bij het ingaan van een Ministerieel besluit dient hier de standaardwaarde opgenomen te worden."
           },
           "buitenland_regel_1": {
@@ -4270,7 +4257,7 @@
             "type": "GOB.ManyReference",
             "ref": "brp:persoonsverblijfplaatsen",
             "description": "Een verwijzing naar de actuele of historische personen van een verblijfplaats."
-          }          
+          }
         }
       },
       "persoonsverblijfplaatsen": {
@@ -4295,8 +4282,7 @@
             "description": "Afhankelijk van inschrijving in GBA of RNI code B (Brief) of W (Woon) adres."
           },
           "gemeente_inschrijving": {
-            "type": "GOB.Reference",
-            "ref": "brp:gemeenten",
+            "type": "GOB.String",
             "description": "De gemeente van inschrijving of doorverwijzing naar volgende of 1ste gemeente van inschrijving."
           },
           "datum_inschrijving_gemeente": {
@@ -4338,8 +4324,7 @@
             "description": "PLUS: Een afgeleid of de verblijfplaats actueel (A) of historisch (H) is."
           },
           "land_vanwaar_ingeschreven": {
-            "type": "GOB.Reference",
-            "ref": "brp:landen",
+            "type": "GOB.String",
             "description": "Een code, opgenomen in Tabel 34, Landentabel, die het land aangeeft waar de ingeschrevene verblijf hield voor (her)vestiging in Nederland."
           },
           "datum_vertrek_nederland": {
@@ -4347,8 +4332,7 @@
             "description": "De datum van vertrek uit Nederland."
           },
           "land_waarnaar_vertrokken": {
-            "type": "GOB.Reference",
-            "ref": "brp:landen",
+            "type": "GOB.String",
             "description": "Een code, opgenomen in Tabel 34, Landentabel, die het land waar de ingeschrevene heen is vertrokken uit Nederland."
           },
           "datum_vestiging_nederland": {
@@ -4391,7 +4375,7 @@
             "description": "De (geslachts)naam waarvan de eventueel aanwezige voorvoegsels en adellijke titel zijn afgesplitst.",
             "level": 4
           },
-          "geslachtsaanduiding_code": {
+          "geslachtsaanduiding": {
             "type": "GOB.JSON",
             "description": "Gegevens over het geslacht van respectievelijk de persoon, de ouder, de echtgenoot/geregistreerd partner, de eerdere echtgenoot/geregistreerd partner.",
             "attributes": {
@@ -4400,13 +4384,10 @@
                 "description": "Kan de waarde 'M', 'V' of 'O' bevatten."
               },
               "omschrijving": {
-                "type": "GOB.String"
+                "type": "GOB.String",
+                "description": "De beschrijving van de geslachtsaanduiding."
               }
             }
-          },
-          "geslachtsaanduiding_oms": {
-            "type": "GOB.String",
-            "description": "De beschrijving van de geslchtsaanduiding"
           },
           "geboortedatum": {
             "type": "GOB.SecureIncompleteDate",
@@ -4455,7 +4436,7 @@
             "type": "GOB.IncompleteDate",
             "description": "De datum van het overlijden",
             "attributes": {
-              "formatted":  {
+              "formatted": {
                 "type": "GOB.String"
               }
             }
@@ -4477,17 +4458,25 @@
         "attributes": {
           "identificatie": {
             "type": "GOB.String",
-            "description": "Unieke identificatie van een persoon"
+            "description": "Unieke identificatie van een persoon."
           },
           "identificatie_persoon2": {
             "type": "GOB.String",
-            "description": "Unieke identificatie van de persoon waarmee een verbintenis bestaat"
+            "description": "Unieke identificatie van de persoon waarmee een verbintenis bestaat."
+          },
+          "anummer_persoon2": {
+            "type": "GOB.String",
+            "description": "Administratienummer van de persoon waarmee een verbintenis bestaat."
+          },
+          "burgerservicenummer_persoon2": {
+            "type": "GOB.String",
+            "description": "Burgerservicenummer van de persoon waarmee een verbintenis bestaat."
           },
           "datum_sluiting": {
             "type": "GOB.IncompleteDate",
-            "description": "De datum van het sluiten van de verbintenis",
+            "description": "De datum van het sluiten van de verbintenis.",
             "attributes": {
-              "formatted":  {
+              "formatted": {
                 "type": "GOB.String"
               }
             }
@@ -4496,7 +4485,7 @@
             "type": "GOB.IncompleteDate",
             "description": "De datum van het ontbinden van de verbintenis",
             "attributes": {
-              "formatted":  {
+              "formatted": {
                 "type": "GOB.String"
               }
             }
@@ -4521,7 +4510,7 @@
             "type": "GOB.Date",
             "description": "De datum waarop de persoon de 1ste keer in de BRP of RNI is ingeschreven."
           },
-          "code_geheim": {
+          "indicatie_geheim": {
             "type": "GOB.String",
             "description": "Codering of de inschrijving geheim is (7) of niet (0)."
           }
