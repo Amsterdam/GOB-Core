@@ -564,7 +564,7 @@
           },
           "zakkingssnelheid": {
             "type": "GOB.Decimal",
-            "description": "Zakkingssnelheid van de meetbout (mm/​jaar) sinds de meting"
+            "description": "Zakkingssnelheid van de meetbout (mm/jaar) sinds de meting"
           },
           "zakking_cumulatief": {
             "type": "GOB.Decimal",
@@ -1955,7 +1955,7 @@
           },
           "bronleverancier": {
             "type": "GOB.JSON",
-            "description": "Verstrekker van brondocumenten en/​of gegevens voortkomend uit het uitoefenen of voorbereiden van een gemeentelijke bevoegdheid, die nodig zijn voor een registratie aan de bronhouder, conform vastgestelde aanleverspecificaties.",
+            "description": "Verstrekker van brondocumenten en/of gegevens voortkomend uit het uitoefenen of voorbereiden van een gemeentelijke bevoegdheid, die nodig zijn voor een registratie aan de bronhouder, conform vastgestelde aanleverspecificaties.",
             "attributes": {
               "code": {
                 "type": "GOB.String"

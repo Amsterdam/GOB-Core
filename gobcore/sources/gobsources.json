@@ -903,6 +903,26 @@
           "method": "equals",
           "destination_attribute": "van_persoon",
           "multiple_allowed": true
+        },
+        "heeft_overlijden_gegevens": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "heeft_verbintenis": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "heeft_inschrijving": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "heeft_ouder1": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "heeft_ouder2": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
         }
       },
       "verblijfplaatsen": {
