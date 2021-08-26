@@ -67,12 +67,12 @@
           "reference": {
             "type": "GOB.Reference",
             "description": "Reference value.",
-            "ref": "test_catalogue:test_entity_ref"
+            "ref": "test_catalogue:test_entity_reference"
           },
           "manyreference": {
             "type": "GOB.ManyReference",
             "description": "Many Reference value.",
-            "ref": "test_catalogue:test_entity_ref"
+            "ref": "test_catalogue:test_entity_reference"
           },
           "polygon": {
             "type": "GOB.Geo.Polygon",
@@ -96,7 +96,7 @@
           "filters": []
         }
       },
-      "test_entity_ref": {
+      "test_entity_reference": {
         "version": "0.1",
         "entity_id": "string",
         "abbreviation": "TER",
