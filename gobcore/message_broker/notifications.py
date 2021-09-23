@@ -84,10 +84,8 @@ def get_notification(msg):
     """
     if msg.get(NOTIFICATION_TYPE) == EventNotification.type:
         return EventNotification.from_msg(msg)
-    elif msg.get(NOTIFICATION_TYPE) == DumpNotification.type:
+    if msg.get(NOTIFICATION_TYPE) == DumpNotification.type:
         return DumpNotification.from_msg(msg)
-    elif msg.get(NOTIFICATION_TYPE) == ExportTestNotification.type:
-        return ExportTestNotification.from_msg(msg)
 
 
 class EventNotification():
@@ -129,24 +127,6 @@ class DumpNotification():
         self.contents = {
             'catalog': catalog,
             'collection': collection,
-        }
-
-    @classmethod
-    def from_msg(cls, msg):
-        return cls(**msg[NOTIFICATION_CONTENTS], header=msg['header'])
-
-
-class ExportTestNotification():
-
-    type = "export_test"
-
-    def __init__(self, catalogue, collection, product, header=None):
-        self.header = header
-
-        self.contents = {
-            'catalogue': catalogue,
-            'collection': collection,
-            'product': product,
         }
 
     @classmethod
