@@ -431,12 +431,12 @@
           "method": "equals",
           "destination_attribute": "identificatie"
         },
-        "_ligt_in_ggpgebied": {
+        "ligt_in_ggpgebied": {
           "method": "lies_in",
           "source_attribute": "geometrie",
           "destination_attribute": "geometrie"
         },
-        "_ligt_in_ggwgebied": {
+        "ligt_in_ggwgebied": {
           "method": "lies_in",
           "source_attribute": "geometrie",
           "destination_attribute": "geometrie"
@@ -447,7 +447,7 @@
           "method": "equals",
           "destination_attribute": "identificatie"
         },
-        "_ligt_in_ggwgebied": {
+        "ligt_in_ggwgebied": {
           "method": "lies_in",
           "source_attribute": "geometrie",
           "destination_attribute": "geometrie"
@@ -475,12 +475,12 @@
           "method": "equals",
           "destination_attribute": "code"
         },
-        "_ligt_in_ggpgebied": {
+        "ligt_in_ggpgebied": {
           "method": "lies_in",
           "source_attribute": "geometrie",
           "destination_attribute": "geometrie"
         },
-        "_ligt_in_ggwgebied": {
+        "ligt_in_ggwgebied": {
           "method": "lies_in",
           "source_attribute": "geometrie",
           "destination_attribute": "geometrie"
@@ -491,7 +491,7 @@
           "method": "equals",
           "destination_attribute": "code"
         },
-        "_ligt_in_ggwgebied": {
+        "ligt_in_ggwgebied": {
           "method": "lies_in",
           "source_attribute": "geometrie",
           "destination_attribute": "geometrie"

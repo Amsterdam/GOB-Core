@@ -43,7 +43,7 @@ def _is_application_thread(t: threading.Thread) -> bool:
     return t.name in ["Eventloop", threading.main_thread().name]
 
 
-class Heartbeat():
+class Heartbeat:
     exchange = STATUS_EXCHANGE
     heartbeat_key = HEARTBEAT_KEY
     progress_key = PROGRESS_KEY
@@ -97,7 +97,7 @@ class Heartbeat():
         return f"{queue} - {status} - {host_info} - {msg_info}"
 
     def __init__(self, connection, name):
-        """Hearbeat
+        """Heartbeat
 
         :param connection: the connection to use for the heartbeats
         :param name: the name of the service for which heartbeats are sent

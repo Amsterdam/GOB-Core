@@ -25,8 +25,7 @@ def progress(*args):
     :return: None
     """
 
-    # print("Progress", threading.get_ident(), *args)
-    pass
+    print("Progress", threading.get_ident(), *args)
 
 
 class AsyncConnection(object):
@@ -84,7 +83,7 @@ class AsyncConnection(object):
     def __exit__(self, *args):
         self.disconnect()
 
-    def is_alive(self):
+    def is_alive(self) -> bool:
         return not self._eventloop_failed
 
     def _on_open_connection(self, connection):
@@ -342,11 +341,11 @@ class AsyncConnection(object):
         :return: None
         """
 
-        progress("Disconnect")
+        # progress("Disconnect")
 
         # Close any open channel
         if self._channel is not None and self._channel.is_open:
-            progress("Close channel")
+            # progress("Close channel")
             # Cancel consumers
             for consumer_tag in self._channel.consumer_tags:
                 self._channel.basic_cancel(
@@ -357,7 +356,7 @@ class AsyncConnection(object):
 
         # Close any open connection
         if self._connection is not None:
-            progress("Close connection")
+            # progress("Close connection")
             self._connection.close()
             # Wait for eventloop to finish on closing of the connection
             if self._eventloop is not None and threading.get_ident() != self._eventloop.ident:
