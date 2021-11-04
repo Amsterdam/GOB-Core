@@ -165,12 +165,12 @@
     LEFT JOIN gebieden_stadsdelen sdl_0
         ON rel_8.dst_id = sdl_0._id AND rel_8.dst_volgnummer = sdl_0.volgnummer AND (sdl_0._expiration_date IS NULL OR sdl_0._expiration_date > NOW())
     -- SELECT _ligt_in_ggwgebied
-    LEFT JOIN mv_gbd_brt_gbd_ggw__ligt_in_ggwgebied rel_9
+    LEFT JOIN mv_gbd_brt_gbd_ggw_ligt_in_ggwgebied rel_9
         ON rel_9.src_id = brt_0._id AND rel_9.src_volgnummer = brt_0.volgnummer
     LEFT JOIN gebieden_ggwgebieden ggw_0
         ON rel_9.dst_id = ggw_0._id AND rel_9.dst_volgnummer = ggw_0.volgnummer AND (ggw_0._expiration_date IS NULL OR ggw_0._expiration_date > NOW())
     -- SELECT _ligt_in_ggpgebied
-    LEFT JOIN mv_gbd_brt_gbd_ggp__ligt_in_ggpgebied rel_10
+    LEFT JOIN mv_gbd_brt_gbd_ggp_ligt_in_ggpgebied rel_10
         ON rel_10.src_id = brt_0._id AND rel_10.src_volgnummer = brt_0.volgnummer
     LEFT JOIN gebieden_ggpgebieden ggp_0
         ON rel_10.dst_id = ggp_0._id AND rel_10.dst_volgnummer = ggp_0.volgnummer AND (ggp_0._expiration_date IS NULL OR ggp_0._expiration_date > NOW())
