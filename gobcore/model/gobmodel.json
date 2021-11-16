@@ -857,7 +857,7 @@
         }
       },
       "buurten": {
-        "version": "0.1",
+        "version": "0.2",
         "abbreviation": "BRT",
         "entity_id": "identificatie",
         "has_states": true,
@@ -916,7 +916,7 @@
         }
       },
       "wijken": {
-        "version": "0.1",
+        "version": "0.2",
         "abbreviation": "WIJK",
         "entity_id": "identificatie",
         "has_states": true,

@@ -202,5 +202,36 @@
         ]
       }
     }
+  },
+  "gebieden": {
+    "buurten": {
+      "0.1": {
+        "target_version": "0.2",
+        "conversions": [
+          {
+            "action": "rename",
+            "old_column": "_ligt_in_ggwgebied",
+            "new_column": "ligt_in_ggwgebied"
+          },
+          {
+            "action": "rename",
+            "old_column": "_ligt_in_ggpgebied",
+            "new_column": "ligt_in_ggpgebied"
+          }
+        ]
+      }
+    },
+    "wijken": {
+      "0.1": {
+        "target_version": "0.2",
+        "conversions": [
+          {
+            "action": "rename",
+            "old_column": "_ligt_in_ggwgebied",
+            "new_column": "ligt_in_ggwgebied"
+          }
+        ]
+      }
+    }
   }
 }
