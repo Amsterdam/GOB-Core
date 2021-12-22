@@ -86,6 +86,11 @@ class QA_CHECK:
         "pattern": r"^[1,2,3]$",
         "msg": "value should be one of [1,2,3]",
     }
+    Value_woonplaats_1012_1024_1025_3594 = {
+        "type": "regex",
+        "pattern": r"^{'bronwaarde': '(1012|1024|1025|3594)'}$",
+        "msg": "value should be one of [1012, 1024, 1025, 3594]",
+    }
     Value_wind_direction_NOZW = {
         "type": "regex",
         "pattern": r"^(N|NO|O|ZO|Z|ZW|W|NW)$",
