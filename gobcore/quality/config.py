@@ -74,6 +74,11 @@ class QA_CHECK:
         "pattern": r"^{[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}}.[0-9]+$",
         "msg": "value should be a 4-2-2-2-6 bytes hexidecimal value with a sequence number",
     }
+    Format_0363 = {
+        "type": "regex",
+        "pattern": r"^0363[0-9]+$",
+        "msg": "value should start with '0363' and should be numeric."
+    }
 
     # Value requirements
     Value_1_2_3 = {
