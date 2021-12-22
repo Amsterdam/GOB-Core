@@ -74,11 +74,6 @@ class QA_CHECK:
         "pattern": r"^{[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}}.[0-9]+$",
         "msg": "value should be a 4-2-2-2-6 bytes hexidecimal value with a sequence number",
     }
-    Format_0363 = {
-        "type": "regex",
-        "pattern": r"^0363[0-9]+$",
-        "msg": "value should start with '0363' and should be numeric."
-    }
 
     # Value requirements
     Value_1_2_3 = {
@@ -86,9 +81,14 @@ class QA_CHECK:
         "pattern": r"^[1,2,3]$",
         "msg": "value should be one of [1,2,3]",
     }
-    Value_woonplaats_1012_1024_1025_3594 = {
+    Value_woonplaats_bronwaarde_1012_1024_1025_3594 = {
         "type": "regex",
         "pattern": r"^{'bronwaarde': '(1012|1024|1025|3594)'}$",
+        "msg": "Bronwaarde should be one of [1012, 1024, 1025, 3594]",
+    }
+    Value_woonplaats_1012_1024_1025_3594 = {
+        "type": "regex",
+        "pattern": r"^(1012|1024|1025|3594)$",
         "msg": "value should be one of [1012, 1024, 1025, 3594]",
     }
     Value_wind_direction_NOZW = {

@@ -37,6 +37,10 @@ class TestConfig(TestCase):
                                 ['abc', '12ab', 'b12', 'AB']),
             'Format_4_2_2_2_6_HEX_SEQ': (['{012345AB-6789-0ABC-DEF1-23456789ABCD}.1', '{012345ab-6789-0abc-def1-23456789abcd}.2'],
                                      ['012345AB-6789-0ABC-DEF1-23456789ABCD.3', '{Z12345AB-6789-0ABC-DEF1-23456789ABCD.1}']),
+            'Format_0363': (
+                ['036300000', '0363123456987951'],
+                ['045700000', 'abcd', '0361abc', '0363 ']
+            ),
             'Value_1_2_3': (['1', '2', '3'],
                             ['4', 'a', '0']),
             'Value_wind_direction_NOZW': (['N', 'NO', 'O', 'ZO', 'Z', 'ZW', 'W', 'NW'],
@@ -48,7 +52,15 @@ class TestConfig(TestCase):
             'Value_not_empty': (['J', '1', 'abcd', 'a1b2'],
                                 ['']),
             'Value_brondocument_coding': (['AB12345678_AB12AB.abc', 'ab12345678_ab12ab.ABC', 'SV12345678_OV12VL.dgn'],
-                                          ['AB12345678AB12AB.abc', 'AB123456789_AB12AB.abc'])
+                                          ['AB12345678AB12AB.abc', 'AB123456789_AB12AB.abc']),
+            'Value_woonplaats_bronwaarde_1012_1024_1025_3594': (
+                ["{'bronwaarde': '1012'}", "{'bronwaarde': '1025'}"],
+                ["{'anders': '1012'}", "{'bronwaarde': '0457'}", '{"bronwaarde": "1012"}'],
+            ),
+            'Value_woonplaats_1012_1024_1025_3594': (
+                ["1012", "1025"],
+                ["1020", "0457"],
+            )
         }
 
         # Get all dicts defined in the class
