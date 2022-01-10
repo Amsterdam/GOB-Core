@@ -6,17 +6,18 @@ Only publication is supported
 
 """
 import json
+import time
+
 import pika
 
 from gobcore.typesystem.json import GobTypeJSONEncoder
 
 
 class Connection(object):
-    """This is an synchronous RabbitMQ connection.
+    """This is an synchronous RabbitMQ connection."""
 
-    No automatic reconnection with RabbitMQ is implemented.
-
-    """
+    RETRIES = 1000
+    SEC_SLEEP = 30
 
     def __init__(self, connection_params, params=None):
         """Create a new Connection
@@ -56,10 +57,28 @@ class Connection(object):
         self._connection = pika.BlockingConnection(self._connection_params)
         self._channel = self._connection.channel()
 
+    def auto_reconnect(self):
+        """
+        Retries establishing a connection to the message broker, throws an exception when its exhausted.
+        Uses a default interval of 30 seconds.
+        """
+        retries = self.RETRIES + 1
+        self.disconnect()
+
+        while retries := retries - 1:
+            self.connect()
+
+            if self.is_alive():
+                break
+
+            time.sleep(self.SEC_SLEEP)
+        else:
+            raise Exception(f"Connection with message broker not available (Retries: {self.RETRIES})")
+
     def publish(self, exchange, key, msg):
-        # Check whether a connection has been established
+        # Check whether a connection has been established, try reconnecting if not the case.
         if self._channel is None or not self._channel.is_open:
-            raise Exception("Connection with message broker not available")
+            self.auto_reconnect()
 
         # Convert the message to json
         json_msg = json.dumps(msg, cls=GobTypeJSONEncoder, allow_nan=False)

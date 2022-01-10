@@ -48,16 +48,22 @@ class MockChannel:
     def cancel(self):
         self.is_open = False
 
+
 class MockConnection:
 
+    is_open = None
+
     def __init__(self, connection_params, params=None):
-        pass
+        self.is_open = True
 
     def close(self):
-        pass
+        self.is_open = False
 
     def channel(self):
         return MockChannel()
+
+    def is_alive(self):
+        return self.is_open
 
 
 published_message = None
@@ -123,13 +129,30 @@ def test_publish(monkeypatch):
     connection.disconnect()
 
 
+@patch('gobcore.message_broker.message_broker.time')
+def test_auto_reconnect(mock_time, monkeypatch):
+    mock_connection(monkeypatch)
+    connection = Connection(connection_params)
+    connection.is_alive = MagicMock()
+
+    connection.publish(exchange="exchange", key="key", msg="message")
+
+    connection.is_alive.assert_called_once()
+    mock_time.sleep.assert_not_called()
+
+
 def test_publish_failure(monkeypatch):
     mock_connection(monkeypatch)
 
     connection = Connection(connection_params)
+
     # publish should fail if we do not perform connection.connect()
-    with pytest.raises(Exception):
-        connection.publish(exchange="exchange", key="key", msg="message")
+    with pytest.raises(Exception, match='Retries: 2'):
+        with monkeypatch.context() as m:
+            m.setattr(connection, 'is_alive', lambda: False)
+            m.setattr(connection, 'SEC_SLEEP', 0.01)
+            m.setattr(connection, 'RETRIES', 2)
+            connection.publish(exchange="exchange", key="key", msg="message")
 
 
 class TestAsyncConnection(TestCase):
