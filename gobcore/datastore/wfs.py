@@ -28,9 +28,10 @@ class WfsDatastore(Datastore):
         """Reads from the response
 
         The requests library is used to iterate through the items
+        The `properties` values are placed at the top level.
 
         :return: a list of dicts
         """
-
         for feature in self.response.json()['features']:
+            feature |= feature.pop('properties')
             yield feature

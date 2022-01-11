@@ -31,8 +31,37 @@ class TestWfsDatastore(TestCase):
             store.connect()
 
     def test_query_wfs(self):
-        features = ['f1', 'f2', 'f3']
+        features = [
+            {
+                "type": "Feature", 
+                "geometry": {
+                    "type": "Polygon", 
+                    "coordinates": [1, 2]
+                }, 
+                "properties": {
+                    "identificatie": "GM0221", 
+                    "naam": "Doesburg", 
+                    "code": "0221", 
+                    "ligtInProvincieCode": "25", 
+                    "ligtInProvincieNaam": "Gelderland"
+                }
+            }
+        ]
+        expected = [
+            {
+                "type": "Feature", 
+                "geometry": {
+                    "type": "Polygon", "coordinates": [1, 2]
+                }, 
+                "identificatie": "GM0221",
+                "naam": "Doesburg",
+                "code": "0221", 
+                "ligtInProvincieCode": "25", 
+                "ligtInProvincieNaam": "Gelderland"
+            }
+        ]
+        
         store = WfsDatastore({})
         store.response = type('MockResponse', (object,), {'json': lambda: {'features': features}})
 
-        self.assertEqual(features, list(store.query(None)))
+        self.assertListEqual(expected, list(store.query(None)))
