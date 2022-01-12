@@ -9,20 +9,20 @@ import json
 import time
 
 import pika
+from pika.connection import Parameters
 
 from gobcore.typesystem.json import GobTypeJSONEncoder
 
 
-class Connection(object):
+class Connection:
     """This is an synchronous RabbitMQ connection."""
 
-    RETRIES = 1000
-    SEC_SLEEP = 30
+    SEC_SLEEP = 10
 
-    def __init__(self, connection_params, params=None):
+    def __init__(self, connection_params: Parameters):
         """Create a new Connection
 
-        :param address: The RabbitMQ address
+        :param connection_params: The RabbitMQ connection credentials
         """
 
         # The connection parameters for the RabbitMQ Message broker
@@ -31,14 +31,6 @@ class Connection(object):
         # The Connection and Channel objects
         self._connection = None
         self._channel = None
-
-        # Custom params
-        self._params = {
-            "load_message": True,
-            "stream_contents": False,
-            "prefetch_count": 1
-        }
-        self._params.update(params or {})
 
     def __enter__(self):
         self.connect()
@@ -58,27 +50,20 @@ class Connection(object):
         self._channel = self._connection.channel()
 
     def auto_reconnect(self):
-        """
-        Retries establishing a connection to the message broker, throws an exception when its exhausted.
-        Uses a default interval of 30 seconds.
-        """
-        retries = self.RETRIES + 1
-        self.disconnect()
-
-        while retries := retries - 1:
-            self.connect()
-
+        """Retries establishing a connection to the message broker."""
+        while True:
             if self.is_alive():
                 break
 
+            print(f'Connection with message broker not available, reconnecting in {self.SEC_SLEEP}...')
+
+            self.disconnect()
             time.sleep(self.SEC_SLEEP)
-        else:
-            raise Exception(f"Connection with message broker not available (Retries: {self.RETRIES})")
+            self.connect()
 
     def publish(self, exchange, key, msg):
-        # Check whether a connection has been established, try reconnecting if not the case.
-        if self._channel is None or not self._channel.is_open:
-            self.auto_reconnect()
+        # make sure we have a connection to the message broker
+        self.auto_reconnect()
 
         # Convert the message to json
         json_msg = json.dumps(msg, cls=GobTypeJSONEncoder, allow_nan=False)
