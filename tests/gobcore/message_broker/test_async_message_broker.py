@@ -1,11 +1,10 @@
 import json
 import pika
 from pika import spec
-import pytest
 import os
 
 from unittest import TestCase
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, patch, call
 
 from gobcore.message_broker.async_message_broker import AsyncConnection
 from gobcore.message_broker.message_broker import Connection
@@ -122,7 +121,6 @@ def test_publish(monkeypatch):
     mock_connection(monkeypatch)
 
     connection = Connection(connection_params)
-    assert connection._params == {"load_message": True, "prefetch_count": 1, "stream_contents": False}
     connection.connect()
     connection.publish(exchange="exchange", key="key", msg="message")
     assert(published_message == json.dumps("message"))
@@ -133,26 +131,12 @@ def test_publish(monkeypatch):
 def test_auto_reconnect(mock_time, monkeypatch):
     mock_connection(monkeypatch)
     connection = Connection(connection_params)
-    connection.is_alive = MagicMock()
+    connection.is_alive = MagicMock(side_effect=[False, False, True])
 
-    connection.publish(exchange="exchange", key="key", msg="message")
+    connection.auto_reconnect()
 
-    connection.is_alive.assert_called_once()
-    mock_time.sleep.assert_not_called()
-
-
-def test_publish_failure(monkeypatch):
-    mock_connection(monkeypatch)
-
-    connection = Connection(connection_params)
-
-    # publish should fail if we do not perform connection.connect()
-    with pytest.raises(Exception, match='Retries: 2'):
-        with monkeypatch.context() as m:
-            m.setattr(connection, 'is_alive', lambda: False)
-            m.setattr(connection, 'SEC_SLEEP', 0.01)
-            m.setattr(connection, 'RETRIES', 2)
-            connection.publish(exchange="exchange", key="key", msg="message")
+    assert connection.is_alive.call_count == 3
+    mock_time.assert_has_calls([call.sleep(connection.SEC_SLEEP), call.sleep(connection.SEC_SLEEP)])
 
 
 class TestAsyncConnection(TestCase):
