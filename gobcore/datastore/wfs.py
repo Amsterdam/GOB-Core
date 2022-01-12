@@ -1,6 +1,7 @@
 import requests
 
 from gobcore.datastore.datastore import Datastore
+from gobcore.logging.logger import logger
 
 
 class WfsDatastore(Datastore):
@@ -25,13 +26,15 @@ class WfsDatastore(Datastore):
         pass  # pragma: no cover
 
     def query(self, query, **kwargs):
-        """Reads from the response
+        """Reads from the GeoJSON response.
 
         The requests library is used to iterate through the items
-        The `properties` values are placed at the top level.
+        The `properties` (should be always present) values are placed at the top level in the feature.
 
         :return: a list of dicts
         """
         for feature in self.response.json()['features']:
-            feature |= feature.pop('properties')
+            if 'properties' not in feature:
+                logger.warning("WFS feature does not contain 'properties' key")
+            feature |= feature.pop('properties', {})
             yield feature

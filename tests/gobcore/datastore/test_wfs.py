@@ -1,5 +1,5 @@
 from unittest import TestCase
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, MagicMock, call
 
 from gobcore.datastore.wfs import WfsDatastore
 
@@ -65,3 +65,13 @@ class TestWfsDatastore(TestCase):
         store.response = type('MockResponse', (object,), {'json': lambda: {'features': features}})
 
         self.assertListEqual(expected, list(store.query(None)))
+
+    @patch('gobcore.datastore.wfs.logger')
+    def test_query_no_properties(self, mock_logger):
+        features = [{"type": "Feature", "geometry": {"type": "Polygon", "coordinates": [1, 2]}}]
+
+        store = WfsDatastore({})
+        store.response = type('MockResponse', (object,), {'json': lambda: {'features': features}})
+
+        self.assertListEqual(features, list(store.query(None)))
+        mock_logger.assert_has_calls([call.warning("WFS feature does not contain 'properties' key")])
