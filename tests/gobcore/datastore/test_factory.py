@@ -30,7 +30,7 @@ class TestDatastoreFactory(TestCase):
                            mock_postgres_store, mock_oracle_store, mock_sql_server_datastore,
                            mock_bag_extract_datastore):
         self.get_datastore_test('oracle', mock_oracle_store)
-        self.get_datastore_test('postgres', mock_postgres_store)
+        self.get_datastore_test('postgresql', mock_postgres_store)
         self.get_datastore_test('objectstore', mock_object_store)
         self.get_datastore_test('wfs', mock_wfs_store)
         self.get_datastore_test('file', mock_file_store)

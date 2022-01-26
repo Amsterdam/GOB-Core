@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import List
 
 ORACLE = 'oracle'
-POSTGRES = 'postgres'
+POSTGRES = 'postgresql'
 OBJECTSTORE = 'objectstore'
 WFS = 'wfs'
 FILE = 'file'
