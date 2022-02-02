@@ -838,11 +838,11 @@
             "description": "Officiële code van het object."
           },
           "begin_geldigheid": {
-            "type": "GOB.Date",
+            "type": "GOB.DateTime",
             "description": "De datum waarop het object is gecreëerd."
           },
           "eind_geldigheid": {
-            "type": "GOB.Date",
+            "type": "GOB.DateTime",
             "description": "De datum waarop het object is komen te vervallen."
           },
           "ligt_in_buurt": {
@@ -875,11 +875,11 @@
             "description": "Volledige, samengestelde, code, bestaande uit stadsdeelcode en wijkcode."
           },
           "begin_geldigheid": {
-            "type": "GOB.Date",
+            "type": "GOB.DateTime",
             "description": "De datum waarop het object is gecreëerd."
           },
           "eind_geldigheid": {
-            "type": "GOB.Date",
+            "type": "GOB.DateTime",
             "description": "De datum waarop het object is komen te vervallen."
           },
           "documentdatum": {
@@ -934,11 +934,11 @@
             "description": "Volledige, samengestelde, code, bestaande uit stadsdeelcode en wijkcode."
           },
           "begin_geldigheid": {
-            "type": "GOB.Date",
+            "type": "GOB.DateTime",
             "description": "De datum waarop het object is gecreëerd."
           },
           "eind_geldigheid": {
-            "type": "GOB.Date",
+            "type": "GOB.DateTime",
             "description": "De datum waarop het object is komen te vervallen."
           },
           "documentdatum": {
@@ -988,11 +988,11 @@
             "description": "De code van het object."
           },
           "begin_geldigheid": {
-            "type": "GOB.Date",
+            "type": "GOB.DateTime",
             "description": "De datum waarop het object is gecreëerd."
           },
           "eind_geldigheid": {
-            "type": "GOB.Date",
+            "type": "GOB.DateTime",
             "description": "De datum waarop het object is komen te vervallen."
           },
           "documentdatum": {
@@ -1039,11 +1039,11 @@
             "description": "De code van het object."
           },
           "begin_geldigheid": {
-            "type": "GOB.Date",
+            "type": "GOB.DateTime",
             "description": "De datum waarop het object is gecreëerd."
           },
           "eind_geldigheid": {
-            "type": "GOB.Date",
+            "type": "GOB.DateTime",
             "description": "De datum waarop het object is komen te vervallen."
           },
           "documentdatum": {
@@ -1090,11 +1090,11 @@
             "description": "Volledige, samengestelde, code, bestaande uit stadsdeelcode en wijkcode."
           },
           "begin_geldigheid": {
-            "type": "GOB.Date",
+            "type": "GOB.DateTime",
             "description": "De datum waarop het object is gecreëerd."
           },
           "eind_geldigheid": {
-            "type": "GOB.Date",
+            "type": "GOB.DateTime",
             "description": "De datum waarop het object is komen te vervallen."
           },
           "documentdatum": {
