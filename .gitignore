@@ -8,3 +8,5 @@
 /htmlcov
 .coverage
 .idea
+.python-version
+.DS_Store
