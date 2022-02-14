@@ -1,3 +1,4 @@
+import datetime
 import unittest
 
 from gobcore.model.sa.management import Log, Service, ServiceTask, Job, JobStep, Task, AuditLog
@@ -27,6 +28,13 @@ class TestManagement(unittest.TestCase):
     def test_job(self):
         job = Job(name='Jobname')
         self.assertEqual(str(job), "<Job Jobname>")
+
+    def test_job_is_zombie(self):
+        job = Job(name='Jobname', start=datetime.datetime.now() - datetime.timedelta(hours=13))
+        self.assertTrue(job.is_zombie())
+
+        job = Job(name='Jobname', start=datetime.datetime.now() - datetime.timedelta(hours=11))
+        self.assertFalse(job.is_zombie())
 
     def test_jobstep(self):
         jobstep = JobStep(name='Jobstepname')

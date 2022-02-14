@@ -3,6 +3,8 @@
 SQLAlchemy Management Models
 
 """
+import datetime
+
 from sqlalchemy import Column, DateTime, Integer, JSON, String, Boolean, ForeignKey, Index
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.ext.declarative import declarative_base
@@ -39,6 +41,10 @@ class Job(Base):
 
     def __repr__(self):
         return f'<Job {self.name}>'
+
+    def is_zombie(self) -> bool:
+        """Consider jobs of less than 12 hours old as still running."""
+        return (datetime.datetime.now() - self.start).total_seconds() >= (12 * 60 * 60)
 
 
 class JobStep(Base):
