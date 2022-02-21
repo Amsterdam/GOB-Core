@@ -4,7 +4,7 @@ bcrypt==3.2.0
 certifi==2021.5.30
 cffi==1.14.6
 charset-normalizer==2.0.4
-click==6.7
+click==7.1.2
 coverage==5.5
 cryptography==36.0.1
 cx-Oracle~=8.3.0
