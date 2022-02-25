@@ -1,6 +1,7 @@
 import datetime
 import decimal
 import json
+import enum
 
 from gobcore.typesystem.gob_types import GOBType
 
@@ -22,16 +23,19 @@ class GobTypeJSONEncoder(json.JSONEncoder):
         if isinstance(obj, GOBType):
             return json.loads(obj.json)
 
-        if isinstance(obj, decimal.Decimal):
-            return json.loads(str(obj))
-
-        if type(obj) is datetime.date:
-            return obj.isoformat()
-
         if type(obj) is datetime.datetime:
             value = obj.isoformat()
             if len(value) == len('YYYY-MM-DDTHH:MM:SS'):
                 # Add missing microseconds
                 value += '.000000'
             return value
+
+        if type(obj) is datetime.date:
+            return obj.isoformat()
+
+        if isinstance(obj, decimal.Decimal):
+            return json.loads(str(obj))
+
+        if isinstance(obj, enum.Enum):
+            return str(obj.value)
         return super().default(obj)
