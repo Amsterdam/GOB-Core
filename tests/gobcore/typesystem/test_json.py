@@ -1,3 +1,4 @@
+import enum
 import json
 import unittest
 import datetime
@@ -8,6 +9,12 @@ from gobcore.typesystem.gob_types import String, Integer, Decimal, Boolean, JSON
 from gobcore.typesystem.json import GobTypeJSONEncoder
 
 from tests.gobcore import fixtures
+
+
+class MockEnum(enum.Enum):
+    attribute1 = "1"
+    attribute2 = 2
+
 
 class TestJsonEncoding(unittest.TestCase):
 
@@ -29,6 +36,13 @@ class TestJsonEncoding(unittest.TestCase):
     def test_datetime(self):
         dump = json.dumps(datetime.datetime(2000, 12, 20, 11, 25, 30), cls=GobTypeJSONEncoder)
         self.assertEqual(dump, '"2000-12-20T11:25:30.000000"')
+
+    def test_enum(self):
+        dump = json.dumps(MockEnum.attribute1, cls=GobTypeJSONEncoder)
+        self.assertEqual(dump, '"1"')
+
+        dump = json.dumps(MockEnum.attribute2, cls=GobTypeJSONEncoder)
+        self.assertEqual(dump, '"2"')
 
     def test_normal_json(self):
 
