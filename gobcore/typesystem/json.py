@@ -19,7 +19,7 @@ class GobTypeJSONEncoder(json.JSONEncoder):
     GOB.Geo-types will return geojson
     """
 
-    def default(self, obj):  # noqa: C901
+    def default(self, obj):  # noqa: C901 (Function is too complex)
         if isinstance(obj, GOBType):
             return json.loads(obj.json)
 
