@@ -7,3 +7,4 @@ class ImportMode(Enum):
     MUTATIONS = "mutations"
     SINGLE_OBJECT = "single_object"
     DELETE = "delete"
+    UPDATE = "update"
