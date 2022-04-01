@@ -3017,6 +3017,7 @@
         "version": "0.1",
         "abbreviation": "GME",
         "entity_id": "identificatie",
+        "has_states": true,
         "attributes": {
           "identificatie": {
             "type": "GOB.String",
