@@ -11,6 +11,18 @@
           }
         ]
       }
+    },
+    "gemeentes": {
+      "0.1": {
+        "target_version": "0.2",
+        "conversions": [
+          {
+            "action": "add",
+            "column": "volgnummer",
+            "default": 1
+          }
+        ]
+      }
     }
   },
   "bag": {
