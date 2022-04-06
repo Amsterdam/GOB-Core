@@ -548,6 +548,10 @@
         "heeft_dossier": {
           "method": "equals",
           "destination_attribute": "dossier"
+        },
+        "ligt_in_gemeente": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
         }
       },
       "ligplaatsen": {
@@ -574,6 +578,10 @@
         "heeft_dossier": {
           "method": "equals",
           "destination_attribute": "dossier"
+        },
+        "ligt_in_gemeente": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
         }
       },
       "openbareruimtes": {
@@ -627,6 +635,10 @@
         "heeft_dossier": {
           "method": "equals",
           "destination_attribute": "dossier"
+        },
+        "ligt_in_gemeente": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
         }
       },
       "verblijfsobjecten": {
@@ -657,6 +669,10 @@
         "heeft_dossier": {
           "method": "equals",
           "destination_attribute": "dossier"
+        },
+        "ligt_in_gemeente": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
         }
       },
       "panden": {

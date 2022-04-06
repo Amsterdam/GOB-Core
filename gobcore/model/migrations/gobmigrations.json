@@ -73,6 +73,15 @@
             "column": "amsterdamse_sleutel"
           }
         ]
+      },
+      "0.4": {
+        "target_version": "0.5",
+        "conversions": [
+          {
+            "action": "add",
+            "column": "ligt_in_gemeente"
+          }
+        ]
       }
     },
     "ligplaatsen": {
@@ -100,6 +109,15 @@
           {
             "action": "delete",
             "column": "amsterdamse_sleutel"
+          }
+        ]
+      },
+      "0.4": {
+        "target_version": "0.5",
+        "conversions": [
+          {
+            "action": "add",
+            "column": "ligt_in_gemeente"
           }
         ]
       }
@@ -142,6 +160,15 @@
             "column": "amsterdamse_sleutel"
           }
         ]
+      },
+      "0.3": {
+        "target_version": "0.4",
+        "conversions": [
+          {
+            "action": "add",
+            "column": "ligt_in_gemeente"
+          }
+        ]
       }
     },
     "verblijfsobjecten": {
@@ -160,6 +187,15 @@
           {
             "action": "delete",
             "column": "amsterdamse_sleutel"
+          }
+        ]
+      },
+      "0.3": {
+        "target_version": "0.4",
+        "conversions": [
+          {
+            "action": "add",
+            "column": "ligt_in_gemeente"
           }
         ]
       }

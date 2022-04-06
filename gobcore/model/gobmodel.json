@@ -1199,7 +1199,7 @@
         }
       },
       "standplaatsen": {
-        "version": "0.4",
+        "version": "0.5",
         "abbreviation": "SPS",
         "entity_id": "identificatie",
         "has_states": true,
@@ -1285,11 +1285,16 @@
               }
             },
             "has_multiple_values": true
+          },
+          "ligt_in_gemeente": {
+            "type": "GOB.Reference",
+            "ref": "brk:gemeentes",
+            "description": "De gemeente waarin de standplaats ligt."
           }
         }
       },
       "ligplaatsen": {
-        "version": "0.4",
+        "version": "0.5",
         "abbreviation": "LPS",
         "entity_id": "identificatie",
         "has_states": true,
@@ -1375,6 +1380,11 @@
               }
             },
             "has_multiple_values": true
+          },
+          "ligt_in_gemeente": {
+            "type": "GOB.Reference",
+            "ref": "brk:gemeentes",
+            "description": "De gemeente waarin de ligplaats ligt."
           }
         }
       },
@@ -1478,7 +1488,7 @@
         }
       },
       "nummeraanduidingen": {
-        "version": "0.3",
+        "version": "0.4",
         "abbreviation": "NAG",
         "entity_id": "identificatie",
         "has_states": true,
@@ -1589,11 +1599,16 @@
                 "type": "GOB.String"
               }
             }
+          },
+          "ligt_in_gemeente": {
+            "type": "GOB.Reference",
+            "ref": "brk:gemeentes",
+            "description": "De gemeente waarin de nummeraanduiding ligt."
           }
         }
       },
       "verblijfsobjecten": {
-        "version": "0.3",
+        "version": "0.4",
         "abbreviation": "VOT",
         "entity_id": "identificatie",
         "has_states": true,
@@ -1817,6 +1832,11 @@
                 "type": "GOB.String"
               }
             }
+          },
+          "ligt_in_gemeente": {
+            "type": "GOB.Reference",
+            "ref": "brk:gemeentes",
+            "description": "De gemeente waarin het verblijfsobject ligt."
           }
         }
       },
