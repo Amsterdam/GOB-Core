@@ -1488,7 +1488,7 @@
         }
       },
       "nummeraanduidingen": {
-        "version": "0.4",
+        "version": "0.3",
         "abbreviation": "NAG",
         "entity_id": "identificatie",
         "has_states": true,
@@ -1599,11 +1599,6 @@
                 "type": "GOB.String"
               }
             }
-          },
-          "ligt_in_gemeente": {
-            "type": "GOB.Reference",
-            "ref": "brk:gemeentes",
-            "description": "De gemeente waarin de nummeraanduiding ligt."
           }
         }
       },
