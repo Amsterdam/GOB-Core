@@ -24,6 +24,7 @@ SELECT
   ) AS _ref_ligt_in_woonplaats_bag_wps,
   json_build_object(
     'identificatie', gme_0.identificatie,
+    'volgnummer', gme_0.volgnummer,
     'naam', gme_0.naam
   ) AS _ref_ligt_in_gemeente_brk_gme,
   nvn_0._mref_heeft_nevenadres_bag_nag,
