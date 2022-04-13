@@ -824,7 +824,7 @@
     "abbreviation": "GBD",
     "collections": {
       "bouwblokken": {
-        "version": "0.1",
+        "version": "0.2",
         "abbreviation": "BBK",
         "entity_id": "identificatie",
         "has_states": true,
@@ -850,6 +850,11 @@
             "description": "De buurt waar het bouwblok in ligt.",
             "ref": "gebieden:buurten"
           },
+          "ligt_in_gemeente": {
+            "type": "GOB.Reference",
+            "description": "De gemeente waar het bouwblok in ligt.",
+            "ref": "brk:gemeentes"
+          },
           "geometrie": {
             "type": "GOB.Geo.Geometry",
             "description": "Geometrische beschrijving van een object."
@@ -857,7 +862,7 @@
         }
       },
       "buurten": {
-        "version": "0.2",
+        "version": "0.3",
         "abbreviation": "BRT",
         "entity_id": "identificatie",
         "has_states": true,
@@ -912,11 +917,16 @@
             "type": "GOB.Reference",
             "description": "Het GGW-gebied waar de buurt in ligt",
             "ref": "gebieden:ggwgebieden"
+          },
+          "ligt_in_gemeente": {
+            "type": "GOB.Reference",
+            "description": "De gemeente waar de buurt in ligt.",
+            "ref": "brk:gemeentes"
           }
         }
       },
       "wijken": {
-        "version": "0.2",
+        "version": "0.3",
         "abbreviation": "WIJK",
         "entity_id": "identificatie",
         "has_states": true,
@@ -966,11 +976,16 @@
             "type": "GOB.Reference",
             "description": "Het GGW-gebied waar de wijk in ligt.",
             "ref": "gebieden:ggwgebieden"
+          },
+          "ligt_in_gemeente": {
+            "type": "GOB.Reference",
+            "description": "De gemeente waar de wijk in ligt.",
+            "ref": "brk:gemeentes"
           }
         }
       },
       "ggwgebieden": {
-        "version": "0.1",
+        "version": "0.2",
         "abbreviation": "GGW",
         "entity_id": "identificatie",
         "has_states": true,
@@ -1017,11 +1032,16 @@
           "geometrie": {
             "type": "GOB.Geo.Polygon",
             "description": "Geometrische beschrijving van een object."
+          },
+          "ligt_in_gemeente": {
+            "type": "GOB.Reference",
+            "description": "De gemeente waar het ggwgebied in ligt.",
+            "ref": "brk:gemeentes"
           }
         }
       },
       "ggpgebieden": {
-        "version": "0.1",
+        "version": "0.2",
         "abbreviation": "GGP",
         "entity_id": "identificatie",
         "has_states": true,
@@ -1068,6 +1088,11 @@
           "geometrie": {
             "type": "GOB.Geo.Polygon",
             "description": "Geometrische beschrijving van een object."
+          },
+          "ligt_in_gemeente": {
+            "type": "GOB.Reference",
+            "description": "De gemeente waar het ggwgebied in ligt.",
+            "ref": "brk:gemeentes"
           }
         }
       },

@@ -258,6 +258,15 @@
             "new_column": "ligt_in_ggpgebied"
           }
         ]
+      },
+      "0.2": {
+        "target_version": "0.3",
+        "conversions": [
+          {
+            "action": "add",
+            "column": "ligt_in_gemeente"
+          }
+        ]
       }
     },
     "wijken": {
@@ -268,6 +277,48 @@
             "action": "rename",
             "old_column": "_ligt_in_ggwgebied",
             "new_column": "ligt_in_ggwgebied"
+          }
+        ]
+      },
+      "0.2": {
+        "target_version": "0.3",
+        "conversions": [
+          {
+            "action": "add",
+            "column": "ligt_in_gemeente"
+          }
+        ]
+      }
+    },
+    "bouwblokken": {
+      "0.1": {
+        "target_version": "0.2",
+        "conversions": [
+          {
+            "action": "add",
+            "column": "ligt_in_gemeente"
+          }
+        ]
+      }
+    },
+    "ggwgebieden": {
+      "0.1": {
+        "target_version": "0.2",
+        "conversions": [
+          {
+            "action": "add",
+            "column": "ligt_in_gemeente"
+          }
+        ]
+      }
+    },
+    "ggpgebieden": {
+      "0.1": {
+        "target_version": "0.2",
+        "conversions": [
+          {
+            "action": "add",
+            "column": "ligt_in_gemeente"
           }
         ]
       }
