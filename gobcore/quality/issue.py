@@ -1,7 +1,6 @@
 import datetime
 from dateutil import parser
 import json
-import os
 
 from gobcore.message_broker.config import IMPORT, RELATE, RELATE_CHECK
 from gobcore.message_broker.offline_contents import ContentsWriter
@@ -325,36 +324,26 @@ def _start_issue_workflow(header, issues, quality_update):
     with ContentsWriter() as writer, \
             ProgressTicker(f"Process issues {catalogue} {collection}", 10000) as progress:
 
-        num_records = 0
-        filename = writer.filename
-
         for json_issue in issues:
             progress.tick()
             issue = Issue(**json_issue)
             writer.write(quality_update.get_contents(issue))
-            num_records += 1
 
-        if num_records:
-            # Start workflow, allow retries when an identical workflow is already running for max_retry_time seconds
-            workflow = {
-                'workflow_name': "import",
-                'step_name': "update_model",
-                'retry_time': 10 * 60  # retry for max 10 minutes
+        # Start workflow
+        # allow retries when an identical workflow is already running for max_retry_time seconds
+        # allow DELETE events to be generated, when no issues are found (always start)
+        workflow = {
+            'workflow_name': "import",
+            'step_name': "update_model",
+            'retry_time': 10 * 60  # retry for max 10 minutes
+        }
+
+        wf_msg = {
+            'header': quality_update.get_header(header),
+            'contents_ref': writer.filename,
+            'summary': {
+                'num_records': progress._count
             }
+        }
 
-            wf_msg = {
-                'header': quality_update.get_header(header),
-                'contents_ref': filename,
-                'summary': {
-                    'num_records': num_records
-                }
-            }
-
-            start_workflow(workflow, wf_msg)
-
-    if not num_records:
-        # no offloading, delete empty file
-        try:
-            os.remove(filename)
-        except Exception as e:
-            print(f"Remove failed ({str(e)})", filename)
+        start_workflow(workflow, wf_msg)

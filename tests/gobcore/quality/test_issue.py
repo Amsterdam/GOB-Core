@@ -370,24 +370,6 @@ class TestIssue(TestCase):
         
         mock_start_workflow.assert_called()
 
-    @patch('builtins.print')
-    @patch('gobcore.quality.issue.os.remove')
-    def test_remove_empty_offloading_files(self, mock_remove, mock_print):
-        header = {
-            'catalogue': 'qa',
-            'collection': 'any collection',
-        }
-        issues = []
-        quality_update = MagicMock()
-
-        _start_issue_workflow(header, issues, quality_update)
-        self.assertTrue(mock_remove.called)
-
-        mock_remove.side_effect = Exception("any exception")
-        _start_issue_workflow(header, issues, quality_update)
-
-        self.assertEqual(mock_print.call_args[0][0], "Remove failed (any exception)")
-
     def test_state_attributes(self):
         entity = {
             'id': 'any id',
