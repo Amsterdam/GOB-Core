@@ -1,7 +1,9 @@
 import unittest
 import mock
 
-from gobcore.model.schema import _get_gob_info, _to_gob, _do_resolve, SchemaException, load_schema, _resolve_all
+from ..amschema_fixtures import get_dataset, get_table
+from gobcore.model import Schema
+from gobcore.model.schema import load_schema
 
 
 class TestAMSSchema(unittest.TestCase):
@@ -9,127 +11,102 @@ class TestAMSSchema(unittest.TestCase):
     def setUp(self):
         pass
 
-    @mock.patch("gobcore.model.schema.requests.get")
-    @mock.patch("gobcore.model.schema._resolve_all")
-    @mock.patch("gobcore.model.schema._to_gob")
-    def test_load_schema(self, mock_to_gob, mock_resolve, mock_get):
-        self.assertEqual(mock_to_gob.return_value, load_schema('uri', 'catalog', 'collection'))
-        mock_get.assert_called_with('uri', timeout=3)
-        mock_to_gob.assert_called_with(mock_resolve.return_value)
+    @mock.patch("gobcore.model.schema.AMSchemaRepository")
+    def test_load_schema(self, mock_repository):
+        schema = Schema(datasetId="dataset", tableId="tableId", version="1.0")
+        dataset = get_dataset()
+        table = get_table()
 
-    @mock.patch("gobcore.model.schema.requests.get")
-    def test_load_schema_exception(self, mock_get):
-        mock_get.side_effect = Exception
+        mock_repository.return_value.get_schema.return_value = table, dataset
 
-        with self.assertRaises(SchemaException):
-            load_schema('uri', 'catalog', 'collection')
-
-    def test_schema_gob_info(self):
-        expect = {
-            "string": "GOB.String",
-            "number": "GOB.Decimal",
-            "integer": "GOB.Integer",
-            "object": "GOB.JSON",
-            "boolean": "GOB.Boolean"
-        }
-
-        for t in expect.keys():
-            result = _get_gob_info({
-                "type": t
-            })
-            self.assertEqual(result, {
-                "type": expect[t]
-            })
-
-        result = _get_gob_info({
-            "title": "GeoJSON Point"
-        })
-        self.assertEqual(result, {
-            "type": "GOB.Geo.Point",
-            "srid": "RD"
-        })
-
-        result = _get_gob_info({
-            "ams.class": "http(s)://some-address/some-more/catalog/collection@vn.m"
-        })
-        self.assertEqual(result, {
-            "ref": "catalog:collection",
-            "type": "GOB.Reference"
-        })
-
-        with self.assertRaises(SchemaException):
-            result = _get_gob_info({
-                "ams.class": "some-rubbish"
-            })
-
-        with self.assertRaises(SchemaException):
-            result = _get_gob_info({})
-            self.assertEqual(result, None)
-
-        with self.assertRaises(SchemaException):
-            result = _get_gob_info({
-                "title": "some-rubbish"
-            })
-
-        with self.assertRaises(SchemaException):
-            result = _get_gob_info({
-                "type": "some-rubbish"
-            })
-
-    def test_to_gob(self):
-        model = _to_gob({
-            "properties": {
-                "x": {
-                    "type": "string",
-                    "anything": "else"
+        expected = {
+            'attributes': {
+                'datum_actueel_tot': {
+                    'description': 'Einddatum van de cyclus, eventueel in combinatie met het kenmerk Status',
+                    'type': 'GOB.String'
                 },
-                "y": {
-                    "type": "string",
-                    "anything": "else"
+                'geometrie': {
+                    'description': 'Geometrische ligging van de meetbout',
+                    'srid': 28992,
+                    'type': 'GOB.Geo.Point'},
+                'hoogte_tov_nap': {
+                    'description': 'Hoogte van het peilmerk t.o.v. NAP',
+                    'type': 'GOB.Decimal'
+                },
+                'identificatie': {
+                    'description': 'Het peilmerknummer van het peilmerk.',
+                    'type': 'GOB.String'
+                },
+                'jaar': {
+                    'description': 'Het jaar van waterpassing, behorende bij de hoogte.',
+                    'type': 'GOB.Integer'
+                },
+                'ligt_in_gebieden_bouwblok': {
+                    'description': 'Het bouwblok waarbinnen het peilmerk ligt',
+                    'ref': 'gebieden:bouwblokken',
+                    'type': 'GOB.Reference'
+                },
+                'merk': {
+                    'type': 'GOB.JSON',
+                    'attributes': {
+                        'code': {
+                            'type': 'GOB.String',
+                        },
+                        'omschrijving': {
+                            'type': 'GOB.String',
+                        }
+                    }
+                },
+                'merk_code': {
+                    'description': 'Merk van het referentiepunt code',
+                    'type': 'GOB.String'
+                },
+                'merk_omschrijving': {
+                    'description': 'Merk van het referentiepunt omschrijving',
+                    'type': 'GOB.String'
+                },
+                'omschrijving': {
+                    'description': 'Beschrijving van het object waarin het peilmerk zich bevindt.',
+                    'type': 'GOB.String'
+                },
+                'publiceerbaar': {
+                    'description': 'Publiceerbaar ja of nee',
+                    'type': 'GOB.Boolean'
+                },
+                'rws_nummer': {
+                    'description': 'Nummer dat Rijkswaterstaat hanteert.',
+                    'type': 'GOB.String'
+                },
+                'status_code': {
+                    'description': 'Status van het referentiepunt (1=actueel, 2=niet te meten, 3=vervallen) code',
+                    'type': 'GOB.Integer'
+                },
+                'status_omschrijving': {
+                    'description': 'Status van het referentiepunt (1=actueel, 2=niet te meten, 3=vervallen) omschrijving',
+                    'type': 'GOB.String'}
+                ,
+                'vervaldatum': {
+                    'description': 'Vervaldatum van het peilmerk.',
+                    'type': 'GOB.String'
+                },
+                'windrichting': {
+                    'description': 'Windrichting',
+                    'type': 'GOB.String'
+                },
+                'x_coordinaat_muurvlak': {
+                    'description': 'X-coördinaat muurvlak',
+                    'type': 'GOB.Decimal'
+                },
+                'y_coordinaat_muurvlak': {
+                    'description': 'Y-coördinaat muurvlak',
+                    'type': 'GOB.Decimal'
                 }
-            }
-        })
-        self.assertEqual(model, {
-            'x': {'anything': 'else', 'type': 'GOB.String'},
-            'y': {'anything': 'else', 'type': 'GOB.String'}
-        })
-
-    def test_do_resolve(self):
-        resolver = mock.MagicMock()
-
-        node = {
-            "a": "b"
+            },
+            'entity_id': 'identificatie',
+            'version': 'ams_2.0.0'
         }
-        result = _do_resolve(node, resolver)
-        self.assertEqual(result, node)
 
-        node = {
-            "a": "b",
-            "c": {
-                "d": "e"
-            }
-        }
-        result = _do_resolve(node, resolver)
-        self.assertEqual(result, node)
+        result = load_schema(schema)
+        self.assertEqual(expected, result)
 
-        node = {
-            "a": "b",
-            "$ref": "da ref"
-        }
-        resolver.resolving.return_value.__enter__.return_value = {'e': 'f'}
-        result = _do_resolve(node, resolver)
-        resolver.resolving.assert_called_with('da ref')
-        self.assertEqual({'$ref': 'da ref', 'a': 'b', 'e': 'f'}, result)
-
-        # Same as previous, now as part of list
-        node = [node]
-        self.assertEqual([result], _do_resolve(node, resolver))
-
-    @mock.patch('gobcore.model.schema.RefResolver')
-    @mock.patch('gobcore.model.schema._do_resolve')
-    def test_resolve_all(self, mock_do_resolve, mock_ref_resolver):
-        res = _resolve_all('uri', 'spec')
-        mock_ref_resolver.assert_called_with('uri', 'spec')
-
-        mock_do_resolve.assert_called_with('spec', mock_ref_resolver.return_value)
-        self.assertEqual(mock_do_resolve.return_value, res)
+        mock_repository.return_value.get_schema.assert_called_with(schema)
