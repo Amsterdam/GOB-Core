@@ -41,6 +41,17 @@
           }
         }
       },
+      "codeList": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string"
+            }
+          }
+        }
+      },
       "merkCode": {
         "type": "string",
         "provenance": "$.merk.code",
@@ -104,6 +115,30 @@
         },
         "relation": "gebieden:bouwblokken",
         "description": "Het bouwblok waarbinnen het peilmerk ligt"
+      },
+      "bestaatUitBuurten": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "identificatie": {
+              "type": "string"
+            },
+            "volgnummer": {
+              "type": "integer"
+            },
+            "beginGeldigheid": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "eindGeldigheid": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        },
+        "relation": "gebieden:buurten",
+        "description": "De buurten waaruit het object bestaat."
       },
        "datumActueelTot": {
         "type": "string",

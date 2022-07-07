@@ -6,7 +6,7 @@ Use that load_schema test instead; it uses a mock dataset.json and table.json th
 from unittest import TestCase
 
 from ...amschema_fixtures import get_dataset
-from gobcore.model.amschema.model import NumberProperty, RefProperty
+from gobcore.model.amschema.model import ArrayProperty, NumberProperty, RefProperty, StringProperty
 
 
 class TestNumberProperty(TestCase):
@@ -28,6 +28,16 @@ class TestRefProperty(TestCase):
 
         with self.assertRaises(NotImplementedError):
             prop.gob_type
+
+
+class TestArrayProperty(TestCase):
+
+    def test_gob_representation(self):
+        stringprop = StringProperty(type="string")
+        prop = ArrayProperty(type="array", items=stringprop)
+
+        with self.assertRaises(NotImplementedError):
+            prop.gob_representation(get_dataset())
 
 
 class TestDataset(TestCase):

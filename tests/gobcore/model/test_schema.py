@@ -46,6 +46,11 @@ class TestAMSSchema(unittest.TestCase):
                     'ref': 'gebieden:bouwblokken',
                     'type': 'GOB.Reference'
                 },
+                'bestaat_uit_buurten': {
+                    'description': 'De buurten waaruit het object bestaat.',
+                    'ref': 'gebieden:buurten',
+                    'type': 'GOB.ManyReference'
+                },
                 'merk': {
                     'type': 'GOB.JSON',
                     'attributes': {
@@ -56,6 +61,15 @@ class TestAMSSchema(unittest.TestCase):
                             'type': 'GOB.String',
                         }
                     }
+                },
+                'code_list': {
+                    'type': 'GOB.JSON',
+                    'attributes': {
+                        'code': {
+                            'type': 'GOB.String'
+                        }
+                    },
+                    'has_multiple_values': True
                 },
                 'merk_code': {
                     'description': 'Merk van het referentiepunt code',

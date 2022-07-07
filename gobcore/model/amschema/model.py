@@ -99,6 +99,9 @@ class ObjectProperty(Property):
     def gob_type(self):
         return "GOB.Reference" if self._is_relation() else "GOB.JSON"
 
+    def mapped_properties(self, dataset: "Dataset"):
+        return {snake_case(k): v.gob_representation(dataset) for k, v in self.properties.items()}
+
     def gob_representation(self, dataset: "Dataset"):
 
         if self._is_relation():
@@ -107,9 +110,8 @@ class ObjectProperty(Property):
             }
 
         else:
-            attributes = {snake_case(k): v.gob_representation(dataset) for k, v in self.properties.items()}
             type_attrs = {
-                "attributes": attributes
+                "attributes": self.mapped_properties(dataset)
             }
 
         return {
@@ -118,7 +120,38 @@ class ObjectProperty(Property):
         }
 
 
-Properties = Union[NonObjectProperties, ObjectProperty]
+class ArrayProperty(Property):
+    type: Literal["array"]
+    items: Union[NonObjectProperties, ObjectProperty]
+    relation: Optional[str]
+
+    def _is_relation(self):
+        return not not self.relation
+
+    @property
+    def gob_type(self):
+        return "GOB.ManyReference" if self._is_relation() else "GOB.JSON"
+
+    def gob_representation(self, dataset: "Dataset"):
+        if self._is_relation():
+            type_attrs = {
+                "ref": self.relation
+            }
+        elif isinstance(self.items, ObjectProperty):
+            type_attrs = {
+                "has_multiple_values": True,
+                "attributes": self.items.mapped_properties(dataset)
+            }
+        else:
+            raise NotImplementedError()
+
+        return {
+            **super().gob_representation(dataset),
+            **type_attrs,
+        }
+
+
+Properties = Union[NonObjectProperties, ObjectProperty, ArrayProperty]
 
 
 class Schema(BaseModel):
