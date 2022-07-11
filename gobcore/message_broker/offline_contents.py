@@ -21,13 +21,14 @@ _MESSAGE_BROKER_FOLDER = "message_broker"   # The name of the folder where the o
 
 class ContentsWriter:
 
-    def __init__(self):
+    def __init__(self, destination: str = None):
         """
         Opens a file
         The entities are written to the file as an array
         """
         unique_name = get_unique_name()
-        self.filename = get_filename(unique_name, _MESSAGE_BROKER_FOLDER)
+        destination = destination or _MESSAGE_BROKER_FOLDER
+        self.filename = get_filename(unique_name, destination)
 
     def __enter__(self):
         self.open()

@@ -130,5 +130,5 @@ def get_filename(name, offload_folder):
     dir = os.path.join(GOB_SHARED_DIR, offload_folder)
     # Create the path if the path not yet exists
     path = Path(dir)
-    path.mkdir(exist_ok=True)
+    path.mkdir(exist_ok=True, parents=True)
     return os.path.join(dir, name)
