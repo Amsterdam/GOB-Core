@@ -200,7 +200,7 @@ class ObjectDatastore(Datastore, ListEnabledDatastore, PutEnabledDatastore, Dele
         :param file_info: File information (name, last_modified, ...)
         :return: The list of non-empty rows
         """
-        io_obj = io.BytesIO(obj)
+        io_obj = io.BytesIO(obj.read())
         excel = pandas.read_excel(io=io_obj, keep_default_na=False, dtype=str, na_values='')
 
         return self._yield_rows(excel.iterrows(), file_info, config)
@@ -215,7 +215,7 @@ class ObjectDatastore(Datastore, ListEnabledDatastore, PutEnabledDatastore, Dele
         :param config: CSV config parameters ("delimiter" character)
         :return: The list of non-empty rows
         """
-        io_obj = io.BytesIO(obj)
+        io_obj = io.BytesIO(obj.read())
         csv = pandas.read_csv(io_obj,
                               delimiter=config.get("delimiter", ","),
                               encoding=config.get("encoding", "UTF-8"),
