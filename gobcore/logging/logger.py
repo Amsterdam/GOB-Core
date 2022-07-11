@@ -15,6 +15,7 @@ import logging
 import os
 import threading
 from collections import defaultdict
+from typing import Optional
 
 from gobcore.logging.log_publisher import LogPublisher
 
@@ -249,7 +250,6 @@ class Logger:
 
     def set_name(self, name):
         self._name = name
-        self._init_logger(name)
 
     def get_name(self):
         return getattr(self, '_name', None)
@@ -260,15 +260,23 @@ class Logger:
     def get_attribute(self, attribute):
         return self._default_args.get(attribute)
 
-    def configure(self, msg, name=None):
+    def _message_broker_handler(self) -> logging.Handler:
+        handler = RequestsHandler()
+        formatter = logging.Formatter(Logger.LOGFORMAT)
+        handler.setFormatter(formatter)
+        return handler
+
+    def configure(self, msg, name=None, handler: Optional[logging.Handler] = None):
         """Configure the logger to store the relevant information for subsequent logging.
         Should be called at the start of processing new item.
 
         :param msg: the processed message
         :param name: the name of the process that processes the message
+        :param handler: Optional handler to send logging to
         """
         if name is not None:
             self.set_name(name)
+            self._init_logger(name, handler)
 
         header = msg.get("header", {})
         self.set_default_args({
@@ -283,7 +291,7 @@ class Logger:
         })
         self._clear_logs()
 
-    def _init_logger(self, name):
+    def _init_logger(self, name: str, handler: Optional[logging.Handler] = None):
         """Sets and initializes a logger instance for the given name
 
         :param name: The name of the logger instance. This name will be part of every log record
@@ -295,18 +303,12 @@ class Logger:
             return
 
         logger = logging.getLogger(name)
-
         logger.setLevel(Logger.LOGLEVEL)
 
-        handler = RequestsHandler()
-        formatter = logging.Formatter(Logger.LOGFORMAT)
-        handler.setFormatter(formatter)
-
-        logger.addHandler(handler)
-
-        # Temporary logging also to stdout
-        stdout_handler = logging.StreamHandler()
-        logger.addHandler(stdout_handler)
+        if handler:
+            logger.addHandler(handler)
+        else:
+            logger.addHandler(self._message_broker_handler())
 
         Logger._logger[name] = logger
 
