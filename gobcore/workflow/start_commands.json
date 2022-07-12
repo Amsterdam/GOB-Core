@@ -51,7 +51,7 @@
       },
       {
         "name": "mode",
-        "description": "The import mode: full (default) or random, last5days, ....",
+        "description": "The import mode: full (default), recent or delete",
         "default": "full"
       }
     ],
