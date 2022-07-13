@@ -92,10 +92,10 @@ class StartCommands:
 
 class WorkflowCommands:
 
-    def __init__(self, commands: list[str]):
+    def __init__(self, commands: list[str] = None):
         start_commands = StartCommands(commands)
 
-        usage = f'''[<command> [--user USER] [<args>]]
+        usage = '''[<command> [--user USER] [<args>]]
 
 The GOB workflow commands are:'''
 
@@ -119,7 +119,8 @@ The GOB workflow commands are:'''
             parser.print_help()
             exit(1)
 
-    def _extract_parser_arg_kwargs(self, arg: StartCommandArgument):
+    @staticmethod
+    def _extract_parser_arg_kwargs(arg: StartCommandArgument):
         kwargs = {'help': arg.description}
 
         if arg.action:
@@ -142,7 +143,7 @@ The GOB workflow commands are:'''
 
         return kwargs
 
-    def _parse_arguments(self):
+    def parse_arguments(self):
         """Parse and validate arguments."""
         parser = argparse.ArgumentParser(description=self.start_command.description)
 
@@ -166,7 +167,3 @@ The GOB workflow commands are:'''
                 input_values[name] = getattr(input_args, name)
 
         return input_values
-
-    def get_message(self):
-        """Returns message dict with the arguments under the header key."""
-        return {'header': self._parse_arguments()}

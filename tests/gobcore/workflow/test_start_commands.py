@@ -1,7 +1,8 @@
 from unittest import TestCase
 from unittest.mock import patch, MagicMock, call
 
-from gobcore.workflow.start_commands import StartCommand, StartCommandArgument, StartCommands, NoSuchCommandException, InvalidArgumentsException
+from gobcore.workflow.start_commands import StartCommand, StartCommandArgument, StartCommands, NoSuchCommandException, \
+    InvalidArgumentsException, WorkflowCommands
 
 
 class TestStartCommandArgument(TestCase):
@@ -191,3 +192,163 @@ class TestStartCommands(TestCase):
         start_commands.commands = MagicMock()
 
         self.assertEqual(start_commands.commands, start_commands.get_all())
+
+
+class Struct:
+    def __init__(self, **entries):
+        self.user = None
+        self.__dict__.update(entries)
+
+
+class MockArgumentParser:
+
+    named_argument_added = False
+    arguments = {}
+
+    def __init__(self):
+        MockArgumentParser.arguments = {}
+
+    def add_argument(self, command, **kwargs):
+        if command.startswith('--') and not MockArgumentParser.named_argument_added:
+            MockArgumentParser.named_argument_added = True
+
+    def parse_args(self, *args):
+        return Struct(**MockArgumentParser.arguments)
+
+    def print_help(self):
+        pass
+
+
+@patch("argparse.ArgumentParser")
+@patch("gobcore.workflow.start_commands.StartCommands")
+class TestWorkflowCommands(TestCase):
+
+    def _mock_start_commands(self):
+        mock = MagicMock()
+
+        mock.get_all.return_value = {
+            'command_a': StartCommand('command_a', {'description': 'Description of command A', 'workflow': 'wf a'}),
+            'command_b': StartCommand('command_b', {'description': 'Description of command B', 'workflow': 'wf b'}),
+        }
+        return mock
+
+    def test_init(self, mock_start_commands, mock_parser):
+        mock_start_commands.return_value = self._mock_start_commands()
+        mock_parser.return_value = MockArgumentParser()
+        MockArgumentParser.arguments['command'] = 'command_a'
+        WorkflowCommands()
+
+        args, kwargs = mock_parser.call_args
+        self.assertTrue(f"{'command_a':25s}Description of command A" in kwargs['usage'])
+        self.assertTrue(f"{'command_b':25s}Description of command B" in kwargs['usage'])
+
+        mock_start_commands.return_value.get.assert_called_with('command_a')
+
+    def test_init_invalid_command(self, mock_start_commands, mock_parser):
+        mock_start_commands.return_value = self._mock_start_commands()
+        mock_start_commands.return_value.get.side_effect = NoSuchCommandException
+        mock_parser.return_value = MockArgumentParser()
+        MockArgumentParser.arguments['command'] = 'nonexistent'
+
+        with self.assertRaises(SystemExit) as cm:
+            WorkflowCommands()
+
+        self.assertEqual(cm.exception.code, 1)
+
+    def test_extract_parser_arg_kwargs_minimal(self, mock_start_commands, mock_parser):
+        wfc = WorkflowCommands()
+        start_command_arg = StartCommandArgument({'name': 'command name'})
+        expected_result = {
+            'type': str,
+            'help': '',
+            'nargs': '?',
+        }
+
+        self.assertEqual(expected_result, wfc._extract_parser_arg_kwargs(start_command_arg))
+
+    def test_extract_parser_arg_kwargs_maximal(self, mock_start_commands, mock_parser):
+        wfc = WorkflowCommands()
+        start_command_arg = StartCommandArgument({
+            'name': 'command name',
+            'default': 'default value',
+            'choices': ['a', 'b'],
+            'required': True,
+            'description': 'some description'
+        })
+
+        expected_result = {
+            'type': str,
+            'help': 'some description',
+            'default': 'default value',
+            'choices': ['a', 'b']
+        }
+
+        self.assertEqual(expected_result, wfc._extract_parser_arg_kwargs(start_command_arg))
+
+    def test_extract_parser_arguments_store_true(self, mock_start_commands, mock_parser):
+        wfc = WorkflowCommands()
+        start_command_arg = StartCommandArgument({
+            'name': 'command name',
+            'default': 'default value',
+            'choices': ['a', 'b'],
+            'required': True,
+            'action': 'store_true',
+        })
+
+        expected_result = {
+            'help': '',
+            'action': 'store_true'
+        }
+
+        self.assertEqual(expected_result, wfc._extract_parser_arg_kwargs(start_command_arg))
+
+    def test_parse_argument(self, mock_start_commands, mock_parser):
+        wfc = WorkflowCommands()
+
+        mock_parser.return_value = MockArgumentParser()
+        MockArgumentParser.arguments['arg1'] = 'val1'
+        MockArgumentParser.arguments['arg2'] = 'val2'
+        wfc._extract_parser_arg_kwargs = MagicMock()
+
+        start_command = StartCommand('command', {'workflow': 'theworkflow'})
+        start_command.args = [
+            StartCommandArgument({'name': 'arg1'}),
+            StartCommandArgument({'name': 'arg2', 'named': True}),
+        ]
+        wfc.start_command = start_command
+        result = wfc.parse_arguments()
+
+        self.assertEqual({
+            'arg1': 'val1',
+            'arg2': 'val2',
+        }, result)
+
+        # Expect a named argument has been added
+        self.assertTrue(MockArgumentParser.named_argument_added)
+
+    def test_parse_argument_with_user(self, mock_start_commands, mock_parser):
+        wfc = WorkflowCommands()
+
+        mock_parser.return_value = MockArgumentParser()
+        MockArgumentParser.arguments['arg1'] = 'val1'
+        MockArgumentParser.arguments['arg2'] = 'val2'
+        MockArgumentParser.arguments['user'] = 'any user'
+        wfc._extract_parser_arg_kwargs = MagicMock()
+
+        start_command = StartCommand('command', {'workflow': 'theworkflow'})
+        start_command.args = [
+            StartCommandArgument({'name': 'arg1'}),
+            StartCommandArgument({'name': 'user'}),
+            StartCommandArgument({'name': 'arg2', 'named': True})
+        ]
+        wfc.start_command = start_command
+        result = wfc.parse_arguments()
+
+        self.assertEqual({
+            'arg1': 'val1',
+            'arg2': 'val2',
+            'user': 'any user'
+        }, result)
+
+        # Expect a named argument has been added
+        self.assertTrue(MockArgumentParser.named_argument_added)
