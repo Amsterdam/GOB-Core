@@ -29,7 +29,7 @@ class TestOfflineContents(unittest.TestCase):
         # the filename returns the path to a valid filename, any missing dirs in the path will be created
         expected_dir = f"{config.GOB_SHARED_DIR}.{oc._MESSAGE_BROKER_FOLDER}"
         self.assertEqual(oc.get_filename("x", oc._MESSAGE_BROKER_FOLDER), f"{expected_dir}.x")
-        mocked_mkdir.assert_called_with(exist_ok=True)
+        mocked_mkdir.assert_called_with(exist_ok=True, parents=True)
 
     @mock.patch('gobcore.message_broker.offline_contents.get_filename', return_value="filename")
     @mock.patch('os.remove')

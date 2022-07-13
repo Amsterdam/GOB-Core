@@ -16,6 +16,7 @@ import os
 import sys
 import threading
 from collections import defaultdict
+from typing import Optional
 
 from gobcore.logging.log_publisher import LogPublisher
 
@@ -103,9 +104,12 @@ class Logger:
 
     _logger = {}
 
-    def __init__(self, name=None):
+    def __init__(self, name: str = None):
+        self.name = name
+
         if name is not None:
-            self.set_name(name)
+            self._init_logger()
+
         self._default_args = {}
         self._offload_file = None
         self._offload_filename = None
@@ -207,7 +211,7 @@ class Logger:
             'log_counts': self.get_log_counts(),
         }
 
-    def _log(self, level, msg, kwargs=None):
+    def _log(self, level: str, msg: str, kwargs=None):
         """
         Logs the message at the given level
 
@@ -217,14 +221,17 @@ class Logger:
         :param kwargs:
         :return: None
         """
-        logger = getattr(Logger._logger[self._name], level)
+        level_logger = getattr(self.log_instance, level)
         assert logger, f"Error: invalid logging level specified ({level})"
+
         extra = {**self._default_args, **kwargs} if kwargs else {**self._default_args}
+
         size = gettotalsizeof(msg) + gettotalsizeof(extra)
         if size > self.MAX_SIZE:
             msg = f"{msg[:self.SHORT_MESSAGE_SIZE]}..."
             extra = self._default_args
-        logger(msg, extra=extra)
+
+        level_logger(msg, extra=extra)
         self._save_log(level, msg)
 
     def info(self, msg, kwargs=None):
@@ -248,19 +255,13 @@ class Logger:
         self._data_msg_count['data_error'] += 1
         self._log('data_error', msg, kwargs)
 
-    def set_name(self, name):
-        self._name = name
-
-    def get_name(self):
-        return getattr(self, '_name', None)
-
     def set_default_args(self, default_args):
         self._default_args = default_args
 
     def get_attribute(self, attribute):
         return self._default_args.get(attribute)
 
-    def configure(self, msg, name=None):
+    def configure(self, msg: dict, name: str = None):
         """Configure the logger to store the relevant information for subsequent logging.
         Should be called at the start of processing new item.
 
@@ -268,8 +269,11 @@ class Logger:
         :param name: the name of the process that processes the message
         """
         if name is not None:
-            self.set_name(name)
-            self._init_logger(name)
+            if self.name is not None:
+                raise ValueError("name already set: ", self.name)
+
+            self.name = name
+            self._init_logger()
 
         header = msg.get("header", {})
         self.set_default_args({
@@ -284,32 +288,34 @@ class Logger:
         })
         self._clear_logs()
 
-    def add_message_broker_handler(self, name: str):
+    def add_message_broker_handler(self):
         """Adds the message broker handler to the `name` instance."""
         handler = RequestsHandler()
         formatter = logging.Formatter(Logger.LOGFORMAT)
         handler.setFormatter(formatter)
+        self.log_instance.addHandler(handler)
 
-        Logger._logger[name].addHandler(handler)
+    def _init_logger(self) -> logging.Logger:
+        if self.name in self._logger:
+            return self._logger[self.name]
 
-    def _init_logger(self, name):
-        """Sets and initializes a logger instance for the given name
-
-        :param name: The name of the logger instance. This name will be part of every log record
-        :return: None
-        """
-        # init_logger creates and adds a loghandler with the given name
-        # Only one log handler should exist for the given name
-        if Logger._logger.get(name) is not None:
-            return
-
-        logger = logging.getLogger(name)
-        logger.setLevel(Logger.LOGLEVEL)
+        new_logger = logging.getLogger(self.name)
+        new_logger.setLevel(self.LOGLEVEL)
 
         # log default to stdout
-        logger.addHandler(logging.StreamHandler(stream=sys.stdout))
+        new_logger.addHandler(logging.StreamHandler(stream=sys.stdout))
 
-        Logger._logger[name] = logger
+        self.set_logger(new_logger)
+        return new_logger
+
+    @property
+    def log_instance(self) -> Optional[logging.Logger]:
+        return self._logger.get(self.name)
+
+    @classmethod
+    def set_logger(cls, inst: logging.Logger):
+        assert inst.name is not None, "cannot set name with None"
+        cls._logger[inst.name] = inst
 
 
 class LoggerManager:

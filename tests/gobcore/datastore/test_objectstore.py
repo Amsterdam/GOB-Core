@@ -1,3 +1,4 @@
+from io import BytesIO
 from unittest import TestCase
 from unittest.mock import patch, MagicMock
 
@@ -212,7 +213,8 @@ class TestObjectDatastore(TestCase):
         mock_read.return_value = MockExcel()
         mock_isnull.return_value = True
         store = ObjectDatastore({}, {})
-        result = [obj for obj in store._read_xls({}, {}, {})]
+        obj = BytesIO(b"")
+        result = [obj for obj in store._read_xls(obj, {}, {})]
         self.assertEqual(result, [])
 
     @patch('gobcore.datastore.objectstore.get_object')
@@ -234,22 +236,22 @@ class TestObjectDatastore(TestCase):
         self.assertEqual(data, [])
         store._read_csv.assert_called()
 
-    @patch('gobcore.datastore.objectstore.io.BytesIO')
     @patch('gobcore.datastore.objectstore.pandas.read_csv')
-    def test_read_csv(self, mock_read, mock_io):
+    def test_read_csv(self, mock_read):
         mock_read.return_value = MockCSV()
         store = ObjectDatastore({}, {})
-        result = [obj for obj in store._read_csv({}, {}, {})]
+        obj = BytesIO(b"")
+        result = [obj for obj in store._read_csv(obj, {}, {})]
         self.assertEqual(result, [{"a": 1, "_file_info": {}}])
 
     @patch('gobcore.datastore.objectstore.pandas.isnull')
-    @patch('gobcore.datastore.objectstore.io.BytesIO')
     @patch('gobcore.datastore.objectstore.pandas.read_csv')
-    def test_read_csv_null_values(self, mock_read, mock_io, mock_isnull):
+    def test_read_csv_null_values(self, mock_read, mock_isnull):
         mock_read.return_value = MockCSV()
         mock_isnull.return_value = True
         store = ObjectDatastore({}, {})
-        result = [obj for obj in store._read_csv({}, {}, {})]
+        obj = BytesIO(b"")
+        result = [obj for obj in store._read_csv(obj, {}, {})]
         self.assertEqual(result, [])
 
     @patch('gobcore.datastore.objectstore.get_object')

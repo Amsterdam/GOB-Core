@@ -19,7 +19,7 @@ class TestLogger(TestCase):
 
     def test_init(self):
         logger = Logger("Any logger")
-        self.assertEqual(logger._name, "Any logger")
+        self.assertEqual(logger.name, "Any logger")
         self.assertIsNotNone(Logger._logger["Any logger"])
         self.assertIsInstance(Logger._logger["Any logger"], logging.Logger)
 
@@ -57,10 +57,9 @@ class TestLogger(TestCase):
     def test_log(self):
         mock_level_logger = MagicMock()
         mock_logger = type('MockLogger', (object,), {'level': mock_level_logger})
-        logger = Logger()
+        logger = Logger('name')
         logger._save_log = MagicMock()
-        logger._name = 'name'
-        Logger._logger = {logger._name: mock_logger}
+        Logger._logger = {logger.name: mock_logger}
         logger._default_args = {'some': 'arg'}
         logger.MAX_SIZE = 15
         logger.SHORT_MESSAGE_SIZE = 10
@@ -73,51 +72,51 @@ class TestLogger(TestCase):
     def test_multiple_init(self):
         logger1 = Logger("Any logger")
         logger2 = Logger("Any other logger")
-        logger3 = Logger(logger1._name)
+        logger3 = Logger(logger1.name)
         self.assertEqual(len(Logger._logger), 2)
 
     def test_info(self):
         logger = Logger("Info logger")
-        with self.assertLogs(logger=Logger._logger[logger._name], level=logging.INFO) as result:
+        with self.assertLogs(logger=Logger._logger[logger.name], level=logging.INFO) as result:
             logger.info("test")
-        self.assertEqual(result.output, [f"INFO:{logger._name}:test"])
+        self.assertEqual(result.output, [f"INFO:{logger.name}:test"])
 
     def test_warning(self):
         logger = Logger("Warning logger")
-        with self.assertLogs(logger=Logger._logger[logger._name], level=logging.INFO) as result:
+        with self.assertLogs(logger=Logger._logger[logger.name], level=logging.INFO) as result:
             logger.warning("test")
-        self.assertEqual(result.output, [f"WARNING:{logger._name}:test"])
+        self.assertEqual(result.output, [f"WARNING:{logger.name}:test"])
 
     def test_error(self):
         logger = Logger("Error logger")
         # RequestsHandler.LOG_PUBLISHER.publish.reset_mock()
-        with self.assertLogs(logger=Logger._logger[logger._name], level=logging.INFO) as result:
+        with self.assertLogs(logger=Logger._logger[logger.name], level=logging.INFO) as result:
             logger.error("test")
-        self.assertEqual(result.output, [f"ERROR:{logger._name}:test"])
+        self.assertEqual(result.output, [f"ERROR:{logger.name}:test"])
 
     def test_data_info(self):
         logger = Logger("Data info logger")
         self.assertEqual(logger._data_msg_count['data_info'], 0)
-        with self.assertLogs(logger=Logger._logger[logger._name], level=ExtendedLogger.DATAINFO) as result:
+        with self.assertLogs(logger=Logger._logger[logger.name], level=ExtendedLogger.DATAINFO) as result:
             logger.data_info("test")
-        self.assertEqual(result.output, [f"DATAINFO:{logger._name}:test"])
+        self.assertEqual(result.output, [f"DATAINFO:{logger.name}:test"])
         self.assertEqual(logger._data_msg_count['data_info'], 1)
 
     def test_data_warning(self):
         logger = Logger("Data warning logger")
         self.assertEqual(logger._data_msg_count['data_warning'], 0)
-        with self.assertLogs(logger=Logger._logger[logger._name], level=ExtendedLogger.DATAWARNING) as result:
+        with self.assertLogs(logger=Logger._logger[logger.name], level=ExtendedLogger.DATAWARNING) as result:
             logger.data_warning("test")
-        self.assertEqual(result.output, [f"DATAWARNING:{logger._name}:test"])
+        self.assertEqual(result.output, [f"DATAWARNING:{logger.name}:test"])
         self.assertEqual(logger._data_msg_count['data_warning'], 1)
 
     def test_data_error(self):
         logger = Logger("Data error logger")
         self.assertEqual(logger._data_msg_count['data_error'], 0)
         # RequestsHandler.LOG_PUBLISHER.publish.reset_mock()
-        with self.assertLogs(logger=Logger._logger[logger._name], level=ExtendedLogger.DATAERROR) as result:
+        with self.assertLogs(logger=Logger._logger[logger.name], level=ExtendedLogger.DATAERROR) as result:
             logger.data_error("test")
-        self.assertEqual(result.output, [f"DATAERROR:{logger._name}:test"])
+        self.assertEqual(result.output, [f"DATAERROR:{logger.name}:test"])
         self.assertEqual(logger._data_msg_count['data_error'], 1)
 
     def test_configure(self):
@@ -139,6 +138,8 @@ class TestLogger(TestCase):
             "some": "other"
         }
         logger.configure(msg)
+        logger.add_message_broker_handler()
+
         self.assertEqual(logger._default_args, msg["header"])
 
         logger.warning("test")
@@ -147,7 +148,7 @@ class TestLogger(TestCase):
         self.assertEqual(level, "WARNING")
         self.assertIsNotNone(args["timestamp"])
         self.assertEqual(args["level"], "WARNING")
-        self.assertEqual(args["name"], logger._name)
+        self.assertEqual(args["name"], logger.name)
         self.assertEqual(args["msg"], "test")
         self.assertIsNotNone(args["formatted_msg"])
         self.assertEqual(args["process_id"], msg["header"]["process_id"])
@@ -182,6 +183,9 @@ class TestLogger(TestCase):
         RequestsHandler.LOG_PUBLISHER = MagicMock(spec=LogPublisher)
         RequestsHandler.LOG_PUBLISHER.publish = MagicMock()
 
+        logger = Logger("logger")
+        self.assertRaises(ValueError, logger.configure, {}, "new_logger")
+
         logger = Logger()
         msg = {
             "header": {
@@ -194,14 +198,15 @@ class TestLogger(TestCase):
             "some": "other"
         }
         logger.configure(msg, "Another config logger")
+        logger.add_message_broker_handler()
 
         logger.warning("test")
         RequestsHandler.LOG_PUBLISHER.publish.assert_called_once()
         level, args = RequestsHandler.LOG_PUBLISHER.publish.call_args[0]
-        self.assertEqual(args["name"], logger._name)
+        self.assertEqual(args["name"], logger.name)
         # Test collection fallback
         self.assertEqual(args["entity"], msg['header']['collection'])
-        self.assertEqual(logger.get_name(), args["name"])
+        self.assertEqual(logger.name, args["name"])
         self.assertEqual(logger.get_attribute('source'), 'any source')
 
     @patch("gobcore.quality.issue.Issue")
@@ -296,7 +301,6 @@ class TestLogger(TestCase):
         mock_file.tell.return_value = 'any byte offset'
         logger._offload_file = mock_file
 
-
         result = logger.write_issue(mock_issue)
 
         mock_file.tell.assert_called()
@@ -341,6 +345,7 @@ class TestLogger(TestCase):
         logger.close_offload_file()
         mock_file.close.assert_called()
 
+
 class TestRequestHandler(TestCase):
 
     def setUp(self):
@@ -370,7 +375,7 @@ class TestRequestHandler(TestCase):
 
 
 class TestLoggerManager(TestCase):
-    class MockThread():
+    class MockThread:
         def __init__(self, id):
             self.ident = id
 
