@@ -260,12 +260,6 @@ class Logger:
     def get_attribute(self, attribute):
         return self._default_args.get(attribute)
 
-    def _message_broker_handler(self) -> logging.Handler:
-        handler = RequestsHandler()
-        formatter = logging.Formatter(Logger.LOGFORMAT)
-        handler.setFormatter(formatter)
-        return handler
-
     def configure(self, msg, name=None):
         """Configure the logger to store the relevant information for subsequent logging.
         Should be called at the start of processing new item.
