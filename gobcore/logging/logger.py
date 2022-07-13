@@ -221,8 +221,8 @@ class Logger:
         :param kwargs:
         :return: None
         """
-        level_logger = getattr(self.log_instance, level)
-        assert logger, f"Error: invalid logging level specified ({level})"
+        level_logger = getattr(self.log_instance, level, None)
+        assert level_logger, f"Error: invalid logging level specified ({level})"
 
         extra = {**self._default_args, **kwargs} if kwargs else {**self._default_args}
 
@@ -234,24 +234,24 @@ class Logger:
         level_logger(msg, extra=extra)
         self._save_log(level, msg)
 
-    def info(self, msg, kwargs=None):
+    def info(self, msg: str, kwargs=None):
         self._log('info', msg, kwargs)
 
-    def warning(self, msg, kwargs=None):
+    def warning(self, msg: str, kwargs=None):
         self._log('warning', msg, kwargs)
 
-    def error(self, msg, kwargs=None):
+    def error(self, msg: str, kwargs=None):
         self._log('error', msg, kwargs)
 
-    def data_info(self, msg, kwargs=None):
+    def data_info(self, msg: str, kwargs=None):
         self._data_msg_count['data_info'] += 1
         self._log('data_info', msg, kwargs)
 
-    def data_warning(self, msg, kwargs=None):
+    def data_warning(self, msg: str, kwargs=None):
         self._data_msg_count['data_warning'] += 1
         self._log('data_warning', msg, kwargs)
 
-    def data_error(self, msg, kwargs=None):
+    def data_error(self, msg: str, kwargs=None):
         self._data_msg_count['data_error'] += 1
         self._log('data_error', msg, kwargs)
 
@@ -316,6 +316,10 @@ class Logger:
     def set_logger(cls, inst: logging.Logger):
         assert inst.name is not None, "cannot set name with None"
         cls._logger[inst.name] = inst
+
+    def get_name(self):
+        """Function needed to get name property due to proxying in LoggerManager."""
+        return self.name
 
 
 class LoggerManager:

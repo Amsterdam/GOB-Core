@@ -201,7 +201,7 @@ class ObjectDatastore(Datastore, ListEnabledDatastore, PutEnabledDatastore, Dele
         :return: The list of non-empty rows
         """
         io_obj = io.BytesIO(obj.read())
-        excel = pandas.read_excel(io=io_obj, keep_default_na=False, dtype=str, na_values='')
+        excel = pandas.read_excel(io=io_obj, keep_default_na=False, dtype=str, na_values='', engine='openpyxl')
 
         return self._yield_rows(excel.iterrows(), file_info, config)
 
