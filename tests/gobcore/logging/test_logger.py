@@ -407,3 +407,9 @@ class TestLoggerManager(TestCase):
 
         logger_manager.ghi(1, 2, 3, kw=4, kw2=5)
         logger_manager.get_logger.return_value.ghi.assert_called_with(1, 2, 3, kw=4, kw2=5)
+
+    def test_get_name(self):
+        logger_manager = LoggerManager()
+        logger_manager.configure({}, name="logger_name")
+
+        self.assertEqual("logger_name", logger_manager.get_name())
