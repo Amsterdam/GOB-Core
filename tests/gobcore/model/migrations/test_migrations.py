@@ -188,6 +188,110 @@ class TestMigrations(unittest.TestCase):
 
         self.assertEqual(result, expected_data)
 
+    @patch('gobcore.model.migrations.GOBMigrations._get_migration')
+    def test_split_json_add(self, mock_get_migration):
+        add_event = MockEvent('ADD', '0.1')
+        data = {
+            'entity': {
+                'some_col': 'ABC',
+                'new_code_column': '456willbeoverwritten',
+                'json_col': {
+                    'code': '123',
+                    'omsc': 'La die la'
+                }
+            }
+        }
+
+        expected = {
+            'entity': {
+                'some_col': 'ABC',
+                'json_col': {
+                    'code': '123',
+                    'omsc': 'La die la'
+                },
+                'new_code_column': '123',
+                'new_omsc_column': 'La die la'
+            }
+        }
+
+        mock_get_migration.side_effect = [{
+            'target_version': '2.0',
+            'conversions': [{
+                'column': 'json_col',
+                'action': 'split_json',
+                'mapping': {
+                    'new_code_column': 'code',
+                    'new_omsc_column': 'omsc'
+                }
+            }]
+        }]
+
+        self.migrations.migrate_event_data(add_event, data, 'catalog', 'collection', '2.0')
+
+        self.assertEqual(data, expected)
+
+    @patch('gobcore.model.migrations.GOBMigrations._get_migration')
+    def test_split_json_modify(self, mock_get_migration):
+        modify_event = MockEvent('MODIFY', '0.1')
+
+        data = {
+            'modifications': [
+                {
+                    'key': 'json_col',
+                    'old_value': {
+                        'code': 123,
+                        'omsc': 'La die la'
+                    },
+                    'new_value': {
+                        'code': 234,
+                        'omsc': 'La die la la la'
+                    },
+                },
+            ]
+        }
+
+        expected = {
+            'modifications': [
+                {
+                    'key': 'json_col',
+                    'old_value': {
+                        'code': 123,
+                        'omsc': 'La die la'
+                    },
+                    'new_value': {
+                        'code': 234,
+                        'omsc': 'La die la la la'
+                    },
+                },
+                {
+                    'key': 'new_code_column',
+                    'old_value': 123,
+                    'new_value': 234
+                },
+                {
+                    'key': 'new_omsc_column',
+                    'old_value': 'La die la',
+                    'new_value': 'La die la la la'
+                }
+            ]
+        }
+
+        mock_get_migration.side_effect = [{
+            'target_version': '2.0',
+            'conversions': [{
+                'column': 'json_col',
+                'action': 'split_json',
+                'mapping': {
+                    'new_code_column': 'code',
+                    'new_omsc_column': 'omsc'
+                }
+            }]
+        }]
+
+        self.migrations.migrate_event_data(modify_event, data, 'catalog', 'collection', '2.0')
+
+        self.assertEqual(data, expected)
+
     @patch('gobcore.model.migrations.logger')
     @patch('gobcore.model.migrations.GOBMigrations._get_migration')
     def test_migrate_event_data_missing_migration(self, mock_get_migration, mock_logger):

@@ -323,5 +323,59 @@
         ]
       }
     }
+  },
+  "nap": {
+    "peilmerken": {
+      "0.1": {
+        "target_version": "ams_2.0.0",
+        "conversions": [
+          {
+            "action": "add",
+            "column": "merk_omschrijving"
+          },
+          {
+            "action": "add",
+            "column": "merk_code"
+          },
+          {
+            "action": "add",
+            "column": "status_omschrijving"
+          },
+          {
+            "action": "add",
+            "column": "status_code"
+          },
+          {
+            "action": "split_json",
+            "column": "merk",
+            "mapping": {
+              "merk_code": "code",
+              "merk_omschrijving": "omschrijving"
+            }
+          },
+          {
+            "action": "split_json",
+            "column": "status",
+            "mapping": {
+              "status_code": "code",
+              "status_omschrijving": "omschrijving"
+            }
+          },
+          {
+            "action": "delete",
+            "column": "merk"
+          },
+          {
+            "action": "delete",
+            "column": "status"
+          },
+          {
+            "action": "rename",
+            "old_column": "ligt_in_bouwblok",
+            "new_column": "ligt_in_gebieden_bouwblok"
+          }
+        ]
+      }
+    }
   }
 }

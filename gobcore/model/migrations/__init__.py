@@ -8,7 +8,6 @@ from gobcore.exceptions import GOBException
 from gobcore.logging.logger import logger
 
 from gobcore.model import GOBModel
-from gobcore.model.metadata import FIELD
 
 
 class GOBMigrations():
@@ -83,6 +82,42 @@ class GOBMigrations():
             if column not in data['entity']:
                 data['entity'][column] = default
 
+    def _split_json(self, event, data, column, mapping):
+        """Splits an existing GOB.JSON field with name :column: in the fields as specified in :mapping:
+
+        For example:
+        :column: is 'oldjsoncolumn'
+        :mapping: is {'attr1': 'newcolumn1', 'attr2': 'newcolumn2'}
+
+        The result wil be an event with two new attributes 'newcolumn1' and 'newcolumn2' with values
+        'oldjsoncolumn.attr1' and 'oldjsoncolumn.attr2' resp.
+
+        Note that 'oldjsoncolumn' will not be removed; use a subsequent 'delete' action in the same migration to
+        remove 'oldjsoncolumn' if needed.
+
+        """
+        if event.action == 'ADD':
+            column_value = data['entity'][column]
+
+            new_values = {new_col: column_value[json_attr] for new_col, json_attr in mapping.items()}
+            data['entity'] = {
+                **data['entity'],
+                **new_values
+            }
+        elif event.action == 'MODIFY':
+            # If old JSON column is present in a modification, add modifications for the newly mapped fields.
+            # Leave the old JSON column modification untouched. User should define an explicit delete action for this.
+            new_modifications = []
+            for modification in data['modifications']:
+                if modification.get('key') == column:
+                    for new_col, json_attr in mapping.items():
+                        new_modifications.append({
+                            'key': new_col,
+                            'old_value': modification['old_value'].get(json_attr),
+                            'new_value': modification['new_value'].get(json_attr)
+                        })
+            data['modifications'] += new_modifications
+
     def _apply_migration(self, event, data, migration):
         """
         Apply a migration on an event by converting the data based on all conversion in the migration
@@ -109,9 +144,15 @@ class GOBMigrations():
             elif conversion.get('action') == 'add':
                 column = conversion.get('column')
                 default = conversion.get('default')
-                assert column and default, "Invalid conversion definition"
+                assert column, "Invalid conversion definition"
 
                 self._add_column(event, data, column, default)
+            elif conversion.get('action') == 'split_json':
+                column = conversion.get('column')
+                mapping = conversion.get('mapping')
+                assert column and mapping, "Invalid conversion definition"
+
+                self._split_json(event, data, column, mapping)
             else:
                 raise NotImplementedError(f"Conversion {conversion['action']} not implemented")
 
