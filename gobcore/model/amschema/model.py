@@ -34,6 +34,11 @@ class StringProperty(Property):
 
     @property
     def gob_type(self):
+        if self.format == StringFormatEnum.date:
+            return "GOB.Date"
+        elif self.format == StringFormatEnum.datetime:
+            return "GOB.DateTime"
+
         return "GOB.String"
 
 

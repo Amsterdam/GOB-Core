@@ -23,7 +23,7 @@ class TestAMSSchema(unittest.TestCase):
             'attributes': {
                 'datum_actueel_tot': {
                     'description': 'Einddatum van de cyclus, eventueel in combinatie met het kenmerk Status',
-                    'type': 'GOB.String'
+                    'type': 'GOB.DateTime'
                 },
                 'geometrie': {
                     'description': 'Geometrische ligging van de meetbout',
@@ -101,7 +101,7 @@ class TestAMSSchema(unittest.TestCase):
                 ,
                 'vervaldatum': {
                     'description': 'Vervaldatum van het peilmerk.',
-                    'type': 'GOB.String'
+                    'type': 'GOB.Date'
                 },
                 'windrichting': {
                     'description': 'Windrichting',
