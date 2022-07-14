@@ -24,11 +24,10 @@ class TestOfflineContents(unittest.TestCase):
         self.assertFalse(oc.get_unique_name() == oc.get_unique_name())
 
     @mock.patch.object(Path, 'mkdir')
-    @mock.patch('os.path.join', side_effect=mock_join)
-    def testFilename(self, mocked_join, mocked_mkdir):
+    def testFilename(self, mocked_mkdir):
         # the filename returns the path to a valid filename, any missing dirs in the path will be created
-        expected_dir = f"{config.GOB_SHARED_DIR}.{oc._MESSAGE_BROKER_FOLDER}"
-        self.assertEqual(oc.get_filename("x", oc._MESSAGE_BROKER_FOLDER), f"{expected_dir}.x")
+        expected_dir = f"{config.GOB_SHARED_DIR}/{oc._MESSAGE_BROKER_FOLDER}"
+        self.assertEqual(oc.get_filename("x", oc._MESSAGE_BROKER_FOLDER), f"{expected_dir}/x")
         mocked_mkdir.assert_called_with(exist_ok=True, parents=True)
 
     @mock.patch('gobcore.message_broker.offline_contents.get_filename', return_value="filename")
