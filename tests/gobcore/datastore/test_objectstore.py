@@ -79,13 +79,14 @@ class TestConnection(TestCase):
 
     @patch("gobcore.datastore.objectstore.Connection")
     def test_get_object(self, mock_conn):
-        mock_conn.get_object.return_value = ('', [b'chunk1'])
-
         metadata = {'name': 'naam'}
         dirname = 'dir'
 
+        mock_conn.get_object.return_value = ('', b'chunk1')
         self.assertEqual(get_object(mock_conn, metadata, dirname), b'chunk1')
-        self.assertEqual(get_object(mock_conn, metadata, dirname, max_chunks=1), b'chunk1')
+
+        mock_conn.get_object.return_value = ('', (ch for ch in [b'chunk1']))
+        self.assertEqual(list(get_object(mock_conn, metadata, dirname)), [b'chunk1'])
 
     @patch("gobcore.datastore.objectstore.Connection")
     def test_put_object(self, mock_conn):
