@@ -1,13 +1,15 @@
 import unittest
 from unittest.mock import MagicMock
 
+from gobcore.model import GOBModel
 from gobcore.sources import GOBSources
 
 
 class TestSources(unittest.TestCase):
 
     def setUp(self):
-        self.sources = GOBSources()
+        model = GOBModel()
+        self.sources = GOBSources(model)
 
     def test_get_relations(self):
         # Assert we get a list of relations for a collection

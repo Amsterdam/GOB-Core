@@ -25,7 +25,7 @@ class ImportEvent(metaclass=ABCMeta):
     name = "event"
     is_add_new = False
     timestamp_field = None  # Each event is timestamped
-    gob_model = GOBModel()
+    gob_model = None
     skip = ["_entity_source_id", "_last_event"]
 
     @classmethod
@@ -68,6 +68,9 @@ class ImportEvent(metaclass=ABCMeta):
         self._data = data  # Data for internal used. Can be modified
         self._metadata = metadata
         self.last_event = self._data.pop("_last_event", None)
+
+        if ImportEvent.gob_model is None:
+            ImportEvent.gob_model = GOBModel()
 
         self._model = self.gob_model.get_collection(self._metadata.catalogue, self._metadata.entity)
 

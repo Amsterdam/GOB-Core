@@ -8,13 +8,13 @@ from gobcore.model import GOBModel
 
 class GOBSources():
 
-    def __init__(self):
+    def __init__(self, model: GOBModel):
         path = os.path.join(os.path.dirname(__file__), 'gobsources.json')
         with open(path) as file:
             data = json.load(file)
 
         self._data = data
-        self._model = GOBModel()
+        self._model = model
 
         self._relations = defaultdict(lambda: defaultdict(list))
 

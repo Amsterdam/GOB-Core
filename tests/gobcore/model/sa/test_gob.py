@@ -1,7 +1,8 @@
 import unittest
 from unittest.mock import patch
 
-from gobcore.model.sa.gob import models, _get_special_column_type, columns_to_model, _create_model_type
+from gobcore.model import GOBModel
+from gobcore.model.sa.gob import get_sqlalchemy_models, columns_to_model
 
 
 class TestGob(unittest.TestCase):
@@ -10,16 +11,10 @@ class TestGob(unittest.TestCase):
         pass
 
     def test_model(self):
+        models = get_sqlalchemy_models(GOBModel())
         for (name, cls) in models.items():
             m = cls()
             self.assertEqual(str(m), name)
-
-    @patch("gobcore.model.sa.gob.is_gob_geo_type", lambda x: x is not None and x.startswith('geo'))
-    @patch("gobcore.model.sa.gob.is_gob_json_type", lambda x: x is not None and x.startswith('json'))
-    def test_get_special_column_type(self):
-        self.assertEqual("geo", _get_special_column_type("geocolumn"))
-        self.assertEqual("json", _get_special_column_type("jsoncolumn"))
-        self.assertIsNone(_get_special_column_type(None))
 
     class MockModel:
         collections = {
@@ -60,7 +55,6 @@ class TestGob(unittest.TestCase):
         def __eq__(self, other):
             return self.name == other.name
 
-    @patch("gobcore.model.sa.gob.GOBModel", MockModel)
     @patch("gobcore.model.sa.gob.ForeignKeyConstraint", MockForeignKeyConstraint)
     @patch("gobcore.model.sa.gob.NameCompressor.compress_name", lambda x: x)
     @patch("gobcore.model.sa.gob.get_column")
@@ -77,7 +71,7 @@ class TestGob(unittest.TestCase):
             'reference_name': 'reference'
         }
 
-        self.assertEqual(mock_model_type.return_value, columns_to_model('rel', 'table_name', {
+        self.assertEqual(mock_model_type.return_value, columns_to_model(self.MockModel(), 'rel', 'table_name', {
             'column1': 'column1spec',
             'column2': 'column2spec',
         }))
@@ -92,7 +86,6 @@ class TestGob(unittest.TestCase):
             mock_unique.return_value,
         ))
 
-    @patch("gobcore.model.sa.gob.GOBModel", MockModel)
     @patch("gobcore.model.sa.gob.ForeignKeyConstraint", MockForeignKeyConstraint)
     @patch("gobcore.model.sa.gob.NameCompressor.compress_name", lambda x: x)
     @patch("gobcore.model.sa.gob.get_column")
@@ -109,7 +102,7 @@ class TestGob(unittest.TestCase):
             'reference_name': 'very_many_reference'
         }
 
-        self.assertEqual(mock_model_type.return_value, columns_to_model('rel', 'table_name', {
+        self.assertEqual(mock_model_type.return_value, columns_to_model(self.MockModel(), 'rel', 'table_name', {
             'column1': 'column1spec',
             'column2': 'column2spec',
         }))

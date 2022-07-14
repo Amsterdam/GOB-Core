@@ -2,6 +2,7 @@ import os
 import json
 
 from gobcore.exceptions import GOBException
+from gobcore.model.events import EVENTS, EVENTS_DESCRIPTION
 from gobcore.model.metadata import FIELD
 from gobcore.model.metadata import STATE_FIELDS
 from gobcore.model.metadata import PRIVATE_META_FIELDS, PUBLIC_META_FIELDS, FIXED_FIELDS
@@ -9,34 +10,6 @@ from gobcore.model.relations import get_relations, get_inverse_relations
 from gobcore.model.quality import QUALITY_CATALOG, get_quality_assurances
 from gobcore.model.schema import load_schema, SchemaException
 
-
-EVENTS_DESCRIPTION = {
-    "eventid": "Unique identification of the event, numbered sequentially",
-    "timestamp": "Datetime when the event as created",
-    "catalogue": "The catalogue in which the entity resides",
-    "entity": "The entity to which the event need to be applied",
-    "tid": "The tid (combination _id and volgnummer, if applicable) of the entity this event refers to",
-    "version": "The version of the entity model",
-    "action": "Add, change, delete or confirm",
-    "source": "The functional source of the entity, e.g. AMSBI",  # Deprecated. Remove later
-    "application": "The technical source of the entity, e.g. DIVA",
-    "source_id": "The id of the entity in the source",  # Deprecated. Remove later
-    "contents": "A json object that holds the contents for the action, the full entity for an Add",
-}
-
-EVENTS = {
-    "eventid": "GOB.PKInteger",
-    "timestamp": "GOB.DateTime",
-    "catalogue": "GOB.String",
-    "entity": "GOB.String",
-    "tid": "GOB.String",
-    "version": "GOB.String",
-    "action": "GOB.String",
-    "source": "GOB.String",  # Deprecated. Remove later
-    "application": "GOB.String",
-    "source_id": "GOB.String",  # Deprecated. Remove later
-    "contents": "GOB.JSON",
-}
 
 
 class NotInModelException(Exception):
@@ -54,11 +27,18 @@ class NoSuchCollectionException(NotInModelException):
 class GOBModel():
     inverse_relations = None
     _data = None
+    legacy_mode = None
 
-    def __init__(self):
+    # Set and used to cache SA models by the SA layer, use model.sa.gob.get_sqlalchemy_models() to retrieve/init
+    sqlalchemy_models = None
+
+    def __init__(self, legacy=False):
         if GOBModel._data is not None:
+            if self.legacy_mode is not None and self.legacy_mode != legacy:
+                raise Exception("Tried to initialise model with different legacy setting")
             # Model is already initialised
             return
+        GOBModel.legacy_mode = legacy
 
         path = os.path.join(os.path.dirname(__file__), 'gobmodel.json')
         with open(path) as file:
