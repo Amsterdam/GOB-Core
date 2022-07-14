@@ -25,4 +25,3 @@ EVENTS = {
     "source_id": "GOB.String",  # Deprecated. Remove later
     "contents": "GOB.JSON",
 }
-

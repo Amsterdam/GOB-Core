@@ -150,7 +150,13 @@ def get_sqlalchemy_models(model):
     }
 
     # Start with events
-    columns_to_model(model, None, "events", columns_to_fields(EVENTS, EVENTS_DESCRIPTION), constraint_columns=["eventid"])
+    columns_to_model(
+        model,
+        None,
+        "events",
+        columns_to_fields(EVENTS, EVENTS_DESCRIPTION),
+        constraint_columns=["eventid"]
+    )
 
     for catalog_name, catalog in model.get_catalogs().items():
         for collection_name, collection in model.get_collections(catalog_name).items():

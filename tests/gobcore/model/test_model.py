@@ -13,6 +13,10 @@ class TestModel(unittest.TestCase):
     def setUp(self):
         self.model = GOBModel()
 
+    def test_fail_on_different_legacy_value(self):
+        with self.assertRaisesRegex(Exception, "Tried to initialise model with different legacy setting"):
+            GOBModel(legacy=True)
+
     def test_get_catalog_names(self):
         self.assertIn('meetbouten', self.model.get_catalog_names())
 

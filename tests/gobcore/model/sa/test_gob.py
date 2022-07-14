@@ -10,11 +10,28 @@ class TestGob(unittest.TestCase):
     def setUp(self):
         pass
 
-    def test_model(self):
+    def test_get_sqlalchemy_models(self):
         models = get_sqlalchemy_models(GOBModel())
         for (name, cls) in models.items():
             m = cls()
             self.assertEqual(str(m), name)
+
+    @patch("gobcore.model.sa.gob.columns_to_model")
+    def test_get_sqlalchemy_models_already_initialised(self, mock_columns_to_model):
+        gobmodel = GOBModel()
+        GOBModel.sqlalchemy_models = None
+
+        models = get_sqlalchemy_models(gobmodel)
+        mock_columns_to_model.assert_called()
+
+        self.assertIsNotNone(GOBModel.sqlalchemy_models)
+        self.assertEqual(GOBModel.sqlalchemy_models, models)
+
+        # Should used cached value the second time
+        mock_columns_to_model.reset_mock()
+        models = get_sqlalchemy_models(gobmodel)
+        mock_columns_to_model.assert_not_called()
+        self.assertEqual(GOBModel.sqlalchemy_models, models)
 
     class MockModel:
         collections = {
