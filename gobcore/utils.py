@@ -1,6 +1,5 @@
 from datetime import datetime
 from itertools import chain
-import os
 from pathlib import Path
 import socket
 from sys import getsizeof

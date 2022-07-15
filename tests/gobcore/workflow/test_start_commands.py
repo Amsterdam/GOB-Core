@@ -194,7 +194,7 @@ class TestStartCommands(TestCase):
         self.assertEqual(start_commands.commands, start_commands.get_all())
 
 
-class Struct:
+class Namespace:
     def __init__(self, **entries):
         self.user = None
         self.__dict__.update(entries)
@@ -213,7 +213,7 @@ class MockArgumentParser:
             MockArgumentParser.named_argument_added = True
 
     def parse_args(self, *args):
-        return Struct(**MockArgumentParser.arguments)
+        return Namespace(**MockArgumentParser.arguments)
 
     def print_help(self):
         pass
