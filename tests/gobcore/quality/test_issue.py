@@ -1,5 +1,5 @@
 from unittest import TestCase
-from unittest.mock import MagicMock, patch, ANY
+from unittest.mock import MagicMock, patch, PropertyMock
 
 import datetime
 
@@ -7,10 +7,12 @@ from gobcore.model import FIELD
 from gobcore.quality.issue import QA_LEVEL, Issue, IssueException, log_issue, process_issues, is_functional_process, \
                                   _start_issue_workflow
 
-class Mock_QA_CHECK():
+
+class Mock_QA_CHECK:
     any_check = {
         'id': 'any check'
     }
+
 
 @patch("gobcore.quality.issue.QA_CHECK", Mock_QA_CHECK)
 class TestIssue(TestCase):
@@ -280,82 +282,82 @@ class TestIssue(TestCase):
                 'mode': 'any mode'
             }
         }
+        # with mock.patch('MyClass.last_transaction', new_callable=PropertyMock) as mock_last_transaction:
 
-        # Skip issues for unnamed process steps
-        mock_logger.get_name.return_value = None
-        process_issues(msg)
-        mock_start_issue_workflow.assert_not_called()
+        with patch("gobcore.quality.issue.logger.name", new_callable=PropertyMock(return_value=None)):
+            # Skip issues for unnamed process steps
+            process_issues(msg)
+            mock_start_issue_workflow.assert_not_called()
 
-        mock_logger.get_name.return_value = "any name"
+        with patch("gobcore.quality.issue.logger.name", new_callable=PropertyMock(return_value="any name")):
+            # Skip empty issues for non-functional process steps
+            mock_logger.get_issues.return_value = (i for i in [])
+            mock_logger.has_issue.return_value = False
+            mock_is_functional.return_value = False
+            process_issues(msg)
+            mock_start_issue_workflow.assert_not_called()
 
-        # Skip empty issues for non-functional process steps
-        mock_logger.get_issues.return_value = (i for i in [])
-        mock_logger.has_issue.return_value = False
-        mock_is_functional.return_value = False
-        process_issues(msg)
-        mock_start_issue_workflow.assert_not_called()
+            # Always skip any issues of the QA catalog itself
+            mock_logger.get_issues.return_value = (i for i in [mock_issue])
+            mock_is_functional.return_value = True
+            mock_logger.has_issue.return_value = True
+            msg['header']['catalogue'] = 'qa'
+            process_issues(msg)
+            mock_start_issue_workflow.assert_not_called()
 
-        # Always skip any issues of the QA catalog itself
-        mock_logger.get_issues.return_value = (i for i in [mock_issue])
-        mock_is_functional.return_value = True
-        mock_logger.has_issue.return_value = True
-        msg['header']['catalogue'] = 'qa'
-        process_issues(msg)
-        mock_start_issue_workflow.assert_not_called()
+            # Skip GOBPrepare
+            mock_logger.get_issues.return_value = (i for i in [mock_issue])
+            mock_is_functional.return_value = True
+            mock_logger.has_issue.return_value = True
+            msg['header']['catalogue'] = 'any catalogue'
+            msg['header']['application'] = 'GOBPrepare'
+            process_issues(msg)
+            mock_start_issue_workflow.assert_not_called()
 
-        # Skip GOBPrepare
-        mock_logger.get_issues.return_value = (i for i in [mock_issue])
-        mock_is_functional.return_value = True
-        mock_logger.has_issue.return_value = True
-        msg['header']['catalogue'] = 'any catalogue'
-        msg['header']['application'] = 'GOBPrepare'
-        process_issues(msg)
-        mock_start_issue_workflow.assert_not_called()
+            # Skip Split job
+            mock_logger.get_issues.return_value = (i for i in [mock_issue])
+            mock_is_functional.return_value = True
+            mock_logger.has_issue.return_value = True
+            msg['header']['catalogue'] = 'any catalogue'
+            msg['header']['is_split'] = True
+            process_issues(msg)
+            mock_start_issue_workflow.assert_not_called()
+            del msg['header']['is_split']
 
-        # Skip Split job
-        mock_logger.get_issues.return_value = (i for i in [mock_issue])
-        mock_is_functional.return_value = True
-        mock_logger.has_issue.return_value = True
-        msg['header']['catalogue'] = 'any catalogue'
-        msg['header']['is_split'] = True
-        process_issues(msg)
-        mock_start_issue_workflow.assert_not_called()
-        del msg['header']['is_split']
+            # Skip when no collection is present
+            mock_logger.get_issues.return_value = (i for i in [mock_issue])
+            mock_is_functional.return_value = True
+            mock_logger.has_issue.return_value = True
+            msg['header']['application'] = 'any application'
+            del msg['header']['collection']
+            process_issues(msg)
+            mock_start_issue_workflow.assert_not_called()
 
-        # Skip when no collection is present
-        mock_logger.get_issues.return_value = (i for i in [mock_issue])
-        mock_is_functional.return_value = True
-        mock_logger.has_issue.return_value = True
-        msg['header']['application'] = 'any application'
-        del msg['header']['collection']
-        process_issues(msg)
-        mock_start_issue_workflow.assert_not_called()
+            # Non-functional processes might report issues
+            # In that case they will not be skipped and handled as regular issues
+            mock_logger.get_issues.return_value = (i for i in [mock_issue])
+            mock_is_functional.return_value = False
+            mock_logger.has_issue.return_value = True
+            msg['header']['collection'] = 'any collection'
+            process_issues(msg)
+            mock_start_issue_workflow.assert_called()
+            mock_start_issue_workflow.reset_mock()
 
-        # Non-functional processes might report issues
-        # In that case they will not be skipped and handled as regular issues
-        mock_logger.get_issues.return_value = (i for i in [mock_issue])
-        mock_is_functional.return_value = False
-        mock_logger.has_issue.return_value = True
-        msg['header']['collection'] = 'any collection'
-        process_issues(msg)
-        mock_start_issue_workflow.assert_called()
-        mock_start_issue_workflow.reset_mock()
+            # Do not skip empty issues for functional process steps
+            mock_logger.get_issues.return_value = (i for i in [])
+            mock_logger.has_issue.return_value = False
+            mock_is_functional.return_value = True
+            process_issues(msg)
+            mock_start_issue_workflow.assert_called()
+            mock_start_issue_workflow.reset_mock()
 
-        # Do not skip empty issues for functional process steps
-        mock_logger.get_issues.return_value = (i for i in [])
-        mock_logger.has_issue.return_value = False
-        mock_is_functional.return_value = True
-        process_issues(msg)
-        mock_start_issue_workflow.assert_called()
-        mock_start_issue_workflow.reset_mock()
-
-        # The regular case is a functional process step that has any issues to report
-        issues = (i for i in [mock_issue])
-        mock_logger.get_issues.return_value = issues
-        mock_logger.has_issue.return_value = True
-        mock_is_functional.return_value = True
-        process_issues(msg)
-        mock_start_issue_workflow.assert_called_with(msg.get('header'), issues, mock_quality_update.return_value)
+            # The regular case is a functional process step that has any issues to report
+            issues = (i for i in [mock_issue])
+            mock_logger.get_issues.return_value = issues
+            mock_logger.has_issue.return_value = True
+            mock_is_functional.return_value = True
+            process_issues(msg)
+            mock_start_issue_workflow.assert_called_with(msg.get('header'), issues, mock_quality_update.return_value)
 
     def test_get_validity(self):
         entity = {

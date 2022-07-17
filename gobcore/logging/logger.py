@@ -16,11 +16,15 @@ import os
 import sys
 import threading
 from collections import defaultdict
-from typing import Optional
+from typing import ClassVar, TYPE_CHECKING, Union
 
 from gobcore.logging.log_publisher import LogPublisher
 
 from gobcore.utils import gettotalsizeof, get_unique_name, get_filename
+
+
+if TYPE_CHECKING:
+    from gobcore.quality.issue import Issue  # pragma: no cover
 
 
 class RequestsHandler(logging.Handler):
@@ -71,18 +75,6 @@ class ExtendedLogger(logging.Logger):
         logging.addLevelName(ExtendedLogger.DATAWARNING, 'DATAWARNING')
         logging.addLevelName(ExtendedLogger.DATAERROR, 'DATAERROR')
 
-    def data_info(self, msg, *args, **kwargs):
-        if self.isEnabledFor(self.DATAINFO):
-            self._log(self.DATAINFO, msg, args, **kwargs)
-
-    def data_warning(self, msg, *args, **kwargs):
-        if self.isEnabledFor(self.DATAWARNING):
-            self._log(self.DATAWARNING, msg, args, **kwargs)
-
-    def data_error(self, msg, *args, **kwargs):
-        if self.isEnabledFor(self.DATAERROR):
-            self._log(self.DATAERROR, msg, args, **kwargs)
-
 
 class Logger:
     """
@@ -94,15 +86,15 @@ class Logger:
     LOGLEVEL = logging.INFO
 
     # Save these messages to report at end of msg handling
-    _SAVE_LOGS = ['warning', 'error', 'data_warning', 'data_error']
+    _SAVE_LOGS = (logging.WARNING, logging.ERROR, ExtendedLogger.DATAWARNING, ExtendedLogger.DATAERROR)
 
     # Save issues to file
     _ISSUES_FOLDER = "issues"   # The name of the folder where the offloaded issues are stored
 
-    MAX_SIZE = 10000
-    SHORT_MESSAGE_SIZE = 1000
+    MAX_SIZE = 10_000
+    SHORT_MESSAGE_SIZE = 1_000
 
-    _logger = {}
+    _logger: ClassVar[dict[str, logging.Logger]] = {}
 
     def __init__(self, name: str = None):
         self.name = name
@@ -113,16 +105,16 @@ class Logger:
         self._default_args = {}
         self._offload_file = None
         self._offload_filename = None
-
-        self._clear_logs()
-        self.clear_issues()
-
-    def clear_issues(self):
         self._issues = {}
         self._data_msg_count = defaultdict(int)
-        self._offload_file = None
+        self.messages = defaultdict(list)
+
+    def clear_issues(self):
+        self._issues.clear()
+        self._data_msg_count.clear()
 
         # Remove the offloaded issues
+        self._offload_file = None
         if self._offload_filename:
             try:
                 os.remove(self._offload_filename)
@@ -137,16 +129,16 @@ class Logger:
         if self._offload_file:
             self._offload_file.close()
 
-    def add_issue(self, issue, level):
+    def add_issue(self, issue: "Issue", level: str):
         if not self._offload_file:
             self.open_offload_file()
 
-        id = issue.get_unique_id()
-        if self._issues.get(id):
+        id_ = issue.get_unique_id()
+        if self._issues.get(id_):
             from gobcore.quality.issue import Issue
 
             # Get the pointer to the issue in the offload file, seek the line and remove any comma or newline
-            issue_offset = self._issues.get(id)
+            issue_offset = self._issues.get(id_)
             self._offload_file.seek(issue_offset)
 
             existing_issue_string = self._offload_file.readline().rstrip("\n")
@@ -157,11 +149,11 @@ class Logger:
 
             # Return to the end of the file and write the new issue
             self._offload_file.seek(0, io.SEEK_END)
-            self._issues[id] = self.write_issue(existing_issue)
+            self._issues[id_] = self.write_issue(existing_issue)
         else:
             # Write this issue and save the byte offset to the issue
-            self._issues[id] = self.write_issue(issue)
-            self._data_msg_count['data_' + level] += 1
+            self._issues[id_] = self.write_issue(issue)
+            self._data_msg_count['data_' + level] += 1  # level comes from QA_LEVEL
 
     def write_issue(self, issue):
         # Store the position in the file before the issue and return it to store a pointer
@@ -188,30 +180,27 @@ class Logger:
                     issue = json.loads(offload_file.readline().rstrip("\n"))
                     yield issue
 
-    def _clear_logs(self):
-        self.messages = {key: [] for key in Logger._SAVE_LOGS}
-
-    def _save_log(self, level, msg):
+    def _save_log(self, level: int, msg: str):
         if level in Logger._SAVE_LOGS:
             self.messages[level].append(msg)
 
-    def get_warnings(self):
-        return self.messages['warning'] + self.messages['data_warning']
+    def get_warnings(self) -> list[str]:
+        return self.messages[logging.WARNING] + self.messages[ExtendedLogger.DATAWARNING]
 
-    def get_errors(self):
-        return self.messages['error'] + self.messages['data_error']
+    def get_errors(self) -> list[str]:
+        return self.messages[logging.ERROR] + self.messages[ExtendedLogger.DATAERROR]
 
-    def get_log_counts(self):
-        return self._data_msg_count
+    def get_log_counts(self) -> dict:
+        return dict(self._data_msg_count)  # possible empty defaultdict
 
-    def get_summary(self):
+    def get_summary(self) -> dict[str, Union[list[str], dict]]:
         return {
             'warnings': self.get_warnings(),
             'errors': self.get_errors(),
             'log_counts': self.get_log_counts(),
         }
 
-    def _log(self, level: str, msg: str, kwargs=None):
+    def _log(self, level: int, msg: str, kwargs=None):
         """
         Logs the message at the given level
 
@@ -221,42 +210,36 @@ class Logger:
         :param kwargs:
         :return: None
         """
-        level_logger = getattr(self.log_instance, level, None)
-        assert level_logger, f"Error: invalid logging level specified ({level})"
-
-        extra = {**self._default_args, **kwargs} if kwargs else {**self._default_args}
+        extra = self._default_args | (kwargs or {})
 
         size = gettotalsizeof(msg) + gettotalsizeof(extra)
         if size > self.MAX_SIZE:
             msg = f"{msg[:self.SHORT_MESSAGE_SIZE]}..."
             extra = self._default_args
 
-        level_logger(msg, extra=extra)
+        self.get_logger().log(level, msg, extra=extra)
         self._save_log(level, msg)
 
-    def info(self, msg: str, kwargs=None):
-        self._log('info', msg, kwargs)
+    def info(self, msg: str, kwargs: dict = None):
+        self._log(logging.INFO, msg, kwargs)
 
-    def warning(self, msg: str, kwargs=None):
-        self._log('warning', msg, kwargs)
+    def warning(self, msg: str, kwargs: dict = None):
+        self._log(logging.WARNING, msg, kwargs)
 
-    def error(self, msg: str, kwargs=None):
-        self._log('error', msg, kwargs)
+    def error(self, msg: str, kwargs: dict = None):
+        self._log(logging.ERROR, msg, kwargs)
 
-    def data_info(self, msg: str, kwargs=None):
+    def data_info(self, msg: str, kwargs: dict = None):
         self._data_msg_count['data_info'] += 1
-        self._log('data_info', msg, kwargs)
+        self._log(ExtendedLogger.DATAINFO, msg, kwargs)
 
-    def data_warning(self, msg: str, kwargs=None):
+    def data_warning(self, msg: str, kwargs: dict = None):
         self._data_msg_count['data_warning'] += 1
-        self._log('data_warning', msg, kwargs)
+        self._log(ExtendedLogger.DATAWARNING, msg, kwargs)
 
-    def data_error(self, msg: str, kwargs=None):
+    def data_error(self, msg: str, kwargs: dict = None):
         self._data_msg_count['data_error'] += 1
-        self._log('data_error', msg, kwargs)
-
-    def set_default_args(self, default_args):
-        self._default_args = default_args
+        self._log(ExtendedLogger.DATAERROR, msg, kwargs)
 
     def get_attribute(self, attribute):
         return self._default_args.get(attribute)
@@ -268,58 +251,59 @@ class Logger:
         :param msg: the processed message
         :param name: the name of the process that processes the message
         """
-        if name is not None:
-            if self.name is not None:
-                raise ValueError("name already set: ", self.name)
+        if name is None and self.name is None:
+            raise ValueError("Name not supllied in either Logger or Logger.configure")
 
+        if name:
             self.name = name
             self._init_logger()
 
-        header = msg.get("header", {})
-        self.set_default_args({
-            'process_id': header.get('process_id'),
-            'source': header.get('source'),
-            'destination': header.get('destination'),
-            'application': header.get('application'),
-            'catalogue': header.get('catalogue'),
-            'entity': header.get('entity', header.get('collection')),
-            'jobid': header.get('jobid'),
-            'stepid': header.get('stepid')
-        })
-        self._clear_logs()
+        self.messages.clear()
+
+        if header := msg.get("header", {}):
+            self._default_args = {
+                'process_id': header.get('process_id'),
+                'source': header.get('source'),
+                'destination': header.get('destination'),
+                'application': header.get('application'),
+                'catalogue': header.get('catalogue'),
+                'entity': header.get('entity', header.get('collection')),
+                'jobid': header.get('jobid'),
+                'stepid': header.get('stepid')
+            }
 
     def add_message_broker_handler(self):
-        """Adds the message broker handler to the `name` instance."""
-        handler = RequestsHandler()
-        formatter = logging.Formatter(Logger.LOGFORMAT)
-        handler.setFormatter(formatter)
-        self.log_instance.addHandler(handler)
+        """Adds the message broker handler to the `name` instance if one doesn't exist yet."""
+        name = "RequestsHandler"
 
-    def _init_logger(self) -> logging.Logger:
+        # make sure we have only 1 handler
+        if not any(
+            isinstance(handler, RequestsHandler) and handler.name == name
+            for handler in self.get_logger().handlers
+        ):
+            handler = RequestsHandler()
+            handler.name = name
+            formatter = logging.Formatter(self.LOGFORMAT)
+            handler.setFormatter(formatter)
+            self.get_logger().addHandler(handler)
+
+    def _init_logger(self):
         if self.name in self._logger:
-            return self._logger[self.name]
+            return
 
         new_logger = logging.getLogger(self.name)
         new_logger.setLevel(self.LOGLEVEL)
 
         # log default to stdout
         new_logger.addHandler(logging.StreamHandler(stream=sys.stdout))
-
         self.set_logger(new_logger)
-        return new_logger
 
-    @property
-    def log_instance(self) -> Optional[logging.Logger]:
-        return self._logger.get(self.name)
+    def get_logger(self) -> logging.Logger:
+        return self._logger[self.name]
 
     @classmethod
     def set_logger(cls, inst: logging.Logger):
-        assert inst.name is not None, "cannot set name with None"
         cls._logger[inst.name] = inst
-
-    def get_name(self):
-        """Function needed to get name property due to proxying in LoggerManager."""
-        return self.name
 
 
 class LoggerManager:
@@ -328,29 +312,24 @@ class LoggerManager:
     Manages loggers per thread. Each thread has its own 'global' logger. LoggerManager proxies all calls to the logger
     to the appropriate Logger instance for that thread.
     """
-    loggers = {}
+    loggers: ClassVar[defaultdict[int, Logger]] = defaultdict(Logger)
 
-    def get_logger(self):
-        """Returns existing Logger for thread, or creates a new instance.
+    @classmethod
+    def get_logger(cls) -> Logger:
+        """Returns existing Logger for thread, or creates a new instance."""
+        return cls.loggers[threading.current_thread().ident]
 
-        :return:
-        """
-        id = threading.current_thread().ident
-
-        if id not in LoggerManager.loggers:
-            LoggerManager.loggers[id] = Logger()
-
-        return LoggerManager.loggers[id]
-
-    def __getattr__(self, name):
-        """Proxy method.
-
-        :param name:
-        :return:
-        """
+    @classmethod
+    def __getattr__(cls, item):
+        """Proxy method. Returns result from executed item."""
         def method(*args, **kwargs):
-            return getattr(self.get_logger(), name)(*args, **kwargs)
+            return getattr(cls.get_logger(), item)(*args, **kwargs)
+
         return method
+
+    @property
+    def name(self) -> str:
+        return self.get_logger().name
 
 
 logger = LoggerManager()

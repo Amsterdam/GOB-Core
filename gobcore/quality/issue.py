@@ -6,7 +6,7 @@ from gobcore.message_broker.config import IMPORT, RELATE, RELATE_CHECK
 from gobcore.message_broker.offline_contents import ContentsWriter
 from gobcore.message_broker.utils import to_json
 from gobcore.model import FIELD
-from gobcore.logging.logger import Logger, logger
+from gobcore.logging.logger import logger, LoggerManager
 from gobcore.quality.config import QA_LEVEL, QA_CHECK
 from gobcore.quality.quality_update import QualityUpdate
 from gobcore.utils import ProgressTicker
@@ -239,14 +239,14 @@ class Issue():
         return args
 
 
-def log_issue(logger: Logger, level: QA_LEVEL, issue: Issue) -> None:
+def log_issue(logger_: LoggerManager, level: str, issue: Issue) -> None:
     """Logs Issue
 
     Only issues without an entity_id are actually written as log messages. All other issues are added
     to the logger instance for further handling (they will be picked up by the process_issues function in
     this file)
 
-    :param logger:
+    :param logger_:
     :param level:
     :param issue:
     :return:
@@ -254,14 +254,14 @@ def log_issue(logger: Logger, level: QA_LEVEL, issue: Issue) -> None:
 
     if issue.entity_id is not None:
         # Only add issues that are linked to entities
-        logger.add_issue(issue, level)
+        logger_.add_issue(issue, level)
     else:
         # Log the message
         {
-            QA_LEVEL.FATAL: logger.data_error,
-            QA_LEVEL.ERROR: logger.data_error,
-            QA_LEVEL.WARNING: logger.data_warning,
-            QA_LEVEL.INFO: logger.data_info
+            QA_LEVEL.FATAL: logger_.data_error,
+            QA_LEVEL.ERROR: logger_.data_error,
+            QA_LEVEL.WARNING: logger_.data_warning,
+            QA_LEVEL.INFO: logger_.data_info
         }[level](issue.msg(), issue.log_args())
 
 
@@ -286,7 +286,7 @@ def process_issues(msg):
     quality_update = QualityUpdate()
 
     # Enrich bevinding with logger info
-    quality_update.proces = logger.get_name()
+    quality_update.proces = logger.name
 
     # Don't process issues of unnamed process
     if quality_update.proces is None:
