@@ -730,7 +730,12 @@
         "version": "0.1",
         "abbreviation": "PMK",
         "entity_id": "identificatie",
-        "attributes": {
+        "schema": {
+          "datasetId": "napAzure",
+          "tableId": "peilmerken",
+          "version": "2.0.0"
+        },
+        "legacy_attributes": {
           "identificatie": {
             "type": "GOB.String",
             "description": "Het peilmerknummer van het peilmerk."

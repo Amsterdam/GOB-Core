@@ -5,9 +5,10 @@ from gobcore.exceptions import GOBException
 from gobcore.model.metadata import FIELD
 from gobcore.model.metadata import STATE_FIELDS
 from gobcore.model.metadata import PRIVATE_META_FIELDS, PUBLIC_META_FIELDS, FIXED_FIELDS
+from gobcore.model.pydantic import Schema
 from gobcore.model.relations import get_relations, get_inverse_relations
 from gobcore.model.quality import QUALITY_CATALOG, get_quality_assurances
-from gobcore.model.schema import load_schema, SchemaException
+from gobcore.model.schema import load_schema
 
 
 class NotInModelException(Exception):
@@ -93,12 +94,8 @@ class GOBModel():
         for catalog_name, catalog in self._data.items():
             for entity_name, model in catalog['collections'].items():
                 if model.get('schema') is not None:
-                    try:
-                        model['attributes'] = load_schema(model['schema'], catalog_name, entity_name)
-                    except SchemaException:
-                        # Use a fallback scenario as long as the schemas are still in development
-                        print(f"ERROR: failed to load schema {model['schema']} for {catalog_name}:{entity_name}")
-                        model['attributes'] = model["_attributes"]
+                    schema = Schema.parse_obj(model.get("schema"))
+                    model.update(load_schema(schema))
 
     def _extract_references(self, attributes):
         return {field_name: spec for field_name, spec in attributes.items()
