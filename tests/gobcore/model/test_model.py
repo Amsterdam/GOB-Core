@@ -41,6 +41,33 @@ class TestModel(unittest.TestCase):
         # Test non existing abbreviation
         self.assertEqual(None, self.model.get_reference_by_abbreviations('xxx', 'xxx'))
 
+    def test_legacy_attributes(self):
+        GOBModel.legacy_mode = False
+        model = GOBModel()
+        peilmerken = model.get_collection('nap', 'peilmerken')
+        self.assertTrue('legacy_attributes' in peilmerken)
+
+        # Test legacy attributes not initialised
+        self.assertTrue('ligt_in_gebieden_bouwblok' in peilmerken['all_fields'])
+        self.assertFalse('ligt_in_bouwblok' in peilmerken['all_fields'])
+        self.assertFalse(all([key in peilmerken['all_fields'] for key in peilmerken['legacy_attributes']]))
+
+        # Reset so we can make it legacy mode
+        GOBModel.legacy_mode = True
+        GOBModel._data = None
+
+        # Test legacy attributes are initialised
+        model = GOBModel(True)
+        peilmerken = model.get_collection('nap', 'peilmerken')
+        self.assertFalse('ligt_in_gebieden_bouwblok' in peilmerken['all_fields'])
+        self.assertTrue('ligt_in_bouwblok' in peilmerken['all_fields'])
+        self.assertTrue(all([key in peilmerken['all_fields'] for key in peilmerken['legacy_attributes']]))
+
+        # Reset
+        GOBModel.legacy_mode = False
+        GOBModel._data = None
+        model = GOBModel()
+
     def test_source_id(self):
         entity = {
             'idfield': 'idvalue'

@@ -69,7 +69,9 @@ class GOBModel():
                 model['references'] = self._extract_references(model['attributes'])
                 model['very_many_references'] = self._extract_very_many_references(model['attributes'])
 
-                model_attributes = model['attributes']
+                model_attributes = model['legacy_attributes'] \
+                    if self.legacy_mode and model.get('legacy_attributes') \
+                    else model['attributes']
                 state_attributes = STATE_FIELDS if self.has_states(catalog_name, entity_name) else {}
                 all_attributes = {
                     **state_attributes,
