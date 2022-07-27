@@ -150,8 +150,8 @@ def end_message(msg, unique_name):
         if reader is not None:
             reader.close()
 
+        filename = get_filename(unique_name, _MESSAGE_BROKER_FOLDER)
         try:
-            filename = get_filename(unique_name, _MESSAGE_BROKER_FOLDER)
             os.remove(filename)
         except Exception as e:
             print(f"Remove failed ({str(e)})", filename)
