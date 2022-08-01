@@ -50,7 +50,14 @@ class TestModel(unittest.TestCase):
         # Test legacy attributes not initialised
         self.assertTrue('ligt_in_gebieden_bouwblok' in peilmerken['all_fields'])
         self.assertFalse('ligt_in_bouwblok' in peilmerken['all_fields'])
+        self.assertTrue('ligt_in_gebieden_bouwblok' in peilmerken['attributes'])
+        self.assertFalse('ligt_in_bouwblok' in peilmerken['attributes'])
         self.assertFalse(all([key in peilmerken['all_fields'] for key in peilmerken['legacy_attributes']]))
+        self.assertFalse(all([key in peilmerken['attributes'] for key in peilmerken['legacy_attributes']]))
+
+        # Check that relations are build based on the correct set of attributes
+        self.assertTrue('ligt_in_gebieden_bouwblok' in peilmerken['references'])
+        self.assertFalse('ligt_in_bouwblok' in peilmerken['references'])
 
         # Reset so we can make it legacy mode
         GOBModel.legacy_mode = True
@@ -61,7 +68,14 @@ class TestModel(unittest.TestCase):
         peilmerken = model.get_collection('nap', 'peilmerken')
         self.assertFalse('ligt_in_gebieden_bouwblok' in peilmerken['all_fields'])
         self.assertTrue('ligt_in_bouwblok' in peilmerken['all_fields'])
+        self.assertFalse('ligt_in_gebieden_bouwblok' in peilmerken['attributes'])
+        self.assertTrue('ligt_in_bouwblok' in peilmerken['attributes'])
         self.assertTrue(all([key in peilmerken['all_fields'] for key in peilmerken['legacy_attributes']]))
+        self.assertTrue(all([key in peilmerken['attributes'] for key in peilmerken['legacy_attributes']]))
+
+        # Check that relations are build based on the correct set of attributes
+        self.assertFalse('ligt_in_gebieden_bouwblok' in peilmerken['references'])
+        self.assertTrue('ligt_in_bouwblok' in peilmerken['references'])
 
         # Reset
         GOBModel.legacy_mode = False

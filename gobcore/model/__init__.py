@@ -66,17 +66,19 @@ class GOBModel():
 
             for entity_name, model in catalog['collections'].items():
                 model['name'] = entity_name
-                model['references'] = self._extract_references(model['attributes'])
-                model['very_many_references'] = self._extract_very_many_references(model['attributes'])
 
-                model_attributes = model['legacy_attributes'] \
+                model['attributes'] = model['legacy_attributes'] \
                     if self.legacy_mode and model.get('legacy_attributes') \
                     else model['attributes']
+
                 state_attributes = STATE_FIELDS if self.has_states(catalog_name, entity_name) else {}
                 all_attributes = {
                     **state_attributes,
-                    **model_attributes
+                    **model['attributes']
                 }
+
+                model['references'] = self._extract_references(model['attributes'])
+                model['very_many_references'] = self._extract_very_many_references(model['attributes'])
 
                 # Add fields to the GOBModel to be used in database creation and lookups
                 model['fields'] = all_attributes
