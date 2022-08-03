@@ -11,11 +11,14 @@ The code is modified to allow for asynchronous send and receive in parallel
 import os
 import threading
 import traceback
+from pathlib import Path
 
 import pika
 
-from gobcore.message_broker.offline_contents import offload_message, end_message
+from gobcore.message_broker.offline_contents import offload_message, end_message, _MESSAGE_BROKER_FOLDER
 from gobcore.message_broker.utils import to_json, get_message_from_body
+from gobcore.message_broker.config import GOB_SHARED_DIR
+
 
 
 def progress(*args):
@@ -75,6 +78,9 @@ class AsyncConnection(object):
 
         # Threaded message handler
         self._message_handler_thread = None
+
+        # offload folder
+        self._offload_folder = Path(GOB_SHARED_DIR, _MESSAGE_BROKER_FOLDER)
 
     def __enter__(self):
         self.connect()
@@ -227,6 +233,8 @@ class AsyncConnection(object):
         # Check whether a connection has been established
         if self._channel is None:
             raise Exception("Connection with message broker not available")
+        if not self._offload_folder.is_dir():
+            raise OSError(f"Offload (mounted) folder is not available: {self._offload_folder}\n")
 
         # Allow for offloaded contents
         msg = offload_message(msg, to_json)
