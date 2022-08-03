@@ -31,6 +31,12 @@ class GOBModel():
     # Set and used to cache SA models by the SA layer, use model.sa.gob.get_sqlalchemy_models() to retrieve/init
     sqlalchemy_models = None
 
+    global_attributes = {
+        **PRIVATE_META_FIELDS,
+        **PUBLIC_META_FIELDS,
+        **FIXED_FIELDS
+    }
+
     def __init__(self, legacy=False):
         if GOBModel._data is not None:
             if self.legacy_mode is not None and self.legacy_mode != legacy:
@@ -51,43 +57,51 @@ class GOBModel():
 
         GOBModel._data = data
         self._load_schemas()
-        data[QUALITY_CATALOG] = get_quality_assurances(self)
-        data["rel"] = get_relations(self)
+        self._init_data()
 
-        global_attributes = {
-            **PRIVATE_META_FIELDS,
-            **PUBLIC_META_FIELDS,
-            **FIXED_FIELDS
-        }
-
+    def _init_data(self):
         # Extract references for easy access in API. Add catalog and collection names to catalog and collection objects
-        for catalog_name, catalog in self._data.items():
-            catalog['name'] = catalog_name
+        for catalog_name in self._data.keys():
+            self._init_catalog(catalog_name)
 
-            for entity_name, model in catalog['collections'].items():
-                model['name'] = entity_name
+        # This needs to happen after initialisation of the object catalogs
+        self._data[QUALITY_CATALOG] = get_quality_assurances(self)
+        self._data["rel"] = get_relations(self)
 
-                model['attributes'] = model['legacy_attributes'] \
-                    if self.legacy_mode and model.get('legacy_attributes') \
-                    else model['attributes']
+        self._init_catalog(QUALITY_CATALOG)
+        self._init_catalog("rel")
 
-                state_attributes = STATE_FIELDS if self.has_states(catalog_name, entity_name) else {}
-                all_attributes = {
-                    **state_attributes,
-                    **model['attributes']
-                }
+    def _init_catalog(self, catalog_name):
+        """Initialises self._data object with all fields and helper dicts
 
-                model['references'] = self._extract_references(model['attributes'])
-                model['very_many_references'] = self._extract_very_many_references(model['attributes'])
+        """
+        catalog = self._data[catalog_name]
+        catalog['name'] = catalog_name
 
-                # Add fields to the GOBModel to be used in database creation and lookups
-                model['fields'] = all_attributes
+        for entity_name, model in catalog['collections'].items():
+            model['name'] = entity_name
 
-                # Include complete definition, including all global fields
-                model['all_fields'] = {
-                    **all_attributes,
-                    **global_attributes
-                }
+            model['attributes'] = model['legacy_attributes'] \
+                if self.legacy_mode and model.get('legacy_attributes') \
+                else model['attributes']
+
+            state_attributes = STATE_FIELDS if self.has_states(catalog_name, entity_name) else {}
+            all_attributes = {
+                **state_attributes,
+                **model['attributes']
+            }
+
+            model['references'] = self._extract_references(model['attributes'])
+            model['very_many_references'] = self._extract_very_many_references(model['attributes'])
+
+            # Add fields to the GOBModel to be used in database creation and lookups
+            model['fields'] = all_attributes
+
+            # Include complete definition, including all global fields
+            model['all_fields'] = {
+                **all_attributes,
+                **self.global_attributes
+            }
 
     def _load_schemas(self):
         """

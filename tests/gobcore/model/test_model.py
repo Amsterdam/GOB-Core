@@ -59,6 +59,10 @@ class TestModel(unittest.TestCase):
         self.assertTrue('ligt_in_gebieden_bouwblok' in peilmerken['references'])
         self.assertFalse('ligt_in_bouwblok' in peilmerken['references'])
 
+        # And we have created the correct relation tables
+        self.assertIsNone(model.get_collection('rel', 'nap_pmk_gbd_bbk_ligt_in_bouwblok'))
+        self.assertIsNotNone(model.get_collection('rel', 'nap_pmk_gbd_bbk_ligt_in_gebieden_bouwblok'))
+
         # Reset so we can make it legacy mode
         GOBModel.legacy_mode = True
         GOBModel._data = None
@@ -76,6 +80,10 @@ class TestModel(unittest.TestCase):
         # Check that relations are build based on the correct set of attributes
         self.assertFalse('ligt_in_gebieden_bouwblok' in peilmerken['references'])
         self.assertTrue('ligt_in_bouwblok' in peilmerken['references'])
+
+        # And we have created the correct relation tables
+        self.assertIsNotNone(model.get_collection('rel', 'nap_pmk_gbd_bbk_ligt_in_bouwblok'))
+        self.assertIsNone(model.get_collection('rel', 'nap_pmk_gbd_bbk_ligt_in_gebieden_bouwblok'))
 
         # Reset
         GOBModel.legacy_mode = False
