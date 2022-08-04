@@ -1,18 +1,11 @@
+from __future__ import annotations
+
 import json
 from pathlib import Path
 from typing import Any
 
-from pydantic import BaseModel
-
-
-class XComData(BaseModel):
-    """Holds xcom data, which is used in various tasks."""
-    # Points to file in Azure storage container
-    contents_ref: str
-
 
 class XComDataStore:
-    xcom_dataclass = XComData
 
     def __init__(self, xcom_path: Path = Path("/airflow/xcom/return.json")) -> None:
         """Before inserting data in the xcom json, validate it.
@@ -27,14 +20,13 @@ class XComDataStore:
 
         :param data: content to be put in the xcom data file.
         """
-        data = self.xcom_dataclass(**data)
         with self.xcom_path.open("w") as fp:
-            json.dump(data.dict(), fp=fp)
+            json.dump(data, fp=fp)
 
-    def parse(self, json_str: str) -> XComData:
+    def parse(self, json_str: str) -> dict[str, Any]:
         """Parse xcom data from application arguments.
 
-        :param json_str: json with data for XComData model.
+        :param json_str: json with data.
         :return: an XComData object.
         """
-        return self.xcom_dataclass(**json.loads(json_str))
+        return json.loads(json_str)
