@@ -119,7 +119,9 @@ def get_unique_name():
 
 
 def get_filename(name: str, offload_folder: str) -> str:
-    """Returns the full filename given a the name of a file, creates parent folders if they don't exist.
+    """Returns the full filename given a name of a file
+
+    Additionally, creates parent folders if they don't exist.
 
     :param name: filename
     :param offload_folder: folder where file should be

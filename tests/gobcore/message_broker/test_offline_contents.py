@@ -1,5 +1,11 @@
+import json
+
 import mock
 import unittest
+from gobcore.utils import get_filename
+from tempfile import TemporaryDirectory
+
+from gobcore.message_broker.utils import to_json
 from unittest.mock import mock_open, ANY
 from pathlib import Path
 
@@ -89,6 +95,16 @@ class TestOfflineContents(unittest.TestCase):
                              {"contents": "contents", "any": "value"})
             self.assertFalse(mocked_writer.called)
         '''
+
+    def testForceOffloadMessage(self):
+        with TemporaryDirectory() as tmpdir:
+            with mock.patch("gobcore.utils.GOB_SHARED_DIR", str(tmpdir)):
+                msg = {"contents": {"test": "data"}}
+                message = oc.offload_message(msg, to_json, force_offload=True)
+                assert "contents_ref" in message
+                filename = get_filename(message["contents_ref"], "message_broker")
+                content = json.loads(Path(filename).read_text())
+                assert content == {"test": "data"}
 
     @mock.patch('gobcore.message_broker.offline_contents.get_unique_name', return_value="unique_name")
     @mock.patch('gobcore.message_broker.offline_contents.get_filename', return_value="filename")

@@ -75,7 +75,6 @@ class ContentsReader:
         :param filename:
         """
         self.filename = filename
-
         self.file = open(self.filename, "r")
         # Use prefix='item' to get per entity (contents = [entity, entity, ...])
         self._items = ijson.items(self.file, prefix="item")
@@ -89,24 +88,26 @@ class ContentsReader:
         self.file.close()
 
 
-def offload_message(msg, converter):
-    """Offload message content
+def offload_message(msg, converter, force_offload: bool = False):
+    """Offload message content when deemed necessary.
 
     :param msg:
     :param converter:
-    :return:
+    :param force_offload: Always offload message, even if content size is below
+        threshold.
+    :return: A message, if offloaded, without "_contents" and with "_contents_ref"
     """
     if _CONTENTS in msg:
         contents = msg[_CONTENTS]
         size = gettotalsizeof(contents)
-        if size > _MAX_CONTENTS_SIZE:
+        if force_offload or size > _MAX_CONTENTS_SIZE:
             unique_name = get_unique_name()
             filename = get_filename(unique_name, _MESSAGE_BROKER_FOLDER)
             try:
                 with open(filename, 'w') as file:
                     file.write(converter(contents))
             except IOError as e:
-                # When the write fails, returns the msg untouched
+                # When write fails, returns the msg untouched
                 print(f"Offload failed ({str(e)})", filename)
                 return msg
             # Replace the contents by a reference
