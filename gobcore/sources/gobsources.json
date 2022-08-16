@@ -396,15 +396,15 @@
     },
     "gebieden": {
       "ggwgebieden": {
-        "ligt_in_stadsdeel": {
+        "ligt_in_gebieden_stadsdeel": {
           "method": "equals",
           "destination_attribute": "code"
         },
-        "bestaat_uit_buurten": {
+        "bestaat_uit_gebieden_buurten": {
           "method": "equals",
           "destination_attribute": "code"
         },
-        "ligt_in_gemeente": {
+        "ligt_in_brk_gemeente": {
           "method": "lies_in",
           "source_attribute": "geometrie",
           "destination_attribute": "geometrie"
@@ -430,56 +430,56 @@
   "DIVA": {
     "gebieden": {
       "bouwblokken": {
-        "ligt_in_buurt": {
+        "ligt_in_gebieden_buurt": {
           "method": "lies_in",
           "source_attribute": "geometrie",
           "destination_attribute": "geometrie"
         },
-        "ligt_in_gemeente": {
+        "ligt_in_brk_gemeente": {
           "method": "lies_in",
           "source_attribute": "geometrie",
           "destination_attribute": "geometrie"
         }
       },
       "buurten": {
-        "ligt_in_wijk": {
+        "ligt_in_gebieden_wijk": {
           "method": "equals",
           "destination_attribute": "identificatie"
         },
-        "ligt_in_ggpgebied": {
+        "ligt_in_gebieden_ggpgebied": {
           "method": "lies_in",
           "source_attribute": "geometrie",
           "destination_attribute": "geometrie"
         },
-        "ligt_in_ggwgebied": {
+        "ligt_in_gebieden_ggwgebied": {
           "method": "lies_in",
           "source_attribute": "geometrie",
           "destination_attribute": "geometrie"
         },
-        "ligt_in_gemeente": {
+        "ligt_in_brk_gemeente": {
           "method": "lies_in",
           "source_attribute": "geometrie",
           "destination_attribute": "geometrie"
         }
       },
       "wijken": {
-        "ligt_in_stadsdeel": {
+        "ligt_in_gebieden_stadsdeel": {
           "method": "equals",
           "destination_attribute": "identificatie"
         },
-        "ligt_in_ggwgebied": {
+        "ligt_in_gebieden_ggwgebied": {
           "method": "lies_in",
           "source_attribute": "geometrie",
           "destination_attribute": "geometrie"
         },
-        "ligt_in_gemeente": {
+        "ligt_in_brk_gemeente": {
           "method": "lies_in",
           "source_attribute": "geometrie",
           "destination_attribute": "geometrie"
         }
       },
       "stadsdelen": {
-        "ligt_in_gemeente": {
+        "ligt_in_brk_gemeente": {
           "method": "lies_in",
           "source_attribute": "geometrie",
           "destination_attribute": "geometrie"
@@ -490,56 +490,56 @@
   "DGDialog": {
     "gebieden": {
       "bouwblokken": {
-        "ligt_in_buurt": {
+        "ligt_in_gebieden_buurt": {
           "method": "lies_in",
           "source_attribute": "geometrie",
           "destination_attribute": "geometrie"
         },
-        "ligt_in_gemeente": {
+        "ligt_in_brk_gemeente": {
           "method": "lies_in",
           "source_attribute": "geometrie",
           "destination_attribute": "geometrie"
         }
       },
       "buurten": {
-        "ligt_in_wijk": {
+        "ligt_in_gebieden_wijk": {
           "method": "equals",
           "destination_attribute": "code"
         },
-        "ligt_in_ggpgebied": {
+        "ligt_in_gebieden_ggpgebied": {
           "method": "lies_in",
           "source_attribute": "geometrie",
           "destination_attribute": "geometrie"
         },
-        "ligt_in_ggwgebied": {
+        "ligt_in_gebieden_ggwgebied": {
           "method": "lies_in",
           "source_attribute": "geometrie",
           "destination_attribute": "geometrie"
         },
-        "ligt_in_gemeente": {
+        "ligt_in_brk_gemeente": {
           "method": "lies_in",
           "source_attribute": "geometrie",
           "destination_attribute": "geometrie"
         }
       },
       "wijken": {
-        "ligt_in_stadsdeel": {
+        "ligt_in_gebieden_stadsdeel": {
           "method": "equals",
           "destination_attribute": "code"
         },
-        "ligt_in_ggwgebied": {
+        "ligt_in_gebieden_ggwgebied": {
           "method": "lies_in",
           "source_attribute": "geometrie",
           "destination_attribute": "geometrie"
         },
-        "ligt_in_gemeente": {
+        "ligt_in_brk_gemeente": {
           "method": "lies_in",
           "source_attribute": "geometrie",
           "destination_attribute": "geometrie"
         }
       },
       "stadsdelen": {
-        "ligt_in_gemeente": {
+        "ligt_in_brk_gemeente": {
           "method": "lies_in",
           "source_attribute": "geometrie",
           "destination_attribute": "geometrie"

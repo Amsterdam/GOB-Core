@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import Literal, Optional, Union
 
-from pydantic import BaseModel
+from pydantic import BaseModel, conlist
 from pydantic.fields import Field
 from pydash import snake_case
 
@@ -19,7 +19,7 @@ class Property(ABC, BaseModel):
     def gob_representation(self, dataset: "Dataset"):
         return {
             "type": self.gob_type,
-            **({"description": self.description} if self.description else {}),
+            "description": self.description or ""
         }
 
 
@@ -65,7 +65,8 @@ class RefProperty(Property):
     ref: str = Field(alias="$ref")
 
     refs_to_gob = {
-        "https://geojson.org/schema/Point.json": "GOB.Geo.Point"
+        "https://geojson.org/schema/Point.json": "GOB.Geo.Point",
+        "https://geojson.org/schema/Polygon.json": "GOB.Geo.Polygon",
     }
 
     @property
@@ -163,11 +164,20 @@ class Schema(BaseModel):
     schema_: str = Field(alias="$schema")
     type: Literal["object"]
     additionalProperties: bool
-    mainGeometry: str
-    identifier: str
+    mainGeometry: Optional[str]
+    identifier: Union[str, list[str]]
     required: list[str]
     display: str
     properties: dict[str, Properties]
+
+
+class TemporalDimensions(BaseModel):
+    geldigOp: Optional[conlist(str, min_items=2, max_items=2)]
+
+
+class Temporal(BaseModel):
+    identifier: str
+    dimensions: TemporalDimensions
 
 
 class Table(BaseModel):
@@ -175,6 +185,7 @@ class Table(BaseModel):
     type: Literal["table"]
     version: str
     schema_: Schema = Field(alias="schema")
+    temporal: Optional[Temporal]
 
 
 class TableListItem(BaseModel):

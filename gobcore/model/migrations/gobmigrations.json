@@ -267,6 +267,31 @@
             "column": "ligt_in_gemeente"
           }
         ]
+      },
+      "0.3": {
+        "target_version": "ams_2.0.0",
+        "conversions": [
+          {
+            "action": "rename",
+            "old_column": "ligt_in_wijk",
+            "new_column": "ligt_in_gebieden_wijk"
+          },
+          {
+            "action": "rename",
+            "old_column": "ligt_in_ggpgebied",
+            "new_column": "ligt_in_gebieden_ggpgebied"
+          },
+          {
+            "action": "rename",
+            "old_column": "ligt_in_ggwgebied",
+            "new_column": "ligt_in_gebieden_ggwgebied"
+          },
+          {
+            "action": "rename",
+            "old_column": "ligt_in_gemeente",
+            "new_column": "ligt_in_brk_gemeente"
+          }
+        ]
       }
     },
     "wijken": {
@@ -288,6 +313,26 @@
             "column": "ligt_in_gemeente"
           }
         ]
+      },
+      "0.3": {
+        "target_version": "ams_2.0.0",
+        "conversions": [
+          {
+            "action": "rename",
+            "old_column": "ligt_in_stadsdeel",
+            "new_column": "ligt_in_gebieden_stadsdeel"
+          },
+          {
+            "action": "rename",
+            "old_column": "ligt_in_ggwgebied",
+            "new_column": "ligt_in_gebieden_ggwgebied"
+          },
+          {
+            "action": "rename",
+            "old_column": "ligt_in_gemeente",
+            "new_column": "ligt_in_brk_gemeente"
+          }
+        ]
       }
     },
     "bouwblokken": {
@@ -297,6 +342,21 @@
           {
             "action": "add",
             "column": "ligt_in_gemeente"
+          }
+        ]
+      },
+      "0.2": {
+        "target_version": "ams_2.0.0",
+        "conversions": [
+          {
+            "action": "rename",
+            "old_column": "ligt_in_buurt",
+            "new_column": "ligt_in_gebieden_buurt"
+          },
+          {
+            "action": "rename",
+            "old_column": "ligt_in_gemeente",
+            "new_column": "ligt_in_brk_gemeente"
           }
         ]
       }
@@ -310,6 +370,26 @@
             "column": "ligt_in_gemeente"
           }
         ]
+      },
+      "0.2": {
+        "target_version": "ams_2.0.0",
+        "conversions": [
+          {
+            "action": "rename",
+            "old_column": "ligt_in_stadsdeel",
+            "new_column": "ligt_in_gebieden_stadsdeel"
+          },
+          {
+            "action": "rename",
+            "old_column": "bestaat_uit_buurten",
+            "new_column": "bestaat_uit_gebieden_buurten"
+          },
+          {
+            "action": "rename",
+            "old_column": "ligt_in_gemeente",
+            "new_column": "ligt_in_brk_gemeente"
+          }
+        ]
       }
     },
     "ggpgebieden": {
@@ -319,6 +399,38 @@
           {
             "action": "add",
             "column": "ligt_in_gemeente"
+          }
+        ]
+      },
+      "0.2": {
+        "target_version": "ams_2.0.0",
+        "conversions": [
+          {
+            "action": "rename",
+            "old_column": "ligt_in_stadsdeel",
+            "new_column": "ligt_in_gebieden_stadsdeel"
+          },
+          {
+            "action": "rename",
+            "old_column": "bestaat_uit_buurten",
+            "new_column": "bestaat_uit_gebieden_buurten"
+          },
+          {
+            "action": "rename",
+            "old_column": "ligt_in_gemeente",
+            "new_column": "ligt_in_brk_gemeente"
+          }
+        ]
+      }
+    },
+    "stadsdelen": {
+      "0.1": {
+        "target_version": "ams_2.0.0",
+        "conversions": [
+          {
+            "action": "rename",
+            "old_column": "ligt_in_gemeente",
+            "new_column": "ligt_in_brk_gemeente"
           }
         ]
       }

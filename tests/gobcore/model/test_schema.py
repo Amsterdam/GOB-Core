@@ -3,7 +3,8 @@ import mock
 
 from ..amschema_fixtures import get_dataset, get_table
 from gobcore.model import Schema
-from gobcore.model.schema import load_schema
+from gobcore.model.schema import LoadSchemaException, load_schema
+from munch import DefaultMunch
 
 
 class TestAMSSchema(unittest.TestCase):
@@ -56,20 +57,25 @@ class TestAMSSchema(unittest.TestCase):
                     'attributes': {
                         'code': {
                             'type': 'GOB.String',
+                            'description': '',
                         },
                         'omschrijving': {
                             'type': 'GOB.String',
-                        }
-                    }
+                            'description': '',
+                        },
+                    },
+                    'description': '',
                 },
                 'code_list': {
                     'type': 'GOB.JSON',
                     'attributes': {
                         'code': {
-                            'type': 'GOB.String'
+                            'type': 'GOB.String',
+                            'description': '',
                         }
                     },
-                    'has_multiple_values': True
+                    'has_multiple_values': True,
+                    'description': '',
                 },
                 'merk_code': {
                     'description': 'Merk van het referentiepunt code',
@@ -124,3 +130,30 @@ class TestAMSSchema(unittest.TestCase):
         self.assertEqual(expected, result)
 
         mock_repository.return_value.get_schema.assert_called_with(schema)
+
+    @mock.patch("gobcore.model.schema.AMSchemaRepository")
+    def test_load_schema_provided_entity_id(self, mock_repository):
+        dataset = get_dataset()
+        table = get_table()
+        table.schema_.identifier = ['some', 'list']
+        mock_repository.return_value.get_schema.return_value = table, dataset
+
+        schema = Schema(datasetId="dataset", tableId="tableId", version="1.0", entity_id="provided_entity_id")
+
+        result = load_schema(schema)
+        self.assertEqual("provided_entity_id", result['entity_id'])
+
+    @mock.patch("gobcore.model.schema.AMSchemaRepository")
+    def test_load_schema_missing_entity_id(self, mock_repository):
+        schema = Schema(datasetId="dataset", tableId="tableId", version="1.0")
+
+        mocktable = DefaultMunch.fromDict({
+            'schema_': {
+                'identifier': ['some', 'list']
+            }
+        })
+
+        mock_repository.return_value.get_schema.return_value = mocktable, None
+
+        with self.assertRaises(LoadSchemaException):
+            load_schema(schema)

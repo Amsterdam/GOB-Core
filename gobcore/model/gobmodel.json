@@ -833,6 +833,12 @@
         "abbreviation": "BBK",
         "entity_id": "identificatie",
         "has_states": true,
+        "schema": {
+          "datasetId": "gebiedenAzure",
+          "tableId": "bouwblokken",
+          "version": "2.0.0",
+          "entity_id": "identificatie"
+        },
         "attributes": {
           "identificatie": {
             "type": "GOB.String",
@@ -871,6 +877,12 @@
         "abbreviation": "BRT",
         "entity_id": "identificatie",
         "has_states": true,
+        "schema": {
+          "datasetId": "gebiedenAzure",
+          "tableId": "buurten",
+          "version": "2.0.0",
+          "entity_id": "identificatie"
+        },
         "attributes": {
           "identificatie": {
             "type": "GOB.String",
@@ -935,6 +947,12 @@
         "abbreviation": "WIJK",
         "entity_id": "identificatie",
         "has_states": true,
+        "schema": {
+          "datasetId": "gebiedenAzure",
+          "tableId": "wijken",
+          "version": "2.0.0",
+          "entity_id": "identificatie"
+        },
         "attributes": {
           "identificatie": {
             "type": "GOB.String",
@@ -994,6 +1012,12 @@
         "abbreviation": "GGW",
         "entity_id": "identificatie",
         "has_states": true,
+        "schema": {
+          "datasetId": "gebiedenAzure",
+          "tableId": "ggwgebieden",
+          "version": "2.0.0",
+          "entity_id": "identificatie"
+        },
         "attributes": {
           "identificatie": {
             "type": "GOB.String",
@@ -1050,6 +1074,12 @@
         "abbreviation": "GGP",
         "entity_id": "identificatie",
         "has_states": true,
+        "schema": {
+          "datasetId": "gebiedenAzure",
+          "tableId": "ggpgebieden",
+          "version": "2.0.0",
+          "entity_id": "identificatie"
+        },
         "attributes": {
           "identificatie": {
             "type": "GOB.String",
@@ -1106,6 +1136,12 @@
         "abbreviation": "SDL",
         "entity_id": "identificatie",
         "has_states": true,
+        "schema": {
+          "datasetId": "gebiedenAzure",
+          "tableId": "stadsdelen",
+          "version": "2.0.0",
+          "entity_id": "identificatie"
+        },
         "attributes": {
           "identificatie": {
             "type": "GOB.String",
@@ -4565,4 +4601,3 @@
     }
   }
 }
-

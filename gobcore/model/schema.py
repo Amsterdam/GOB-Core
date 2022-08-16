@@ -4,6 +4,10 @@ from gobcore.model.pydantic import Schema
 from pydash import snake_case
 
 
+class LoadSchemaException(Exception):
+    pass
+
+
 def load_schema(schema: Schema):
     """
     Load json schema for the given catalog and connection
@@ -12,10 +16,14 @@ def load_schema(schema: Schema):
     """
     table, dataset = AMSchemaRepository().get_schema(schema)
 
+    if isinstance(table.schema_.identifier, list):
+        if not schema.entity_id:
+            raise LoadSchemaException("Please set entity_id explicitly, because AMS Schema identifier is of type list")
+
     # Convert to GOBModel format
     return {
         "attributes": _to_gob(table, dataset),
-        "entity_id": table.schema_.identifier,
+        "entity_id": schema.entity_id or table.schema_.identifier,
         "version": f"ams_{table.version}"
     }
 
