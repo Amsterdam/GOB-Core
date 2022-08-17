@@ -78,24 +78,24 @@
     FROM
       bag_verblijfsobjecten AS vot
     -- SELECT heeft_hoofdadres
-    LEFT JOIN mv_bag_vot_bag_nag_heeft_hoofdadres rel_0
+    LEFT JOIN legacy.v_bag_vot_bag_nag_heeft_hoofdadres rel_0
         ON rel_0.src_id = vot._id AND rel_0.src_volgnummer = vot.volgnummer
-    LEFT JOIN bag_nummeraanduidingen nag_0
+    LEFT JOIN legacy.g_nummeraanduidingen nag_0
         ON rel_0.dst_id = nag_0._id AND rel_0.dst_volgnummer = nag_0.volgnummer AND (nag_0._expiration_date IS NULL OR nag_0._expiration_date > NOW())
     -- SELECT ligt_aan_openbareruimte
-    LEFT JOIN mv_bag_nag_bag_ore_ligt_aan_openbareruimte rel_1
+    LEFT JOIN legacy.v_bag_nag_bag_ore_ligt_aan_openbareruimte rel_1
         ON rel_1.src_id = nag_0._id AND rel_1.src_volgnummer = nag_0.volgnummer
-    LEFT JOIN bag_openbareruimtes ore_0
+    LEFT JOIN legacy.g_openbareruimtes ore_0
         ON rel_1.dst_id = ore_0._id AND rel_1.dst_volgnummer = ore_0.volgnummer AND (ore_0._expiration_date IS NULL OR ore_0._expiration_date > NOW())
     -- SELECT ligt_in_woonplaats
-    LEFT JOIN mv_bag_ore_bag_wps_ligt_in_woonplaats rel_2
+    LEFT JOIN legacy.v_bag_ore_bag_wps_ligt_in_woonplaats rel_2
         ON rel_2.src_id = ore_0._id AND rel_2.src_volgnummer = ore_0.volgnummer
-    LEFT JOIN bag_woonplaatsen wps_0
+    LEFT JOIN legacy.g_woonplaatsen wps_0
         ON rel_2.dst_id = wps_0._id AND rel_2.dst_volgnummer = wps_0.volgnummer AND (wps_0._expiration_date IS NULL OR wps_0._expiration_date > NOW())
     -- SELECT ligt_in_gemeente (direct relation)
-    LEFT JOIN mv_bag_vot_brk_gme_ligt_in_gemeente rel_3
+    LEFT JOIN legacy.v_bag_vot_brk_gme_ligt_in_gemeente rel_3
         ON rel_3.src_id = vot._id AND rel_3.src_volgnummer = vot.volgnummer
-    LEFT JOIN brk_gemeentes gme_0
+    LEFT JOIN legacy.k_gemeentes gme_0
         ON rel_3.dst_id = gme_0._id AND rel_3.dst_volgnummer = gme_0.volgnummer AND (gme_0._expiration_date IS NULL OR gme_0._expiration_date > NOW())
     -- SELECT heeft_nevenadres
     LEFT JOIN (
@@ -134,53 +134,53 @@
     ) AS pnd_0
     ON pnd_0.src_id = vot._id AND pnd_0.src_volgnummer = vot.volgnummer
     -- SELECT first ligt_in_bouwblok
-    LEFT JOIN LATERAL (
+    LEFT JOIN legacy.L (
         SELECT DISTINCT ON (pnd_1.src_id)
            pnd_1.src_id, pnd_1.dst_id, pnd_1.src_volgnummer, pnd_1.dst_volgnummer
-        FROM mv_bag_vot_bag_pnd_ligt_in_panden pnd_1
+        FROM legacy.v_bag_vot_bag_pnd_ligt_in_panden pnd_1
         INNER JOIN (SELECT src_id, MAX(src_volgnummer::INTEGER) src_volgnummer
-          FROM mv_bag_vot_bag_pnd_ligt_in_panden
+          FROM legacy.v_bag_vot_bag_pnd_ligt_in_panden
           GROUP BY src_id) max_pnd ON pnd_1.src_id = max_pnd.src_id AND pnd_1.src_volgnummer::INTEGER = max_pnd.src_volgnummer
           ORDER BY pnd_1.src_id, pnd_1.src_volgnummer, pnd_1.dst_id
     ) AS rel_4
         ON rel_4.src_id = vot._id AND rel_4.src_volgnummer = vot.volgnummer
-    LEFT JOIN bag_panden pnd_2
+    LEFT JOIN legacy.g_panden pnd_2
         ON rel_4.dst_id = pnd_2._id AND rel_4.dst_volgnummer = pnd_2.volgnummer AND (pnd_2._expiration_date IS NULL OR pnd_2._expiration_date > NOW())
-    LEFT JOIN mv_bag_pnd_gbd_bbk_ligt_in_bouwblok rel_5
+    LEFT JOIN legacy.v_bag_pnd_gbd_bbk_ligt_in_bouwblok rel_5
         ON rel_5.src_id = pnd_2._id AND rel_5.src_volgnummer = pnd_2.volgnummer
-    LEFT JOIN gebieden_bouwblokken bbk_0
+    LEFT JOIN legacy.n_bouwblokken bbk_0
         ON rel_5.dst_id = bbk_0._id AND rel_5.dst_volgnummer = bbk_0.volgnummer AND (bbk_0._expiration_date IS NULL OR bbk_0._expiration_date > NOW())
     -- SELECT ligt_in_buurt
-    LEFT JOIN mv_bag_vot_gbd_brt_ligt_in_buurt rel_6
+    LEFT JOIN legacy.v_bag_vot_gbd_brt_ligt_in_buurt rel_6
         ON rel_6.src_id = vot._id AND rel_6.src_volgnummer = vot.volgnummer
-    LEFT JOIN gebieden_buurten brt_0
+    LEFT JOIN legacy.n_buurten brt_0
         ON rel_6.dst_id = brt_0._id AND rel_6.dst_volgnummer = brt_0.volgnummer AND (brt_0._expiration_date IS NULL OR brt_0._expiration_date > NOW())
     -- SELECT ligt_in_wijk
-    LEFT JOIN mv_gbd_brt_gbd_wijk_ligt_in_wijk rel_7
+    LEFT JOIN legacy.v_gbd_brt_gbd_wijk_ligt_in_wijk rel_7
         ON rel_7.src_id = brt_0._id AND rel_7.src_volgnummer = brt_0.volgnummer
-    LEFT JOIN gebieden_wijken wijk_0
+    LEFT JOIN legacy.n_wijken wijk_0
         ON rel_7.dst_id = wijk_0._id AND rel_7.dst_volgnummer = wijk_0.volgnummer AND (brt_0._expiration_date IS NULL OR brt_0._expiration_date > NOW())
     -- SELECT ligt_in_stadsdeel
-    LEFT JOIN mv_gbd_wijk_gbd_sdl_ligt_in_stadsdeel rel_8
+    LEFT JOIN legacy.v_gbd_wijk_gbd_sdl_ligt_in_stadsdeel rel_8
         ON rel_8.src_id = wijk_0._id AND rel_8.src_volgnummer = wijk_0.volgnummer
-    LEFT JOIN gebieden_stadsdelen sdl_0
+    LEFT JOIN legacy.n_stadsdelen sdl_0
         ON rel_8.dst_id = sdl_0._id AND rel_8.dst_volgnummer = sdl_0.volgnummer AND (sdl_0._expiration_date IS NULL OR sdl_0._expiration_date > NOW())
     -- SELECT _ligt_in_ggwgebied
-    LEFT JOIN mv_gbd_brt_gbd_ggw_ligt_in_ggwgebied rel_9
+    LEFT JOIN legacy.v_gbd_brt_gbd_ggw_ligt_in_ggwgebied rel_9
         ON rel_9.src_id = brt_0._id AND rel_9.src_volgnummer = brt_0.volgnummer
-    LEFT JOIN gebieden_ggwgebieden ggw_0
+    LEFT JOIN legacy.n_ggwgebieden ggw_0
         ON rel_9.dst_id = ggw_0._id AND rel_9.dst_volgnummer = ggw_0.volgnummer AND (ggw_0._expiration_date IS NULL OR ggw_0._expiration_date > NOW())
     -- SELECT _ligt_in_ggpgebied
-    LEFT JOIN mv_gbd_brt_gbd_ggp_ligt_in_ggpgebied rel_10
+    LEFT JOIN legacy.v_gbd_brt_gbd_ggp_ligt_in_ggpgebied rel_10
         ON rel_10.src_id = brt_0._id AND rel_10.src_volgnummer = brt_0.volgnummer
-    LEFT JOIN gebieden_ggpgebieden ggp_0
+    LEFT JOIN legacy.n_ggpgebieden ggp_0
         ON rel_10.dst_id = ggp_0._id AND rel_10.dst_volgnummer = ggp_0.volgnummer AND (ggp_0._expiration_date IS NULL OR ggp_0._expiration_date > NOW())
     -- SELECT in_onderzoek
     LEFT JOIN (
           SELECT
               src_id, src_volgnummer
-          FROM mv_bag_vot_bag_ozk_heeft_onderzoeken rel
-          INNER JOIN bag_onderzoeken ozk
+          FROM legacy.v_bag_vot_bag_ozk_heeft_onderzoeken rel
+          INNER JOIN legacy.g_onderzoeken ozk
               ON rel.dst_id = ozk._id
                      AND rel.dst_volgnummer = ozk.volgnummer
                      AND ozk.in_onderzoek = 'J'
@@ -190,8 +190,8 @@
     -- SELECT wdt.soortobject (inv)
     LEFT JOIN (
         SELECT dst_id, dst_volgnummer, jsonb_agg(distinct wdt.soortobject) soortobject
-        FROM mv_woz_wdt_bag_vot_is_verbonden_met_verblijfsobject rel
-        LEFT JOIN woz_wozdeelobjecten wdt
+        FROM legacy.v_woz_wdt_bag_vot_is_verbonden_met_verblijfsobject rel
+        LEFT JOIN legacy.z_wozdeelobjecten wdt
             ON rel.src_id = wdt._id AND rel.src_volgnummer = wdt.volgnummer
             AND (wdt._expiration_date IS NULL OR wdt._expiration_date > NOW())
         WHERE wdt.soortobject->>'code' IS NOT NULL

@@ -27,39 +27,39 @@ SELECT sjt._gobid,
        sjt.postadres_buitenland,
        sjt.beschikkingsbevoegdheid,
        sjt.type_subject
-FROM brk_kadastralesubjecten sjt
+FROM legacy.k_kadastralesubjecten sjt
          JOIN (
     SELECT sjt.identificatie
-    FROM brk_kadastralesubjecten sjt
-             JOIN mv_brk_tng_brk_sjt_van_kadastraalsubject rel ON rel.dst_id = sjt._id
-             JOIN brk_tenaamstellingen tng ON tng._id = rel.src_id
+    FROM legacy.k_kadastralesubjecten sjt
+             JOIN legacy.v_brk_tng_brk_sjt_van_kadastraalsubject rel ON rel.dst_id = sjt._id
+             JOIN legacy.k_tenaamstellingen tng ON tng._id = rel.src_id
     WHERE (tng._expiration_date IS NULL OR tng._expiration_date > NOW())
     GROUP BY sjt.identificatie
     UNION
     SELECT sjt.identificatie
-    FROM brk_kadastralesubjecten sjt
-             JOIN mv_brk_zrt_brk_sjt__betr_apprechtsplit_vve_ rel ON rel.dst_id = sjt._id
-             JOIN brk_zakelijkerechten zrt ON zrt._id = rel.src_id AND zrt.volgnummer = rel.src_volgnummer
+    FROM legacy.k_kadastralesubjecten sjt
+             JOIN legacy.v_brk_zrt_brk_sjt__betr_apprechtsplit_vve_ rel ON rel.dst_id = sjt._id
+             JOIN legacy.k_zakelijkerechten zrt ON zrt._id = rel.src_id AND zrt.volgnummer = rel.src_volgnummer
     GROUP BY sjt.identificatie
     UNION
     SELECT sjt.identificatie
-    FROM brk_kadastralesubjecten sjt
-             JOIN mv_brk_zrt_brk_sjt__ontst_apprechtsplit_vve_ rel ON rel.dst_id = sjt._id
-             JOIN brk_zakelijkerechten zrt ON zrt._id = rel.src_id AND zrt.volgnummer = rel.src_volgnummer
+    FROM legacy.k_kadastralesubjecten sjt
+             JOIN legacy.v_brk_zrt_brk_sjt__ontst_apprechtsplit_vve_ rel ON rel.dst_id = sjt._id
+             JOIN legacy.k_zakelijkerechten zrt ON zrt._id = rel.src_id AND zrt.volgnummer = rel.src_volgnummer
     GROUP BY sjt.identificatie
     UNION
     SELECT sjt.identificatie
-    FROM brk_kadastralesubjecten sjt
-             JOIN mv_brk_akt_brk_sjt_heeft_betrokken_persoon rel ON rel.dst_id = sjt._id
-             JOIN brk_aantekeningenkadastraleobjecten akt
+    FROM legacy.k_kadastralesubjecten sjt
+             JOIN legacy.v_brk_akt_brk_sjt_heeft_betrokken_persoon rel ON rel.dst_id = sjt._id
+             JOIN legacy.k_aantekeningenkadastraleobjecten akt
                   ON akt._id = rel.src_id and akt.volgnummer = rel.src_volgnummer
     WHERE (akt._expiration_date IS NULL OR akt._expiration_date > NOW())
     GROUP BY sjt.identificatie
     UNION
     SELECT sjt.identificatie
-    FROM brk_kadastralesubjecten sjt
-             JOIN mv_brk_art_brk_sjt_heeft_betrokken_persoon rel ON rel.dst_id = sjt._id
-             JOIN brk_aantekeningenrechten art ON art._id = rel.src_id
+    FROM legacy.k_kadastralesubjecten sjt
+             JOIN legacy.v_brk_art_brk_sjt_heeft_betrokken_persoon rel ON rel.dst_id = sjt._id
+             JOIN legacy.k_aantekeningenrechten art ON art._id = rel.src_id
     WHERE (art._expiration_date IS NULL OR art._expiration_date > NOW())
     GROUP BY sjt.identificatie
 ) sjt_ids ON sjt_ids.identificatie = sjt.identificatie

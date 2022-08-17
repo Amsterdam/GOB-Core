@@ -53,42 +53,42 @@ SELECT
   ) AS _ref_ligt_in_ggpgebied_gbd_ggp,
   pnd.geometrie
 FROM
-  bag_panden AS pnd
+  legacy.bag_panden AS pnd
 -- SELECT ligt_in_bouwblok
-LEFT JOIN mv_bag_pnd_gbd_bbk_ligt_in_bouwblok rel_0
+LEFT JOIN legacy.mv_bag_pnd_gbd_bbk_ligt_in_bouwblok rel_0
     ON rel_0.src_id = pnd._id AND rel_0.src_volgnummer = pnd.volgnummer
-LEFT JOIN gebieden_bouwblokken bbk_0
+LEFT JOIN legacy.n_bouwblokken bbk_0
     ON rel_0.dst_id = bbk_0._id AND rel_0.dst_volgnummer = bbk_0.volgnummer
 -- SELECT ligt_in_buurt
-LEFT JOIN mv_bag_pnd_gbd_brt_ligt_in_buurt rel_1
+LEFT JOIN legacy.v_bag_pnd_gbd_brt_ligt_in_buurt rel_1
     ON rel_1.src_id = pnd._id AND rel_1.src_volgnummer = pnd.volgnummer
-LEFT JOIN gebieden_buurten brt_0
+LEFT JOIN legacy.gebieden_buurten brt_0
     ON rel_1.dst_id = brt_0._id AND rel_1.dst_volgnummer = brt_0.volgnummer
 -- SELECT ligt_in_wijk
-LEFT JOIN mv_gbd_brt_gbd_wijk_ligt_in_wijk rel_2
+LEFT JOIN legacy.mv_gbd_brt_gbd_wijk_ligt_in_wijk rel_2
     ON rel_2.src_id = brt_0._id AND rel_2.src_volgnummer = brt_0.volgnummer
-LEFT JOIN gebieden_wijken wijk_0
+LEFT JOIN legacy.gebieden_wijken wijk_0
     ON rel_2.dst_id = wijk_0._id AND rel_2.dst_volgnummer = wijk_0.volgnummer
 -- SELECT ligt_in_stadsdeel
-LEFT JOIN mv_gbd_wijk_gbd_sdl_ligt_in_stadsdeel rel_3
+LEFT JOIN legacy.mv_gbd_wijk_gbd_sdl_ligt_in_stadsdeel rel_3
     ON rel_3.src_id = wijk_0._id AND rel_3.src_volgnummer = wijk_0.volgnummer
-LEFT JOIN gebieden_stadsdelen sdl_0
+LEFT JOIN legacy.gebieden_stadsdelen sdl_0
     ON rel_3.dst_id = sdl_0._id AND rel_3.dst_volgnummer = sdl_0.volgnummer
 -- SELECT _ligt_in_ggwgebied
-LEFT JOIN mv_gbd_brt_gbd_ggw_ligt_in_ggwgebied rel_4
+LEFT JOIN legacy.mv_gbd_brt_gbd_ggw_ligt_in_ggwgebied rel_4
     ON rel_4.src_id = brt_0._id AND rel_4.src_volgnummer = brt_0.volgnummer
-LEFT JOIN gebieden_ggwgebieden ggw_0
+LEFT JOIN legacy.gebieden_ggwgebieden ggw_0
     ON rel_4.dst_id = ggw_0._id AND rel_4.dst_volgnummer = ggw_0.volgnummer
 -- SELECT _ligt_in_ggpgebied
-LEFT JOIN mv_gbd_brt_gbd_ggp_ligt_in_ggpgebied rel_5
+LEFT JOIN legacy.mv_gbd_brt_gbd_ggp_ligt_in_ggpgebied rel_5
     ON rel_5.src_id = brt_0._id AND rel_5.src_volgnummer = brt_0.volgnummer
-LEFT JOIN gebieden_ggpgebieden ggp_0
+LEFT JOIN legacy.gebieden_ggpgebieden ggp_0
     ON rel_5.dst_id = ggp_0._id AND rel_5.dst_volgnummer = ggp_0.volgnummer
 LEFT JOIN (
       SELECT
           src_id, src_volgnummer
-      FROM mv_bag_pnd_bag_ozk_heeft_onderzoeken rel
-               INNER JOIN bag_onderzoeken ozk
+      FROM legacy.mv_bag_pnd_bag_ozk_heeft_onderzoeken rel
+               INNER JOIN legacy.bag_onderzoeken ozk
                           ON rel.dst_id = ozk._id
                               AND rel.dst_volgnummer = ozk.volgnummer
                               AND ozk.in_onderzoek = 'J'
