@@ -839,7 +839,7 @@
           "version": "2.0.0",
           "entity_id": "identificatie"
         },
-        "attributes": {
+        "legacy_attributes": {
           "identificatie": {
             "type": "GOB.String",
             "description": "Unieke identificatie van het object."
@@ -883,7 +883,7 @@
           "version": "2.0.0",
           "entity_id": "identificatie"
         },
-        "attributes": {
+        "legacy_attributes": {
           "identificatie": {
             "type": "GOB.String",
             "description": "Unieke identificatie van het object."
@@ -953,7 +953,7 @@
           "version": "2.0.0",
           "entity_id": "identificatie"
         },
-        "attributes": {
+        "legacy_attributes": {
           "identificatie": {
             "type": "GOB.String",
             "description": "Unieke identificatie van het object."
@@ -1018,7 +1018,7 @@
           "version": "2.0.0",
           "entity_id": "identificatie"
         },
-        "attributes": {
+        "legacy_attributes": {
           "identificatie": {
             "type": "GOB.String",
             "description": "Unieke identificatie van het object."
@@ -1080,7 +1080,7 @@
           "version": "2.0.0",
           "entity_id": "identificatie"
         },
-        "attributes": {
+        "legacy_attributes": {
           "identificatie": {
             "type": "GOB.String",
             "description": "Unieke identificatie van het object."
@@ -1142,7 +1142,7 @@
           "version": "2.0.0",
           "entity_id": "identificatie"
         },
-        "attributes": {
+        "legacy_attributes": {
           "identificatie": {
             "type": "GOB.String",
             "description": "Unieke identificatie van het object."
