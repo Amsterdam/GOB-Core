@@ -57,10 +57,10 @@ FROM
 -- SELECT ligt_in_bouwblok
 LEFT JOIN legacy.mv_bag_pnd_gbd_bbk_ligt_in_bouwblok rel_0
     ON rel_0.src_id = pnd._id AND rel_0.src_volgnummer = pnd.volgnummer
-LEFT JOIN legacy.n_bouwblokken bbk_0
+LEFT JOIN legacy.gebieden_bouwblokken bbk_0
     ON rel_0.dst_id = bbk_0._id AND rel_0.dst_volgnummer = bbk_0.volgnummer
 -- SELECT ligt_in_buurt
-LEFT JOIN legacy.v_bag_pnd_gbd_brt_ligt_in_buurt rel_1
+LEFT JOIN legacy.mv_bag_pnd_gbd_brt_ligt_in_buurt rel_1
     ON rel_1.src_id = pnd._id AND rel_1.src_volgnummer = pnd.volgnummer
 LEFT JOIN legacy.gebieden_buurten brt_0
     ON rel_1.dst_id = brt_0._id AND rel_1.dst_volgnummer = brt_0.volgnummer

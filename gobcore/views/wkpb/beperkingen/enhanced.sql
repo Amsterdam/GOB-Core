@@ -8,7 +8,7 @@ SELECT identificatie
      , begin_geldigheid
      , eind_geldigheid
 FROM 
-    wkpb_beperkingen bpg 
+    legacy.wkpb_beperkingen bpg
 WHERE
       aard -> 'code' <> '3'
       AND COALESCE(_expiration_date, '9999-12-31'::timestamp without time zone) > NOW()

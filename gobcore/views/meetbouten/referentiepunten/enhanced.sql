@@ -3,5 +3,5 @@
     ,      hoogte_tov_nap
     ,      datum
     ,      CONCAT_WS(' ', nabij_nummeraanduiding->>'bronwaarde', locatie)       AS locatie
-    FROM  legacy.n_referentiepunten
+    FROM  legacy.meetbouten_referentiepunten
     WHERE publiceerbaar = TRUE
