@@ -90,6 +90,24 @@ class TestModel(unittest.TestCase):
         GOBModel._data = None
         model = GOBModel()
 
+    def test_init_legacy_attributes_not_set_for_schema(self):
+        GOBModel.legacy_mode = True
+        GOBModel._data = None
+        model = GOBModel(True)
+
+        # Prepare object. Remove legacy_attributes
+        data = model._data
+        data['nap']['collections']['peilmerken']['attributes'] = data['nap']['collections']['peilmerken']['legacy_attributes']
+        del data['nap']['collections']['peilmerken']['legacy_attributes']
+
+        with self.assertRaisesRegexp(GOBException, "Expected 'legacy_attributes' to be defined for nap peilmerken"):
+            model._init_catalog(data['nap'])
+
+        # Reset
+        GOBModel.legacy_mode = False
+        GOBModel._data = None
+        model = GOBModel()
+
     def test_source_id(self):
         entity = {
             'idfield': 'idvalue'

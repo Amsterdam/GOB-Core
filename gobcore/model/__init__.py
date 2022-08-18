@@ -57,33 +57,36 @@ class GOBModel():
 
         GOBModel._data = data
         self._load_schemas()
-        self._init_data()
+        self._init_data(data)
 
-    def _init_data(self):
+    def _init_data(self, data):
         # Extract references for easy access in API. Add catalog and collection names to catalog and collection objects
-        for catalog_name in self._data.keys():
-            self._init_catalog(catalog_name)
+        for catalog_name, catalog in data.items():
+            catalog['name'] = catalog_name
+            self._init_catalog(catalog)
 
         # This needs to happen after initialisation of the object catalogs
         self._data[QUALITY_CATALOG] = get_quality_assurances(self)
+        self._data[QUALITY_CATALOG]['name'] = QUALITY_CATALOG
         self._data["rel"] = get_relations(self)
+        self._data["rel"]["name"] = "rel"
 
-        self._init_catalog(QUALITY_CATALOG)
-        self._init_catalog("rel")
+        self._init_catalog(self._data[QUALITY_CATALOG])
+        self._init_catalog(self._data["rel"])
 
-    def _init_catalog(self, catalog_name):
+    def _init_catalog(self, catalog):
         """Initialises self._data object with all fields and helper dicts
 
         """
-        catalog = self._data[catalog_name]
-        catalog['name'] = catalog_name
+        catalog_name = catalog["name"]
 
         for entity_name, model in catalog['collections'].items():
             model['name'] = entity_name
 
-            model['attributes'] = model['legacy_attributes'] \
-                if self.legacy_mode and model.get('legacy_attributes') \
-                else model['attributes']
+            if self.legacy_mode:
+                if 'schema' in model and 'legacy_attributes' not in model:
+                    raise GOBException(f"Expected 'legacy_attributes' to be defined for {catalog_name} {entity_name}")
+                model['attributes'] = model.get('legacy_attributes', model['attributes'])
 
             state_attributes = STATE_FIELDS if self.has_states(catalog_name, entity_name) else {}
             all_attributes = {
