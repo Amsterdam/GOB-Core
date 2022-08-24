@@ -16,27 +16,27 @@ def default_parser(handlers: List[str]) -> argparse.ArgumentParser:
         description="GOB Upload, Compare and Relate"
     )
 
-    # Upload task arguments
+    # Default arguments
     parser.add_argument(
         "handler",
         choices=handlers,  # migrate is upload specific
         help="Which handler to run."
     )
-    # make this in generiek
-    parser.add_argument(
-        "--message-data",
-        default="{}",
-        help="Message data used by the handler."
-    )
+    # parser.add_argument(
+    #     "--message-in-path",
+    #     required=False,
+    #     help="Path to message data."
+    # )
+    # Is this always required?
     parser.add_argument(
         "--message-result-path",
         default="/airflow/xcom/return.json",
-        help="Path to store result message."
+        help="Path with json file, which contains the filepath to the result data."
     )
     return parser
 
 
-def run_as_standalone(args: argparse.Namespace, handler: Callable, message_data: dict):
+def run_as_standalone(message_write_path: Path, handler: Callable, message_data: dict):
     """Run as stand-alone application.
 
     Parses and processes the cli arguments to a result message.
@@ -46,7 +46,6 @@ def run_as_standalone(args: argparse.Namespace, handler: Callable, message_data:
 
     :return: result message
     """
-    # Figure out what message is
     # message_in = construct_message(args)
     message_in, offloaded_filename = load_message(
         # msg=json.loads(args.message_data),
@@ -54,8 +53,10 @@ def run_as_standalone(args: argparse.Namespace, handler: Callable, message_data:
         converter=from_json,
         params={"stream_contents": False}
     )
-
-    logger.configure(message_in, str(args.handler).upper())
+    print("---")
+    print(message_in)
+    print(offloaded_filename)
+    logger.configure(message_in, str(handler.__name__).upper())
 
     # CALLBACK/HANDLER code
     message_out = handler(message_in)
@@ -66,8 +67,8 @@ def run_as_standalone(args: argparse.Namespace, handler: Callable, message_data:
         converter=to_json,
         force_offload=True
     )
-    print(f"Writing message data to {args.message_write_path}")
-    write_message(message_out_offloaded, Path(args.message_write_path))
+    print(f"Writing message data to {message_write_path}")
+    write_message(message_out_offloaded, Path(message_write_path))
     return message_out_offloaded
 
 
