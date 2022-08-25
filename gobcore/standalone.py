@@ -70,29 +70,47 @@ def _build_message(args: argparse.Namespace) -> Message:
     :param args: Parsed arguments
     :return: A message with keys as required by different handlers.
     """
+    # Just pass on message if there is message data.
+    # Do something smart here: apply is a start command and requires catalogue
+    # and collection? Or optional? Is message data leading then?
+    if hasattr(args, "message_data"):
+        # Is there not something doing this already?
+        return json.loads(args.message_data)
+
     header = {
         'catalogue': getattr(args, "catalogue", None),
         'collection': getattr(args, "collection", None),
         'entity': getattr(args, "collection", None),
         'attribute': getattr(args, "attribute", None),
         'application': getattr(args, "application", None),
+        # We're constructing the whole message again, as MessageMetaData is used by compare
+        # question: are we sure we want to pass this to arguments?
+        # Maybe just passing the message along (for non-start-commands) is not a bad idea at all.
+        # It can also easily be fixed:
+        # - each non-start-commands gets a required --message-data (instead of parent parser)
+        # - just pass on that message
+        # - start commands have specific --catalogue, --collection arguments
+        # - non-start-commands will not require '--catalogue' '--collection' as that is also in the message
+        # - otherwise the message needs to be constructed from arguments
+        # How does workflow do that right now?
+        # 'source': getattr(args, "source").get("source", "test")
     }
+
+
     # Prevent this value from being None, just leave it away instead.
     if hasattr(args, "mode"):
         header["mode"] = getattr(args, "mode", None)
 
-    contents_ref = {}
-    summary = {}
+    # contents_ref = {}
+    # summary = {}
     # Message data as passed with --message-data
-    if hasattr(args, "message_data"):
-        message_data = json.loads(args.message_data)
-        contents_ref = message_data.get("contents_ref", {})
-        summary = message_data.get("summary", {})
+    # if hasattr(args, "message_data"):
+    #     message_data = json.loads(args.message_data)
+    #     contents_ref = message_data.get("contents_ref", {})
+    #     summary = message_data.get("summary", {})
 
     return {
         "header": header,
-        "contents_ref": contents_ref,
-        "summary": summary
     }
 
 
