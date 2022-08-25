@@ -78,7 +78,7 @@ def _build_message(args: argparse.Namespace) -> Message:
         'application': getattr(args, "application", None),
     }
     # Prevent this value from being None, just leave it away instead.
-    if hasattr(args.mode):
+    if hasattr(args, "mode"):
         header["mode"] = getattr(args, "mode", None)
 
     contents_ref = {}
