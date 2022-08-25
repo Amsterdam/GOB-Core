@@ -30,7 +30,8 @@ def parent_argument_parser() -> Tuple[argparse.ArgumentParser, argparse._SubPars
     subparsers = parser.add_subparsers(
         title="subcommands",
         help="Which handler to run.",
-        dest="handler"
+        dest="handler",
+        required=True
     )
     return parser, subparsers
 
@@ -56,7 +57,6 @@ def run_as_standalone(
         force_offload=True
     )
 
-    print(f"Writing message data to {args.message_result_path}")
     # Write message data over xcom
     _write_message(message_out_offloaded, Path(args.message_result_path))
     return message_out_offloaded
@@ -70,15 +70,29 @@ def _build_message(args: argparse.Namespace) -> Message:
     :param args: Parsed arguments
     :return: A message with keys as required by different handlers.
     """
+    header = {
+        'catalogue': getattr(args, "catalogue", None),
+        'collection': getattr(args, "collection", None),
+        'entity': getattr(args, "collection", None),
+        'attribute': getattr(args, "attribute", None),
+        'application': getattr(args, "application", None),
+    }
+    # Prevent this value from being None, just leave it away instead.
+    if hasattr(args.mode):
+        header["mode"] = getattr(args, "mode", None)
+
+    contents_ref = {}
+    summary = {}
+    # Message data as passed with --message-data
+    if hasattr(args, "message_data"):
+        message_data = json.loads(args.message_data)
+        contents_ref = message_data.get("contents_ref", {})
+        summary = message_data.get("summary", {})
+
     return {
-        'header': {
-            'catalogue': getattr(args, "catalogue", None),
-            'mode': getattr(args, "mode", None),
-            'collection': getattr(args, "collection", None),
-            'entity': getattr(args, "collection", None),
-            'attribute': getattr(args, "attribute", None),
-            'application': getattr(args, "application", None)
-        }
+        "header": header,
+        "contents_ref": contents_ref,
+        "summary": summary
     }
 
 
