@@ -1,78 +1,115 @@
+from functools import partial
+
 import json
 
 import argparse
 
-from gobcore.logging.logger import logger
 from gobcore.message_broker.utils import to_json, from_json
 from gobcore.message_broker.offline_contents import offload_message, load_message
 
 from pathlib import Path
-from typing import List, Dict, Any, Callable
+from typing import Dict, Any, Callable, Tuple
+
+Message = Dict[str, Any]
 
 
-def default_parser(handlers: List[str]) -> argparse.ArgumentParser:
+def parent_argument_parser() -> Tuple[argparse.ArgumentParser, argparse._SubParsersAction]:
     parser = argparse.ArgumentParser(
-        prog="python -m gobupload",
-        description="GOB Upload, Compare and Relate"
+        description='Start standalone GOB Tasks',
     )
-
-    # Default arguments
     parser.add_argument(
-        "handler",
-        choices=handlers,  # migrate is upload specific
-        help="Which handler to run."
-    )
-    # parser.add_argument(
-    #     "--message-in-path",
-    #     required=False,
-    #     help="Path to message data."
-    # )
-    # Is this always required?
+         "--message-data",
+         default="{}",
+         help="Message data used by the handler."
+     )
     parser.add_argument(
         "--message-result-path",
         default="/airflow/xcom/return.json",
-        help="Path with json file, which contains the filepath to the result data."
+        help="Path to store result message."
     )
-    return parser
+    subparsers = parser.add_subparsers(
+        title="subcommands",
+        help="Which handler to run.",
+        dest="handler"
+    )
+    return parser, subparsers
 
 
-def run_as_standalone(message_write_path: Path, handler: Callable, message_data: dict):
-    """Run as stand-alone application.
-
-    Parses and processes the cli arguments to a result message.
-    Logging is sent to stdout.
-
-    example: python -m gobimport import gebieden wijken DGDialog
-
-    :return: result message
-    """
-    # message_in = construct_message(args)
+def run_as_standalone(
+        args: argparse.Namespace, service_definition: dict[str, Any]
+) -> Message:
+    message = _build_message(args)
+    print(f"Loading incoming message: {message}")
+    # Load offloaded 'contents_ref'-data into message
     message_in, offloaded_filename = load_message(
-        # msg=json.loads(args.message_data),
-        msg=message_data,
+        msg=message,
         converter=from_json,
         params={"stream_contents": False}
     )
-    print("---")
+    print("Fully loaded incoming message, including data:")
     print(message_in)
-    print(offloaded_filename)
-    logger.configure(message_in, str(handler.__name__).upper())
-
-    # CALLBACK/HANDLER code
+    handler = _get_handler(args.handler, service_definition)
     message_out = handler(message_in)
-    # END CALLBACK/HANDLER
-
     message_out_offloaded = offload_message(
         msg=message_out,
         converter=to_json,
         force_offload=True
     )
-    print(f"Writing message data to {message_write_path}")
-    write_message(message_out_offloaded, Path(message_write_path))
+
+    print(f"Writing message data to {args.message_result_path}")
+    # Write message data over xcom
+    _write_message(message_out_offloaded, Path(args.message_result_path))
     return message_out_offloaded
 
 
-def write_message(message_out: Dict[str, Any], write_path: Path) -> None:
+def _build_message(args: argparse.Namespace) -> Message:
+    """Create a message from argparse arguments.
+
+    Defaults to None if attribute has no value.
+
+    :param args: Parsed arguments
+    :return: A message with keys as required by different handlers.
+    """
+    return {
+        'header': {
+            'catalogue': getattr(args, "catalogue", None),
+            'mode': getattr(args, "mode", None),
+            'collection': getattr(args, "collection", None),
+            'entity': getattr(args, "collection", None),
+            'attribute': getattr(args, "attribute", None),
+            'application': getattr(args, "application", None)
+        }
+    }
+
+
+def _get_handler(handler: str, mapping: Dict[str, Any]) -> Callable:
+    """Returns handler from a dictionary which is formatted like:
+
+    mapping = {
+        "handler_name": {
+            "handler": some_callable
+            "handler_kwargs": {"raise_exception": True}  # Optional
+        }
+    }
+
+    This mapping usually is SERVICEDEFINITION.
+
+    :param handler: name of the handler to lookup in the mapping.
+    :param mapping: mapping formatted as described above.
+    :returns: A callable.
+    """
+    if handler not in mapping:
+        raise KeyError(f"Handler '{handler}' not defined.")
+
+    handler_config = mapping.get(handler)
+    # Apply optional keyword arguments and return partial function.
+    return partial(
+        handler_config["handler"],
+        **handler_config.get("handler_kwargs", {})
+    )
+
+
+def _write_message(message_out: Dict[str, Any], write_path: Path) -> None:
     """Write message data to a file. Ensures parent directories exist.
 
     :param message_out: Message data to be written
