@@ -1,34 +1,37 @@
-from functools import partial
-
-import json
-
 import argparse
-
-from gobcore.message_broker.utils import to_json, from_json
-from gobcore.message_broker.offline_contents import offload_message, load_message
-
+import json
 from pathlib import Path
 from typing import Dict, Any, Callable, Tuple
+
+from gobcore.message_broker.offline_contents import offload_message, load_message
+from gobcore.message_broker.utils import to_json, from_json
 
 Message = Dict[str, Any]
 
 
 def parent_argument_parser() -> Tuple[argparse.ArgumentParser, argparse._SubParsersAction]:
+    """Setup parent argument parser, to which subparsers can be added.
+
+    Add any 'handler'-functions to the returned subparser, call parse_args() on
+    the parent parser when all handlers are added.
+
+    :return: The parent parser and the subparser, to add subcommands to.
+    """
     parser = argparse.ArgumentParser(
         description='Start standalone GOB Tasks',
     )
     parser.add_argument(
-         "--message-data",
-         default="{}",
-         help="Message data used by the handler."
-     )
+        "--message-data",
+        required=False,
+        help="Message data used by the handler."
+    )
     parser.add_argument(
         "--message-result-path",
         default="/airflow/xcom/return.json",
         help="Path to store result message."
     )
     subparsers = parser.add_subparsers(
-        title="subcommands",
+        title="handlers",
         help="Which handler to run.",
         dest="handler",
         required=True
@@ -38,7 +41,18 @@ def parent_argument_parser() -> Tuple[argparse.ArgumentParser, argparse._SubPars
 
 def run_as_standalone(
         args: argparse.Namespace, service_definition: dict[str, Any]
-) -> Message:
+) -> int:
+    """Runs application in standalone mode.
+
+    Finds the handler to run from the arguments given. For 'start commands' the
+    message is constructed from arguments, for example with a catalogue and
+    collection. 'Non-start commands' are instructed with a message received
+    from a handler called in a previous task.
+
+    :param args: Arguments as parsed by arg parse.
+    :param service_definition: A dict with keys which maps to handlers.
+    :return: the resulting message data from the handler.
+    """
     message = _build_message(args)
     print(f"Loading incoming message: {message}")
     # Load offloaded 'contents_ref'-data into message
@@ -47,8 +61,6 @@ def run_as_standalone(
         converter=from_json,
         params={"stream_contents": False}
     )
-    print("Fully loaded incoming message, including data:")
-    print(message_in)
     handler = _get_handler(args.handler, service_definition)
     message_out = handler(message_in)
     message_out_offloaded = offload_message(
@@ -57,9 +69,12 @@ def run_as_standalone(
         force_offload=True
     )
 
-    # Write message data over xcom
     _write_message(message_out_offloaded, Path(args.message_result_path))
-    return message_out_offloaded
+    if errors := _get_errors(message_out):
+        print(errors)  # TODO: logger.error?
+        return 1
+
+    return 0
 
 
 def _build_message(args: argparse.Namespace) -> Message:
@@ -71,10 +86,7 @@ def _build_message(args: argparse.Namespace) -> Message:
     :return: A message with keys as required by different handlers.
     """
     # Just pass on message if there is message data.
-    # Do something smart here: apply is a start command and requires catalogue
-    # and collection? Or optional? Is message data leading then?
-    if hasattr(args, "message_data"):
-        # Is there not something doing this already?
+    if args.message_data is not None:
         return json.loads(args.message_data)
 
     header = {
@@ -83,35 +95,28 @@ def _build_message(args: argparse.Namespace) -> Message:
         'entity': getattr(args, "collection", None),
         'attribute': getattr(args, "attribute", None),
         'application': getattr(args, "application", None),
-        # We're constructing the whole message again, as MessageMetaData is used by compare
-        # question: are we sure we want to pass this to arguments?
-        # Maybe just passing the message along (for non-start-commands) is not a bad idea at all.
-        # It can also easily be fixed:
-        # - each non-start-commands gets a required --message-data (instead of parent parser)
-        # - just pass on that message
-        # - start commands have specific --catalogue, --collection arguments
-        # - non-start-commands will not require '--catalogue' '--collection' as that is also in the message
-        # - otherwise the message needs to be constructed from arguments
-        # How does workflow do that right now?
-        # 'source': getattr(args, "source").get("source", "test")
     }
 
-
-    # Prevent this value from being None, just leave it away instead.
+    # Prevent this value from being None, as that breaks handlers.
+    # When mode is not passed, handlers switch to their own default
     if hasattr(args, "mode"):
-        header["mode"] = getattr(args, "mode", None)
-
-    # contents_ref = {}
-    # summary = {}
-    # Message data as passed with --message-data
-    # if hasattr(args, "message_data"):
-    #     message_data = json.loads(args.message_data)
-    #     contents_ref = message_data.get("contents_ref", {})
-    #     summary = message_data.get("summary", {})
+        header["mode"] = getattr(args, "mode")
 
     return {
         "header": header,
     }
+
+
+def _get_errors(message) -> list[str]:
+    """Returns a list with errors if the result message has any.
+
+    :param message: The message to check
+    :return: The errors from the 'summary' in the message.
+    """
+    if "summary" not in message:
+        return []
+
+    return message["summary"].get("errors", [])
 
 
 def _get_handler(handler: str, mapping: Dict[str, Any]) -> Callable:
@@ -120,7 +125,6 @@ def _get_handler(handler: str, mapping: Dict[str, Any]) -> Callable:
     mapping = {
         "handler_name": {
             "handler": some_callable
-            "handler_kwargs": {"raise_exception": True}  # Optional
         }
     }
 
@@ -135,13 +139,10 @@ def _get_handler(handler: str, mapping: Dict[str, Any]) -> Callable:
 
     handler_config = mapping.get(handler)
     # Apply optional keyword arguments and return partial function.
-    return partial(
-        handler_config["handler"],
-        **handler_config.get("handler_kwargs", {})
-    )
+    return handler_config["handler"]
 
 
-def _write_message(message_out: Dict[str, Any], write_path: Path) -> None:
+def _write_message(message_out: Message, write_path: Path) -> None:
     """Write message data to a file. Ensures parent directories exist.
 
     :param message_out: Message data to be written
