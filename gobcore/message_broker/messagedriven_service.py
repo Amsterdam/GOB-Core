@@ -1,7 +1,7 @@
 import sys
 import time
 import threading
-from typing import Callable
+from typing import Callable, Dict, Any
 
 from gobcore.logging.logger import logger
 from gobcore.message_broker.async_message_broker import AsyncConnection
@@ -53,7 +53,7 @@ def _get_logger_name(handler: Callable):
     return handler.__name__.upper()
 
 
-def _on_message(connection, service, msg):
+def _on_message(connection, service, msg: Dict[str, Any]):
     """Called on every message receipt
 
     :param connection: the connection with the message broker
