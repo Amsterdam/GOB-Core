@@ -1,7 +1,10 @@
+import re
 from unittest import TestCase
-from unittest.mock import patch, mock_open
 
-from gobcore.utils import ProgressTicker, get_dns
+import pytest
+from unittest.mock import patch, mock_open, Mock
+
+from gobcore.utils import ProgressTicker, get_dns, get_logger_name
 
 
 class TestProgressTicker(TestCase):
@@ -62,3 +65,12 @@ nameserver 1.2.3.4
 
         open.side_effect = IOError
         self.assertIsNone(get_dns())
+
+
+@pytest.mark.parametrize(["handler", "pattern"], [
+    (Mock(__name__="logger_name"), "LOGGER_NAME"),
+    (Mock(), r"<Mock id='[0-9]+'>"),
+])
+def test_get_logger_name(handler, pattern):
+    name = get_logger_name(handler)
+    assert re.match(pattern, name)

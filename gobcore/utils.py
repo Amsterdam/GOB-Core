@@ -1,3 +1,5 @@
+from typing import Callable
+
 from datetime import datetime
 from itertools import chain
 from pathlib import Path
@@ -130,3 +132,18 @@ def get_filename(name: str, offload_folder: str) -> str:
     path = Path(GOB_SHARED_DIR, offload_folder)
     path.mkdir(exist_ok=True, parents=True)
     return str(path / name)
+
+
+def get_logger_name(handler: Callable):
+    """Creates a name for a logger from a given handler.
+
+    If handler has no __name__ attribute (like mocks or lambda's), it uses the
+    string representation of the function.
+
+    :param handler: A callable, as defined in SERVICEDEFINITION.
+    :return: a name to configure a logger with.
+    """
+    if not hasattr(handler, "__name__"):
+        return str(handler)
+
+    return handler.__name__.upper()
