@@ -28,7 +28,8 @@ node('GOBBUILD') {
                "docker-compose -p gobcore run -u root --rm test"
 
         }, {
-            sh "docker-compose -p gobcore down"
+            sh "docker-compose -p gobcore down && "+
+            sh "docker network rm gobcore_default"
         }
     }
 
