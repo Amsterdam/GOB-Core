@@ -1,8 +1,10 @@
 import argparse
 import json
+from gobcore.logging.logger import logger
 from pathlib import Path
 from typing import Dict, Any, Callable, Tuple
 
+from gobcore.utils import get_logger_name
 from gobcore.message_broker.offline_contents import offload_message, load_message
 from gobcore.message_broker.utils import to_json, from_json
 
@@ -62,6 +64,7 @@ def run_as_standalone(
         params={"stream_contents": False}
     )
     handler = _get_handler(args.handler, service_definition)
+    logger.configure(message_in, get_logger_name(handler))
     message_out = handler(message_in)
     message_out_offloaded = offload_message(
         msg=message_out,

@@ -10,6 +10,7 @@ from gobcore.message_broker.config import CONNECTION_PARAMS
 from gobcore.message_broker.initialise_queues import initialize_message_broker
 from gobcore.message_broker.notifications import contains_notification, send_notification
 from gobcore.quality.issue import process_issues
+from gobcore.utils import get_logger_name
 
 CHECK_CONNECTION = 5                # Check connection every n seconds
 RUNS_IN_OWN_THREAD = "own_thread"   # Service that runs in a separate thread
@@ -38,21 +39,6 @@ def _handle_result_msg(connection, service, result_msg) -> bool:
     return result_msg is not False
 
 
-def _get_logger_name(handler: Callable):
-    """Creates a name for a logger from a given handler.
-
-    If handler has no __name__ attribute (like mocks or lambda's), it uses the
-    string representation of the function.
-
-    :param handler: A callable, as defined in SERVICEDEFINITION.
-    :return: a name to configure a logger with.
-    """
-    if not hasattr(handler, "__name__"):
-        return str(handler)
-
-    return handler.__name__.upper()
-
-
 def _on_message(connection, service, msg: Dict[str, Any]):
     """Called on every message receipt
 
@@ -65,7 +51,7 @@ def _on_message(connection, service, msg: Dict[str, Any]):
     handler: Callable = service['handler']
     try:
         Heartbeat.progress(connection, service, msg, STATUS_START)
-        logger.configure(msg, _get_logger_name(handler))
+        logger.configure(msg, get_logger_name(handler))
         logger.add_message_broker_handler()
         result_msg = handler(msg)
         result = _handle_result_msg(connection, service, result_msg)
