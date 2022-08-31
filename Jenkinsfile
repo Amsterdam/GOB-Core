@@ -29,7 +29,7 @@ node('GOBBUILD') {
 
         }, {
             sh "docker-compose -p gobcore down && "+
-            sh "docker network rm gobcore_default"
+            "docker network rm gobcore_default"
         }
     }
 
