@@ -24,13 +24,12 @@ node('GOBBUILD') {
 
     stage('Test') {
         tryStep "test", {
-            sh "docker network rm gobcore_default"
+            sh "docker network ls"
             sh "docker-compose -p gobcore build && " +
                "docker-compose -p gobcore run -u root --rm test"
 
         }, {
             sh "docker-compose -p gobcore down"
-
         }
     }
 
