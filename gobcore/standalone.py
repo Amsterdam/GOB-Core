@@ -56,7 +56,6 @@ def run_as_standalone(
     :return: the resulting message data from the handler.
     """
     message = _build_message(args)
-    print(f"Loading incoming message: {message}")
     # Load offloaded 'contents_ref'-data into message
     message_in, offloaded_filename = load_message(
         msg=message,
