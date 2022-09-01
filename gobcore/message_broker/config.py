@@ -39,7 +39,7 @@ CONNECTION_PARAMS = pika.ConnectionParameters(
     virtual_host=MESSAGE_BROKER_VHOST,
     credentials=pika.PlainCredentials(username=MESSAGE_BROKER_USER,
                                       password=MESSAGE_BROKER_PASSWORD),
-    heartbeat_interval=1200,
+    heartbeat=1200,
     blocked_connection_timeout=600
 )
 
