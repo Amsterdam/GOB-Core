@@ -23,7 +23,7 @@ class NoSuchCollectionException(NotInModelException):
     pass
 
 
-class GOBModel():
+class GOBModel:
     inverse_relations = None
     _data = None
     legacy_mode = None

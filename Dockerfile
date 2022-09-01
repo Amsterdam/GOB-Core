@@ -1,28 +1,32 @@
-FROM amsterdam/python:3.9-buster
-MAINTAINER datapunt@amsterdam.nl
+# syntax=docker/dockerfile:1
+FROM amsterdam/gob_wheelhouse:3.9-buster as wheelhouse
 
-# Install GDAL and ODBC
-RUN apt-get update
-RUN apt-get install -y --no-install-recommends libgdal-dev unixodbc-dev
+# Application stage.
+FROM amsterdam/gob_baseimage:3.9-buster as application
 
-# Update C env vars so compiler can find gdal
-ENV CPLUS_INCLUDE_PATH=/usr/include/gdal
-ENV C_INCLUDE_PATH=/usr/include/gdal
+# Fill the wheelhouse.
+COPY --from=wheelhouse /opt/wheelhouse /opt/wheelhouse
 
-# Install gobworkflow in /app folder
+# Install gobcore in /app folder.
 WORKDIR /app
 
-# Copy testscript to where jenkins expect them
-COPY test.sh /app/
-
-# Install required Python packages
+# Install required Python packages.
 COPY requirements.txt /app/
-RUN LIBGDAL_VERSION=$(gdal-config --version) pip3 install --no-cache-dir -r requirements.txt
+RUN LIBGDAL_VERSION=$(gdal-config --version) pip install --no-cache-dir \
+	--find-links /opt/wheelhouse --requirement requirements.txt
 RUN rm requirements.txt
-RUN mkdir -m 777 -p /root/gob-volume/message_broker
+# Wheelhouse cleanup.
+RUN rm -rf /opt/wheelhouse
 
-# Copy gobcore module
+RUN mkdir -m 775 -p /home/datapunt/gob-volume/message_broker && chown datapunt.datapunt /home/datapunt/gob-volume/message_broker
+# Airflow (standalone).
+RUN mkdir -m 775 /airflow && chown datapunt.datapunt /airflow
+
+# Copy gobcore module.
 COPY gobcore gobcore
-# Copy tests and config
-COPY .flake8 .flake8
+
+# Copy test module and tests to where Jenkins expects them.
+COPY test.sh .flake8 ./
 COPY tests tests
+
+USER datapunt
