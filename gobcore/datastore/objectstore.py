@@ -36,7 +36,7 @@ import io
 import logging
 import os
 import re
-from typing import Tuple, Iterator, Union
+from typing import Tuple, Iterator, Union, Optional
 
 import pandas
 from swiftclient.client import Connection
@@ -106,12 +106,19 @@ def get_full_container_list(conn, container, **kwargs) -> list:
         marker = objects[-1]['name']
 
 
-def get_object(connection, object_meta_data: dict, dirname: str, chunk_size: int = 50_000_000,
-               **kwargs) -> Union[Iterator[bytes], bytes]:
+def get_object(
+        connection: Connection,
+        object_meta_data: dict,
+        dirname: str,
+        chunk_size: Optional[int] = 50_000_000,
+        **kwargs
+) -> Union[Iterator[bytes], bytes]:
     """
     Download object from objectstore using chunks with `chunk_size`. (default 50mb)
     Use chunks to workaround bug: https://bugs.python.org/issue42853 (fixed in 3.9.7)
     object_meta_data is an object retured when using 'get_full_container_list'
+
+    returns bytes object in case `chunk_size` is None else Generator[bytes]
     """
     return connection.get_object(dirname, object_meta_data['name'], resp_chunk_size=chunk_size, **kwargs)[1]
 
