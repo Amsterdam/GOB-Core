@@ -63,7 +63,7 @@ class OracleDatastore(SqlDatastore):
         # Allow mutiple hosts speciefied, comma separated
         items = {k: str(v).split(',')[0] if k in ('host', 'port') else v
                  for k, v in self.connection_config.items() if k != 'name'}
-        url = URL(**items)
+        url = URL.create(**items)
 
         # The Oracle driver can accept a service name instead of a SID
         service_name_pattern = re.compile(r"^\w+\.\w+\.\w+$")

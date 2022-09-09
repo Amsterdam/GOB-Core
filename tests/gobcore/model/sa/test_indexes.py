@@ -312,4 +312,4 @@ class TestIndexes(unittest.TestCase):
                 'table_name': 'rel_relation_b'
             }
         }
-        self.assertEquals(result, expected)
+        self.assertEqual(result, expected)
