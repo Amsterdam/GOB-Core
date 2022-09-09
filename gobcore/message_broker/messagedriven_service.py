@@ -50,7 +50,6 @@ def _on_message(connection, service, msg: Dict[str, Any]):
     """
     handler: Callable = service['handler']
     logger.configure(msg, get_logger_name(handler))
-    logger.add_message_broker_handler()
 
     try:
         Heartbeat.progress(connection, service, msg, STATUS_START)

@@ -63,7 +63,7 @@ def run_as_standalone(
         params={"stream_contents": False}
     )
     handler = _get_handler(args.handler, service_definition)
-    logger.configure(message_in, get_logger_name(handler))
+    logger.configure(message_in, get_logger_name(handler), standalone=True)
     message_out = handler(message_in)
     message_out_offloaded = offload_message(
         msg=message_out,

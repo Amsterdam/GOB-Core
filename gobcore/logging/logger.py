@@ -27,9 +27,22 @@ if TYPE_CHECKING:
     from gobcore.quality.issue import Issue  # pragma: no cover
 
 
+class StdoutHandler(logging.StreamHandler):
+
+    def __init__(self):
+        super().__init__(stream=sys.stdout)
+        self.name = "StdoutHandler"
+
+
 class RequestsHandler(logging.Handler):
 
+    LOGFORMAT = "%(asctime)s %(name)-12s %(levelname)-8s %(message)s"
     LOG_PUBLISHER = None
+
+    def __init__(self):
+        super().__init__()
+        self.name = "RequestsHandler"
+        self.formatter = logging.Formatter(self.LOGFORMAT)
 
     def emit(self, record):
         """Emits a log record on the message broker
@@ -81,8 +94,6 @@ class Logger:
     GOB logger, used for application logging for the GOB system.
     Holds information to give context to subsequent logging.
     """
-
-    LOGFORMAT = "%(asctime)s %(name)-12s %(levelname)-8s %(message)s"
     LOGLEVEL = logging.INFO
 
     # Save these messages to report at end of msg handling
@@ -98,6 +109,7 @@ class Logger:
 
     def __init__(self, name: str = None):
         self.name = name
+        self.handlers = (StdoutHandler, RequestsHandler)
 
         if name is not None:
             self._init_logger()
@@ -244,15 +256,19 @@ class Logger:
     def get_attribute(self, attribute):
         return self._default_args.get(attribute)
 
-    def configure(self, msg: dict, name: str = None):
+    def configure(self, msg: dict, name: str = None, standalone: bool = False):
         """Configure the logger to store the relevant information for subsequent logging.
         Should be called at the start of processing new item.
 
         :param msg: the processed message
         :param name: the name of the process that processes the message
+        :param standalone: standalone mode, only use stdout handler
         """
         if name is None and self.name is None:
             raise ValueError("Name not supllied in either Logger or Logger.configure")
+
+        if standalone:
+            self.handlers = (StdoutHandler, )
 
         if name:
             self.name = name
@@ -272,30 +288,18 @@ class Logger:
                 'stepid': header.get('stepid')
             }
 
-    def add_message_broker_handler(self):
-        """Adds the message broker handler to the `name` instance if one doesn't exist yet."""
-        name = "RequestsHandler"
-
-        # make sure we have only 1 handler
-        if not any(
-            isinstance(handler, RequestsHandler) and handler.name == name
-            for handler in self.get_logger().handlers
-        ):
-            handler = RequestsHandler()
-            handler.name = name
-            formatter = logging.Formatter(self.LOGFORMAT)
-            handler.setFormatter(formatter)
-            self.get_logger().addHandler(handler)
-
     def _init_logger(self):
+        assert self.name is not None, "Name not set"
+
         if self.name in self._logger:
             return
 
         new_logger = logging.getLogger(self.name)
         new_logger.setLevel(self.LOGLEVEL)
 
-        # log default to stdout
-        new_logger.addHandler(logging.StreamHandler(stream=sys.stdout))
+        for handler in self.handlers:
+            new_logger.addHandler(handler())
+
         self.set_logger(new_logger)
 
     def get_logger(self) -> logging.Logger:
