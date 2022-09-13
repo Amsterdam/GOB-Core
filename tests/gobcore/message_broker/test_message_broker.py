@@ -31,6 +31,7 @@ class MockDeliver:
 
     delivery_tag = "tag"
     exchange = "exchange"
+    redelivered = True
 
     def __init__(self, key):
         self.routing_key = key

@@ -18,9 +18,9 @@ RUN rm requirements.txt
 # Wheelhouse cleanup.
 RUN rm -rf /opt/wheelhouse
 
-RUN mkdir -m 775 -p /home/datapunt/gob-volume/message_broker && chown datapunt.datapunt /home/datapunt/gob-volume/message_broker
+RUN mkdir -m 2755 -p /home/datapunt/gob-volume/message_broker && chown datapunt.datapunt /home/datapunt/gob-volume/message_broker
 # Airflow (standalone).
-RUN mkdir -m 775 /airflow && chown datapunt.datapunt /airflow
+RUN mkdir -m 2755 /airflow && chown datapunt.datapunt /airflow
 
 # Copy gobcore module.
 COPY gobcore gobcore

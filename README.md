@@ -1,6 +1,6 @@
 # GOB-Core
 
-GOB shared logic
+GOB shared logic.
 
 Include in a GOB project using:
 
@@ -8,8 +8,7 @@ Include in a GOB project using:
 pip install -e git+git://github.com/Amsterdam/GOB-Core.git@vX.Y.Z#egg=gobcore
 ```
 
-If you need to test with a local version of GOB-Core change the include line in 
-requirements.txt with:
+If you need to test with a local version of GOB-Core change the include line in `requirements.txt` with:
 
 ```bash
 -e <<local path to GOB-Core>>
@@ -19,21 +18,21 @@ requirements.txt with:
 
 ## Requirements
 
-* docker-compose >= 1.17
-* docker ce >= 18.03
+* docker compose >= 1.25
+* Docker CE >= 18.09
 
 ## Tests
 
 ```bash
-docker-compose build
-docker-compose up
+docker compose build
+docker compose up
 ```
 
 # Local
 
 ## Requirements
 
-* python >= 3.6
+* Python >= 3.9
     
 ## Initialisation
 

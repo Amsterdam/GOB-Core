@@ -100,7 +100,7 @@ class TestModel(unittest.TestCase):
         data['nap']['collections']['peilmerken']['attributes'] = data['nap']['collections']['peilmerken']['legacy_attributes']
         del data['nap']['collections']['peilmerken']['legacy_attributes']
 
-        with self.assertRaisesRegexp(GOBException, "Expected 'legacy_attributes' to be defined for nap peilmerken"):
+        with self.assertRaisesRegex(GOBException, "Expected 'legacy_attributes' to be defined for nap peilmerken"):
             model._init_catalog(data['nap'])
 
         # Reset

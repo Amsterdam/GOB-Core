@@ -25,7 +25,7 @@ node('GOBBUILD') {
     stage('Test') {
         tryStep "test", {
             sh "docker-compose -p gobcore build && " +
-               "docker-compose -p gobcore run -u root --rm test"
+               "docker-compose -p gobcore run --rm test"
 
         }, {
             sh "docker-compose -p gobcore down"
