@@ -9,8 +9,8 @@ The definition includes:
 todo: The delete and confirm actions contain too much data. Contents can be left empty
     A deletion or confirmation simple specifies source and sourceid in a collection
     See also the examples in the action classes
-
 """
+
 from abc import ABCMeta, abstractmethod
 
 from gobcore.exceptions import GOBException
@@ -42,6 +42,7 @@ class ImportEvent(metaclass=ABCMeta):
 
         return {"event": cls.name, "data": data, "version": version}
 
+    # Warning: this class attribute differs from the instance attribute.
     @classmethod
     def last_event(cls, data):
         return {"_last_event": data.get("_last_event")}
@@ -81,8 +82,8 @@ class ImportEvent(metaclass=ABCMeta):
         :param metadata: the metadata of the import message
         :return:
         """
-        dict = self.get_attribute_dict()
-        for key, value in dict.items():
+        attr_dict = self.get_attribute_dict()
+        for key, value in attr_dict.items():
             setattr(entity, key, value)
 
     def get_attribute_dict(self):
@@ -172,7 +173,7 @@ class MODIFY(ImportEvent):
         # Set the hash
         entity._hash = self._data[hash_key]
 
-        # extract modifications from the data, before applying the event to the entity
+        # Extract modifications from the data, before applying the event to the entity.
         modifications = self._data.pop(modifications_key)
         attribute_set = self._extract_modifications(entity, modifications)
         self._data = {**self._data, **attribute_set}
@@ -180,9 +181,9 @@ class MODIFY(ImportEvent):
         super().apply_to(entity)
 
     def _extract_modifications(self, entity, modifications):
-        """extracts attributes to modify, and checks if old values are indeed present on entity
+        """Extracts attributes to modify, and checks if old values are indeed present on entity.
 
-        :param entity: the instance to be modified
+        :param entity: the instance to be modified -- unused argument!
         :param modifications: a collection of mutations of attributes to be interpretated
 
         :return: a dict with extracted and verified mutations

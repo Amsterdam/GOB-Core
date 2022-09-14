@@ -17,7 +17,7 @@ class GOBMigrations:
 
         GOBMigrations._migrations = defaultdict(lambda: defaultdict(lambda: defaultdict(None)))
 
-        # Extract migrations for easy access in API
+        # Extract migrations for easy access.
         self._extract_migrations()
 
     def _extract_migrations(self):

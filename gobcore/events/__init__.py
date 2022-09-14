@@ -1,12 +1,10 @@
 """GOB Events
 
-The event definitions that are defined in the gob_events module are
-
-GOB events are the add, modification, deletion and confirmation of data
+GOB events are the add, modification, deletion and confirmation of data.
 The possible events are defined in this module.
-The definition and characteristics of each event is in the gob_events module
-
+The definition and characteristics of each event is in the gob_events module.
 """
+
 import json
 
 from gobcore.exceptions import GOBException
@@ -41,8 +39,8 @@ def _get_event(name):
     """
     try:
         return _gob_events_dict[name]
-    except KeyError:
-        raise GOBException(f"{name} is an invalid GOB event")
+    except KeyError as exc:
+        raise GOBException(f"{name} is an invalid GOB event") from exc
 
 
 def get_event_for(old_data, new_data, modifications, version):
@@ -112,13 +110,12 @@ def _get_event_class_for(has_old_state, has_new_state, has_modifications):
 
     if has_old_state and not has_new_state:
         return GOB.DELETE
-    elif has_new_state and not has_old_state:
+    if has_new_state and not has_old_state:
         return GOB.ADD
 
     if has_modifications:
         return GOB.MODIFY
-    else:
-        return GOB.CONFIRM
+    return GOB.CONFIRM
 
 
 def GobEvent(tid, event_message, metadata):
@@ -149,7 +146,8 @@ def database_to_gobevent(event) -> ImportEvent:
     else:
         data = json.loads(event.contents)
 
-    # Get the model version to check if the event should be migrated to the correct version
+    # Get the model version to check if the event should be migrated to the correct version.
+    # No legacy_mode! -- database_to_gobevent is only used by GOB-Upload.
     model_version = GOBModel().get_collection(event.catalogue, event.entity)['version']
 
     if model_version != event.version:

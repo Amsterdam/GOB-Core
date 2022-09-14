@@ -178,8 +178,7 @@ def get_relation_name(model, catalog_name, collection_name, reference_name):
 
 
 def get_relations(model):
-    """
-    Get the relation specs for all references within the GOB model
+    """Get the relation specs for all references within the GOB model.
 
     :param model: The GOBModel instance
     :return: The relation specifications
@@ -191,7 +190,7 @@ def get_relations(model):
         "description": "GOB Relations",
         "collections": {}
     }
-    for src_catalog_name, src_catalog in model._data.items():
+    for src_catalog_name, src_catalog in model.data.items():
         for src_collection_name, src_collection in src_catalog['collections'].items():
             references = model._extract_references(src_collection['attributes'])
             for reference_name, reference in references.items():
@@ -218,14 +217,14 @@ def get_relations(model):
 
 
 def get_fieldnames_for_missing_relations(model):
-    """Returns the field names in a catalog -> collection -> [fieldnames] dict for which no relation is defined, for
-    example in case a collection is referenced that doesn't exist yet.
+    """Returns the field names in a catalog -> collection -> [fieldnames] dict for which no relation is defined,
+    for example in case a collection is referenced that doesn't exist yet.
 
     :param model:
     :return:
     """
     result = {}
-    for src_catalog_name, src_catalog in model._data.items():
+    for src_catalog_name, src_catalog in model.items():
         result[src_catalog_name] = {}
         for src_collection_name, src_collection in src_catalog['collections'].items():
             result[src_catalog_name][src_collection_name] = []
@@ -249,9 +248,8 @@ def get_fieldnames_for_missing_relations(model):
 def get_inverse_relations(model):
     """Returns a list of inverse relations for each collection, grouped by owning collection.
 
-    For example, when brk:tenaamstellingen has a relation heeft_zrt with brk:zakelijkerechten, the result of this
-    function would be:
-
+    For example, when brk:tenaamstellingen has a relation heeft_zrt with brk:zakelijkerechten,
+    the result of this function would be:
 
     brk: {
       zakelijkerechten: { # Dict of all collections that reference brk:zakelijkerechten
@@ -271,7 +269,7 @@ def get_inverse_relations(model):
     """
     inverse_relations = defaultdict(lambda: defaultdict(lambda: defaultdict(dict)))
 
-    for src_cat_name, src_catalog in model._data.items():
+    for src_cat_name, src_catalog in model.items():
         for src_col_name, src_collection in src_catalog['collections'].items():
             references = model._extract_references(src_collection['attributes'])
 

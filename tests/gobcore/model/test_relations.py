@@ -87,7 +87,7 @@ class TestRelations(unittest.TestCase):
         self.assertEqual(relations, expect)
 
         mock_get_relation_name.return_value = 'name'
-        model._data = {
+        model.data = {
             "catalog": {
                 "abbreviation": "cat",
                 "collections": {
@@ -209,11 +209,15 @@ class TestRelations(unittest.TestCase):
 
         class MockModel:
             gobmodel = GOBModel()
-            _data = model
+            data = model
 
-            # Wire original GOBModel _extract_references method
+            # Wire original GOBModel _extract_references method.
             def _extract_references(self, attributes):
                 return self.gobmodel._extract_references(attributes)
+
+            def items(self):
+                """Fix GOBModel items method."""
+                return self.data.items()
 
         expected_result = {
             "cat": {
@@ -272,11 +276,15 @@ class TestRelations(unittest.TestCase):
 
         class MockModel:
             gobmodel = GOBModel()
-            _data = model
+            data = model
 
-            # Wire original GOBModel _extract_references method
+            # Wire original GOBModel _extract_references method.
             def _extract_references(self, attributes):
                 return self.gobmodel._extract_references(attributes)
+
+            def items(self):
+                """Fix GOBModel items method."""
+                return self.data.items()
 
         expected_result = {
             "cat": {

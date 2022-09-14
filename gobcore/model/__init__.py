@@ -28,7 +28,8 @@ class GOBModel:
     _data = None
     legacy_mode = None
 
-    # Set and used to cache SA models by the SA layer, use model.sa.gob.get_sqlalchemy_models() to retrieve/init
+    # Set and used to cache SQLAlchemy models by the SA layer.
+    # Use model.sa.gob.get_sqlalchemy_models() to retrieve/init.
     sqlalchemy_models = None
 
     global_attributes = {
@@ -54,29 +55,31 @@ class GOBModel:
             del data["test_catalogue"]
 
         GOBModel._data = data
+        GOBModel.data = data
+        # Proces data.
         self._load_schemas()
-        self._init_data(data)
-        self.data = data
+        self._init_data()
 
-    def _init_data(self, data):
-        # Extract references for easy access in API. Add catalog and collection names to catalog and collection objects
-        for catalog_name, catalog in data.items():
+    def _init_data(self):
+        """Extract references for easy access.
+
+        Add catalog and collection names to catalog and collection objects.
+        """
+        for catalog_name, catalog in self.data.items():
             catalog['name'] = catalog_name
             self._init_catalog(catalog)
 
         # This needs to happen after initialisation of the object catalogs
-        self._data[QUALITY_CATALOG] = get_quality_assurances(self)
-        self._data[QUALITY_CATALOG]['name'] = QUALITY_CATALOG
-        self._data["rel"] = get_relations(self)
-        self._data["rel"]["name"] = "rel"
+        self.data[QUALITY_CATALOG] = get_quality_assurances(self)
+        self.data[QUALITY_CATALOG]['name'] = QUALITY_CATALOG
+        self.data["rel"] = get_relations(self)
+        self.data["rel"]["name"] = "rel"
 
-        self._init_catalog(self._data[QUALITY_CATALOG])
-        self._init_catalog(self._data["rel"])
+        self._init_catalog(self.data[QUALITY_CATALOG])
+        self._init_catalog(self.data["rel"])
 
     def _init_catalog(self, catalog):
-        """Initialises self._data object with all fields and helper dicts
-
-        """
+        """Initialises self.data object with all fields and helper dicts."""
         catalog_name = catalog["name"]
 
         for entity_name, model in catalog['collections'].items():
@@ -84,7 +87,8 @@ class GOBModel:
 
             if self.legacy_mode:
                 if 'schema' in model and 'legacy_attributes' not in model:
-                    raise GOBException(f"Expected 'legacy_attributes' to be defined for {catalog_name} {entity_name}")
+                    raise GOBException(
+                        f"Expected 'legacy_attributes' to be defined for {catalog_name} {entity_name}")
                 model['attributes'] = model.get('legacy_attributes', model['attributes'])
 
             state_attributes = STATE_FIELDS if self.has_states(catalog_name, entity_name) else {}
@@ -106,12 +110,11 @@ class GOBModel:
             }
 
     def _load_schemas(self):
-        """
-        Load any external schemas and updates model accordingly
+        """Load any external schemas and updates model accordingly.
 
         :return: None
         """
-        for catalog_name, catalog in self._data.items():
+        for catalog_name, catalog in self.items():
             for entity_name, model in catalog['collections'].items():
                 if model.get('schema') is not None:
                     schema = Schema.parse_obj(model.get("schema"))
@@ -152,8 +155,10 @@ class GOBModel:
         return collections[collection_name] if collections and collection_name in collections else None
 
     def get_collection_by_name(self, collection_name):
-        """Finds collection only by name. Raises GOBException when multiple collections with name are found. Returns
-        (catalog, collection) tuple when success.
+        """Finds collection only by name.
+
+        Raises GOBException when multiple collections with name are found.
+        Returns (catalog, collection) tuple when success.
 
         :param collection_name:
         :return:
@@ -184,6 +189,11 @@ class GOBModel:
         collection = self.get_collection(catalog_name, collection_name)
         return collection.get("has_states") is True
 
+    def items(self) -> list[tuple[str, dict]]:
+        """Return (name, dict) of all catalogs."""
+        # Replaces .get_catalogs().items() and ._data.items().
+        return self.data.items()
+
     def get_source_id(self, entity, input_spec):
         """
         Gets the id that uniquely identifies the entity within the source
@@ -206,7 +216,7 @@ class GOBModel:
         return source_id
 
     def get_reference_by_abbreviations(self, catalog_abbreviation, collection_abbreviation):
-        for catalog_name, catalog in self._data.items():
+        for catalog_name, catalog in self.data.items():
             if catalog['abbreviation'] == catalog_abbreviation.upper():
                 for collection_name, collection in catalog['collections'].items():
                     if collection['abbreviation'] == collection_abbreviation.upper():

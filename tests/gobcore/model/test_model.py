@@ -298,7 +298,7 @@ class TestModel(unittest.TestCase):
     def test_load_schemas(self, mock_load_schema):
         mock_load_schema.return_value = {'attributes': {}, 'version': '1.0', 'entity_id': 'some_attribute'}
         model = GOBModel()
-        model._data = {
+        model.data = {
             'cat_a': {
                 'collections': {
                     'coll_a': {
@@ -319,7 +319,7 @@ class TestModel(unittest.TestCase):
                 }
             },
         }
-        expected = copy.deepcopy(model._data)
+        expected = copy.deepcopy(model.data)
         expected['cat_a']['collections']['coll_b'] = {
             'attributes': {},
             'version': '1.0',
@@ -334,7 +334,7 @@ class TestModel(unittest.TestCase):
             },
         }
         model._load_schemas()
-        self.assertEqual(expected, model._data)
+        self.assertEqual(expected, model.data)
         mock_load_schema.assert_called_with(Schema(datasetId='the dataset', tableId='the table', version='1.0'))
 
     def test_catalog_collection_from_abbr(self):
