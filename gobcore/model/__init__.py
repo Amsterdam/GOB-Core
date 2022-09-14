@@ -1,7 +1,7 @@
 import os
-import json
 
 from gobcore.exceptions import GOBException
+from gobcore.parse import json_to_dict
 from gobcore.model.metadata import FIELD
 from gobcore.model.metadata import STATE_FIELDS
 from gobcore.model.metadata import PRIVATE_META_FIELDS, PUBLIC_META_FIELDS, FIXED_FIELDS
@@ -45,19 +45,18 @@ class GOBModel:
             return
         GOBModel.legacy_mode = legacy
 
-        path = os.path.join(os.path.dirname(__file__), 'gobmodel.json')
-        with open(path) as file:
-            data = json.load(file)
+        data = json_to_dict(os.path.join(os.path.dirname(__file__), 'gobmodel.json'))
 
-        if os.getenv('DISABLE_TEST_CATALOGUE', False):
-            # Default is to include the test catalogue
+        if os.getenv('DISABLE_TEST_CATALOGUE'):
+            # Default is to include the test catalogue.
             # By setting the DISABLE_TEST_CATALOGUE environment variable
-            # the test catalogue can be removed
+            # the test catalogue can be removed.
             del data["test_catalogue"]
 
         GOBModel._data = data
         self._load_schemas()
         self._init_data(data)
+        self.data = data
 
     def _init_data(self, data):
         # Extract references for easy access in API. Add catalog and collection names to catalog and collection objects

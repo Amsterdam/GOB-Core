@@ -1,16 +1,13 @@
 import json
-import os
-
+from os import path
 from collections import defaultdict
 
 from gobcore.exceptions import GOBException
-
+from gobcore.parse import json_to_dict
 from gobcore.logging.logger import logger
 
-from gobcore.model import GOBModel
 
-
-class GOBMigrations():
+class GOBMigrations:
     _migrations = None
 
     def __init__(self):
@@ -18,19 +15,14 @@ class GOBMigrations():
             # Migrations already initialised
             return
 
-        path = os.path.join(os.path.dirname(__file__), 'gobmigrations.json')
-        with open(path) as file:
-            data = json.load(file)
-
-        self._data = data
-
         GOBMigrations._migrations = defaultdict(lambda: defaultdict(lambda: defaultdict(None)))
 
         # Extract migrations for easy access in API
         self._extract_migrations()
 
     def _extract_migrations(self):
-        for catalog_name, catalog in self._data.items():
+        data = json_to_dict(path.join(path.dirname(__file__), 'gobmigrations.json'))
+        for catalog_name, catalog in data.items():
             for collection_name, collection in catalog.items():
                 for version, migration in collection.items():
                     # Store the migrations(s) for the catalog - collection - version

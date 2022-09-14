@@ -279,7 +279,7 @@ class TestModel(unittest.TestCase):
         model.split_ref.assert_called_with(ref)
         self.assertEqual(model.split_ref.return_value, result)
 
-    @patch("gobcore.model.os.getenv", lambda x, _: x == 'DISABLE_TEST_CATALOGUE')
+    @patch("gobcore.model.os.getenv", lambda x: x == 'DISABLE_TEST_CATALOGUE')
     def test_test_catalog_deleted(self):
         # Reinitialise
         GOBModel._data = None
