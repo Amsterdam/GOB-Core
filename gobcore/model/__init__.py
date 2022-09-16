@@ -1,8 +1,9 @@
 import os
 from typing import Optional
+import copy
 
 from gobcore.exceptions import GOBException
-from gobcore.parse import json_to_dict
+from gobcore.parse import json_to_cached_dict
 from gobcore.model.metadata import FIELD
 from gobcore.model.metadata import STATE_FIELDS
 from gobcore.model.metadata import PRIVATE_META_FIELDS, PUBLIC_META_FIELDS, FIXED_FIELDS
@@ -47,7 +48,9 @@ class GOBModel:
             return
         GOBModel.legacy_mode = legacy
 
-        data = json_to_dict(os.path.join(os.path.dirname(__file__), 'gobmodel.json'))
+        cached_data = json_to_cached_dict(os.path.join(os.path.dirname(__file__), 'gobmodel.json'))
+        # Leave cached data untouched.
+        data = copy.deepcopy(cached_data)
 
         if os.getenv('DISABLE_TEST_CATALOGUE'):
             # Default is to include the test catalogue.

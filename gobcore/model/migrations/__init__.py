@@ -3,7 +3,7 @@ from os import path
 from collections import defaultdict
 
 from gobcore.exceptions import GOBException
-from gobcore.parse import json_to_dict
+from gobcore.parse import json_to_cached_dict
 from gobcore.logging.logger import logger
 
 
@@ -21,7 +21,7 @@ class GOBMigrations:
         self._extract_migrations()
 
     def _extract_migrations(self):
-        data = json_to_dict(path.join(path.dirname(__file__), 'gobmigrations.json'))
+        data = json_to_cached_dict(path.join(path.dirname(__file__), 'gobmigrations.json'))
         for catalog_name, catalog in data.items():
             for collection_name, collection in catalog.items():
                 for version, migration in collection.items():
