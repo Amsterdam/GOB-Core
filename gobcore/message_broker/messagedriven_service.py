@@ -1,10 +1,11 @@
 import sys
 import time
 import threading
-from typing import Callable, Dict, Any
+from typing import Callable, Dict, Any, Optional
 
 from gobcore.logging.logger import logger, StdoutHandler, RequestsHandler
 from gobcore.message_broker.async_message_broker import AsyncConnection
+from gobcore.message_broker.typing import Service, ServiceDefinition
 from gobcore.status.heartbeat import Heartbeat, HEARTBEAT_INTERVAL, STATUS_OK, STATUS_START, STATUS_FAIL
 from gobcore.message_broker.config import CONNECTION_PARAMS
 from gobcore.message_broker.initialise_queues import initialize_message_broker
@@ -20,7 +21,7 @@ LOGGER_HANDLERS = [StdoutHandler(), RequestsHandler()]
 assert(HEARTBEAT_INTERVAL % CHECK_CONNECTION == 0)
 
 
-def _handle_result_msg(connection, service, result_msg) -> bool:
+def _handle_result_msg(connection: AsyncConnection, service: Service, result_msg: dict) -> bool:
     """
     Processes issues, notifications and reports from result message if available.
     Return False if result_msg is False, else True
@@ -40,7 +41,7 @@ def _handle_result_msg(connection, service, result_msg) -> bool:
     return result_msg is not False
 
 
-def _on_message(connection, service, msg: Dict[str, Any]):
+def _on_message(connection: AsyncConnection, service: Service, msg: Dict[str, Any]) -> bool:
     """Called on every message receipt
 
     :param connection: the connection with the message broker
@@ -100,7 +101,7 @@ class MessagedrivenService:
     MessagedrivenService(SERVICEDEFINITION).start()
 
     """
-    def __init__(self, services: dict, name: str, params=None):
+    def __init__(self, services: ServiceDefinition, name: str, params: Optional[dict] = None):
         self.services = services
         self.name = name
         self.params = params or {}
@@ -134,11 +135,11 @@ class MessagedrivenService:
             if callable(service['queue']):
                 service['queue'] = service['queue']()
 
-    def _start_threads(self, queues: list):
+    def _start_threads(self, queues: list[str]):
         for queue in queues:
             self._start_thread([queue])
 
-    def _start_thread(self, queues):
+    def _start_thread(self, queues: list[str]) -> threading.Thread:
         thread = threading.Thread(target=self._listen, args=(queues,), name="QueueHandler")
         thread.start()
 
@@ -149,7 +150,7 @@ class MessagedrivenService:
 
         return thread
 
-    def _on_message(self, connection, exchange, queue, key, msg):
+    def _on_message(self, connection: AsyncConnection, exchange: str, queue: str, key: str, msg: dict) -> bool:
         """Called on every message receipt
 
         :param connection: the connection with the message broker
@@ -165,7 +166,7 @@ class MessagedrivenService:
 
         return _on_message(connection, service, msg)
 
-    def _listen(self, queues: list):
+    def _listen(self, queues: list[str]):
         with AsyncConnection(CONNECTION_PARAMS, self.params) as connection:
             # Subscribe to the queues, handle messages in the on_message function (runs in another thread)
             connection.subscribe(queues, self._on_message)
@@ -213,7 +214,7 @@ class MessagedrivenService:
                     heartbeat.send()
                     n = 0
 
-    def _get_service(self, queue):
+    def _get_service(self, queue: str) -> Service:
         """Gets the service for the specified queue
 
         :param queue:
@@ -222,6 +223,6 @@ class MessagedrivenService:
         return next(s for s in self.services.values() if s["queue"] == queue)
 
 
-def messagedriven_service(services, name, params=None):
+def messagedriven_service(services: ServiceDefinition, name: str, params: Optional[dict] = None):
     # For backwards compatibility
     MessagedrivenService(services, name, params).start()

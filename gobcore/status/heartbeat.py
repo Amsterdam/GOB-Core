@@ -14,9 +14,11 @@ import datetime
 import threading
 import socket
 import os
-import typing
+from typing import Union, Optional
 
+from gobcore.message_broker import AsyncConnection
 from gobcore.message_broker.config import STATUS_EXCHANGE, HEARTBEAT_KEY, PROGRESS_KEY
+from gobcore.message_broker.typing import Service
 from gobcore.utils import get_host_info
 
 HEARTBEAT_INTERVAL = 60     # Send a heartbeat every 60 seconds
@@ -28,6 +30,9 @@ STATUS_FAIL = "failed"
 STATUS_SCHEDULED = "scheduled"
 STATUS_REJECTED = "rejected"
 STATUS_END = STATUS_OK
+
+
+JobStatus = Union[STATUS_START, STATUS_OK, STATUS_FAIL, STATUS_SCHEDULED, STATUS_REJECTED, STATUS_END]
 
 
 def _is_heartbeat_thread(t: threading.Thread) -> bool:
@@ -49,7 +54,14 @@ class Heartbeat:
     progress_key = PROGRESS_KEY
 
     @classmethod
-    def progress(cls, connection, service, msg, status, info_msg=None):
+    def progress(
+            cls,
+            connection: AsyncConnection,
+            service: Service,
+            msg: dict,
+            status: JobStatus,
+            info_msg: Optional[str] = None
+    ):
         """
         Send a progress heartbeat
 
@@ -79,7 +91,7 @@ class Heartbeat:
                 })
 
     @classmethod
-    def _progress_log_msg(cls, queue, status, header):
+    def _progress_log_msg(cls, queue: str, status: JobStatus, header: dict) -> str:
         """
         Return a message that contains info about the message and its execution state
 
@@ -96,7 +108,7 @@ class Heartbeat:
 
         return f"{queue} - {status} - {host_info} - {msg_info}"
 
-    def __init__(self, connection, name):
+    def __init__(self, connection: AsyncConnection, name: str):
         """Heartbeat
 
         :param connection: the connection to use for the heartbeats
@@ -115,7 +127,7 @@ class Heartbeat:
         atexit.register(self.send)
 
     @property
-    def threads(self) -> typing.Iterable[threading.Thread]:
+    def threads(self) -> list[threading.Thread]:
         """Threads that heartbeat should report on"""
         return list(filter(
             _is_heartbeat_thread,

@@ -4,6 +4,7 @@ from gobcore.logging.logger import logger, StdoutHandler
 from pathlib import Path
 from typing import Dict, Any, Callable, Tuple
 
+from gobcore.message_broker.typing import ServiceDefinition
 from gobcore.utils import get_logger_name
 from gobcore.message_broker.offline_contents import offload_message, load_message
 from gobcore.message_broker.utils import to_json, from_json
@@ -42,7 +43,7 @@ def parent_argument_parser() -> Tuple[argparse.ArgumentParser, argparse._SubPars
 
 
 def run_as_standalone(
-        args: argparse.Namespace, service_definition: dict[str, Any]
+        args: argparse.Namespace, service_definition: ServiceDefinition
 ) -> int:
     """Runs application in standalone mode.
 
