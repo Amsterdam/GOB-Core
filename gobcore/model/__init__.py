@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 
 from gobcore.exceptions import GOBException
 from gobcore.parse import json_to_dict
@@ -114,7 +115,7 @@ class GOBModel:
 
         :return: None
         """
-        for catalog_name, catalog in self.items():
+        for catalog in self.values():
             for entity_name, model in catalog['collections'].items():
                 if model.get('schema') is not None:
                     schema = Schema.parse_obj(model.get("schema"))
@@ -128,29 +129,72 @@ class GOBModel:
         return {field_name: spec for field_name, spec in attributes.items()
                 if spec['type'] in ['GOB.VeryManyReference']}
 
+    def items(self) -> list[tuple[str, dict]]:
+        """Return (name, dict) of all catalogs."""
+        # Replaces .get_catalogs().items() and ._data.items().
+        return self.data.items()
+
+    def keys(self) -> list:
+        """Return catalog names."""
+        # Replaces .get_catalog_names(), get_catalogs().keys() and self._data.keys().
+        return self.data.keys()
+
+    def values(self) -> list:
+        """Return catalog values."""
+        # Replaces self._data.values()
+        return self.data.values()
+
+    def get(self, catalog_name: str, default=None) -> Optional[dict]:
+        """Return catalog or None."""
+        # Replaces get_catalog().
+        return self.data.get(catalog_name, default)
+
+    def __getitem__(self, catalog_name: str) -> dict:
+        """Return catalog."""
+        # Replaces get_catalog().
+        return self.data[catalog_name]
+
+    def __len__(self) -> int:
+        """Return number of catalogs."""
+        return len(self.data)
+
+    def __contains__(self, catalog_name: str) -> bool:
+        """Valid catalog_name?"""
+        return catalog_name in self.data
+
+    def __iter__(self):
+        """Return catalog iterator."""
+        return iter(self.data)
+
     def get_inverse_relations(self):
         if not self.inverse_relations:
             self.inverse_relations = get_inverse_relations(self)
         return self.inverse_relations
 
     def get_catalog_names(self):
+        """Deprecated. Use .keys()."""
         return self._data.keys()
 
     def get_catalogs(self):
+        """Deprecated. Use self.data."""
         return self._data
 
     def get_catalog(self, catalog_name):
+        """Deprecated. Use gob_model[catalog_name] (.__getitem__) or .get(catalog_name)."""
         return self._data[catalog_name] if catalog_name in self._data else None
 
     def get_collection_names(self, catalog_name):
+        """Deprecated. Use gob_model[catalog_name]['collections'].keys()."""
         catalog = self.get_catalog(catalog_name)
         return catalog['collections'].keys() if 'collections' in catalog else None
 
     def get_collections(self, catalog_name):
+        """Deprecated. Use gob_model[catalog_name]['collections'] if …"""
         catalog = self.get_catalog(catalog_name)
         return catalog['collections'] if catalog and 'collections' in catalog else None
 
     def get_collection(self, catalog_name, collection_name):
+        """Deprecated. Use gob_model[catalog_name]['collections'][collection] if …."""
         collections = self.get_collections(catalog_name)
         return collections[collection_name] if collections and collection_name in collections else None
 
@@ -179,8 +223,7 @@ class GOBModel:
         return (catalog, collections[0]) if collections else None
 
     def has_states(self, catalog_name, collection_name):
-        """
-        Tells if a collection has states
+        """Tells if a collection has states.
 
         :param catalog_name: name of the catalog
         :param collection_name: name of the collection
@@ -189,14 +232,8 @@ class GOBModel:
         collection = self.get_collection(catalog_name, collection_name)
         return collection.get("has_states") is True
 
-    def items(self) -> list[tuple[str, dict]]:
-        """Return (name, dict) of all catalogs."""
-        # Replaces .get_catalogs().items() and ._data.items().
-        return self.data.items()
-
     def get_source_id(self, entity, input_spec):
-        """
-        Gets the id that uniquely identifies the entity within the source
+        """Gets the id that uniquely identifies the entity within the source.
 
         :param entity: the entity
         :param input_spec: the input format specification
@@ -223,9 +260,7 @@ class GOBModel:
                         return ':'.join([catalog_name, collection_name])
 
     def get_table_names(self):
-        '''
-        Helper function to generate all table names
-        '''
+        """Helper function to generate all table names."""
         table_names = []
         for catalog_name in self.get_catalog_names():
             for collection_name in self.get_collection_names(catalog_name):
@@ -236,7 +271,7 @@ class GOBModel:
         return f'{catalog_name}_{collection_name}'.lower()
 
     def get_table_name_from_ref(self, ref):
-        """Returns the table name from a reference
+        """Returns the table name from a reference.
 
         :param ref:
         :return:
@@ -245,7 +280,7 @@ class GOBModel:
         return self.get_table_name(catalog, collection)
 
     def split_ref(self, ref) -> tuple:
-        """Splits reference into tuple of (catalog_name, collection_name)
+        """Splits reference into tuple of (catalog_name, collection_name).
 
         :param ref:
         :return:
@@ -260,7 +295,7 @@ class GOBModel:
         return self.split_ref(ref)
 
     def get_collection_from_ref(self, ref) -> dict:
-        """Returns collection ref is referring to
+        """Returns collection ref is referring to.
 
         :param ref:
         :return:
@@ -277,7 +312,7 @@ class GOBModel:
         return split
 
     def get_catalog_from_table_name(self, table_name: str):
-        """Returns catalog name from table name
+        """Returns catalog name from table name.
 
         :param table_name:
         :return:
@@ -285,7 +320,7 @@ class GOBModel:
         return self._split_table_name(table_name)[0]
 
     def get_collection_from_table_name(self, table_name: str):
-        """Returns collection name from table name
+        """Returns collection name from table name.
 
         :param table_name:
         :return:
@@ -293,29 +328,29 @@ class GOBModel:
         return "_".join(self._split_table_name(table_name)[1:])
 
     def get_catalog_from_abbr(self, catalog_abbr: str):
-        """Returns catalog from abbreviation
+        """Returns catalog from abbreviation.
 
         :param catalog_abbr:
         """
         try:
-            return [catalog for catalog in self._data.values() if catalog['abbreviation'].lower() == catalog_abbr][0]
-        except IndexError:
-            raise NoSuchCatalogException(catalog_abbr)
+            return [catalog for catalog in self._data.values()
+                if catalog['abbreviation'].lower() == catalog_abbr][0]
+        except IndexError as exc:
+            raise NoSuchCatalogException(catalog_abbr) from exc
 
     def get_catalog_collection_from_abbr(self, catalog_abbr: str, collection_abbr: str):
-        """Returns catalog and collection
+        """Returns catalog and collection.
 
         :param catalog_abbr:
         :param collection_abbr:
         :return:
         """
-
         catalog = self.get_catalog_from_abbr(catalog_abbr)
 
         try:
             collection = [collection for collection in catalog['collections'].values()
                           if collection['abbreviation'].lower() == collection_abbr][0]
-        except IndexError:
-            raise NoSuchCollectionException(collection_abbr)
+        except IndexError as exc:
+            raise NoSuchCollectionException(collection_abbr) from exc
 
         return catalog, collection
