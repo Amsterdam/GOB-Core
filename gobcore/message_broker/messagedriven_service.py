@@ -3,7 +3,7 @@ import time
 import threading
 from typing import Callable, Dict, Any
 
-from gobcore.logging.logger import logger
+from gobcore.logging.logger import logger, StdoutHandler, RequestsHandler
 from gobcore.message_broker.async_message_broker import AsyncConnection
 from gobcore.status.heartbeat import Heartbeat, HEARTBEAT_INTERVAL, STATUS_OK, STATUS_START, STATUS_FAIL
 from gobcore.message_broker.config import CONNECTION_PARAMS
@@ -14,6 +14,7 @@ from gobcore.utils import get_logger_name
 
 CHECK_CONNECTION = 5                # Check connection every n seconds
 RUNS_IN_OWN_THREAD = "own_thread"   # Service that runs in a separate thread
+LOGGER_HANDLERS = [StdoutHandler, RequestsHandler]
 
 # Assure that heartbeats are sent at every HEARTBEAT_INTERVAL
 assert(HEARTBEAT_INTERVAL % CHECK_CONNECTION == 0)
@@ -49,7 +50,7 @@ def _on_message(connection, service, msg: Dict[str, Any]):
     :return:
     """
     handler: Callable = service['handler']
-    logger.configure(msg, get_logger_name(handler))
+    logger.configure(msg, get_logger_name(handler), handlers=LOGGER_HANDLERS)
 
     try:
         Heartbeat.progress(connection, service, msg, STATUS_START)
