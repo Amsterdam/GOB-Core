@@ -96,7 +96,7 @@ class TestModel(unittest.TestCase):
         model = GOBModel(True)
 
         # Prepare object. Remove legacy_attributes
-        data = model._data
+        data = model.data
         data['nap']['collections']['peilmerken']['attributes'] = data['nap']['collections']['peilmerken']['legacy_attributes']
         del data['nap']['collections']['peilmerken']['legacy_attributes']
 
@@ -246,7 +246,7 @@ class TestModel(unittest.TestCase):
 
     def test_get_collection_by_name(self):
         model = GOBModel()
-        model._data = {
+        model.data = {
             'cat_a': {
                 'collections': {
                     'coll_a': 'collection a',
@@ -285,14 +285,14 @@ class TestModel(unittest.TestCase):
         GOBModel._data = None
 
         model = GOBModel()
-        self.assertFalse('test_catalogue' in model._data)
+        self.assertFalse('test_catalogue' in model.data)
 
         # Cleanup
         GOBModel._data = None
 
     def test_test_catalog_present(self):
         model = GOBModel()
-        self.assertTrue('test_catalogue' in model._data)
+        self.assertTrue('test_catalogue' in model.data)
 
     @patch('gobcore.model.load_schema')
     def test_load_schemas(self, mock_load_schema):
@@ -339,7 +339,7 @@ class TestModel(unittest.TestCase):
 
     def test_catalog_collection_from_abbr(self):
         model = GOBModel()
-        model._data = {
+        model.data = {
             'cat_a': {
                 'abbreviation': 'ca',
                 'collections': {
@@ -380,7 +380,7 @@ class TestModel(unittest.TestCase):
 
     def test_catalog_from_abbr(self):
         model = GOBModel()
-        model._data = {
+        model.data = {
             'cat_a': {
                 'abbreviation': 'ca',
                 'collections': {
@@ -389,7 +389,7 @@ class TestModel(unittest.TestCase):
             }
         }
 
-        self.assertEqual(model._data['cat_a'], model.get_catalog_from_abbr('ca'))
+        self.assertEqual(model.data['cat_a'], model.get_catalog_from_abbr('ca'))
 
         with self.assertRaises(NoSuchCatalogException):
             model.get_catalog_from_abbr('nonexistent')

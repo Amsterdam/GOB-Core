@@ -66,7 +66,7 @@ class GOBModel:
 
         Add catalog and collection names to catalog and collection objects.
         """
-        for catalog_name, catalog in self.data.items():
+        for catalog_name, catalog in self.items():
             catalog['name'] = catalog_name
             self._init_catalog(catalog)
 
@@ -86,6 +86,7 @@ class GOBModel:
         for entity_name, model in catalog['collections'].items():
             model['name'] = entity_name
 
+            # GOB API.
             if self.legacy_mode:
                 if 'schema' in model and 'legacy_attributes' not in model:
                     raise GOBException(
@@ -116,7 +117,7 @@ class GOBModel:
         :return: None
         """
         for catalog in self.values():
-            for entity_name, model in catalog['collections'].items():
+            for model in catalog['collections'].values():
                 if model.get('schema') is not None:
                     schema = Schema.parse_obj(model.get("schema"))
                     model.update(load_schema(schema))
@@ -189,19 +190,31 @@ class GOBModel:
         return catalog['collections'].keys() if 'collections' in catalog else None
 
     def get_collections(self, catalog_name):
-        """Deprecated. Use gob_model[catalog_name]['collections'] if …"""
+        """Deprecated.
+
+        Use:
+        * gob_model[catalog_name]['collections']
+        * if gob_model.get(catalog_name):
+              return gob_model[catalog_name].get('collections')
+        """
         catalog = self.get_catalog(catalog_name)
         return catalog['collections'] if catalog and 'collections' in catalog else None
 
     def get_collection(self, catalog_name, collection_name):
-        """Deprecated. Use gob_model[catalog_name]['collections'][collection] if …."""
+        """Deprecated.
+
+        Use:
+        * gob_model[catalog_name]['collections'].get(collection_name).
+        * if gob_model.get(catalog_name) and gob_model[catalog_name].get('collections'):
+              return gob_model[catalog_name]['collections'].get(collection_name)
+        """
         collections = self.get_collections(catalog_name)
         return collections[collection_name] if collections and collection_name in collections else None
 
     def get_collection_by_name(self, collection_name):
         """Finds collection only by name.
 
-        Raises GOBException when multiple collections with name are found.
+        Raises GOBException when multiple collections with collection_name are found.
         Returns (catalog, collection) tuple when success.
 
         :param collection_name:
@@ -210,17 +223,17 @@ class GOBModel:
         collections = []
         catalog = None
 
-        for catalog_name in self._data.keys():
-            collection = self.get_collection(catalog_name, collection_name)
+        for catalog_name, catalog in self.items():
+            collection = catalog['collections'].get(collection_name)
 
             if collection:
                 collections.append(collection)
-                catalog = catalog_name
+                collection_catalog_name = catalog_name
 
         if len(collections) > 1:
             raise GOBException(f"Multiple collections found with name {collection_name}")
 
-        return (catalog, collections[0]) if collections else None
+        return (collection_catalog_name, collections[0]) if collections else None
 
     def has_states(self, catalog_name, collection_name):
         """Tells if a collection has states.
@@ -229,7 +242,7 @@ class GOBModel:
         :param collection_name: name of the collection
         :return: True if the collection has states
         """
-        collection = self.get_collection(catalog_name, collection_name)
+        collection = self[catalog_name]['collections'].get(collection_name)
         return collection.get("has_states") is True
 
     def get_source_id(self, entity, input_spec):
@@ -253,7 +266,7 @@ class GOBModel:
         return source_id
 
     def get_reference_by_abbreviations(self, catalog_abbreviation, collection_abbreviation):
-        for catalog_name, catalog in self.data.items():
+        for catalog_name, catalog in self.items():
             if catalog['abbreviation'] == catalog_abbreviation.upper():
                 for collection_name, collection in catalog['collections'].items():
                     if collection['abbreviation'] == collection_abbreviation.upper():
@@ -262,8 +275,8 @@ class GOBModel:
     def get_table_names(self):
         """Helper function to generate all table names."""
         table_names = []
-        for catalog_name in self.get_catalog_names():
-            for collection_name in self.get_collection_names(catalog_name):
+        for catalog_name, catalog in self.items():
+            for collection_name in catalog['collections']:
                 table_names.append(self.get_table_name(catalog_name, collection_name))
         return table_names
 
@@ -287,7 +300,7 @@ class GOBModel:
         """
         split_res = ref.split(':')
 
-        if len(split_res) != 2 or not all([len(item) > 0 for item in split_res]):
+        if len(split_res) != 2 or not all(len(item) > 0 for item in split_res):
             raise GOBException(f"Invalid reference {ref}")
         return split_res
 
@@ -301,6 +314,7 @@ class GOBModel:
         :return:
         """
         catalog_name, collection_name = self.split_ref(ref)
+        # test_get_collection_from_ref_gerommel nog omschrijven (Mocks).
         return self.get_collection(catalog_name, collection_name)
 
     def _split_table_name(self, table_name: str):
@@ -333,8 +347,8 @@ class GOBModel:
         :param catalog_abbr:
         """
         try:
-            return [catalog for catalog in self._data.values()
-                if catalog['abbreviation'].lower() == catalog_abbr][0]
+            return [catalog for catalog in self.values()
+                    if catalog['abbreviation'].lower() == catalog_abbr][0]
         except IndexError as exc:
             raise NoSuchCatalogException(catalog_abbr) from exc
 
