@@ -19,8 +19,7 @@ _startup = True  # Show relation warnings only on startup (first execution)
 
 
 def _get_relation(name):
-    """
-    Get the relation specification
+    """Get the relation specification.
 
     :param name: The name of the relation
     :return: The relation specification
@@ -88,8 +87,7 @@ def _get_relation(name):
 
 
 def _get_destination(model, dst_catalog_name, dst_collection_name):
-    """
-    Get the destination catalog and collection given their names
+    """Get the destination catalog and collection given their names.
 
     :param model: GOBModel instance
     :param dst_catalog_name:
@@ -97,8 +95,8 @@ def _get_destination(model, dst_catalog_name, dst_collection_name):
     :return:
     """
     try:
-        dst_catalog = model.get_catalog(dst_catalog_name)
-        dst_collection = model.get_collection(dst_catalog_name, dst_collection_name)
+        dst_catalog = model[dst_catalog_name]
+        dst_collection = dst_catalog['collections'][dst_collection_name]
         return {
             "catalog": dst_catalog,
             "catalog_name": dst_catalog_name,
@@ -110,8 +108,7 @@ def _get_destination(model, dst_catalog_name, dst_collection_name):
 
 
 def _get_relation_name(src, dst, reference_name):
-    """
-    Get the name of the relation. This name can be used as table name
+    """Get the name of the relation. This name can be used as table name.
 
     :param src: source {catalog, catalog_name, collection, collection_name}
     :param dst: destination {catalog, catalog_name, collection, collection_name}
@@ -152,17 +149,18 @@ def get_reference_name_from_relation_table_name(table_name: str):
 
 
 def get_relation_name(model, catalog_name, collection_name, reference_name):
-    """
-    Get the name of the relation. This name can be used as table name
+    """Get the name of the relation. This name can be used as table name.
 
+    :param model: The GOBModel instance
     :param catalog_name:
     :param collection_name:
     :param reference_name:
     :return:
     """
-    catalog = model.get_catalog(catalog_name)
-    collection = model.get_collection(catalog_name, collection_name)
-    reference = [reference for name, reference in collection['attributes'].items() if name == reference_name][0]
+    catalog = model[catalog_name]
+    collection = model[catalog_name]['collections'][collection_name]
+    reference = [reference for name, reference in collection['attributes'].items()
+                 if name == reference_name][0]
     dst_catalog_name, dst_collection_name = reference['ref'].split(':')
 
     src = {
@@ -190,7 +188,7 @@ def get_relations(model):
         "description": "GOB Relations",
         "collections": {}
     }
-    for src_catalog_name, src_catalog in model.data.items():
+    for src_catalog_name, src_catalog in model.items():
         for src_collection_name, src_collection in src_catalog['collections'].items():
             references = model._extract_references(src_collection['attributes'])
             for reference_name, reference in references.items():
@@ -220,7 +218,7 @@ def get_fieldnames_for_missing_relations(model):
     """Returns the field names in a catalog -> collection -> [fieldnames] dict for which no relation is defined,
     for example in case a collection is referenced that doesn't exist yet.
 
-    :param model:
+    :param model: The GOBModel instance
     :return:
     """
     result = {}
@@ -264,7 +262,7 @@ def get_inverse_relations(model):
       kadastraleobjecten: [ .. ] # List of all collections that reference brk:kadastraleobjecten
     }
 
-    :param model:
+    :param model: The GOBModel instance
     :return:
     """
     inverse_relations = defaultdict(lambda: defaultdict(lambda: defaultdict(dict)))
@@ -289,12 +287,12 @@ def get_relations_for_collection(model, catalog_name, collection_name):
     """
     Return a dictionary with all relations and the table_name for a specified collection
 
-    :param model:
+    :param model: The GOBModel instance
     :param catalog_name:
     :param collection_name:
     :return:
     """
-    collection = model.get_collection(catalog_name, collection_name)
+    collection = model[catalog_name]['collections'][collection_name]
     references = model._extract_references(collection['attributes'])
     table_names = {reference_name: get_relation_name(model, catalog_name, collection_name, reference_name)
                    for reference_name in references.keys()}

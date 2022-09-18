@@ -34,7 +34,6 @@ class TestRelations(unittest.TestCase):
 
     @mock.patch("gobcore.model.relations.NameCompressor")
     def test_relation_name(self, mock_name_compressor):
-        model = mock.MagicMock()
         src = {
             "catalog": {
                 'abbreviation': 'cat'
@@ -61,15 +60,22 @@ class TestRelations(unittest.TestCase):
             "collection_name": "collection"
         }
 
-        # Assert that NameCompressor is used
+        # Assert that NameCompressor is used.
         mock_name_compressor.compress_name.side_effect = lambda s: s
         name = _get_relation_name(src, dst, "reference")
         expect = 'cat_col_dst_cat_dst_col_reference'
         self.assertEqual(name, expect)
         mock_name_compressor.compress_name.assert_called_with(expect)
 
-        model.get_catalog.return_value = src['catalog']
-        model.get_collection.return_value = src['collection']
+        # test get_relation_name()
+        model = GOBModel()
+        # catalog['collections']['collection'] => src['collections']['dst']
+        model.data = {
+            'catalog': {'abbreviation': 'cat', 'collections': src},
+            'src': {'abbreviation': 'cat',
+                    'collections': {'dst': src['collection']}
+                   }
+        }
         name = get_relation_name(model, "catalog", "collection", "reference")
         expect = 'cat_col_cat_col_reference'
         self.assertEqual(name, expect)
@@ -87,7 +93,7 @@ class TestRelations(unittest.TestCase):
         self.assertEqual(relations, expect)
 
         mock_get_relation_name.return_value = 'name'
-        model.data = {
+        data = {
             "catalog": {
                 "abbreviation": "cat",
                 "collections": {
@@ -98,6 +104,7 @@ class TestRelations(unittest.TestCase):
                 }
             }
         }
+        model.items.return_value = data.items()
         model._extract_references.return_value = {
             "reference": {
                 "type": "GOB.Reference",
@@ -302,18 +309,23 @@ class TestRelations(unittest.TestCase):
 
     def test_get_destination_errors(self):
         model = mock.MagicMock()
-        model.get_catalog.side_effect = TypeError
+
+        # dst_catalog = model[dst_catalog_name]
+        model.__getitem__.side_effect = KeyError
         self.assertIsNone(_get_destination(model, 'cat', 'coll'))
 
-        model.get_catalog.side_effect = KeyError
+        # dst_catalog = model[dst_catalog_name]
+        model.__getitem__.side_effect = TypeError
         self.assertIsNone(_get_destination(model, 'cat', 'coll'))
+        model.__getitem__.side_effect = None
 
-    @mock.patch('gobcore.model.relations._get_relation_name')
-    def test_get_relations_for_collection(self, mock_get_relation_name):
+    def test_get_relations_for_collection(self):
         model = {
             "cat": {
+                "abbreviation": "cat",
                 "collections": {
                     "entity": {
+                        "abbreviation": "ent",
                         "attributes": {
                             "refa": {
                                 "type": "GOB.Reference",
@@ -336,27 +348,18 @@ class TestRelations(unittest.TestCase):
             }
         }
 
-        class MockModel:
-            gobmodel = GOBModel()
-            _data = model
-
-            def get_catalog(self, catalog_name):
-                return model[catalog_name]
-
-            def get_collection(self, catalog_name, collection_name):
-                return model[catalog_name]['collections'][collection_name]
-
-            # Wire original GOBModel _extract_references method
-            def _extract_references(self, attributes):
-                return self.gobmodel._extract_references(attributes)
-
-        mock_get_relation_name.return_value = 'name'
-
-        expected_result = {
-            "refa": "name",
-            "refb": "name",
-            "refc": "name",
+        gobmodel = GOBModel()
+        gobmodel.data = {
+            'cat': model['cat'],
+            'some': {'abbreviation': 'some',
+                        'collections': {'ref': {'abbreviation': 'ref'}}}
         }
 
-        result = get_relations_for_collection(MockModel(), 'cat', 'entity')
+        expected_result = {
+            "refa": "cat_ent_some_ref_refa",
+            "refb": "cat_ent_some_ref_refb",
+            "refc": "cat_ent_some_ref_refc",
+        }
+
+        result = get_relations_for_collection(gobmodel, 'cat', 'entity')
         self.assertEqual(expected_result, result)
