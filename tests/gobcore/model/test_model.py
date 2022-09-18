@@ -185,14 +185,20 @@ class TestModel(unittest.TestCase):
                 self.model.split_ref(testcase)
 
     def test_get_collection_from_ref(self):
-        self.model.get_collection = MagicMock(return_value={"fake": "collection"})
+        collections = MagicMock()
+        collections.__getitem__.return_value = {"fake": "collection"}
+        self.model.data = {'some': {'collections': collections}}
         self.model.split_ref = MagicMock(return_value=("some", "reference"))
 
         result = self.model.get_collection_from_ref("some:reference")
 
         self.assertEqual({"fake": "collection"}, result)
         self.model.split_ref.assert_called_with("some:reference")
-        self.model.get_collection.assert_called_with("some", "reference")
+        collections.__getitem__.assert_called_with("reference")
+
+        self.model.data = {'other': {'collections': collections}}
+        result = self.model.get_collection_from_ref("some:reference")
+        self.assertIsNone(result)
 
     @patch("gobcore.model.get_inverse_relations")
     def test_get_inverse_relations(self, mock_get_inverse_relations):

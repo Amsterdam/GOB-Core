@@ -218,9 +218,10 @@ class GOBModel:
         """Deprecated.
 
         Use:
-        * gob_model[catalog_name]['collections'].get(collection_name).
-        * if gob_model.get(catalog_name) and gob_model[catalog_name].get('collections'):
-              return gob_model[catalog_name]['collections'].get(collection_name)
+          try:
+              return gob_model[catalog_name]['collections'][collection_name]
+          except KeyError:
+              return None
         """
         deprecation("deprecated: use gob_model[catalog_name]['collections'].get(collection_name) …")
         collections = self.get_collections(catalog_name)
@@ -329,8 +330,10 @@ class GOBModel:
         :return:
         """
         catalog_name, collection_name = self.split_ref(ref)
-        # test_get_collection_from_ref_gerommel nog omschrijven (Mocks).
-        return self.get_collection(catalog_name, collection_name)
+        try:
+            return self[catalog_name]['collections'][collection_name]
+        except KeyError:
+            return None
 
     def _split_table_name(self, table_name: str):
         split = [part for part in table_name.split('_') if part]
