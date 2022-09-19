@@ -2,7 +2,7 @@ import argparse
 import json
 from gobcore.logging.logger import logger, StdoutHandler
 from pathlib import Path
-from typing import Dict, Any, Callable, Tuple
+from typing import Dict, Any, Tuple
 
 from gobcore.message_broker.typing import ServiceDefinition
 from gobcore.utils import get_logger_name
@@ -66,22 +66,22 @@ def run_as_standalone(
     )
 
     service = service_definition[args.handler]
-    handler = service["handler"]
 
     with logger.configure_context(message_in, get_logger_name(service), handlers=[StdoutHandler()]):
-        message_out = handler(message_in)
-        message_out_offloaded = offload_message(
-            msg=message_out,
-            converter=to_json,
-            force_offload=True
-        )
+        message_out = service["handler"](message_in)
 
-        _write_message(message_out_offloaded, Path(args.message_result_path))
-        if errors := _get_errors(message_out):
-            print(errors)  # TODO: logger.error?
-            return 1
+    message_out_offloaded = offload_message(
+        msg=message_out,
+        converter=to_json,
+        force_offload=True
+    )
 
-        return 0
+    _write_message(message_out_offloaded, Path(args.message_result_path))
+    if errors := _get_errors(message_out):
+        print(errors)  # TODO: logger.error?
+        return 1
+
+    return 0
 
 
 def _build_message(args: argparse.Namespace) -> Message:
@@ -124,29 +124,6 @@ def _get_errors(message) -> list[str]:
         return []
 
     return message["summary"].get("errors", [])
-
-
-def _get_handler(handler: str, mapping: Dict[str, Any]) -> Callable:
-    """Returns handler from a dictionary which is formatted like:
-
-    mapping = {
-        "handler_name": {
-            "handler": some_callable
-        }
-    }
-
-    This mapping usually is SERVICEDEFINITION.
-
-    :param handler: name of the handler to lookup in the mapping.
-    :param mapping: mapping formatted as described above.
-    :returns: A callable.
-    """
-    if handler not in mapping:
-        raise KeyError(f"Handler '{handler}' not defined.")
-
-    handler_config = mapping.get(handler)
-    # Apply optional keyword arguments and return partial function.
-    return handler_config["handler"]
 
 
 def _write_message(message_out: Message, write_path: Path) -> None:

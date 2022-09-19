@@ -31,9 +31,9 @@ def get_service_fixture(handler):
     }
 
 
-def get_servicedefinition_fixture(handler):
+def get_servicedefinition_fixture(handler, workflow: str = None):
     return {
-        random_string(): {
+        workflow or random_string(): {
             'queue': _build_queuename(random_string(), random_string(), random_string()),
             'handler': handler,
             'report': {

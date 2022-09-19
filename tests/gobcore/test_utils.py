@@ -1,8 +1,7 @@
-import re
 from unittest import TestCase
+from unittest.mock import patch, mock_open
 
-import pytest
-from unittest.mock import patch, mock_open, Mock
+from tests.gobcore.fixtures import get_service_fixture
 
 from gobcore.utils import ProgressTicker, get_dns, get_logger_name
 
@@ -66,11 +65,16 @@ nameserver 1.2.3.4
         open.side_effect = IOError
         self.assertIsNone(get_dns())
 
+    def test_get_logger_name(self):
+        service = get_service_fixture(lambda msg: True)
+        service["queue"] = "gob.workflow.import.queue"
 
-@pytest.mark.parametrize(["handler", "pattern"], [
-    (Mock(__name__="logger_name"), "LOGGER_NAME"),
-    (Mock(), r"<Mock id='[0-9]+'>"),
-])
-def test_get_logger_name(handler, pattern):
-    name = get_logger_name(handler)
-    assert re.match(pattern, name)
+        self.assertEqual("IMPORT", get_logger_name(service))
+
+        service["logger"] = "use this logger now"
+        self.assertEqual("USE THIS LOGGER NOW", get_logger_name(service))
+
+        service["logger"] = None
+        with self.assertRaisesRegex(TypeError, "Name must be str type"):
+            get_logger_name(service)
+
