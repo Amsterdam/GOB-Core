@@ -1,8 +1,9 @@
 import unittest
-import mock
+from unittest.mock import MagicMock, patch
 
-from gobcore.status.heartbeat import Heartbeat
+from gobcore.status.heartbeat import Heartbeat, STATUS_START, STATUS_OK, STATUS_FAIL
 from gobcore.message_broker.config import STATUS_EXCHANGE, HEARTBEAT_KEY
+
 
 class MockHeartbeatConnection:
 
@@ -28,7 +29,7 @@ class MockedThread:
         self.name = name
 
     def is_alive(self):
-        return self._is_alive;
+        return self._is_alive
 
 
 def generate_threads(*specs):
@@ -40,19 +41,19 @@ def generate_threads(*specs):
 
 class TestHeartbeat(unittest.TestCase):
 
-    @mock.patch("gobcore.message_broker.message_broker.Connection.connect")
-    @mock.patch("gobcore.message_broker.message_broker.Connection.publish")
-    @mock.patch("atexit.register")
-    def test_constructor(self, mocked_atexit_register, mocked_publish, mocked_connect):
+    @patch("gobcore.message_broker.message_broker.Connection.connect")
+    @patch("gobcore.message_broker.message_broker.Connection.publish", MagicMock())
+    @patch("atexit.register")
+    def test_constructor(self, mocked_atexit_register, mocked_connect):
         connection = MockHeartbeatConnection()
         _heartbeat = Heartbeat(connection, "Myname")
         mocked_connect.assert_not_called()
         mocked_atexit_register.assert_called()
         self.assertIsNotNone(connection.msg)
 
-    @mock.patch("gobcore.message_broker.message_broker.Connection.connect")
-    @mock.patch("gobcore.message_broker.message_broker.Connection.publish")
-    def test_send(self, mocked_publish, mocked_connect):
+    @patch("gobcore.message_broker.message_broker.Connection.connect", MagicMock())
+    @patch("gobcore.message_broker.message_broker.Connection.publish")
+    def test_send(self, mocked_publish):
         connection = MockHeartbeatConnection()
         heartbeat = Heartbeat(connection, "Myname")
         mocked_publish.reset_mock()
@@ -63,21 +64,22 @@ class TestHeartbeat(unittest.TestCase):
         self.assertEqual(connection.key, HEARTBEAT_KEY)
         self.assertEqual(connection.msg["name"], "Myname")
 
-    @mock.patch("threading.enumerate", new=generate_threads(["a"]))
+    @patch("threading.enumerate", new=generate_threads(["a"]))
     def test_heartbeat_threads(self):
         connection = MockHeartbeatConnection()
         heartbeat = Heartbeat(connection, "Myname")
         assert len(heartbeat.threads) == 1
 
-    @mock.patch("threading.enumerate", new=generate_threads(["_a"]))
+    @patch("threading.enumerate", new=generate_threads(["_a"]))
     def test_heartbeat_no_threads(self):
         connection = MockHeartbeatConnection()
         heartbeat = Heartbeat(connection, "Myname")
         assert len(heartbeat.threads) == 0
 
-    def test_progress(self):
+    @patch("gobcore.status.heartbeat.Heartbeat._progress_log_msg")
+    def test_progress(self, mock_progress_log):
         connection = MockHeartbeatConnection()
-        connection.publish = mock.MagicMock()
+        connection.publish = MagicMock()
 
         msg = {
             "header": {
@@ -89,23 +91,40 @@ class TestHeartbeat(unittest.TestCase):
             "report": "any report"
         }
 
-        Heartbeat.progress(None, {}, {}, None)
+        Heartbeat.progress(connection, {}, {})
         connection.publish.assert_not_called()
 
-        Heartbeat.progress(None, service, {}, None)
+        Heartbeat.progress(connection, service, {})
         connection.publish.assert_not_called()
 
-        Heartbeat.progress(None, {}, msg, None)
+        Heartbeat.progress(connection, {}, msg)
         connection.publish.assert_not_called()
 
-        Heartbeat.progress(connection, service, msg, "any status", "any info")
-        connection.publish.assert_called_with("gob.status", "status.progress", {
-            'header': {'jobid': 'any job', 'stepid': 'any step'},
-            "jobid": "any job",
-            "stepid": "any step",
-            "status": "any status",
-            "info_msg": "any info"
-        })
+        def publish_msg(status, info_msg):
+            return {
+                'header': {'jobid': 'any job', 'stepid': 'any step'},
+                "jobid": "any job",
+                "stepid": "any step",
+                "status": status,
+                "info_msg": info_msg
+            }
+
+        # Case without exception
+        with Heartbeat.progress(connection, service, msg):
+            connection.publish.assert_called_with("gob.status", "status.progress", publish_msg(STATUS_START, None))
+        connection.publish.assert_called_with("gob.status", "status.progress", publish_msg(STATUS_OK, None))
+        assert mock_progress_log.call_count == 2
+
+        # Case with exception
+        with self.assertRaisesRegex(ZeroDivisionError, "division by zero"):
+            with Heartbeat.progress(connection, service, msg):
+                connection.publish.assert_called_with("gob.status", "status.progress", publish_msg(STATUS_START, None))
+                my_error = 10 / 0
+
+            connection.publish.assert_called_with(
+                "gob.status", "status.progress", publish_msg(STATUS_FAIL, "division by zero")
+            )
+        assert mock_progress_log.call_count == 4
 
     def test_log_msg(self):
         queue = "any queue"

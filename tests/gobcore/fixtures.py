@@ -4,6 +4,7 @@ import string
 from gobcore.events import GOB, GOB_EVENTS
 from gobcore.events import import_events
 from gobcore.events.import_message import MessageMetaData
+from gobcore.message_broker.config import _build_queuename
 
 
 class Entity(object):
@@ -21,8 +22,19 @@ def random_string(length=12, source=None):
 
 def get_service_fixture(handler):
     return {
+        'queue': _build_queuename(random_string(), random_string(), random_string()),
+        'handler': handler,
+        'report': {
+            'exchange': random_string(),
+            'key': random_string()
+        }
+    }
+
+
+def get_servicedefinition_fixture(handler):
+    return {
         random_string(): {
-            'queue': random_string(),
+            'queue': _build_queuename(random_string(), random_string(), random_string()),
             'handler': handler,
             'report': {
                 'exchange': random_string(),
@@ -30,6 +42,7 @@ def get_service_fixture(handler):
             }
         }
     }
+
 
 def random_bool():
     return random.choice([True, False])

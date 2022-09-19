@@ -134,12 +134,17 @@ def get_filename(name: str, offload_folder: str) -> str:
 
 
 def get_logger_name(service: Service) -> str:
-    """Creates a name for a logger from a given handler.
-
-    If handler has no __name__ attribute (like mocks or lambda's), it uses the
-    string representation of the function.
+    """
+    Creates a name for a logger from the servicedefinition.
+    This is defined by the `logger` key, with a fallback to the queue name.
+    The returned value must be a string, nameless loggers are not allowed.
 
     :param service: A service, as defined in SERVICEDEFINITION.
     :return: a name to configure a logger with.
     """
-    return service.get("logger", service["queue"].split(".")[-2]).upper()
+    name = service.get("logger", service["queue"].split(".")[-2])
+
+    if not isinstance(name, str):
+        raise TypeError(f"Name must be str type, got: {type(name)}")
+
+    return name.upper()

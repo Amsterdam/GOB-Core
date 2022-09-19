@@ -23,23 +23,7 @@ LOGGER_HANDLERS = [StdoutHandler(), RequestsHandler()]
 assert(HEARTBEAT_INTERVAL % CHECK_CONNECTION == 0)
 
 
-def _handle_result_msg(connection: AsyncConnection, service: Service, result_msg: dict) -> bool:
-    """
-    Processes issues, notifications and reports from result message if available.
-    Return False if result_msg is False, else True
-    """
-    process_issues(result_msg)
-
-    if contains_notification(result_msg):
-        send_notification(result_msg)
-
-    # If a report_queue is defined, report the result message
-    if 'report' in service:
-        report = service['report']
-        connection.publish(report['exchange'], report['key'], result_msg)
-
-
-def _on_message(connection: AsyncConnection, service: Service, msg: Dict[str, Any]) -> bool:
+def _on_message(connection: AsyncConnection, service: Service, msg: dict[str, Any]) -> bool:
     """Called on every message receipt
 
     :param connection: the connection with the message broker
@@ -54,10 +38,17 @@ def _on_message(connection: AsyncConnection, service: Service, msg: Dict[str, An
     ):
         # execute handler
         if result_msg := service["handler"](msg):
-            _handle_result_msg(connection, service, result_msg)
+            process_issues(result_msg)
 
-        # Don't acknowledge messages which explicitely return False, in all other cases do acknowledge.
-        return result_msg is not False
+            if contains_notification(result_msg):
+                send_notification(result_msg)
+
+            # If a report_queue is defined, report the result message
+            if report := service.get("report"):
+                connection.publish(report["exchange"], report["key"], result_msg)
+
+    # Don't acknowledge messages which explicitely return False, in all other cases do acknowledge.
+    return result_msg is not False
 
 
 class MessagedrivenService:
