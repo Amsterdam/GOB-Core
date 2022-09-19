@@ -22,6 +22,10 @@ class TestLogger(TestCase):
         self.assertEqual(logger.name, "Any logger")
         self.assertTrue(logger.get_logger().hasHandlers())
 
+    def test_repr(self):
+        logger = Logger("new")
+        self.assertIn(logger.name, repr(logger))
+
     def test_get_warnings(self):
         logger = Logger()
         logger.messages[logging.WARNING] = ['warning messages']
