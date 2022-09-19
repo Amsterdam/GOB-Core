@@ -1,5 +1,3 @@
-from typing import Callable
-
 from datetime import datetime
 from itertools import chain
 from pathlib import Path
@@ -8,6 +6,7 @@ from sys import getsizeof
 import uuid
 
 from gobcore.message_broker.config import GOB_SHARED_DIR
+from gobcore.message_broker.typing import Service
 
 
 def gettotalsizeof(o):
@@ -134,16 +133,13 @@ def get_filename(name: str, offload_folder: str) -> str:
     return str(path / name)
 
 
-def get_logger_name(handler: Callable):
+def get_logger_name(service: Service) -> str:
     """Creates a name for a logger from a given handler.
 
     If handler has no __name__ attribute (like mocks or lambda's), it uses the
     string representation of the function.
 
-    :param handler: A callable, as defined in SERVICEDEFINITION.
+    :param service: A service, as defined in SERVICEDEFINITION.
     :return: a name to configure a logger with.
     """
-    if not hasattr(handler, "__name__"):
-        return str(handler)
-
-    return handler.__name__.upper()
+    return service.get("logger", service["queue"].split(".")[-2]).upper()

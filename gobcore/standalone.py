@@ -8,6 +8,7 @@ from gobcore.message_broker.typing import ServiceDefinition
 from gobcore.utils import get_logger_name
 from gobcore.message_broker.offline_contents import offload_message, load_message
 from gobcore.message_broker.utils import to_json, from_json
+from gobcore.utils import get_logger_name
 
 Message = Dict[str, Any]
 
@@ -63,21 +64,24 @@ def run_as_standalone(
         converter=from_json,
         params={"stream_contents": False}
     )
-    handler = _get_handler(args.handler, service_definition)
-    logger.configure(message_in, get_logger_name(handler), handlers=[StdoutHandler()])
-    message_out = handler(message_in)
-    message_out_offloaded = offload_message(
-        msg=message_out,
-        converter=to_json,
-        force_offload=True
-    )
 
-    _write_message(message_out_offloaded, Path(args.message_result_path))
-    if errors := _get_errors(message_out):
-        print(errors)  # TODO: logger.error?
-        return 1
+    service = service_definition[args.handler]
+    handler = service["handler"]
 
-    return 0
+    with logger.configure_context(message_in, get_logger_name(service), handlers=[StdoutHandler()]):
+        message_out = handler(message_in)
+        message_out_offloaded = offload_message(
+            msg=message_out,
+            converter=to_json,
+            force_offload=True
+        )
+
+        _write_message(message_out_offloaded, Path(args.message_result_path))
+        if errors := _get_errors(message_out):
+            print(errors)  # TODO: logger.error?
+            return 1
+
+        return 0
 
 
 def _build_message(args: argparse.Namespace) -> Message:
