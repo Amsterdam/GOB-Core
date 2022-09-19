@@ -118,6 +118,9 @@ class Logger:
         self._data_msg_count = defaultdict(int)
         self.messages = defaultdict(list)
 
+    def __repr__(self):
+        return f"{super().__repr__()}<{self.name}>"
+
     def clear_issues(self):
         self._issues.clear()
         self._data_msg_count.clear()
@@ -323,7 +326,7 @@ class LoggerManager:
 
     @name.setter
     def name(self, value):
-        if not isinstance(value, str):
+        if value is not None and not isinstance(value, str):
             # raises vague exception otherwise
             raise TypeError(f"Logger name is not str: {type(value)}")
         self.get_logger().name = value

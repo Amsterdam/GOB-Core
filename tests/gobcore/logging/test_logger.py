@@ -414,6 +414,9 @@ class TestLoggerManager(TestCase):
         logger_manager.name = "new name"
         self.assertEqual("new name", logger_manager.name)
 
+        logger_manager.name = None
+        self.assertIsNone(logger_manager.name)
+
         with self.assertRaises(TypeError):
             logger_manager.name = 1234
 
