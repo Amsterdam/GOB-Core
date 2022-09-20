@@ -1,11 +1,13 @@
 """GOB
 
 SQLAlchemy GOB Models
-
 """
+
+
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.schema import UniqueConstraint, ForeignKeyConstraint
 
+from gobcore.model import GOBModel
 # Import data definitions
 from gobcore.model.events import EVENTS, EVENTS_DESCRIPTION
 from gobcore.model.metadata import FIELD
@@ -28,10 +30,11 @@ def get_base():
 
 
 def get_column(column_name, column_specification):
-    """Utility method to convert GOB type to a SQLAlchemy Column
+    """Utility method to convert GOB type to a SQLAlchemy Column.
 
-    Get the SQLAlchemy columndefinition for the gob type as exposed by the gob_type
+    Get the SQLAlchemy columndefinition for the gob type as exposed by the gob_type.
 
+    :param column_name:
     :param column: (name, type)
     :return: sqlalchemy.Column
     """
@@ -42,7 +45,7 @@ def get_column(column_name, column_specification):
 
 
 def _create_model_type(table_name, columns, has_states, table_args):
-    """Creates model type based on given parameters. Extracted for testability
+    """Creates model type based on given parameters. Extracted for testability.
 
     :param table_name:
     :param columns:
@@ -59,9 +62,10 @@ def _create_model_type(table_name, columns, has_states, table_args):
     })
 
 
-def columns_to_model(model, catalog_name, table_name, columns, has_states=False, constraint_columns=None):
-    """Create a model out of table_name and GOB column specification
+def columns_to_model(model: GOBModel, catalog_name, table_name, columns, has_states=False, constraint_columns=None):
+    """Create a model out of table_name and GOB column specification.
 
+    :param model: GOBModel instance
     :param table_name: name of the table
     :param columns: GOB column specification
     :param has_states:
@@ -136,12 +140,12 @@ def columns_to_model(model, catalog_name, table_name, columns, has_states=False,
     return _create_model_type(table_name, columns, has_states, table_args)
 
 
-def get_sqlalchemy_models(model):
-    """Derive Models from GOB model specification
+def get_sqlalchemy_models(model: GOBModel):
+    """Derive Models from GOB model specification.
 
+    :param model: GOBModel instance
     :return: None
     """
-
     if model.__class__.sqlalchemy_models:
         return model.__class__.sqlalchemy_models
 
@@ -158,8 +162,8 @@ def get_sqlalchemy_models(model):
         constraint_columns=["eventid"]
     )
 
-    for catalog_name, catalog in model.get_catalogs().items():
-        for collection_name, collection in model.get_collections(catalog_name).items():
+    for catalog_name in model:
+        for collection_name, collection in model[catalog_name]['collections'].items():
             # "attributes": {
             #     "attribute_name": {
             #         "type": "GOB type name, e.g. GOB.String",

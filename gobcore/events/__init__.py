@@ -148,7 +148,7 @@ def database_to_gobevent(event) -> ImportEvent:
 
     # Get the model version to check if the event should be migrated to the correct version.
     # No legacy_mode! -- database_to_gobevent is only used by GOB-Upload.
-    model_version = GOBModel().get_collection(event.catalogue, event.entity)['version']
+    model_version = GOBModel()[event.catalogue]['collections'][event.entity]['version']
 
     if model_version != event.version:
         # Event should be migrated to the correct GOBModel version

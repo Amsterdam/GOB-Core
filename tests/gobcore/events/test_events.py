@@ -9,7 +9,7 @@ from gobcore.exceptions import GOBException
 from tests.gobcore import fixtures
 
 def dict_to_object(dict):
-    class Obj(object):
+    class Obj:
         def __init__(self, dict):
             self.__dict__ = dict
             self.eventid = 1
@@ -91,9 +91,8 @@ class TestEvents(unittest.TestCase):
     @patch('gobcore.events.GobEvent')
     @patch('gobcore.events.MessageMetaData')
     def test_database_to_gobevent(self, mock_message_meta_data, mock_gob_event, mock_model):
-        mock_model().get_collection.return_value = {
-            'version': '0.1'
-        }
+        mock_model().__getitem__.return_value = {
+            'collections': {'test_entity': {'version': '0.1'}}}
 
         mock_event = {
             'version': '0.1',
@@ -129,12 +128,12 @@ class TestEvents(unittest.TestCase):
     @patch('gobcore.events.GOBModel')
     @patch('gobcore.events.GobEvent')
     @patch('gobcore.events.MessageMetaData')
-    def test_database_to_gobevent_migration(self, mock_message_meta_data, mock_gob_event, mock_model, mock_migrations):
+    def test_database_to_gobevent_migration(
+            self, mock_message_meta_data, mock_gob_event, mock_model, mock_migrations):
+        """Test database to GOB events migrations."""
         target_version = '0.2'
-
-        mock_model().get_collection.return_value = {
-            'version': target_version
-        }
+        mock_model().__getitem__.return_value = {
+            'collections': {'test_entity': {'version': target_version}}}
 
         mock_migrations().migrate_event_data.return_value = {
             'entity': {
@@ -176,7 +175,7 @@ class TestEvents(unittest.TestCase):
 
         database_to_gobevent(event)
 
-        mock_migrations().migrate_event_data.assert_called_with(event, data, event.catalogue, event.entity,
-                                                                target_version)
+        mock_migrations().migrate_event_data.assert_called_with(
+                event, data, event.catalogue, event.entity, target_version)
 
         mock_gob_event.assert_called_with("the tid", expected_event_msg, expected_meta_data)

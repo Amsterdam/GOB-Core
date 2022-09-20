@@ -1,29 +1,29 @@
-import json
 import os
 
 from collections import defaultdict
 
 from gobcore.model import GOBModel
+from gobcore.parse import json_to_cached_dict
 
 
-class GOBSources():
+class GOBSources:
 
     def __init__(self, model: GOBModel):
-        path = os.path.join(os.path.dirname(__file__), 'gobsources.json')
-        with open(path) as file:
-            data = json.load(file)
+        """GOBSources initialisation.
 
-        self._data = data
-        self._model = model
+        :param model: GOBModel instance
+        """
+        data = json_to_cached_dict(os.path.join(os.path.dirname(__file__), 'gobsources.json'))
+        self.model = model
 
         self._relations = defaultdict(lambda: defaultdict(list))
 
-        # Extract references for easy access in API
-        for source_name, source in self._data.items():
+        # Extract references for easy access.
+        for source_name, source in data.items():
             self._extract_relations(source_name, source)
 
     def _extract_relations(self, source_name, source):
-        for catalog_name, catalog in self._model.get_catalogs().items():
+        for catalog_name, catalog in self.model.items():
             for collection_name, collection in catalog['collections'].items():
                 for field_name, spec in collection['references'].items():
                     field_relation = self._get_field_relation(
@@ -53,8 +53,7 @@ class GOBSources():
             return relation
 
     def get_field_relations(self, catalog_name, collection_name, field_name):
-        """
-        Get all the relations for the specified field in the given catalog - collection
+        """Get all the relations for the specified field in the given catalog - collection.
 
         Not that more field relations may exist because multiple applications may
         be source for the field.

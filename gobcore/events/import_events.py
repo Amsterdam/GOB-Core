@@ -71,9 +71,10 @@ class ImportEvent(metaclass=ABCMeta):
         self.last_event = self._data.pop("_last_event", None)
 
         if ImportEvent.gob_model is None:
+            # No legacy_mode!
             ImportEvent.gob_model = GOBModel()
 
-        self._model = self.gob_model.get_collection(self._metadata.catalogue, self._metadata.entity)
+        self._model = self.gob_model[self._metadata.catalogue]['collections'][self._metadata.entity]
 
     def apply_to(self, entity):
         """Sets the attributes in data on the entity (expands `data['mutations'] first)

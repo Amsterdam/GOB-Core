@@ -96,24 +96,21 @@ class TestIndexes(unittest.TestCase):
             }
         }
 
-        def get_catalogs(self):
-            return self.model
-
-        def get_catalog(self, catalog_name):
+        def __getitem__(self, catalog_name):
             return self.model[catalog_name]
 
-        def get_collections(self, catalog_name):
-            return self.model[catalog_name]['collections']
+        def items(self):
+            return self.model.items()
 
         def get_table_name(self, catalog_name, collection_name):
-            return f"{catalog_name}_{collection_name}"
+            return f'{catalog_name}_{collection_name}'.lower()
 
         def get_table_name_from_ref(self, ref: str):
             return ref.replace(':', '_')
 
         def get_collection_from_ref(self, ref: str):
             cat, coll = self.get_catalog_collection_names_from_ref(ref)
-            return self.get_collections(cat)[coll]
+            return self.model[cat]['collections'][coll]
 
         def get_catalog_collection_names_from_ref(self, ref: str):
             spl = ref.split(':')

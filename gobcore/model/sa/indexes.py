@@ -1,5 +1,6 @@
 import hashlib
 import re
+
 from gobcore.model.metadata import FIELD
 from gobcore.sources import GOBSources
 from gobcore.typesystem import is_gob_geo_type, is_gob_json_type
@@ -18,10 +19,9 @@ def _get_special_column_type(column_type: str):
     """
     if is_gob_geo_type(column_type):
         return "geo"
-    elif is_gob_json_type(column_type):
+    if is_gob_json_type(column_type):
         return "json"
-    else:
-        return None
+    return None
 
 
 def _remove_leading_underscore(s: str):
@@ -69,8 +69,8 @@ def _default_indexes_for_columns(input_columns: list, table_type: str) -> dict:
 
     result = {}
     for columns in default_indexes:
-        # Check if all columns defined in index are present
-        if all([column in input_columns for column in columns]):
+        # Check if all columns defined in index are present.
+        if all(column in input_columns for column in columns):
             idx_name = "_".join([_remove_leading_underscore(column) for column in columns])
             result[idx_name] = columns
     return result
@@ -98,7 +98,7 @@ def _relation_indexes_for_collection(model, catalog_name, collection_name, colle
         dst_index_table = model.get_table_name_from_ref(ref)
         dst_collection = model.get_collection_from_ref(ref)
         dst_catalog_name, dst_collection_name = model.get_catalog_collection_names_from_ref(ref)
-        dst_catalog = model.get_catalog(dst_catalog_name)
+        dst_catalog = model[dst_catalog_name]
         relations = sources.get_field_relations(catalog_name, collection_name, col)
 
         for relation in relations:
@@ -133,8 +133,8 @@ def _relation_indexes_for_collection(model, catalog_name, collection_name, colle
 def get_indexes(model) -> dict:
     indexes = {}
 
-    for catalog_name, catalog in model.get_catalogs().items():
-        for collection_name, collection in model.get_collections(catalog_name).items():
+    for catalog_name, catalog in model.items():
+        for collection_name, collection in model[catalog_name]['collections'].items():
             entity = collection['all_fields']
             table_name = model.get_table_name(catalog_name, collection_name)
             is_relation_table = table_name.startswith('rel_')
