@@ -1,7 +1,7 @@
 import os
-from typing import Optional
 import copy
 import warnings
+from collections import UserDict
 
 from gobcore.exceptions import GOBException
 from gobcore.parse import json_to_cached_dict
@@ -16,7 +16,7 @@ from gobcore.model.schema import load_schema
 
 def deprecation(message):
     """Add a deprecation warning."""
-    warnings.warn(message, DeprecationWarning, stacklevel=2)
+    warnings.warn(message, DeprecationWarning, stacklevel=3)
 
 
 class NotInModelException(Exception):
@@ -31,7 +31,7 @@ class NoSuchCollectionException(NotInModelException):
     pass
 
 
-class GOBModel:
+class GOBModel(UserDict):
     inverse_relations = None
     _data = None
     legacy_mode = None
@@ -64,11 +64,16 @@ class GOBModel:
             # the test catalogue can be removed.
             del data["test_catalogue"]
 
-        GOBModel._data = data
-        GOBModel.data = data
         # Proces data.
-        self._load_schemas()
+        self._load_schemas(data)
+        GOBModel.data = data
         self._init_data()
+
+        # UserDict data.
+        super().__init__(data)
+        GOBModel._data = data
+        # Fix instance data.
+        self.data = data
 
     def _init_data(self):
         """Extract references for easy access.
@@ -120,61 +125,27 @@ class GOBModel:
                 **self.global_attributes
             }
 
-    def _load_schemas(self):
-        """Load any external schemas and updates model accordingly.
+    @staticmethod
+    def _load_schemas(data):
+        """Load any external schemas and updates catalog model accordingly.
 
         :return: None
         """
-        for catalog in self.values():
+        for catalog in data.values():
             for model in catalog['collections'].values():
                 if model.get('schema') is not None:
                     schema = Schema.parse_obj(model.get("schema"))
                     model.update(load_schema(schema))
 
-    def _extract_references(self, attributes):
+    @staticmethod
+    def _extract_references(attributes):
         return {field_name: spec for field_name, spec in attributes.items()
                 if spec['type'] in ['GOB.Reference', 'GOB.ManyReference', 'GOB.VeryManyReference']}
 
-    def _extract_very_many_references(self, attributes):
+    @staticmethod
+    def _extract_very_many_references(attributes):
         return {field_name: spec for field_name, spec in attributes.items()
                 if spec['type'] in ['GOB.VeryManyReference']}
-
-    def items(self) -> list[tuple[str, dict]]:
-        """Return (name, dict) of all catalogs."""
-        # Replaces .get_catalogs().items() and ._data.items().
-        return self.data.items()
-
-    def keys(self) -> list:
-        """Return catalog names."""
-        # Replaces .get_catalog_names(), get_catalogs().keys() and self._data.keys().
-        return self.data.keys()
-
-    def values(self) -> list:
-        """Return catalog values."""
-        # Replaces self._data.values()
-        return self.data.values()
-
-    def get(self, catalog_name: str, default=None) -> Optional[dict]:
-        """Return catalog or None."""
-        # Replaces get_catalog().
-        return self.data.get(catalog_name, default)
-
-    def __getitem__(self, catalog_name: str) -> dict:
-        """Return catalog."""
-        # Replaces get_catalog().
-        return self.data[catalog_name]
-
-    def __len__(self) -> int:
-        """Return number of catalogs."""
-        return len(self.data)
-
-    def __contains__(self, catalog_name: str) -> bool:
-        """Valid catalog_name?"""
-        return catalog_name in self.data
-
-    def __iter__(self):
-        """Return catalog iterator."""
-        return iter(self.data)
 
     def get_inverse_relations(self):
         if not self.inverse_relations:

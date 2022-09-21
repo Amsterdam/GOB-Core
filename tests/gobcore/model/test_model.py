@@ -1,13 +1,14 @@
-import unittest
-import copy
+from unittest import TestCase
 from unittest.mock import MagicMock, patch
+from typing import ItemsView, KeysView
+import copy
 
 from gobcore.exceptions import GOBException
 from gobcore.model import GOBModel, NoSuchCollectionException, NoSuchCatalogException, Schema
 from tests.gobcore.fixtures import random_string
 
 
-class TestModel(unittest.TestCase):
+class TestModel(TestCase):
 
     def setUp(self):
         self.model = GOBModel()
@@ -22,6 +23,8 @@ class TestModel(unittest.TestCase):
     def test_get_catalogs(self):
         catalogs = self.model.get_catalogs()
         self.assertIsInstance(catalogs.items(), type({}.items()))
+        self.assertIsInstance(self.model.items(), ItemsView)
+        self.assertIsInstance(self.model.keys(), KeysView)
         self.assertIn('meetbouten', catalogs.keys())
 
     def test_get_collection_names(self):
@@ -339,9 +342,10 @@ class TestModel(unittest.TestCase):
                 'version': '1.0'
             },
         }
-        model._load_schemas()
+        model._load_schemas(model.data)
         self.assertEqual(expected, model.data)
-        mock_load_schema.assert_called_with(Schema(datasetId='the dataset', tableId='the table', version='1.0'))
+        mock_load_schema.assert_called_with(
+            Schema(datasetId='the dataset', tableId='the table', version='1.0'))
 
     def test_catalog_collection_from_abbr(self):
         model = GOBModel()
