@@ -11,6 +11,7 @@ from gobcore.message_broker.utils import to_json, from_json
 from gobcore.utils import get_logger_name
 
 Message = Dict[str, Any]
+LOG_HANDLERS = [StdoutHandler()]
 
 
 def parent_argument_parser() -> Tuple[argparse.ArgumentParser, argparse._SubParsersAction]:
@@ -67,7 +68,7 @@ def run_as_standalone(
 
     service = service_definition[args.handler]
 
-    with logger.configure_context(message_in, get_logger_name(service), handlers=[StdoutHandler()]):
+    with logger.configure_context(message_in, get_logger_name(service), LOG_HANDLERS):
         message_out = service["handler"](message_in)
 
     message_out_offloaded = offload_message(

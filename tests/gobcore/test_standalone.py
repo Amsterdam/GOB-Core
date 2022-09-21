@@ -6,8 +6,7 @@ import pytest
 from argparse import ArgumentParser
 from unittest.mock import Mock, patch
 
-from gobcore.logging.logger import StdoutHandler
-from gobcore.standalone import run_as_standalone, parent_argument_parser, _build_message
+from gobcore.standalone import run_as_standalone, parent_argument_parser, _build_message, LOG_HANDLERS
 from tests.gobcore.fixtures import get_servicedefinition_fixture
 
 
@@ -35,6 +34,7 @@ class TestStandalone:
 
     @pytest.fixture
     def result_path(self):
+        """Use temporary directory for the result.json. The default mount of /airflow/.. is not always available."""
         with TemporaryDirectory() as tmp_dir:
             yield Path(tmp_dir, "return.json")
 
@@ -48,12 +48,13 @@ class TestStandalone:
         servicedefinition = get_servicedefinition_fixture(mock_handler, "import")
         servicedefinition["import"]["logger"] = "the logger"
 
-        message_in = {'header': {'catalogue': 'test_catalogue', 'collection': None, 'entity': None, 'attribute': None, 'application': None, 'mode': 'full'}}
+        message_in = {'header': {'catalogue': 'test_catalogue', 'collection': None, 'entity': None, 'attribute': None,
+                                 'application': None, 'mode': 'full'}}
 
         with patch("gobcore.standalone.logger") as mock_logger:
             assert run_as_standalone(args, servicedefinition) == 0
 
-            mock_logger.configure.assert_called_with(message_in, "THE LOGGER", handlers=[StdoutHandler])
+            mock_logger.configure_context.assert_called_with(message_in, "THE LOGGER", LOG_HANDLERS)
 
         mock_handler.assert_called_with(message_in)
 

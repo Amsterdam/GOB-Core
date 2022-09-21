@@ -422,9 +422,6 @@ class TestLoggerManager(TestCase):
             logger_manager.name = None
 
         with self.assertRaises(TypeError):
-            logger_manager.name = None
-
-        with self.assertRaises(TypeError):
             logger_manager.name = 1234
 
     def test_configure_context(self):
