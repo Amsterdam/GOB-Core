@@ -138,7 +138,7 @@ class TestLogger(TestCase):
             },
             "some": "other"
         }
-        logger.configure(msg, "NEW NAME", handlers=[RequestsHandler])
+        logger.configure(msg, "NEW NAME", handlers=[RequestsHandler()])
         self.assertEqual(logger.name, "NEW NAME")
         self.assertEqual(logger._default_args, msg["header"])
         self.assertEqual(len(logger.messages), 0)
@@ -195,7 +195,7 @@ class TestLogger(TestCase):
             },
             "some": "other"
         }
-        logger.configure(msg, "Another config logger", handlers=[RequestsHandler])
+        logger.configure(msg, "Another config logger", handlers=[RequestsHandler()])
 
         logger.warning("test")
         RequestsHandler.LOG_PUBLISHER.publish.assert_called_once()
@@ -418,8 +418,8 @@ class TestLoggerManager(TestCase):
         logger_manager.name = "new name"
         self.assertEqual("new name", logger_manager.name)
 
-        logger_manager.name = None
-        self.assertIsNone(logger_manager.name)
+        with self.assertRaises(TypeError):
+            logger_manager.name = None
 
         with self.assertRaises(TypeError):
             logger_manager.name = 1234

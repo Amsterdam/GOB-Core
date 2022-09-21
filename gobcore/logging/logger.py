@@ -109,7 +109,7 @@ class Logger:
     def __init__(self, name: str = None):
         if name is not None:
             self.name = name
-            self._init_logger(handlers=[StdoutHandler])
+            self._init_logger(handlers=[StdoutHandler()])
 
         self._default_args = {}
         self._offload_file = None
@@ -259,7 +259,7 @@ class Logger:
     def get_logger(self) -> logging.Logger:
         return logging.getLogger(self.name)
 
-    def configure(self, msg: dict, name: str, handlers: Optional[list[type[logging.Handler]]] = None):
+    def configure(self, msg: dict, name: str, handlers: Optional[list[logging.Handler]] = None):
         """
         Configure the logger to store the relevant information for subsequent logging.
         Should be called just before the start of processing a new item.
@@ -287,13 +287,12 @@ class Logger:
                 'stepid': header.get('stepid')
             }
 
-    def _init_logger(self, handlers: list[type[logging.Handler]]):
+    def _init_logger(self, handlers: list[logging.Handler]):
         new_logger = logging.getLogger(self.name)
         new_logger.setLevel(self.LOGLEVEL)
 
         for handler in handlers:
-            handler = handler()
-
+            # Don't add handlers if one exists with the same name
             if not any(new_hndlr.name == handler.name for new_hndlr in new_logger.handlers):
                 new_logger.addHandler(handler)
 
@@ -325,8 +324,8 @@ class LoggerManager:
             return self.get_logger().name
 
     @name.setter
-    def name(self, value):
-        if value is not None and not isinstance(value, str):
+    def name(self, value: Optional[str]):
+        if not isinstance(value, str):
             # raises vague exception otherwise
             raise TypeError(f"Logger name is not str: {type(value)}")
         self.get_logger().name = value

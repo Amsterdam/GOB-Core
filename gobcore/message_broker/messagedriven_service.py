@@ -14,7 +14,7 @@ from gobcore.utils import get_logger_name
 
 CHECK_CONNECTION = 5                # Check connection every n seconds
 RUNS_IN_OWN_THREAD = "own_thread"   # Service that runs in a separate thread
-LOGGER_HANDLERS = [StdoutHandler, RequestsHandler]
+LOGGER_HANDLERS = [StdoutHandler(), RequestsHandler()]
 
 # Assure that heartbeats are sent at every HEARTBEAT_INTERVAL
 assert(HEARTBEAT_INTERVAL % CHECK_CONNECTION == 0)
