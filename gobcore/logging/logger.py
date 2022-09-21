@@ -324,14 +324,14 @@ class LoggerManager:
             return self.get_logger().name
 
     @name.setter
-    def name(self, value: Optional[str]):
+    def name(self, value: str):
         if not isinstance(value, str):
             # raises vague exception otherwise
             raise TypeError(f"Logger name is not str: {type(value)}")
         self.get_logger().name = value
 
     @contextlib.contextmanager
-    def configure_context(self, msg: dict, name: str, handlers: Optional[list[type[logging.Handler]]] = None):
+    def configure_context(self, msg: dict, name: str, handlers: Optional[list[logging.Handler]] = None):
         """
         Runs the logs through logger `name` within this context.
         When leaving the context, reset `name` to the original value.
@@ -341,13 +341,17 @@ class LoggerManager:
         :param name: (Required) the name of the process that processes the message
         :param handlers: (Optional) add handlers to current named instance
         """
-        current_name = self.name
+        current_name = self.name  # None if not initialised
         self.get_logger().configure(msg, name, handlers)
 
         try:
             yield
         finally:
-            self.name = current_name
+            if current_name is None:
+                # A previous not initialised logger doesn't have a name attribute, delete it again
+                delattr(self.get_logger(), "name")
+            else:
+                self.name = current_name
 
 
 logger = LoggerManager()

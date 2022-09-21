@@ -425,7 +425,16 @@ class TestLoggerManager(TestCase):
             logger_manager.name = 1234
 
     def test_configure_context(self):
+        # initialised without name, resets to None
         logger_manager = LoggerManager()
+        logger_manager.loggers.clear()
+
+        with logger_manager.configure_context({}, "the context name"):
+            self.assertEqual(logger_manager.name, "the context name")
+
+        self.assertIsNone(logger_manager.name)
+
+        # initialised with name
         logger_manager.name = "the initial name"
 
         with logger_manager.configure_context({}, "the context name"):
