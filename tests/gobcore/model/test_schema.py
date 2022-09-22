@@ -97,11 +97,11 @@ class TestAMSSchema(unittest.TestCase):
                     'description': 'Nummer dat Rijkswaterstaat hanteert.',
                     'type': 'GOB.String'
                 },
-                'someCharacter': {
+                'some_character': {
                     'description': 'This one should map to GOB.Character',
                     'type': 'GOB.Character'
                 },
-                'someNumberWithoutMultipleOf': {
+                'some_number_without_multiple_of': {
                     'description': 'Should map to GOB.Decimal',
                     'type': 'GOB.Decimal'
                 },
