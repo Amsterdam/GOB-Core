@@ -232,8 +232,11 @@ class GOBModel(UserDict):
         :param collection_name: name of the collection
         :return: True if the collection has states
         """
-        collection = self[catalog_name]['collections'].get(collection_name)
-        return collection.get("has_states") is True
+        try:
+            collection = self[catalog_name]['collections'].get(collection_name)
+            return collection.get("has_states") is True
+        except KeyError:
+            return False
 
     def get_source_id(self, entity, input_spec):
         """Gets the id that uniquely identifies the entity within the source.
