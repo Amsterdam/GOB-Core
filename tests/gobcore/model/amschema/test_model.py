@@ -9,17 +9,6 @@ from ...amschema_fixtures import get_dataset
 from gobcore.model.amschema.model import ArrayProperty, NumberProperty, RefProperty, StringProperty
 
 
-class TestNumberProperty(TestCase):
-
-    def test_gob_type(self):
-        """Test without multipleOf set"""
-        prop = NumberProperty(type="number")
-        prop.multipleOf = None
-
-        with self.assertRaises(NotImplementedError):
-            prop.gob_type
-
-
 class TestRefProperty(TestCase):
 
     def test_gob_type(self):
