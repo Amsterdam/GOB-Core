@@ -119,7 +119,7 @@ class Logger:
         self.messages = defaultdict(list)
 
     def __repr__(self):
-        return f"{super().__repr__()}<{self.name}>"
+        return f"{super().__repr__()}<{getattr(self, 'name', 'NOT SET')}>"
 
     def clear_issues(self):
         self._issues.clear()

@@ -24,7 +24,10 @@ class TestLogger(TestCase):
 
     def test_repr(self):
         logger = Logger("new")
-        self.assertIn(logger.name, repr(logger))
+        self.assertTrue(repr(logger).endswith("<new>"))
+
+        logger = Logger()
+        self.assertTrue(repr(logger).endswith("<NOT SET>"))
 
     def test_get_warnings(self):
         logger = Logger()
