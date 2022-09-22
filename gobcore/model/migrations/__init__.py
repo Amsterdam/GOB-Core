@@ -23,7 +23,6 @@ class GOBMigrations():
             data = json.load(file)
 
         self._data = data
-        self._model = GOBModel()
 
         GOBMigrations._migrations = defaultdict(lambda: defaultdict(lambda: defaultdict(None)))
 

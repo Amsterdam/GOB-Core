@@ -10,7 +10,8 @@ _CONVERSIONS = {
     "wordt_uitgeoefend_in": "uitgoef_in",
     "commerciele_vestiging": "comm_vstgng",
     "maatschappelijke_activiteit": "maatsch_act",
-    "heeft_sbi_activiteiten": "heeft_sbi_act"
+    "heeft_sbi_activiteiten": "heeft_sbi_act",
+    "refereert_aan": "rft_n"
 }
 
 

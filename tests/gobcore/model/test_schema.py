@@ -97,6 +97,14 @@ class TestAMSSchema(unittest.TestCase):
                     'description': 'Nummer dat Rijkswaterstaat hanteert.',
                     'type': 'GOB.String'
                 },
+                'someCharacter': {
+                    'description': 'This one should map to GOB.Character',
+                    'type': 'GOB.Character'
+                },
+                'someNumberWithoutMultipleOf': {
+                    'description': 'Should map to GOB.Decimal',
+                    'type': 'GOB.Decimal'
+                },
                 'status_code': {
                     'description': 'Status van het referentiepunt (1=actueel, 2=niet te meten, 3=vervallen) code',
                     'type': 'GOB.Integer'
@@ -120,7 +128,7 @@ class TestAMSSchema(unittest.TestCase):
                 'y_coordinaat_muurvlak': {
                     'description': 'Y-coördinaat muurvlak',
                     'type': 'GOB.Decimal'
-                }
+                },
             },
             'entity_id': 'identificatie',
             'version': 'ams_2.0.0'

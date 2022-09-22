@@ -80,6 +80,10 @@
         "multipleOf": 0.01,
         "description": "Y-co\u00f6rdinaat muurvlak"
       },
+      "someNumberWithoutMultipleOf": {
+        "type": "number",
+        "description": "Should map to GOB.Decimal"
+      },
       "rwsNummer": {
         "type": "string",
         "description": "Nummer dat Rijkswaterstaat hanteert."
@@ -102,6 +106,11 @@
         "type": "string",
         "format": "date",
         "description": "Vervaldatum van het peilmerk."
+      },
+      "someCharacter": {
+        "type": "string",
+        "maxLength": 1,
+        "description": "This one should map to GOB.Character"
       },
       "ligtInGebiedenBouwblok": {
         "type": "object",

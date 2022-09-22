@@ -426,7 +426,12 @@
         "version": "0.1",
         "abbreviation": "MBT",
         "entity_id": "identificatie",
-        "attributes": {
+        "schema": {
+          "datasetId": "meetboutenAzure",
+          "tableId": "meetbouten",
+          "version": "2.0.0"
+        },
+        "legacy_attributes": {
           "identificatie": {
             "type": "GOB.String",
             "description": "Unieke identificatie van de meetbout"
@@ -519,7 +524,12 @@
         "version": "0.1",
         "abbreviation": "MTG",
         "entity_id": "identificatie",
-        "attributes": {
+        "schema": {
+          "datasetId": "meetboutenAzure",
+          "tableId": "metingen",
+          "version": "2.0.0"
+        },
+        "legacy_attributes": {
           "identificatie": {
             "type": "GOB.String",
             "description": "Unieke identificatie van de meting"
@@ -601,7 +611,12 @@
         "version": "0.1",
         "abbreviation": "RPT",
         "entity_id": "identificatie",
-        "attributes": {
+        "schema": {
+          "datasetId": "meetboutenAzure",
+          "tableId": "referentiepunten",
+          "version": "2.0.0"
+        },
+        "legacy_attributes": {
           "identificatie": {
             "type": "GOB.String",
             "description": "Unieke identificatie van de meting"
@@ -707,7 +722,12 @@
         "version": "0.1",
         "abbreviation": "RLG",
         "entity_id": "identificatie",
-        "attributes": {
+        "schema": {
+          "datasetId": "meetboutenAzure",
+          "tableId": "rollagen",
+          "version": "2.0.0"
+        },
+        "legacy_attributes": {
           "identificatie": {
             "type": "GOB.String",
             "description": "Unieke identificatie van de rollaag"

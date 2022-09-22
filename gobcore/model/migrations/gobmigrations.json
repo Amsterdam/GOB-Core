@@ -489,5 +489,126 @@
         ]
       }
     }
+  },
+  "meetbouten": {
+    "meetbouten": {
+      "0.1": {
+        "target_version": "ams_2.0.0",
+        "conversions": [
+          {
+            "action": "add",
+            "column": "datum_actueel_tot"
+          },
+          {
+            "action": "add",
+            "column": "nabij_adres"
+          },
+          {
+            "action": "split_json",
+            "column": "nabij_nummeraanduiding",
+            "mapping": {
+              "nabij_adres": "bronwaarde"
+            }
+          },
+          {
+            "action": "delete",
+            "column": "nabij_nummeraanduiding"
+          },
+          {
+            "action": "rename",
+            "old_column": "ligt_in_bouwblok",
+            "new_column": "ligt_in_gebieden_bouwblok"
+          },
+          {
+            "action": "rename",
+            "old_column": "ligt_in_buurt",
+            "new_column": "ligt_in_gebieden_buurt"
+          },
+          {
+            "action": "rename",
+            "old_column": "ligt_in_stadsdeel",
+            "new_column": "ligt_in_gebieden_stadsdeel"
+          }
+        ]
+      }
+    },
+    "metingen": {
+      "0.1": {
+        "target_version": "ams_2.0.0",
+        "conversions": [
+          {
+            "action": "rename",
+            "old_column": "hoort_bij_meetbout",
+            "new_column": "hoort_bij_meetbouten_meetbout"
+          },
+          {
+            "action": "rename",
+            "old_column": "refereert_aan_referentiepunten",
+            "new_column": "refereert_aan_meetbouten_referentiepunten"
+          },
+          {
+            "action": "add",
+            "column": "datum_actueel_tot"
+          }
+        ]
+      }
+    },
+    "referentiepunten": {
+      "0.1": {
+        "target_version": "ams_2.0.0",
+        "conversions": [
+          {
+            "action": "add",
+            "column": "nabij_adres"
+          },
+          {
+            "action": "split_json",
+            "column": "nabij_nummeraanduiding",
+            "mapping": {
+              "nabij_adres": "bronwaarde"
+            }
+          },
+          {
+            "action": "delete",
+            "column": "nabij_nummeraanduiding"
+          },
+          {
+            "action": "add",
+            "column": "datum_actueel_tot"
+          },
+          {
+            "action": "rename",
+            "old_column": "ligt_in_bouwblok",
+            "new_column": "ligt_in_gebieden_bouwblok"
+          },
+          {
+            "action": "rename",
+            "old_column": "ligt_in_buurt",
+            "new_column": "ligt_in_gebieden_buurt"
+          },
+          {
+            "action": "rename",
+            "old_column": "ligt_in_stadsdeel",
+            "new_column": "ligt_in_gebieden_stadsdeel"
+          }
+        ]
+      }
+    },
+    "rollagen": {
+      "0.1": {
+        "target_version": "ams_2.0.0",
+        "conversions": [
+          {
+            "action": "rename",
+            "old_column": "is_gemeten_van_bouwblok",
+            "new_column": "is_gemeten_van_gebieden_bouwblok"
+          },
+          {
+            "action": "add",
+            "column": "datum_actueel_tot"
+          }
+        ]
+      }
+    }
   }
 }

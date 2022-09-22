@@ -31,6 +31,8 @@ class StringFormatEnum(str, Enum):
 class StringProperty(Property):
     type: Literal["string"]
     format: Optional[StringFormatEnum]
+    minLength: Optional[int]
+    maxLength: Optional[int]
 
     @property
     def gob_type(self):
@@ -38,6 +40,8 @@ class StringProperty(Property):
             return "GOB.Date"
         elif self.format == StringFormatEnum.datetime:
             return "GOB.DateTime"
+        elif self.maxLength == 1:
+            return "GOB.Character"
 
         return "GOB.String"
 
@@ -48,9 +52,7 @@ class NumberProperty(Property):
 
     @property
     def gob_type(self):
-        if self.multipleOf:
-            return "GOB.Decimal"
-        raise NotImplementedError()
+        return "GOB.Decimal"
 
 
 class IntegerProperty(Property):
