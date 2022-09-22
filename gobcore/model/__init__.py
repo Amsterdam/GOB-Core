@@ -66,13 +66,16 @@ class GOBModel(UserDict):
 
         # Proces data.
         self._load_schemas(data)
+        # Temporary assignements for GOBModel class and instance .data and ._data
+        # just to maintain backwards compatibility.
+        # GOBModel (instance) will be a singleton in the next fase (1c).
         GOBModel.data = data
+        GOBModel._data = data
         self._init_data()
 
         # UserDict data.
         super().__init__(data)
-        GOBModel._data = data
-        # Fix instance data.
+        # Reset instance .data. UserDict .data is a copy of data (initialdata).
         self.data = data
 
     def _init_data(self):
