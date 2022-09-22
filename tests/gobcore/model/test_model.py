@@ -143,6 +143,9 @@ class TestModel(TestCase):
         self.assertEqual("idvalue.1", self.model.get_source_id(entity, spec))
         self.model.has_states.assert_called_with('meetbouten', 'meetbouten')
 
+    def test_has_states_catalog_keyerror(self):
+        self.assertFalse(self.model.has_states('nonexistingcatalog', 'collection'))
+
     def test_source_id_states_other_seqnr_field(self):
         self.model.has_states = MagicMock(return_value=True)
 
