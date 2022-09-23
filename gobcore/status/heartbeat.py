@@ -15,7 +15,7 @@ import datetime
 import threading
 import socket
 import os
-from typing import Union, Optional
+from typing import Union
 
 from gobcore.message_broker import AsyncConnection
 from gobcore.message_broker.config import STATUS_EXCHANGE, HEARTBEAT_KEY, PROGRESS_KEY
@@ -65,10 +65,9 @@ class Heartbeat:
         :param connection: The message broker connection
         :param service: The definition of the service that delivered the message
         :param msg: The message being processed
-        :param status: The status to report (STATUS_START, STATUS_OK or STATUS_FAIL)
         :return: None
         """
-        def _publish_progress(status: Status, info_msg: str = None):
+        def _publish_progress(status: JobStatus, info_msg: str = None):
             if service.get("report") and msg.get("header"):
                 jobid = msg["header"].get("jobid")
                 stepid = msg["header"].get("stepid")

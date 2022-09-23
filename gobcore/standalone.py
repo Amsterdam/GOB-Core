@@ -1,12 +1,11 @@
 import argparse
 import json
-from gobcore.logging.logger import logger, StdoutHandler
 from pathlib import Path
 from typing import Dict, Any, Tuple
 
-from gobcore.message_broker.typing import ServiceDefinition
-from gobcore.utils import get_logger_name
+from gobcore.logging.logger import logger, StdoutHandler
 from gobcore.message_broker.offline_contents import offload_message, load_message
+from gobcore.message_broker.typing import ServiceDefinition
 from gobcore.message_broker.utils import to_json, from_json
 from gobcore.utils import get_logger_name
 

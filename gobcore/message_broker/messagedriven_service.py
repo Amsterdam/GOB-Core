@@ -1,12 +1,10 @@
 import sys
-import time
 import threading
-from typing import Callable, Dict, Any, Optional
+import time
+from typing import Any, Optional
 
 from gobcore.logging.logger import logger, StdoutHandler, RequestsHandler
 from gobcore.message_broker.async_message_broker import AsyncConnection
-from gobcore.message_broker.typing import Service, ServiceDefinition
-from gobcore.status.heartbeat import Heartbeat, HEARTBEAT_INTERVAL, STATUS_OK, STATUS_START, STATUS_FAIL
 from gobcore.message_broker.config import CONNECTION_PARAMS
 from gobcore.message_broker.initialise_queues import initialize_message_broker
 from gobcore.message_broker.notifications import contains_notification, send_notification
