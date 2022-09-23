@@ -233,7 +233,7 @@ class GOBModel(UserDict):
         :return: True if the collection has states
         """
         try:
-            collection = self[catalog_name]['collections'].get(collection_name)
+            collection = self[catalog_name]['collections'][collection_name]
             return collection.get("has_states") is True
         except KeyError:
             return False
