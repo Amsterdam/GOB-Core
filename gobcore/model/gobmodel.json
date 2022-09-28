@@ -437,9 +437,13 @@
             "description": "Unieke identificatie van de meetbout"
           },
           "nabij_nummeraanduiding": {
-            "type": "GOB.Reference",
+            "type": "GOB.JSON",
             "description": "Een adres in de nabijheid van de meetbout",
-            "ref": "bag:nummeraanduidingen"
+            "attributes": {
+              "bronwaarde": {
+                "type": "GOB.String"
+              }
+            }
           },
           "locatie": {
             "type": "GOB.String",
@@ -622,9 +626,13 @@
             "description": "Unieke identificatie van de meting"
           },
           "nabij_nummeraanduiding": {
-            "type": "GOB.Reference",
+            "type": "GOB.JSON",
             "description": "Een adres in de nabijheid van het referentiepunt",
-            "ref": "bag:nummeraanduidingen"
+            "attributes": {
+              "bronwaarde": {
+                "type": "GOB.String"
+              }
+            }
           },
           "locatie": {
             "type": "GOB.String",
