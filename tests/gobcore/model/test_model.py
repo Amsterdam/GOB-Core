@@ -1,5 +1,5 @@
 from unittest import TestCase
-from unittest.mock import MagicMock, patch
+from unittest.mock import Mock, MagicMock, patch
 from typing import ItemsView, KeysView
 import copy
 
@@ -14,32 +14,34 @@ class TestModel(TestCase):
         self.model = GOBModel()
 
     def test_fail_on_different_legacy_value(self):
-        with self.assertRaisesRegex(Exception, "Tried to initialise model with different legacy setting"):
+        with self.assertRaisesRegex(
+                Exception, "Tried to initialise model with different legacy setting"):
             GOBModel(legacy=True)
 
-    def test_get_catalog_names(self):
-        self.assertIn('meetbouten', self.model.get_catalog_names())
+    def test_contains(self):
+        self.assertIn('meetbouten', self.model)
 
-    def test_get_catalogs(self):
-        catalogs = self.model.get_catalogs()
-        self.assertIsInstance(catalogs.items(), type({}.items()))
+    def test_items_and_keys(self):
         self.assertIsInstance(self.model.items(), ItemsView)
         self.assertIsInstance(self.model.keys(), KeysView)
-        self.assertIn('meetbouten', catalogs.keys())
+        self.assertIn('meetbouten', self.model.keys())
 
-    def test_get_collection_names(self):
-        self.assertIn('meetbouten', self.model.get_collection_names('meetbouten'))
+    def test_collections_contains(self):
+        self.assertIn('meetbouten', self.model['meetbouten']['collections'])
 
     def test_get_table_names(self):
         self.assertIn('meetbouten_meetbouten', self.model.get_table_names())
 
     def test_get_table_name(self):
-        self.assertEqual('meetbouten_meetbouten', self.model.get_table_name('meetbouten', 'meetbouten'))
+        self.assertEqual(
+            'meetbouten_meetbouten', self.model.get_table_name('meetbouten', 'meetbouten'))
 
     def test_get_reference_by_abbreviations(self):
         # Test lower and upper case
-        self.assertEqual('meetbouten:meetbouten', self.model.get_reference_by_abbreviations('mbn', 'mbt'))
-        self.assertEqual('meetbouten:meetbouten', self.model.get_reference_by_abbreviations('mbn', 'MBT'))
+        self.assertEqual(
+            'meetbouten:meetbouten', self.model.get_reference_by_abbreviations('mbn', 'mbt'))
+        self.assertEqual(
+            'meetbouten:meetbouten', self.model.get_reference_by_abbreviations('mbn', 'MBT'))
 
         # Test non existing abbreviation
         self.assertEqual(None, self.model.get_reference_by_abbreviations('xxx', 'xxx'))
@@ -47,7 +49,7 @@ class TestModel(TestCase):
     def test_legacy_attributes(self):
         GOBModel.legacy_mode = False
         model = GOBModel()
-        peilmerken = model.get_collection('nap', 'peilmerken')
+        peilmerken = model['nap']['collections']['peilmerken']
         self.assertTrue('legacy_attributes' in peilmerken)
 
         # Test legacy attributes not initialised
@@ -55,38 +57,45 @@ class TestModel(TestCase):
         self.assertFalse('ligt_in_bouwblok' in peilmerken['all_fields'])
         self.assertTrue('ligt_in_gebieden_bouwblok' in peilmerken['attributes'])
         self.assertFalse('ligt_in_bouwblok' in peilmerken['attributes'])
-        self.assertFalse(all([key in peilmerken['all_fields'] for key in peilmerken['legacy_attributes']]))
-        self.assertFalse(all([key in peilmerken['attributes'] for key in peilmerken['legacy_attributes']]))
+        self.assertFalse(
+            all(key in peilmerken['all_fields'] for key in peilmerken['legacy_attributes']))
+        self.assertFalse(
+            all(key in peilmerken['attributes'] for key in peilmerken['legacy_attributes']))
 
         # Check that relations are build based on the correct set of attributes
         self.assertTrue('ligt_in_gebieden_bouwblok' in peilmerken['references'])
         self.assertFalse('ligt_in_bouwblok' in peilmerken['references'])
 
         # And we have created the correct relation tables
-        self.assertIsNone(model.get_collection('rel', 'nap_pmk_gbd_bbk_ligt_in_bouwblok'))
-        self.assertIsNotNone(model.get_collection('rel', 'nap_pmk_gbd_bbk_ligt_in_gebieden_bouwblok'))
+        with self.assertRaises(KeyError):
+            _ = model['rel']['collections']['nap_pmk_gbd_bbk_ligt_in_bouwblok']
+        self.assertIsNotNone(
+            model['rel']['collections']['nap_pmk_gbd_bbk_ligt_in_gebieden_bouwblok'])
 
         # Reset so we can make it legacy mode
         GOBModel.legacy_mode = True
         GOBModel._data = None
+        model = GOBModel(True)
 
         # Test legacy attributes are initialised
-        model = GOBModel(True)
-        peilmerken = model.get_collection('nap', 'peilmerken')
+        peilmerken = model['nap']['collections']['peilmerken']
         self.assertFalse('ligt_in_gebieden_bouwblok' in peilmerken['all_fields'])
         self.assertTrue('ligt_in_bouwblok' in peilmerken['all_fields'])
         self.assertFalse('ligt_in_gebieden_bouwblok' in peilmerken['attributes'])
         self.assertTrue('ligt_in_bouwblok' in peilmerken['attributes'])
-        self.assertTrue(all([key in peilmerken['all_fields'] for key in peilmerken['legacy_attributes']]))
-        self.assertTrue(all([key in peilmerken['attributes'] for key in peilmerken['legacy_attributes']]))
+        self.assertTrue(
+            all(key in peilmerken['all_fields'] for key in peilmerken['legacy_attributes']))
+        self.assertTrue(
+            all(key in peilmerken['attributes'] for key in peilmerken['legacy_attributes']))
 
         # Check that relations are build based on the correct set of attributes
         self.assertFalse('ligt_in_gebieden_bouwblok' in peilmerken['references'])
         self.assertTrue('ligt_in_bouwblok' in peilmerken['references'])
 
         # And we have created the correct relation tables
-        self.assertIsNotNone(model.get_collection('rel', 'nap_pmk_gbd_bbk_ligt_in_bouwblok'))
-        self.assertIsNone(model.get_collection('rel', 'nap_pmk_gbd_bbk_ligt_in_gebieden_bouwblok'))
+        self.assertIsNotNone(model['rel']['collections']['nap_pmk_gbd_bbk_ligt_in_bouwblok'])
+        with self.assertRaises(KeyError):
+            _ = model['rel']['collections']['nap_pmk_gbd_bbk_ligt_in_gebieden_bouwblok']
 
         # Reset
         GOBModel.legacy_mode = False
@@ -100,10 +109,12 @@ class TestModel(TestCase):
 
         # Prepare object. Remove legacy_attributes
         data = model.data
-        data['nap']['collections']['peilmerken']['attributes'] = data['nap']['collections']['peilmerken']['legacy_attributes']
+        data['nap']['collections']['peilmerken']['attributes'] = data[
+            'nap']['collections']['peilmerken']['legacy_attributes']
         del data['nap']['collections']['peilmerken']['legacy_attributes']
 
-        with self.assertRaisesRegex(GOBException, "Expected 'legacy_attributes' to be defined for nap peilmerken"):
+        with self.assertRaisesRegex(
+                GOBException, "Expected 'legacy_attributes' to be defined for nap peilmerken"):
             model._init_catalog(data['nap'])
 
         # Reset
@@ -126,7 +137,8 @@ class TestModel(TestCase):
         self.assertEqual(source_id, 'idvalue')
 
     def test_source_id_states(self):
-        self.model.has_states = MagicMock(return_value=True)
+        self.model.has_states = Mock(
+            spec=self.model.has_states, name="has_states", return_value=True)
 
         entity = {
             'idfield': 'idvalue',
@@ -147,7 +159,8 @@ class TestModel(TestCase):
         self.assertFalse(self.model.has_states('nonexistingcatalog', 'collection'))
 
     def test_source_id_states_other_seqnr_field(self):
-        self.model.has_states = MagicMock(return_value=True)
+        self.model.has_states = Mock(
+            spec=self.model.has_states, name="has_states", return_value=True)
 
         entity = {
             'idfield': 'idvalue',
@@ -173,7 +186,8 @@ class TestModel(TestCase):
         self.assertEqual("abc_def", self.model.get_table_name_from_ref("abc:def"))
 
     def test_get_table_name_from_ref_error(self):
-        self.model.split_ref = MagicMock(side_effect=GOBException)
+        self.model.split_ref = Mock(
+            spec=self.model.split_ref, name="split_ref", side_effect=GOBException)
 
         with self.assertRaises(GOBException):
             self.model.get_table_name_from_ref("something_invalid")
@@ -191,10 +205,11 @@ class TestModel(TestCase):
                 self.model.split_ref(testcase)
 
     def test_get_collection_from_ref(self):
-        collections = MagicMock()
+        collections = MagicMock(spec_set=dict, name="collections")
         collections.__getitem__.return_value = {"fake": "collection"}
         self.model.data = {'some': {'collections': collections}}
-        self.model.split_ref = MagicMock(return_value=("some", "reference"))
+        self.model.split_ref = Mock(
+            spec=self.model.split_ref, name="split_ref", return_value=("some", "reference"))
 
         result = self.model.get_collection_from_ref("some:reference")
 
@@ -285,7 +300,7 @@ class TestModel(TestCase):
 
     def test_catalog_collection_names_from_ref(self):
         model = GOBModel()
-        model.split_ref = MagicMock()
+        model.split_ref = Mock(spec=model.split_ref, name="split_ref")
         ref = random_string()
         result = model.get_catalog_collection_names_from_ref(ref)
         model.split_ref.assert_called_with(ref)
@@ -295,8 +310,8 @@ class TestModel(TestCase):
     def test_test_catalog_deleted(self):
         # Reinitialise
         GOBModel._data = None
-
         model = GOBModel()
+
         self.assertFalse('test_catalogue' in model.data)
 
         # Cleanup
@@ -308,7 +323,8 @@ class TestModel(TestCase):
 
     @patch('gobcore.model.load_schema')
     def test_load_schemas(self, mock_load_schema):
-        mock_load_schema.return_value = {'attributes': {}, 'version': '1.0', 'entity_id': 'some_attribute'}
+        mock_load_schema.return_value = {
+            'attributes': {}, 'version': '1.0', 'entity_id': 'some_attribute'}
         model = GOBModel()
         model.data = {
             'cat_a': {
@@ -409,19 +425,19 @@ class TestModel(TestCase):
 
     def test_collections_no_underscore(self):
         ignore_catalogs = {'test_catalogue', 'qa', 'rel'}
-        catalogs = [cat for cat in self.model.get_catalog_names() if cat not in ignore_catalogs]
+        catalogs = [cat for cat in self.model if cat not in ignore_catalogs]
 
         for cat in catalogs:
-            for collection in self.model.get_collection_names(cat):
+            for collection in self.model[cat]['collections']:
                 self.assertNotIn('_', collection)
 
     def test_reference_no_underscore(self):
         ignore_catalogs = {'test_catalogue', 'qa', 'rel'}
-        catalogs = [cat for cat in self.model.get_catalog_names() if cat not in ignore_catalogs]
+        catalogs = [cat for cat in self.model if cat not in ignore_catalogs]
 
         for cat in catalogs:
-            for collection in self.model.get_collections(cat):
-                refs = self.model.get_collection(cat, collection)['references']
+            for collection in self.model[cat]['collections']:
+                refs = self.model[cat]['collections'][collection]['references']
 
                 for attr, ref in refs.items():
                     self.assertNotIn('_', ref['ref'], msg=f"{cat}.{collection}.{attr}")
