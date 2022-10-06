@@ -1,6 +1,5 @@
 import os
 import copy
-import warnings
 from collections import UserDict
 
 from gobcore.exceptions import GOBException
@@ -12,11 +11,6 @@ from gobcore.model.pydantic import Schema
 from gobcore.model.relations import get_relations, get_inverse_relations
 from gobcore.model.quality import QUALITY_CATALOG, get_quality_assurances
 from gobcore.model.schema import load_schema
-
-
-def deprecation(message):
-    """Add a deprecation warning."""
-    warnings.warn(message, DeprecationWarning, stacklevel=3)
 
 
 class NotInModelException(Exception):
@@ -154,52 +148,6 @@ class GOBModel(UserDict):
         if not self.inverse_relations:
             self.inverse_relations = get_inverse_relations(self)
         return self.inverse_relations
-
-    def get_catalog_names(self):
-        """Deprecated. Use .keys()."""
-        deprecation("deprecated: use .keys()")
-        return self._data.keys()
-
-    def get_catalogs(self):
-        """Deprecated. Use self.data."""
-        deprecation("deprecated: use self.data")
-        return self._data
-
-    def get_catalog(self, catalog_name):
-        """Deprecated. Use gob_model[catalog_name] (.__getitem__) or .get(catalog_name)."""
-        deprecation("deprecated: use gob_model[catalog_name] or gob_model.get(catalog_name)")
-        return self._data[catalog_name] if catalog_name in self._data else None
-
-    def get_collection_names(self, catalog_name):
-        """Deprecated. Use gob_model[catalog_name]['collections'].keys()."""
-        deprecation("deprecated: use gob_model[catalog_name]['collections'].keys()")
-        catalog = self.get_catalog(catalog_name)
-        return catalog['collections'].keys() if 'collections' in catalog else None
-
-    def get_collections(self, catalog_name):
-        """Deprecated.
-
-        Use:
-        * gob_model[catalog_name]['collections']
-        * if gob_model.get(catalog_name):
-              return gob_model[catalog_name].get('collections')
-        """
-        deprecation("deprecated: use gob_model[catalog_name]['collections'] or …")
-        catalog = self.get_catalog(catalog_name)
-        return catalog['collections'] if catalog and 'collections' in catalog else None
-
-    def get_collection(self, catalog_name, collection_name):
-        """Deprecated.
-
-        Use:
-          try:
-              return gob_model[catalog_name]['collections'][collection_name]
-          except KeyError:
-              return None
-        """
-        deprecation("deprecated: use gob_model[catalog_name]['collections'].get(collection_name) …")
-        collections = self.get_collections(catalog_name)
-        return collections[collection_name] if collections and collection_name in collections else None
 
     def get_collection_by_name(self, collection_name):
         """Finds collection only by name.

@@ -1,3 +1,6 @@
+"""GOBModel tests."""
+
+
 from unittest import TestCase
 from unittest.mock import Mock, MagicMock, patch
 from typing import ItemsView, KeysView
@@ -6,6 +9,42 @@ import copy
 from gobcore.exceptions import GOBException
 from gobcore.model import GOBModel, NoSuchCollectionException, NoSuchCatalogException, Schema
 from tests.gobcore.fixtures import random_string
+
+
+
+class TestUserDict(TestCase):
+    """GOBModel UserDict tests."""
+
+    def setUp(self):
+        self.gob_model = GOBModel()
+
+    def test_model_data(self):
+        """GOBModel data check."""
+        assert GOBModel._data is GOBModel.data is self.gob_model.data is self.gob_model._data
+
+    def test_model_catalogs(self):
+        """GOBModel catalog checks."""
+        # Catalog count.
+        self.assertEqual(len(self.gob_model), 13, msg="catalog count has changed")
+        # Catalog 'doesnotexist" should not exist.
+        self.assertIsNone(
+            self.gob_model.get('doesnotexist'), msg="Catalog 'doesnotexist' should not exist!")
+
+    def test_model_iter(self):
+        """GOBModel catalog and collection iteration checks."""
+        for catalog_name in self.gob_model:
+            # __getitem__
+            self.assertIs(self.gob_model[catalog_name], self.gob_model.get(catalog_name))
+            # __contains__
+            self.assertIn(catalog_name, self.gob_model)
+            #
+            # Catalog collection checks.
+            for collection in self.gob_model[catalog_name]['collections']:
+                # The number of collections should be more than 8!?
+                self.assertTrue(
+                    len(self.gob_model[catalog_name]['collections'][collection]) > 8,
+                    msg=f"Not enough collections for {catalog_name}!?"
+                )
 
 
 class TestModel(TestCase):
