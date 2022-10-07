@@ -1,10 +1,10 @@
-"""
-GOB Relations module
+"""GOB Relations module.
 
 Relations are automatically derived from the GOB Model specification.
 """
 
 from collections import defaultdict
+
 from gobcore.model.metadata import FIELD, DESCRIPTION
 from gobcore.model.name_compressor import NameCompressor
 from gobcore.exceptions import GOBException
@@ -24,7 +24,6 @@ def _get_relation(name):
     :param name: The name of the relation
     :return: The relation specification
     """
-
     return {
         "version": "0.1",
         "abbreviation": name,
@@ -89,13 +88,14 @@ def _get_relation(name):
 def _get_destination(model, dst_catalog_name, dst_collection_name):
     """Get the destination catalog and collection given their names.
 
-    :param model: GOBModel instance
+    :param model: GOBModel class/instance
     :param dst_catalog_name:
     :param dst_collection_name:
     :return:
     """
     try:
-        dst_catalog = model[dst_catalog_name]
+        # model.data covers GOBModel initialisation.
+        dst_catalog = model.data[dst_catalog_name]
         dst_collection = dst_catalog['collections'][dst_collection_name]
         return {
             "catalog": dst_catalog,
@@ -103,7 +103,8 @@ def _get_destination(model, dst_catalog_name, dst_collection_name):
             "collection": dst_collection,
             "collection_name": dst_collection_name
         }
-    except (TypeError, KeyError):
+    # hr.nietnatuurlijkepersonen, hr.rechtspersoon
+    except KeyError:
         return None
 
 
@@ -121,7 +122,9 @@ def _get_relation_name(src, dst, reference_name):
                 f"{dst['catalog']['abbreviation']}_{dst['collection']['abbreviation']}_" +
                 f"{reference_name}").lower()
         return NameCompressor.compress_name(name)
-    except (TypeError, KeyError):
+    # brk.kadastralesubjecten.heeft_rsin_voor => hr.nietnatuurlijkepersonen
+    # hr.sbiactiviteiten.heeft_als_rechtspersoon => hr.rechtspersoon
+    except TypeError:
         return None
 
 
@@ -176,9 +179,9 @@ def get_relation_name(model, catalog_name, collection_name, reference_name):
 
 
 def get_relations(model):
-    """Get the relation specs for all references within the GOB model.
+    """Get the relation specs for all references within GOBModel data.
 
-    :param model: The GOBModel instance
+    :param model: GOBModel class
     :return: The relation specifications
     """
     global _startup
@@ -188,7 +191,8 @@ def get_relations(model):
         "description": "GOB Relations",
         "collections": {}
     }
-    for src_catalog_name, src_catalog in model.items():
+    # model.data covers GOBModel initialisation.
+    for src_catalog_name, src_catalog in model.data.items():
         for src_collection_name, src_collection in src_catalog['collections'].items():
             references = model._extract_references(src_collection['attributes'])
             for reference_name, reference in references.items():
@@ -215,8 +219,10 @@ def get_relations(model):
 
 
 def get_fieldnames_for_missing_relations(model):
-    """Returns the field names in a catalog -> collection -> [fieldnames] dict for which no relation is defined,
-    for example in case a collection is referenced that doesn't exist yet.
+    """Add missing references.
+
+    Returns the field names in a catalog -> collection -> [fieldnames] dict for which no relation
+    is defined, for example in case a collection is referenced that doesn't exist yet.
 
     :param model: The GOBModel instance
     :return:
@@ -284,8 +290,7 @@ def get_inverse_relations(model):
 
 
 def get_relations_for_collection(model, catalog_name, collection_name):
-    """
-    Return a dictionary with all relations and the table_name for a specified collection
+    """Return a dictionary with all relations and the table_name for a specified collection.
 
     :param model: The GOBModel instance
     :param catalog_name:
@@ -300,8 +305,7 @@ def get_relations_for_collection(model, catalog_name, collection_name):
 
 
 def create_relation(src, validity, dst, derivation):
-    """
-    Create a relation for the given specification items
+    """Create a relation for the given specification items.
 
     :param src:
     :param validity:

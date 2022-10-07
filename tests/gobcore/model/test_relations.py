@@ -4,7 +4,6 @@ from unittest import mock
 from gobcore.model.relations import _get_relation, _get_relation_name, get_relation_name, get_relations, \
     create_relation, get_inverse_relations, get_fieldnames_for_missing_relations, split_relation_table_name, \
     get_reference_name_from_relation_table_name, _get_destination, get_relations_for_collection
-from gobcore.model.name_compressor import NameCompressor
 from gobcore.model import GOBModel
 from gobcore.exceptions import GOBException
 
@@ -82,8 +81,9 @@ class TestRelations(unittest.TestCase):
 
     @mock.patch('gobcore.model.relations._get_relation_name')
     def test_relations(self, mock_get_relation_name):
-        model = mock.MagicMock()
-        relations = get_relations(model)
+        mock_model = mock.MagicMock(spec_set=GOBModel)
+
+        relations = get_relations(mock_model)
         expect = {
             'version': '0.1',
             'abbreviation': 'REL',
@@ -104,14 +104,14 @@ class TestRelations(unittest.TestCase):
                 }
             }
         }
-        model.items.return_value = data.items()
-        model._extract_references.return_value = {
+        mock_model.data.items.return_value = data.items()
+        mock_model._extract_references.return_value = {
             "reference": {
                 "type": "GOB.Reference",
                 "ref": "dst_cat:dst_col"
             }
         }
-        relations = get_relations(model)
+        relations = get_relations(mock_model)
         self.assertIsNotNone(relations['collections']['name'])
         self.assertEqual(len(relations['collections'].items()), 1)
 
@@ -308,16 +308,11 @@ class TestRelations(unittest.TestCase):
             self.assertEqual(expected_result, result)
 
     def test_get_destination_errors(self):
-        model = mock.MagicMock()
+        mock_model = mock.MagicMock(spec_set=GOBModel)
 
-        # dst_catalog = model[dst_catalog_name]
-        model.__getitem__.side_effect = KeyError
-        self.assertIsNone(_get_destination(model, 'cat', 'coll'))
-
-        # dst_catalog = model[dst_catalog_name]
-        model.__getitem__.side_effect = TypeError
-        self.assertIsNone(_get_destination(model, 'cat', 'coll'))
-        model.__getitem__.side_effect = None
+        # dst_catalog = model.data[dst_catalog_name]
+        mock_model.data.__getitem__.side_effect = KeyError
+        self.assertIsNone(_get_destination(mock_model, 'cat', 'coll'))
 
     def test_get_relations_for_collection(self):
         model = {

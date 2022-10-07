@@ -1,6 +1,5 @@
 """GOBModel tests."""
 
-
 from unittest import TestCase
 from unittest.mock import Mock, MagicMock, patch
 from typing import ItemsView, KeysView
@@ -20,7 +19,7 @@ class TestUserDict(TestCase):
 
     def test_model_data(self):
         """GOBModel data check."""
-        assert GOBModel._data is GOBModel.data is self.gob_model.data is self.gob_model._data
+        self.assertIs(GOBModel.data, self.gob_model.data)
 
     def test_model_catalogs(self):
         """GOBModel catalog checks."""
@@ -113,7 +112,7 @@ class TestModel(TestCase):
 
         # Reset so we can make it legacy mode
         GOBModel.legacy_mode = True
-        GOBModel._data = None
+        GOBModel.data = None
         model = GOBModel(True)
 
         # Test legacy attributes are initialised
@@ -138,12 +137,12 @@ class TestModel(TestCase):
 
         # Reset
         GOBModel.legacy_mode = False
-        GOBModel._data = None
+        GOBModel.data = None
         model = GOBModel()
 
     def test_init_legacy_attributes_not_set_for_schema(self):
         GOBModel.legacy_mode = True
-        GOBModel._data = None
+        GOBModel.data = None
         model = GOBModel(True)
 
         # Prepare object. Remove legacy_attributes
@@ -158,7 +157,7 @@ class TestModel(TestCase):
 
         # Reset
         GOBModel.legacy_mode = False
-        GOBModel._data = None
+        GOBModel.data = None
         model = GOBModel()
 
     def test_source_id(self):
@@ -177,7 +176,7 @@ class TestModel(TestCase):
 
     def test_source_id_states(self):
         self.model.has_states = Mock(
-            spec=self.model.has_states, name="has_states", return_value=True)
+            spec=GOBModel.has_states, name="has_states", return_value=True)
 
         entity = {
             'idfield': 'idvalue',
@@ -348,13 +347,13 @@ class TestModel(TestCase):
     @patch("gobcore.model.os.getenv", lambda x: x == 'DISABLE_TEST_CATALOGUE')
     def test_test_catalog_deleted(self):
         # Reinitialise
-        GOBModel._data = None
+        GOBModel.data = None
         model = GOBModel()
 
         self.assertFalse('test_catalogue' in model.data)
 
         # Cleanup
-        GOBModel._data = None
+        GOBModel.data = None
 
     def test_test_catalog_present(self):
         model = GOBModel()
