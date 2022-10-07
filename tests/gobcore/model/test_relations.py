@@ -10,9 +10,6 @@ from gobcore.exceptions import GOBException
 
 class TestRelations(unittest.TestCase):
 
-    def setUp(self):
-        pass
-
     def test_relation(self):
         global_attributes = ['id', 'derivation', 'bronwaarde']
         src_attributes = ['src_id', 'src_source', 'src_volgnummer']
@@ -78,6 +75,9 @@ class TestRelations(unittest.TestCase):
         name = get_relation_name(model, "catalog", "collection", "reference")
         expect = 'cat_col_cat_col_reference'
         self.assertEqual(name, expect)
+
+        # Reset GOBModel data
+        GOBModel._initialised = False
 
     @mock.patch('gobcore.model.relations._get_relation_name')
     def test_relations(self, mock_get_relation_name):
@@ -308,7 +308,9 @@ class TestRelations(unittest.TestCase):
             self.assertEqual(expected_result, result)
 
     def test_get_destination_errors(self):
-        mock_model = mock.MagicMock(spec_set=GOBModel)
+        # Cover GOBModel initialisation.
+        mock_model = mock.MagicMock(spec=GOBModel)
+        mock_model.data = mock.MagicMock(spec_set=dict)
 
         # dst_catalog = model.data[dst_catalog_name]
         mock_model.data.__getitem__.side_effect = KeyError
@@ -358,3 +360,6 @@ class TestRelations(unittest.TestCase):
 
         result = get_relations_for_collection(gobmodel, 'cat', 'entity')
         self.assertEqual(expected_result, result)
+
+        # Reset GOBModel data
+        GOBModel._initialised = False

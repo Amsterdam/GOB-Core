@@ -47,9 +47,14 @@ class TestUserDict(TestCase):
 
 
 class TestModel(TestCase):
+    """GOBModel non legacy mode tests."""
 
     def setUp(self):
         self.model = GOBModel()
+
+    def test_singleton(self):
+        gob_model = GOBModel()
+        self.assertIs(self.model, gob_model)
 
     def test_fail_on_different_legacy_value(self):
         with self.assertRaisesRegex(
@@ -65,6 +70,7 @@ class TestModel(TestCase):
         self.assertIn('meetbouten', self.model.keys())
 
     def test_collections_contains(self):
+        self.assertIn('collections', self.model['meetbouten'])
         self.assertIn('meetbouten', self.model['meetbouten']['collections'])
 
     def test_get_table_names(self):
@@ -85,9 +91,7 @@ class TestModel(TestCase):
         self.assertEqual(None, self.model.get_reference_by_abbreviations('xxx', 'xxx'))
 
     def test_legacy_attributes(self):
-        GOBModel.legacy_mode = False
-        model = GOBModel()
-        peilmerken = model['nap']['collections']['peilmerken']
+        peilmerken = self.model['nap']['collections']['peilmerken']
         self.assertTrue('legacy_attributes' in peilmerken)
 
         # Test legacy attributes not initialised
@@ -106,17 +110,16 @@ class TestModel(TestCase):
 
         # And we have created the correct relation tables
         with self.assertRaises(KeyError):
-            _ = model['rel']['collections']['nap_pmk_gbd_bbk_ligt_in_bouwblok']
+            _ = self.model['rel']['collections']['nap_pmk_gbd_bbk_ligt_in_bouwblok']
         self.assertIsNotNone(
-            model['rel']['collections']['nap_pmk_gbd_bbk_ligt_in_gebieden_bouwblok'])
+            self.model['rel']['collections']['nap_pmk_gbd_bbk_ligt_in_gebieden_bouwblok'])
 
-        # Reset so we can make it legacy mode
-        GOBModel.legacy_mode = True
-        GOBModel.data = None
-        model = GOBModel(True)
+        # Reset GOBModel so we can make it legacy mode
+        GOBModel._initialised = False
+        self.model = GOBModel(True)
 
         # Test legacy attributes are initialised
-        peilmerken = model['nap']['collections']['peilmerken']
+        peilmerken = self.model['nap']['collections']['peilmerken']
         self.assertFalse('ligt_in_gebieden_bouwblok' in peilmerken['all_fields'])
         self.assertTrue('ligt_in_bouwblok' in peilmerken['all_fields'])
         self.assertFalse('ligt_in_gebieden_bouwblok' in peilmerken['attributes'])
@@ -131,34 +134,12 @@ class TestModel(TestCase):
         self.assertTrue('ligt_in_bouwblok' in peilmerken['references'])
 
         # And we have created the correct relation tables
-        self.assertIsNotNone(model['rel']['collections']['nap_pmk_gbd_bbk_ligt_in_bouwblok'])
+        self.assertIsNotNone(self.model['rel']['collections']['nap_pmk_gbd_bbk_ligt_in_bouwblok'])
         with self.assertRaises(KeyError):
-            _ = model['rel']['collections']['nap_pmk_gbd_bbk_ligt_in_gebieden_bouwblok']
+            _ = self.model['rel']['collections']['nap_pmk_gbd_bbk_ligt_in_gebieden_bouwblok']
 
-        # Reset
-        GOBModel.legacy_mode = False
-        GOBModel.data = None
-        model = GOBModel()
-
-    def test_init_legacy_attributes_not_set_for_schema(self):
-        GOBModel.legacy_mode = True
-        GOBModel.data = None
-        model = GOBModel(True)
-
-        # Prepare object. Remove legacy_attributes
-        data = model.data
-        data['nap']['collections']['peilmerken']['attributes'] = data[
-            'nap']['collections']['peilmerken']['legacy_attributes']
-        del data['nap']['collections']['peilmerken']['legacy_attributes']
-
-        with self.assertRaisesRegex(
-                GOBException, "Expected 'legacy_attributes' to be defined for nap peilmerken"):
-            model._init_catalog(data['nap'])
-
-        # Reset
-        GOBModel.legacy_mode = False
-        GOBModel.data = None
-        model = GOBModel()
+        # Reset GOBModel for further testing
+        GOBModel._initialised = False
 
     def test_source_id(self):
         entity = {
@@ -176,7 +157,7 @@ class TestModel(TestCase):
 
     def test_source_id_states(self):
         self.model.has_states = Mock(
-            spec=GOBModel.has_states, name="has_states", return_value=True)
+            spec_set=GOBModel.has_states, name="has_states", return_value=True)
 
         entity = {
             'idfield': 'idvalue',
@@ -198,7 +179,7 @@ class TestModel(TestCase):
 
     def test_source_id_states_other_seqnr_field(self):
         self.model.has_states = Mock(
-            spec=self.model.has_states, name="has_states", return_value=True)
+            spec_set=GOBModel.has_states, name="has_states", return_value=True)
 
         entity = {
             'idfield': 'idvalue',
@@ -224,9 +205,6 @@ class TestModel(TestCase):
         self.assertEqual("abc_def", self.model.get_table_name_from_ref("abc:def"))
 
     def test_get_table_name_from_ref_error(self):
-        self.model.split_ref = Mock(
-            spec=self.model.split_ref, name="split_ref", side_effect=GOBException)
-
         with self.assertRaises(GOBException):
             self.model.get_table_name_from_ref("something_invalid")
 
@@ -247,7 +225,7 @@ class TestModel(TestCase):
         collections.__getitem__.return_value = {"fake": "collection"}
         self.model.data = {'some': {'collections': collections}}
         self.model.split_ref = Mock(
-            spec=self.model.split_ref, name="split_ref", return_value=("some", "reference"))
+            spec_set=self.model.split_ref, name="split_ref", return_value=("some", "reference"))
 
         result = self.model.get_collection_from_ref("some:reference")
 
@@ -259,44 +237,43 @@ class TestModel(TestCase):
         result = self.model.get_collection_from_ref("some:reference")
         self.assertIsNone(result)
 
+        # Reset GOBModel data
+        GOBModel._initialised = False
+
     @patch("gobcore.model.get_inverse_relations")
     def test_get_inverse_relations(self, mock_get_inverse_relations):
-        model = GOBModel()
-        self.assertEqual(mock_get_inverse_relations.return_value, model.get_inverse_relations())
+        self.assertEqual(mock_get_inverse_relations.return_value, self.model.get_inverse_relations())
 
         # Call twice. Expect same result
-        self.assertEqual(mock_get_inverse_relations.return_value, model.get_inverse_relations())
+        self.assertEqual(mock_get_inverse_relations.return_value, self.model.get_inverse_relations())
         # But should only be evaluated once
         mock_get_inverse_relations.assert_called_once()
 
     def test_get_catalog_from_table_name(self):
-        model = GOBModel()
         testcases = [
             ('brk_something', 'brk'),
             ('brk_long_table_name', 'brk'),
         ]
 
         for arg, result in testcases:
-            self.assertEqual(result, model.get_catalog_from_table_name(arg))
+            self.assertEqual(result, self.model.get_catalog_from_table_name(arg))
 
         with self.assertRaisesRegex(GOBException, "Invalid table name"):
-            model.get_catalog_from_table_name('brk_')
+            self.model.get_catalog_from_table_name('brk_')
 
     def test_get_collection_from_table_name(self):
-        model = GOBModel()
         testcases = [
             ('brk_collection', 'collection'),
             ('brk_coll_lection', 'coll_lection'),
         ]
 
         for arg, result in testcases:
-            self.assertEqual(result, model.get_collection_from_table_name(arg))
+            self.assertEqual(result, self.model.get_collection_from_table_name(arg))
 
         with self.assertRaisesRegex(GOBException, "Invalid table name"):
-            model.get_collection_from_table_name('brk_')
+            self.model.get_collection_from_table_name('brk_')
 
     def test_split_table_name(self):
-        model = GOBModel()
         testcases = [
             'brk_',
             '_brk',
@@ -307,11 +284,10 @@ class TestModel(TestCase):
 
         for testcase in testcases:
             with self.assertRaisesRegex(GOBException, "Invalid table name"):
-                model._split_table_name(testcase)
+                self.model._split_table_name(testcase)
 
     def test_get_collection_by_name(self):
-        model = GOBModel()
-        model.data = {
+        self.model.data = {
             'cat_a': {
                 'collections': {
                     'coll_a': 'collection a',
@@ -326,45 +302,45 @@ class TestModel(TestCase):
         }
 
         # Success
-        res = model.get_collection_by_name('coll_b')
+        res = self.model.get_collection_by_name('coll_b')
         self.assertEqual(('cat_a', 'collection b'), res)
 
         # Not found
-        self.assertIsNone(model.get_collection_by_name('nonexistent'))
+        self.assertIsNone(self.model.get_collection_by_name('nonexistent'))
 
         # Multiple found
         with self.assertRaises(GOBException):
-            model.get_collection_by_name('coll_a')
+            self.model.get_collection_by_name('coll_a')
+
+        # Reset GOBModel data
+        GOBModel._initialised = False
 
     def test_catalog_collection_names_from_ref(self):
-        model = GOBModel()
-        model.split_ref = Mock(spec=model.split_ref, name="split_ref")
+        self.model.split_ref = Mock(spec_set=self.model.split_ref, name="split_ref")
         ref = random_string()
-        result = model.get_catalog_collection_names_from_ref(ref)
-        model.split_ref.assert_called_with(ref)
-        self.assertEqual(model.split_ref.return_value, result)
+        result = self.model.get_catalog_collection_names_from_ref(ref)
+        self.model.split_ref.assert_called_with(ref)
+        self.assertEqual(self.model.split_ref.return_value, result)
 
     @patch("gobcore.model.os.getenv", lambda x: x == 'DISABLE_TEST_CATALOGUE')
     def test_test_catalog_deleted(self):
-        # Reinitialise
-        GOBModel.data = None
+        # Reinitialise without test catalog
+        GOBModel._initialised = False
         model = GOBModel()
 
         self.assertFalse('test_catalogue' in model.data)
 
-        # Cleanup
-        GOBModel.data = None
+        # Reset GOBModel data
+        GOBModel._initialised = False
 
     def test_test_catalog_present(self):
-        model = GOBModel()
-        self.assertTrue('test_catalogue' in model.data)
+        self.assertTrue('test_catalogue' in self.model)
 
     @patch('gobcore.model.load_schema')
     def test_load_schemas(self, mock_load_schema):
         mock_load_schema.return_value = {
             'attributes': {}, 'version': '1.0', 'entity_id': 'some_attribute'}
-        model = GOBModel()
-        model.data = {
+        self.model.data = {
             'cat_a': {
                 'collections': {
                     'coll_a': {
@@ -385,7 +361,7 @@ class TestModel(TestCase):
                 }
             },
         }
-        expected = copy.deepcopy(model.data)
+        expected = copy.deepcopy(self.model.data)
         expected['cat_a']['collections']['coll_b'] = {
             'attributes': {},
             'version': '1.0',
@@ -399,14 +375,16 @@ class TestModel(TestCase):
                 'version': '1.0'
             },
         }
-        model._load_schemas(model.data)
-        self.assertEqual(expected, model.data)
+        self.model._load_schemas(self.model.data)
+        self.assertEqual(expected, self.model.data)
         mock_load_schema.assert_called_with(
             Schema(datasetId='the dataset', tableId='the table', version='1.0'))
 
+        # Reset GOBModel data
+        GOBModel._initialised = False
+
     def test_catalog_collection_from_abbr(self):
-        model = GOBModel()
-        model.data = {
+        self.model.data = {
             'cat_a': {
                 'abbreviation': 'ca',
                 'collections': {
@@ -437,17 +415,19 @@ class TestModel(TestCase):
         }, {
             'abbreviation': 'cob',
             'some other': 'data',
-        }), model.get_catalog_collection_from_abbr('ca', 'cob'))
+        }), self.model.get_catalog_collection_from_abbr('ca', 'cob'))
 
         with self.assertRaises(NoSuchCatalogException):
-            model.get_catalog_collection_from_abbr('cc', 'cob')
+            self.model.get_catalog_collection_from_abbr('cc', 'cob')
 
         with self.assertRaises(NoSuchCollectionException):
-            model.get_catalog_collection_from_abbr('ca', 'coc')
+            self.model.get_catalog_collection_from_abbr('ca', 'coc')
+
+        # Reset GOBModel data
+        GOBModel._initialised = False
 
     def test_catalog_from_abbr(self):
-        model = GOBModel()
-        model.data = {
+        self.model.data = {
             'cat_a': {
                 'abbreviation': 'ca',
                 'collections': {
@@ -456,10 +436,12 @@ class TestModel(TestCase):
             }
         }
 
-        self.assertEqual(model.data['cat_a'], model.get_catalog_from_abbr('ca'))
-
+        self.assertIs(self.model['cat_a'], self.model.get_catalog_from_abbr('ca'))
         with self.assertRaises(NoSuchCatalogException):
-            model.get_catalog_from_abbr('nonexistent')
+            self.model.get_catalog_from_abbr('nonexistent')
+
+        # Reset GOBModel data
+        GOBModel._initialised = False
 
     def test_collections_no_underscore(self):
         ignore_catalogs = {'test_catalogue', 'qa', 'rel'}
@@ -479,3 +461,40 @@ class TestModel(TestCase):
 
                 for attr, ref in refs.items():
                     self.assertNotIn('_', ref['ref'], msg=f"{cat}.{collection}.{attr}")
+
+
+class TestLegacyModel(TestCase):
+    """GOBModel legacy mode tests."""
+
+    @staticmethod
+    def setUpClass():
+        # Reset from TestModel
+        GOBModel._initialised = False
+
+    @staticmethod
+    def tearDownClass():
+        # Reset for further testing
+        GOBModel._initialised = False
+
+    def setUp(self):
+        self.model = GOBModel(True)
+
+    def test_singleton(self):
+        gob_model = GOBModel(True)
+        self.assertIs(self.model, gob_model)
+
+    def test_fail_on_different_legacy_value(self):
+        with self.assertRaisesRegex(
+                Exception, "Tried to initialise model with different legacy setting"):
+            GOBModel()
+
+    def test_init_legacy_attributes_not_set_for_schema(self):
+        # Prepare object. Remove legacy_attributes
+        data = self.model.data
+        data['nap']['collections']['peilmerken']['attributes'] = data[
+            'nap']['collections']['peilmerken']['legacy_attributes']
+        del data['nap']['collections']['peilmerken']['legacy_attributes']
+
+        with self.assertRaisesRegex(
+                GOBException, "Expected 'legacy_attributes' to be defined for nap peilmerken"):
+            self.model._init_catalog(data['nap'])

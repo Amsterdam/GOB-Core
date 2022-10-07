@@ -26,13 +26,7 @@ class NoSuchCollectionException(NotInModelException):
 
 
 class GOBModel(UserDict):
-    inverse_relations = None
-    data = None
-    legacy_mode = None
-
-    # Set and used to cache SQLAlchemy models by the SA layer.
-    # Use model.sa.gob.get_sqlalchemy_models() to retrieve/init.
-    sqlalchemy_models = None
+    _initialised = False
 
     global_attributes = {
         **PRIVATE_META_FIELDS,
@@ -40,31 +34,46 @@ class GOBModel(UserDict):
         **FIXED_FIELDS
     }
 
-    @classmethod
-    def __init__(cls, legacy=False):
-        if cls.data is not None:
-            if cls.legacy_mode is not None and cls.legacy_mode != legacy:
+    def __new__(cls, legacy=False):
+        """GOBModel (instance) singleton."""
+        if cls._initialised:
+            if cls.legacy_mode is not legacy:
                 raise Exception("Tried to initialise model with different legacy setting")
             # Model is already initialised
-            return
-        cls.legacy_mode = legacy
+        else:
+            # GOBModel singleton initialisation.
+            singleton = super().__new__(cls)
+            cls.legacy_mode = legacy
+            cls.inverse_relations = None
 
-        # UserDict (GOBModel classmethod).
-        super().__init__(cls)
+            # Set and used to cache SQLAlchemy models by the SA layer.
+            # Use model.sa.gob.get_sqlalchemy_models() to retrieve/init.
+            cls.sqlalchemy_models = None
 
-        cached_data = json_to_cached_dict(os.path.join(os.path.dirname(__file__), 'gobmodel.json'))
-        # Initialise GOBModel.data (leave cached_data untouched).
-        cls.data = copy.deepcopy(cached_data)
+            # UserDict (GOBModel classmethod).
+            super().__init__(cls)
 
-        if os.getenv('DISABLE_TEST_CATALOGUE'):
-            # Default is to include the test catalogue.
-            # By setting the DISABLE_TEST_CATALOGUE environment variable
-            # the test catalogue can be removed.
-            del cls.data["test_catalogue"]
+            cached_data = json_to_cached_dict(os.path.join(os.path.dirname(__file__), 'gobmodel.json'))
+            # Initialise GOBModel.data (leave cached_data untouched).
+            cls.data = copy.deepcopy(cached_data)
 
-        # Proces GOBModel.data.
-        cls._load_schemas(cls.data)
-        cls._init_data(cls.data)
+            if os.getenv('DISABLE_TEST_CATALOGUE'):
+                # Default is to include the test catalogue.
+                # By setting the DISABLE_TEST_CATALOGUE environment variable
+                # the test catalogue can be removed.
+                del cls.data["test_catalogue"]
+
+            # Proces GOBModel.data.
+            cls._load_schemas(cls.data)
+            cls._init_data(cls.data)
+
+            cls._initialised = True
+            cls.__instance = singleton
+        return cls.__instance
+
+    @classmethod
+    def __init__(cls, legacy=False):
+        pass
 
     @classmethod
     def _init_data(cls, data):
