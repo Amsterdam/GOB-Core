@@ -256,6 +256,19 @@ class Logger:
     def get_attribute(self, attribute):
         return self._default_args.get(attribute)
 
+    def update_default_args_from_msg(self, msg: dict):
+        if header := msg.get("header"):
+            self._default_args |= {
+                'process_id': header.get('process_id'),
+                'source': header.get('source'),
+                'destination': header.get('destination'),
+                'application': header.get('application'),
+                'catalogue': header.get('catalogue'),
+                'entity': header.get('entity', header.get('collection')),
+                'jobid': header.get('jobid'),
+                'stepid': header.get('stepid')
+            }
+
     def get_logger(self) -> logging.Logger:
         return logging.getLogger(self.name)
 
@@ -275,17 +288,9 @@ class Logger:
 
         self.messages.clear()
 
-        if header := msg.get("header", {}):
-            self._default_args = {
-                'process_id': header.get('process_id'),
-                'source': header.get('source'),
-                'destination': header.get('destination'),
-                'application': header.get('application'),
-                'catalogue': header.get('catalogue'),
-                'entity': header.get('entity', header.get('collection')),
-                'jobid': header.get('jobid'),
-                'stepid': header.get('stepid')
-            }
+        # Add default logging parameters like catalog, collection, source
+        # Required for writing logs to db and filtering in Iris
+        self.update_default_args_from_msg(msg)
 
     def _init_logger(self, handlers: list[logging.Handler]):
         new_logger = logging.getLogger(self.name)
