@@ -330,42 +330,42 @@
   "Grondslag": {
     "meetbouten": {
       "meetbouten": {
-        "ligt_in_bouwblok": {
+        "ligt_in_gebieden_bouwblok": {
           "method": "equals",
           "destination_attribute": "code"
         },
-        "ligt_in_buurt": {
+        "ligt_in_gebieden_buurt": {
           "method": "lies_in",
           "source_attribute": "geometrie",
           "destination_attribute": "geometrie"
         },
-        "ligt_in_stadsdeel": {
+        "ligt_in_gebieden_stadsdeel": {
           "method": "lies_in",
           "source_attribute": "geometrie",
           "destination_attribute": "geometrie"
         }
       },
       "metingen": {
-        "hoort_bij_meetbout": {
+        "hoort_bij_meetbouten_meetbout": {
           "method": "equals",
           "destination_attribute": "identificatie"
         },
-        "refereert_aan_referentiepunten": {
+        "refereert_aan_meetbouten_referentiepunten": {
           "method": "equals",
           "destination_attribute": "identificatie"
         }
       },
       "referentiepunten": {
-        "ligt_in_bouwblok": {
+        "ligt_in_gebieden_bouwblok": {
           "method": "equals",
           "destination_attribute": "code"
         },
-        "ligt_in_buurt": {
+        "ligt_in_gebieden_buurt": {
           "method": "lies_in",
           "source_attribute": "geometrie",
           "destination_attribute": "geometrie"
         },
-        "ligt_in_stadsdeel": {
+        "ligt_in_gebieden_stadsdeel": {
           "method": "lies_in",
           "source_attribute": "geometrie",
           "destination_attribute": "geometrie"
@@ -388,7 +388,7 @@
   "Basisinformatie": {
     "meetbouten": {
       "rollagen": {
-        "is_gemeten_van_bouwblok": {
+        "is_gemeten_van_gebieden_bouwblok": {
           "method": "equals",
           "destination_attribute": "code"
         }
