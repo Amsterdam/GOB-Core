@@ -123,6 +123,39 @@ class TestLogger(TestCase):
         self.assertEqual(result.output, [f"DATAERROR:{logger.name}:test"])
         self.assertEqual(logger._data_msg_count['data_error'], 1)
 
+    def test_update_default_args(self):
+        logger = Logger("Config logger")
+        msg = {
+            "header": {
+                'process_id': 'any process_id',
+                'source': 'any source',
+                'destination': 'any destination',
+                'application': 'any application',
+                'catalogue': 'any catalogue',
+                'entity': 'any entity'
+            },
+            "some": "other"
+        }
+        logger.update_default_args_from_msg(msg)
+
+        expected = {
+            'process_id': 'any process_id',
+            'source': 'any source',
+            'destination': 'any destination',
+            'application': 'any application',
+            'catalogue': 'any catalogue',
+            'entity': 'any entity',
+            'jobid': None,  # default value
+            'stepid': None  # default value
+        }
+        self.assertDictEqual(expected, logger._default_args)
+
+        # not updated case (no header key)
+        logger = Logger("Config logger")
+        msg = {"non-header-key": "other"}
+        logger.update_default_args_from_msg(msg)
+        self.assertEqual({}, logger._default_args)
+
     def test_configure(self):
         RequestsHandler.LOG_PUBLISHER = MagicMock(spec=LogPublisher)
         RequestsHandler.LOG_PUBLISHER.publish = MagicMock()
