@@ -3231,6 +3231,26 @@
       }
     }
   },
+  "brk2": {
+    "version": "0.1",
+    "description": "De Basisregistratie kadaster 2 (BRK2) bevat informatie over percelen, eigendom, hypotheken, beperkte rechten (zoals recht van erfpacht, opstal en vruchtgebruik) en leidingnetwerken. Daarnaast staan er kadastrale kaarten in met perceel, perceelnummer, oppervlakte, kadastrale grens en de grenzen van het rijk, de provincies en gemeenten.",
+    "abbreviation": "BRK2",
+    "collections": {
+      "kadastraleobjecten": {
+        "version": "0.1",
+        "abbreviation": "KOT",
+        "entity_id": "identificatie",
+        "has_states": true,
+        "schema": {
+          "datasetId": "brk2",
+          "tableId": "kadastraleobjecten",
+          "version": "1.0.0",
+          "entity_id": "identificatie"
+        },
+        "legacy_attributes": {}
+      }
+    }
+  },
   "wkpb": {
     "version": "0.1",
     "abbreviation": "WKPB",

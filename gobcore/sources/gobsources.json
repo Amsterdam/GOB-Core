@@ -915,6 +915,22 @@
         }
       }
     },
+    "brk2": {
+      "kadastraleobjecten": {
+        "heeft_een_relatie_met_verblijfsobject": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "is_ontstaan_uit_g_perceel": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "is_ontstaan_uit_kadastraalobject": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        }
+      }
+    },
     "woz": {
       "wozobjecten": {
         "bestaat_uit_wozdeelobjecten": {
