@@ -71,6 +71,7 @@ class GOBModel(UserDict):
             cls.__instance = singleton
         return cls.__instance
 
+    # Match __new__ parameters.
     @classmethod
     def __init__(cls, legacy=False):
         pass

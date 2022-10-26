@@ -94,7 +94,7 @@ def _get_destination(model, dst_catalog_name, dst_collection_name):
     :return:
     """
     try:
-        # model.data covers GOBModel initialisation.
+        # model.data covers GOBModel initialisation in __new__.
         dst_catalog = model.data[dst_catalog_name]
         dst_collection = dst_catalog['collections'][dst_collection_name]
         return {
@@ -103,7 +103,7 @@ def _get_destination(model, dst_catalog_name, dst_collection_name):
             "collection": dst_collection,
             "collection_name": dst_collection_name
         }
-    # hr.nietnatuurlijkepersonen, hr.rechtspersoon
+    # Not found relations; e.g. hr.nietnatuurlijkepersonen.
     except KeyError:
         return None
 
@@ -122,8 +122,7 @@ def _get_relation_name(src, dst, reference_name):
                 f"{dst['catalog']['abbreviation']}_{dst['collection']['abbreviation']}_" +
                 f"{reference_name}").lower()
         return NameCompressor.compress_name(name)
-    # brk.kadastralesubjecten.heeft_rsin_voor => hr.nietnatuurlijkepersonen
-    # hr.sbiactiviteiten.heeft_als_rechtspersoon => hr.rechtspersoon
+    # Not found relations; e.g. brk.kadastralesubjecten.heeft_rsin_voor => hr.nietnatuurlijkepersonen
     except TypeError:
         return None
 
@@ -191,7 +190,7 @@ def get_relations(model):
         "description": "GOB Relations",
         "collections": {}
     }
-    # model.data covers GOBModel initialisation.
+    # model.data covers GOBModel initialisation in __new__.
     for src_catalog_name, src_catalog in model.data.items():
         for src_collection_name, src_collection in src_catalog['collections'].items():
             references = model._extract_references(src_collection['attributes'])
