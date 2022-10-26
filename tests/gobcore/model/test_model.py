@@ -286,35 +286,6 @@ class TestModel(TestCase):
             with self.assertRaisesRegex(GOBException, "Invalid table name"):
                 self.model._split_table_name(testcase)
 
-    def test_get_collection_by_name(self):
-        self.model.data = {
-            'cat_a': {
-                'collections': {
-                    'coll_a': 'collection a',
-                    'coll_b': 'collection b'
-                }
-            },
-            'cat_b': {
-                'collections': {
-                    'coll_a': 'second collection a'
-                }
-            }
-        }
-
-        # Success
-        res = self.model.get_collection_by_name('coll_b')
-        self.assertEqual(('cat_a', 'collection b'), res)
-
-        # Not found
-        self.assertIsNone(self.model.get_collection_by_name('nonexistent'))
-
-        # Multiple found
-        with self.assertRaises(GOBException):
-            self.model.get_collection_by_name('coll_a')
-
-        # Reset GOBModel data
-        GOBModel._initialised = False
-
     def test_catalog_collection_names_from_ref(self):
         self.model.split_ref = Mock(spec_set=self.model.split_ref, name="split_ref")
         ref = random_string()

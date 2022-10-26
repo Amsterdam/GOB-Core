@@ -154,30 +154,6 @@ class GOBModel(UserDict):
             self.inverse_relations = get_inverse_relations(self)
         return self.inverse_relations
 
-    def get_collection_by_name(self, collection_name):
-        """Finds collection only by name.
-
-        Raises GOBException when multiple collections with collection_name are found.
-        Returns (catalog, collection) tuple when success.
-
-        :param collection_name:
-        :return:
-        """
-        collections = []
-        catalog = None
-
-        for catalog_name, catalog in self.items():
-            collection = catalog['collections'].get(collection_name)
-
-            if collection:
-                collections.append(collection)
-                collection_catalog_name = catalog_name
-
-        if len(collections) > 1:
-            raise GOBException(f"Multiple collections found with name {collection_name}")
-
-        return (collection_catalog_name, collections[0]) if collections else None
-
     @classmethod
     def has_states(cls, catalog_name, collection_name):
         """Tells if a collection has states.
