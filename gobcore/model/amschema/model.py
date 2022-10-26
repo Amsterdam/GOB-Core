@@ -69,7 +69,7 @@ class RefProperty(Property):
     refs_to_gob = {
         "https://geojson.org/schema/Point.json": "GOB.Geo.Point",
         "https://geojson.org/schema/Polygon.json": "GOB.Geo.Polygon",
-        "https://geojson.org/schema/Geometry.json": "GOB.Geo.Geometry",
+        "https://geojson.org/schema/LineString.json": "GOB.Geo.Geometry",
     }
 
     @property
