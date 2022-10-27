@@ -11,7 +11,7 @@ _CONVERSIONS = {
     "commerciele_vestiging": "comm_vstgng",
     "maatschappelijke_activiteit": "maatsch_act",
     "heeft_sbi_activiteiten": "heeft_sbi_act",
-    "refereert_aan": "rft_n"
+    "refereert_aan_meetbouten_referentiepunten": "meetbouten_refpnt_rft_aan"
 }
 
 
