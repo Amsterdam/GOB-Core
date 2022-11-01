@@ -1,13 +1,13 @@
 import json
 from unittest import TestCase
 from unittest.mock import patch
-
-from mock.mock import MagicMock
 from pathlib import Path
 
-from ...amschema_fixtures import get_dataset, get_table
+from mock.mock import MagicMock
+
 from gobcore.model import Schema
 from gobcore.model.amschema.repo import AMSchemaError, AMSchemaRepository
+from ...amschema_fixtures import get_dataset, get_table
 
 
 class TestAMSchemaRepository(TestCase):
@@ -41,6 +41,7 @@ class TestAMSchemaRepository(TestCase):
 
     @patch("gobcore.model.amschema.repo.requests")
     def test_download_dataset(self, mock_requests):
+        """Test remote (HTTP) AMS schema dataset."""
         with open(Path(__file__).parent.parent.parent.joinpath('amschema_fixtures/dataset.json')) as f:
             filecontents = f.read()
             mock_requests.get.return_value.json = lambda: json.loads(filecontents)
@@ -48,21 +49,24 @@ class TestAMSchemaRepository(TestCase):
         instance = AMSchemaRepository()
         dataset = get_dataset()
 
-        result = instance._download_dataset("download-location")
+        download_url = "https://download-location.tld/amsterdam-schema/master"
+        result = instance._download_dataset(download_url)
         self.assertEqual(result, dataset)
 
-        mock_requests.get.assert_called_with("download-location", timeout=5)
+        mock_requests.get.assert_called_with(download_url, timeout=5)
 
-    @patch("gobcore.model.amschema.repo.requests")
-    def test_download_table(self, mock_requests):
-        with open(Path(__file__).parent.parent.parent.joinpath('amschema_fixtures/table.json')) as f:
-            filecontents = f.read()
-            mock_requests.get.return_value.json = lambda: json.loads(filecontents)
+    @patch("gobcore.model.amschema.repo.json_to_cached_dict")
+    def test_local_table(self, mock_cached_dict):
+        """Test local AMS schema table."""
+        with Path(__file__).parent.parent.parent.joinpath(
+                'amschema_fixtures/table.json').open(encoding="utf-8") as json_file:
+            mock_cached_dict.return_value = json.load(json_file)
 
         instance = AMSchemaRepository()
         table = get_table()
 
-        result = instance._download_table("download-location")
+        local_path = "download-location/amsterdam-schema"
+        result = instance._download_table(local_path)
         self.assertEqual(result, table)
 
-        mock_requests.get.assert_called_with("download-location", timeout=5)
+        mock_cached_dict.assert_called_with(local_path)
