@@ -3248,6 +3248,31 @@
           "entity_id": "identificatie"
         },
         "legacy_attributes": {}
+      },
+      "zakelijkerechten": {
+        "version": "0.1",
+        "abbreviation": "ZRT",
+        "entity_id": "identificatie",
+        "has_states": true,
+        "schema": {
+          "datasetId": "brk2",
+          "tableId": "zakelijkerechten",
+          "version": "1.0.0",
+          "entity_id": "identificatie"
+        },
+        "legacy_attributes": {}
+      },
+      "tenaamstellingen": {
+        "version": "0.1",
+        "abbreviation": "TNG",
+        "entity_id": "identificatie",
+        "schema": {
+          "datasetId": "brk2",
+          "tableId": "tenaamstellingen",
+          "version": "1.0.0",
+          "entity_id": "identificatie"
+        },
+        "legacy_attributes": {}
       }
     }
   },
