@@ -3248,6 +3248,18 @@
           "entity_id": "identificatie"
         },
         "legacy_attributes": {}
+      },
+      "kadastralesubjecten": {
+        "version": "0.1",
+        "abbreviation": "SJT",
+        "entity_id": "identificatie",
+        "schema": {
+          "datasetId": "brk2",
+          "tableId": "kadastralesubjecten",
+          "version": "1.0.0",
+          "entity_id": "identificatie"
+        },
+        "legacy_attributes": {}
       }
     }
   },
