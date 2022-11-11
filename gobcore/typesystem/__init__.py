@@ -1,4 +1,4 @@
-"""GOB Data types
+"""GOB Data types.
 
 GOB data consists of entities with attributes, eg Meetbout = { identificatie, locatie, ... }
 The possible types for each attribute are defined in this module.
@@ -77,16 +77,15 @@ _gob_postgres_sql_types_list = [
 
 
 def enhance_type_info(type_info):
-    """
-    Enhance type info with gob types
+    """Enhance type info with gob types.
 
     For every type attribute a corresponding gob_type attribute is set
-    that contains the GOB type class
+    that contains the GOB type class.
 
     :param type_info:
     :return:
     """
-    if type_info.get("type"):
+    if type_info.get("type") and not isinstance(type_info["type"], dict):
         type_info["gob_type"] = get_gob_type(type_info["type"])
     for value in type_info.values():
         # Recurse into type info to add type info for each "type" attribute
