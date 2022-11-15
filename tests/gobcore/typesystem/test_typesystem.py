@@ -6,12 +6,12 @@ from gobcore.typesystem import enhance_type_info, get_gob_type_from_info
 
 
 class TestTypesystem(TestCase):
-   
+
     @patch('gobcore.typesystem.get_gob_type')
     def test_get_modifications(self, mock_get_gob_type):
         self.assertEqual([], get_modifications(None, 'data', 'model'), 'Should return empty list when model is None')
         self.assertEqual([], get_modifications('entity', None, 'model'), 'Should return empty list when data is None')
-        
+
         model = {
             'field1': {
                 'type': 'the type',
@@ -20,23 +20,23 @@ class TestTypesystem(TestCase):
                 'type': 'field2 type',
             }
         }
-        
+
         entity = type('MockEntity', (object,), {
             'field1': 'oldField1value',
             'field2': 'oldField2value',
         })
-        
+
         data = {
             'field1': 'newField1value',
             'field2': 'oldField2value',
         }
-        
+
         expected_result = [
             {'key': 'field1', 'old_value': 'oldField1value', 'new_value': 'newField1value'},
         ]
-        
+
         mock_get_gob_type.return_value.from_value = lambda x, **kwargs: x
-        
+
         self.assertEqual(expected_result, get_modifications(entity, data, model))
 
     @patch('gobcore.typesystem.get_gob_type')
@@ -69,7 +69,7 @@ class TestTypesystem(TestCase):
             'k2': type('MockGobType', (object,), {'to_value': 'k2value'}),
             'k3': type('MockGobType', (object,), {'to_value': 'k3value'}),
         }
-        
+
         self.assertEqual({
             'k1': 'k1value',
             'k2': 'k2value',
@@ -113,6 +113,16 @@ class TestTypesystem(TestCase):
         }
         enhance_type_info(type_info)
         self.assertEqual(type_info['some key']['secure']['attr']['gob_type'], GOB.String)
+
+        type_info = {
+            'type': {
+                'code': {
+                    'type': "GOB.String"
+                }
+            }
+        }
+        enhance_type_info(type_info)
+        self.assertEqual(type_info['type']['code']['gob_type'], GOB.String)
 
     def test_gob_type_from_info(self):
         type_info = {
