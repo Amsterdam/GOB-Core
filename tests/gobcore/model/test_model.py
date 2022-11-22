@@ -458,14 +458,3 @@ class TestLegacyModel(TestCase):
         with self.assertRaisesRegex(
                 Exception, "Tried to initialise model with different legacy setting"):
             GOBModel()
-
-    def test_init_legacy_attributes_not_set_for_schema(self):
-        # Prepare object. Remove legacy_attributes
-        data = self.model.data
-        data['nap']['collections']['peilmerken']['attributes'] = data[
-            'nap']['collections']['peilmerken']['legacy_attributes']
-        del data['nap']['collections']['peilmerken']['legacy_attributes']
-
-        with self.assertRaisesRegex(
-                GOBException, "Expected 'legacy_attributes' to be defined for nap peilmerken"):
-            self.model._init_catalog(data['nap'])

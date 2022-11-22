@@ -105,10 +105,9 @@ class GOBModel(UserDict):
 
             # GOB API.
             if cls.legacy_mode:
-                if 'schema' in collection and 'legacy_attributes' not in collection:
-                    raise GOBException(
-                        f"Expected 'legacy_attributes' to be defined for {catalog_name} {entity_name}")
-                collection['attributes'] = collection.get('legacy_attributes', collection['attributes'])
+                if 'schema' in collection and 'legacy_attributes' in collection:
+                    collection['attributes'] = collection.get(
+                        'legacy_attributes', collection['attributes'])
 
             state_attributes = STATE_FIELDS if cls.has_states(catalog_name, entity_name) else {}
             all_attributes = {
