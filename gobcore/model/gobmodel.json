@@ -3258,6 +3258,17 @@
           "version": "1.0.0",
           "entity_id": "identificatie"
         }
+      },
+      "meta": {
+        "version": "0.1",
+        "abbreviation": "META",
+        "entity_id": "id",
+        "schema": {
+          "datasetId": "brk2",
+          "tableId": "meta",
+          "version": "1.0.0",
+          "entity_id": "id"
+        }
       }
     }
   },
