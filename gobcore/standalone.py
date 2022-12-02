@@ -57,15 +57,15 @@ def run_as_standalone(
     :param service_definition: A dict with keys which maps to handlers.
     :return: the resulting message data from the handler.
     """
-    message = _build_message(args)
+    service = service_definition[args.handler]
+    pass_args = service.get('pass_args_standalone', [])
+    message = _build_message(args, pass_args)
     # Load offloaded 'contents_ref'-data into message
     message_in, offloaded_filename = load_message(
         msg=message,
         converter=from_json,
         params={"stream_contents": False}
     )
-
-    service = service_definition[args.handler]
 
     with logger.configure_context(message_in, get_logger_name(service), LOG_HANDLERS):
         message_out = service["handler"](message_in)
@@ -84,7 +84,7 @@ def run_as_standalone(
     return 0
 
 
-def _build_message(args: argparse.Namespace) -> Message:
+def _build_message(args: argparse.Namespace, extra_args: list[str]) -> Message:
     """Create a message from argparse arguments.
 
     Defaults to None if attribute has no value.
@@ -96,18 +96,15 @@ def _build_message(args: argparse.Namespace) -> Message:
     if args.message_data is not None:
         return json.loads(args.message_data)
 
-    header = {
-        'catalogue': getattr(args, "catalogue", None),
-        'collection': getattr(args, "collection", None),
-        'entity': getattr(args, "collection", None),
-        'attribute': getattr(args, "attribute", None),
-        'application': getattr(args, "application", None),
-    }
+    header_args = [
+        'catalogue',
+        'collection',
+        'entity',
+        'attribute',
+        'application',
+    ] + extra_args
 
-    # Prevent this value from being None, as that breaks handlers.
-    # When mode is not passed, handlers switch to their own default
-    if hasattr(args, "mode"):
-        header["mode"] = getattr(args, "mode")
+    header = {arg: getattr(args, arg, None) for arg in header_args}
 
     return {
         "header": header,

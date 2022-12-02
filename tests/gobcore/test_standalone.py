@@ -47,6 +47,7 @@ class TestStandalone:
         mock_handler = Mock(return_value={})
         servicedefinition = get_servicedefinition_fixture(mock_handler, "import")
         servicedefinition["import"]["logger"] = "the logger"
+        servicedefinition["import"]["pass_args_standalone"] = ["mode"]
 
         message_in = {'header': {'catalogue': 'test_catalogue', 'collection': None, 'entity': None, 'attribute': None,
                                  'application': None, 'mode': 'full'}}
@@ -154,7 +155,7 @@ class TestStandalone:
         ])
         args.message_result_path = result_path
 
-        message = _build_message(args)
+        message = _build_message(args, [])
         assert message["header"]["catalogue"] == "nap"
         assert message["header"]["collection"] == "peilmerken"
         assert message["header"]["source"] == "AMSBI"
@@ -163,6 +164,6 @@ class TestStandalone:
         args = arg_parser.parse_args([
             "import", "--catalogue", "test_catalogue"
         ])
-        message = _build_message(args)
+        message = _build_message(args, [])
         assert message["header"]["catalogue"] == "test_catalogue"
         assert message["header"]["collection"] is None
