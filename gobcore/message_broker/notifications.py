@@ -114,6 +114,7 @@ class EventNotification():
         """
         return cls(**msg[NOTIFICATION_CONTENTS], header=msg['header'])
 
+
 def _send_notification(exchange, notification_type, msg):
     """
     Send a notification message of a specified type (None for unspecied) on the specified exchange
