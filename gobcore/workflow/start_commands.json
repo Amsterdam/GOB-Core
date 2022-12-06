@@ -84,7 +84,7 @@
       {
         "name": "destination",
         "default": "Objectstore",
-        "choices": ["Objectstore", "File", "Database"],
+        "choices": ["Objectstore", "File"],
         "description": "Destination, default is Objectstore"
       },
       {
@@ -92,13 +92,6 @@
         "required": false,
         "description": "The name of the product to export, (example: \"csv_actueel\")",
         "named": true
-      },
-      {
-        "name": "full",
-        "required": false,
-        "description": "Forces full dump (only used in combination with destination Database",
-        "named": true,
-        "action": "store_true"
       }
     ],
     "workflow": "export"

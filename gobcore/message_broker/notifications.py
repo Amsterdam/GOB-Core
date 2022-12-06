@@ -84,8 +84,6 @@ def get_notification(msg):
     """
     if msg.get(NOTIFICATION_TYPE) == EventNotification.type:
         return EventNotification.from_msg(msg)
-    if msg.get(NOTIFICATION_TYPE) == DumpNotification.type:
-        return DumpNotification.from_msg(msg)
 
 
 class EventNotification():
@@ -115,24 +113,6 @@ class EventNotification():
         :return:
         """
         return cls(**msg[NOTIFICATION_CONTENTS], header=msg['header'])
-
-
-class DumpNotification():
-
-    type = "dump"
-
-    def __init__(self, catalog, collection, header=None):
-        self.header = header
-
-        self.contents = {
-            'catalog': catalog,
-            'collection': collection,
-        }
-
-    @classmethod
-    def from_msg(cls, msg):
-        return cls(**msg[NOTIFICATION_CONTENTS], header=msg['header'])
-
 
 def _send_notification(exchange, notification_type, msg):
     """

@@ -9,8 +9,7 @@ from gobcore.message_broker.notifications import listen_to_notifications,\
     get_notification,\
     EventNotification,\
     _send_notification,\
-    _listen_to_notifications,\
-    DumpNotification
+    _listen_to_notifications
 
 @patch("gobcore.message_broker.notifications.NOTIFY_EXCHANGE", 'notification exchange')
 @patch("gobcore.message_broker.notifications.NOTIFY_BASE_QUEUE", 'base queue')
@@ -114,21 +113,3 @@ class TestNotifications(TestCase):
         mock_create_queue.assert_called_with(channel=mock_channel, queue='any queue', durable=True)
         mock_bind_queue.assert_called_with(channel=mock_channel, exchange='any exchange', queue='any queue', key='')
         self.assertEqual(result, 'any queue')
-
-
-class TestDumpNotification(TestCase):
-
-    def test_from_msg(self):
-        msg = {
-            'type': 'dump',
-            'header': {'some': 'header'},
-            'contents': {
-                'catalog': 'SOME CAT',
-                'collection': 'SOME COLL',
-            }
-        }
-        notification = get_notification(msg)
-        self.assertIsInstance(notification, DumpNotification)
-        self.assertEqual({'some': 'header'}, notification.header)
-        self.assertEqual('SOME CAT', notification.contents.get('catalog'))
-        self.assertEqual('SOME COLL', notification.contents.get('collection'))
