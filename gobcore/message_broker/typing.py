@@ -38,7 +38,11 @@ class OwnThread(TypedDict, total=False):
     own_thread: bool
 
 
-class Service(Exchange, Queue, Key, Handler, Logger, Report, OwnThread):
+class PassArgsStandalone(TypedDict):
+    pass_args_standalone: list[str]
+
+
+class Service(Exchange, Queue, Key, Handler, Logger, Report, OwnThread, PassArgsStandalone):
     pass
 
 
