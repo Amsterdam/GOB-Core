@@ -1,5 +1,5 @@
 from unittest import TestCase
-from mock import patch
+from unittest.mock import patch
 from unittest.mock import MagicMock, call
 
 from gobcore.message_broker.notifications import listen_to_notifications,\

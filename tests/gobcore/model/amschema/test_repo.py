@@ -3,7 +3,7 @@ from unittest import TestCase
 from unittest.mock import patch
 from pathlib import Path
 
-from mock.mock import MagicMock
+from unittest.mock import MagicMock
 
 from gobcore.model import Schema
 from gobcore.model.amschema.repo import AMSchemaError, AMSchemaRepository

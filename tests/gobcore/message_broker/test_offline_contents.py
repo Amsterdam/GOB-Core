@@ -1,7 +1,7 @@
 import json
 
-import mock
 import unittest
+from unittest import mock
 from gobcore.utils import get_filename
 from tempfile import TemporaryDirectory
 

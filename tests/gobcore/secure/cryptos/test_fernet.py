@@ -1,5 +1,5 @@
 import unittest
-import mock
+from unittest import mock
 
 from gobcore.secure.cryptos.fernet import FernetCrypto, DecryptionError
 from gobcore.secure.cryptos.config import _getenv

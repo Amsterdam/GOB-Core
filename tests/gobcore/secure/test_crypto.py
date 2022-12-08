@@ -1,6 +1,6 @@
 import unittest
-import mock
 import json
+from unittest import mock
 
 from gobcore.secure.crypto import is_encrypted, confidence_level, encrypt, decrypt, is_protected
 from gobcore.secure.crypto import read_protect, read_unprotect

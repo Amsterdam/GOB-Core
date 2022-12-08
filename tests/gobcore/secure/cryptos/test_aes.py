@@ -1,5 +1,5 @@
 import unittest
-import mock
+from unittest import mock
 
 from gobcore.secure.cryptos.aes import AESCrypto, DecryptionError
 

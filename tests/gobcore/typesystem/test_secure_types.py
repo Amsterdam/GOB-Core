@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import MagicMock
-import mock
+from unittest import mock
 
 from gobcore.typesystem.gob_secure_types import SecureString, SecureDecimal, SecureDateTime, Secure, SecureDate, SecureIncompleteDate
 from gobcore.typesystem.gob_types import JSON, String

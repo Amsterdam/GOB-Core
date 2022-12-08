@@ -1,5 +1,5 @@
 import unittest
-import mock
+from unittest import mock
 
 from ..amschema_fixtures import get_dataset, get_table
 from gobcore.model import Schema
