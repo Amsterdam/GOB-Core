@@ -38,7 +38,7 @@ class OwnThread(TypedDict, total=False):
     own_thread: bool
 
 
-class PassArgsStandalone(TypedDict):
+class PassArgsStandalone(TypedDict, total=False):
     pass_args_standalone: list[str]
 
 
