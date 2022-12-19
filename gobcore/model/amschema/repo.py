@@ -6,7 +6,7 @@ import requests
 from pydash import snake_case
 
 from gobcore.model import Schema
-from gobcore.model.amschema.model import Dataset, Table
+from gobcore.model.amschema.model import Dataset, Table, TableListItem
 from gobcore.parse import json_to_cached_dict
 
 REPO_BASE = os.getenv(
@@ -48,9 +48,33 @@ class AMSchemaRepository:
             return f"{REPO_BASE}/datasets/{snake_case(dataset_id)}/dataset.json"
         return f"{REPO_BASE}/datasets/{dataset_id}/dataset.json"
 
+    def _brk2_workaround(self, schema: Schema, dataset: Dataset):
+        """
+        Temporary workaround brk2 issue on amsterdamschema repo:
+        https://github.com/Amsterdam/amsterdam-schema/commit/1bde32fc927fc6e3e73aaf170ce79d48ccc85ddd
+
+        Inactive datasets break automation on datadiensten side.
+        Manually add the active ids to the dataset.
+
+        Remove once brk2 is properly active or re-added to the amsterdam-schema.
+        """
+        if schema.datasetId == "brk2":
+            dataset.tables += [
+                TableListItem(id="kadastraleobjecten", activeVersions={"1.0.0": "kadastraleobjecten/v1.0.0"},
+                              **{"$ref": "kadastraleobjecten/v1.0.0"}),
+                TableListItem(id="kadastralesubjecten", activeVersions={"1.0.0": "kadastralesubjecten/v1.0.0"},
+                              **{"$ref": "kadastralesubjecten/v1.0.0"}),
+                TableListItem(id="zakelijkerechten", activeVersions={"1.0.0": "zakelijkerechten/v1.0.0"},
+                              **{"$ref": "zakelijkerechten/v1.0.0"}),
+                TableListItem(id="tenaamstellingen", activeVersions={"1.0.0": "tenaamstellingen/v1.0.0"},
+                              **{"$ref": "tenaamstellingen/v1.0.0"})
+            ]
+
     def get_schema(self, schema: Schema) -> (Table, Dataset):
         dataset_uri = self._dataset_uri(schema.datasetId)
         dataset = self._download_dataset(dataset_uri)
+
+        self._brk2_workaround(schema, dataset)
 
         try:
             table = [t for t in dataset.tables if t.id == schema.tableId][0]
