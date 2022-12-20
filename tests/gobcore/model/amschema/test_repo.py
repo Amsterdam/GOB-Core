@@ -6,7 +6,7 @@ from pathlib import Path
 from mock.mock import MagicMock
 
 from gobcore.model import Schema
-from gobcore.model.amschema.repo import AMSchemaError, AMSchemaRepository
+from gobcore.model.amschema.repo import AMSchemaError, AMSchemaRepository, REPO_BASE
 from ...amschema_fixtures import get_dataset, get_table
 
 
@@ -26,8 +26,8 @@ class TestAMSchemaRepository(TestCase):
         result = instance.get_schema(schema)
         self.assertEqual((table, dataset), result)
 
-        instance._download_dataset.assert_called_with("https://raw.githubusercontent.com/Amsterdam/amsterdam-schema/master/datasets/nap/dataset.json")
-        instance._download_table.assert_called_with("https://raw.githubusercontent.com/Amsterdam/amsterdam-schema/master/datasets/nap/peilmerken/v2.0.0.json")
+        instance._download_dataset.assert_called_with(f"{REPO_BASE}/datasets/nap/dataset.json")
+        instance._download_table.assert_called_with(f"{REPO_BASE}/datasets/nap/peilmerken/v2.0.0.json")
 
         # TableId does not exist
         with self.assertRaisesRegex(AMSchemaError, "Table someTable/2.0.0 does not exist in dataset nap"):
