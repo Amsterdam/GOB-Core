@@ -1,10 +1,10 @@
 from unittest import TestCase
 from unittest.mock import patch, MagicMock
 
-from gobcore.datastore.oracle import DSN_FAILOVER_ADDRESS_TEMPLATE, DSN_FAILOVER_TEMPLATE, OracleDatastore, GOBException
+from gobcore.datastore.oracle import DSN_FAILOVER_ADDRESS_TEMPLATE, OracleDatastore, GOBException
 
 
-class MockConnection():
+class MockConnection:
     class CursorObj:
         def __init__(self, result):
             self.result = result
@@ -91,8 +91,8 @@ class TestOracleDatastore(TestCase):
         self.assertEqual(exp_res, OracleDatastore._get_dsn(**args))
 
 
-    @patch("gobcore.datastore.oracle.cx_Oracle")
-    def test_connect(self, mock_cx_oracle):
+    @patch("gobcore.datastore.oracle.oracledb")
+    def test_connect(self, mock_oracledb):
         config = {
             'username': 'user',
             'database': 'db',
@@ -102,7 +102,7 @@ class TestOracleDatastore(TestCase):
             'name': 'configname',
         }
 
-        mock_cx_oracle.Connection.return_value = {"connected": True}
+        mock_oracledb.Connection.return_value = {"connected": True}
         store = OracleDatastore(config)
         store.connect()
         self.assertEqual("(user@db)", store.user)
@@ -112,7 +112,7 @@ class TestOracleDatastore(TestCase):
         dsn = '(DESCRIPTION=(FAILOVER=off)(LOAD_BALANCE=off)(CONNECT_TIMEOUT=3)(RETRY_COUNT=3)' \
                   f'(ADDRESS_LIST={"".join(address_list)})' \
                   '(CONNECT_DATA=(SERVICE_NAME=db)))'
-        mock_cx_oracle.Connection.assert_called_with(user='user', password='pw', dsn = dsn)
+        mock_oracledb.Connection.assert_called_with(user='user', password='pw', dsn = dsn)
 
         config = {
             'username': 'user',
@@ -150,8 +150,8 @@ class TestOracleDatastore(TestCase):
         }, createrowfunc(*args))
 
     @patch("gobcore.datastore.oracle.OracleDatastore.get_url", MagicMock())
-    @patch('gobcore.datastore.oracle.cx_Oracle.CLOB', "CLOB")
-    @patch('gobcore.datastore.oracle.cx_Oracle.LONG_STRING', "LONG_STRING")
+    @patch('gobcore.datastore.oracle.oracledb.CLOB', "CLOB")
+    @patch('gobcore.datastore.oracle.oracledb.LONG_STRING', "LONG_STRING")
     def test_output_type_handler(self):
         cursor = type('Cursor', (object,), {'arraysize': 20, 'var': lambda x, arraysize: x + '_' + str(arraysize)})
         store = OracleDatastore({}, {})

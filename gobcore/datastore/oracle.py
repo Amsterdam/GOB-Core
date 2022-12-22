@@ -2,7 +2,7 @@ from typing import List
 
 import re
 import os
-import cx_Oracle
+import oracledb
 import tempfile
 import shutil
 
@@ -104,7 +104,7 @@ class OracleDatastore(SqlDatastore):
     def connect(self):
         """Connect to the datasource
 
-        The cx_Oracle library is used to connect to the data source for databases
+        The oracledb library is used to connect to the data source for databases
 
         :return: a connection to the given database
         """
@@ -115,7 +115,7 @@ class OracleDatastore(SqlDatastore):
             database, username, password, port, host = [str(self.connection_config[k]) for k in items]
             self.user = f"({username}@{database})"
             dsn = self._get_dsn(host, port, database)
-            self.connection = cx_Oracle.Connection(user=username, password=password, dsn=dsn)
+            self.connection = oracledb.Connection(user=username, password=password, dsn=dsn)
         except KeyError as e:
             raise GOBException(f'Missing configuration for source {self.connection_config["name"]}. Error: {e}')
 
@@ -125,8 +125,7 @@ class OracleDatastore(SqlDatastore):
             self.connection = None
 
     def _makedict(self, cursor):
-        """Convert cx_oracle query result to be a dictionary
-        """
+        """Convert query result to be a dictionary."""
         cols = [d[0].lower() for d in cursor.description]
 
         def createrow(*args):
@@ -135,13 +134,14 @@ class OracleDatastore(SqlDatastore):
         return createrow
 
     def _output_type_handler(self, cursor, name, defaultType, size, precision, scale):
-        if defaultType == cx_Oracle.CLOB:
-            return cursor.var(cx_Oracle.LONG_STRING, arraysize=cursor.arraysize)
+        if defaultType == oracledb.CLOB:
+            return cursor.var(oracledb.LONG_STRING, arraysize=cursor.arraysize)
 
     def query(self, query, **kwargs):
-        """Reads from the database
+        """
+        Reads from the database.
 
-        The cx_Oracle library is used to connect to the data source for databases
+        The oracledb library is used to connect to the data source for databases
 
         :return: a list of data
         """
