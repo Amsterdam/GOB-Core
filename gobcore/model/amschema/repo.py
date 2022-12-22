@@ -10,7 +10,7 @@ from gobcore.model.amschema.model import Dataset, Table
 from gobcore.parse import json_to_cached_dict
 
 REPO_BASE = os.getenv(
-    'REPO_BASE', "https://raw.githubusercontent.com/Amsterdam/amsterdam-schema/brk2_active_dataset")
+    'REPO_BASE', "https://raw.githubusercontent.com/Amsterdam/amsterdam-schema/master")
 
 
 class AMSchemaError(Exception):
