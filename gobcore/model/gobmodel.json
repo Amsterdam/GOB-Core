@@ -3270,6 +3270,18 @@
           "entity_id": "id"
         }
       },
+      "zakelijkerechten": {
+        "version": "0.1",
+        "abbreviation": "ZRT",
+        "entity_id": "identificatie",
+        "has_states": true,
+        "schema": {
+          "datasetId": "brk2",
+          "tableId": "zakelijkerechten",
+          "version": "1.0.0",
+          "entity_id": "identificatie"
+        }
+      },
       "tenaamstellingen": {
         "version": "0.1",
         "abbreviation": "TNG",
