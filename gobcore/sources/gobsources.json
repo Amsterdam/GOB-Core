@@ -929,6 +929,46 @@
           "method": "equals",
           "destination_attribute": "identificatie"
         }
+      },
+      "zakelijkerechten": {
+        "belast_brk_zakelijke_rechten": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "belast_met_brk_zakelijke_rechten": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "ontstaan_uit_brk_zakelijke_rechten": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "ontstaan_uit_appartementsrechtsplitsing_vve": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "betrokken_bij_brk_zakelijke_rechten": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "betrokken_bij_appartementsrechtsplitsing_vve": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "is_beperkt_tot_brk_tenaamstellingen": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "rust_op_brk_kadastraal_object": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        }
+      },
+      "tenaamstellingen": {
+        "van_brk_zakelijk_recht": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        }
       }
     },
     "woz": {
