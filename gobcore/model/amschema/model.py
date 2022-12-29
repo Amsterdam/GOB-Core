@@ -48,23 +48,13 @@ class StringProperty(Property):
 
     @property
     def gob_type(self):
-        # Date
         if self.format == StringFormatEnum.date:
-            if self.is_secure:
-                return "GOB.SecureDate"
-            return "GOB.Date"
-        # DateTime
+            return "GOB.SecureDate" if self.is_secure else "GOB.Date"
         if self.format == StringFormatEnum.datetime:
-            if self.is_secure:
-                return "GOB.SecureDateTime"
-            return "GOB.DateTime"
-        # Character
+            return "GOB.SecureDateTime" if self.is_secure else "GOB.DateTime"
         if self.maxLength == 1:
             return "GOB.Character"
-        # String
-        if self.is_secure:
-            return "GOB.SecureString"
-        return "GOB.String"
+        return "GOB.SecureString" if self.is_secure else "GOB.String"
 
 
 class NumberProperty(Property):
@@ -73,9 +63,7 @@ class NumberProperty(Property):
 
     @property
     def gob_type(self):
-        if self.is_secure:
-            return "GOB.SecureDecimal"
-        return "GOB.Decimal"
+        return "GOB.SecureDecimal" if self.is_secure else "GOB.Decimal"
 
 
 class IntegerProperty(Property):
