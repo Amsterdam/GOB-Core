@@ -10,13 +10,25 @@ from pydash import snake_case
 class Property(ABC, BaseModel):
     description: Optional[str]
     provenance: Optional[str]
+    auth: Optional[str]
 
     @property
     @abstractmethod
     def gob_type(self):  # pragma: no cover
         pass
 
+    @property
+    def is_secure(self):
+        """Determine if type of Property instance is secure."""
+        return self.auth and self.auth != 'OPENBAAR'
+
     def gob_representation(self, dataset: "Dataset"):
+        if self.is_secure:
+            return {
+                "type": self.gob_type,
+                "level": 4,
+                "description": self.description or ""
+            }
         return {
             "type": self.gob_type,
             "description": self.description or ""
@@ -36,13 +48,22 @@ class StringProperty(Property):
 
     @property
     def gob_type(self):
+        # Date
         if self.format == StringFormatEnum.date:
+            if self.is_secure:
+                return "GOB.SecureDate"
             return "GOB.Date"
-        elif self.format == StringFormatEnum.datetime:
+        # DateTime
+        if self.format == StringFormatEnum.datetime:
+            if self.is_secure:
+                return "GOB.SecureDateTime"
             return "GOB.DateTime"
-        elif self.maxLength == 1:
+        # Character
+        if self.maxLength == 1:
             return "GOB.Character"
-
+        # String
+        if self.is_secure:
+            return "GOB.SecureString"
         return "GOB.String"
 
 
@@ -52,6 +73,8 @@ class NumberProperty(Property):
 
     @property
     def gob_type(self):
+        if self.is_secure:
+            return "GOB.SecureDecimal"
         return "GOB.Decimal"
 
 
@@ -64,6 +87,7 @@ class IntegerProperty(Property):
 
 
 class RefProperty(Property):
+    """Amsterdam schema property with $ref attribute."""
     ref: str = Field(alias="$ref")
 
     refs_to_gob = {
@@ -110,7 +134,14 @@ class ObjectProperty(Property):
         return "GOB.Reference" if self._is_relation() else "GOB.JSON"
 
     def mapped_properties(self, dataset: "Dataset"):
-        return {snake_case(k): v.gob_representation(dataset) for k, v in self.properties.items()}
+        """Map Amsterdam schema object properties to GOB properties."""
+        gob_properties = {}
+        for ams_prop, ams_value in self.properties.items():
+            # Property with no 'auth' value inherites from object.
+            if not ams_value.auth and self.auth:
+                ams_value.auth = self.auth
+            gob_properties[snake_case(ams_prop)] = ams_value.gob_representation(dataset)
+        return gob_properties
 
     def gob_representation(self, dataset: "Dataset"):
 
@@ -165,6 +196,7 @@ Properties = Union[NonObjectProperties, ObjectProperty, ArrayProperty]
 
 
 class Schema(BaseModel):
+    """Amsterdam schema: table schema object."""
     schema_: str = Field(alias="$schema")
     type: Literal["object"]
     additionalProperties: bool
@@ -176,29 +208,36 @@ class Schema(BaseModel):
 
 
 class TemporalDimensions(BaseModel):
+    """Amsterdam schema: table temporal dimensions."""
     geldigOp: Optional[conlist(str, min_items=2, max_items=2)]
 
 
 class Temporal(BaseModel):
+    """Amsterdam schema: table temporal."""
     identifier: str
     dimensions: TemporalDimensions
 
 
 class Table(BaseModel):
+    """Amsterdam schema: table; corresponds to GOB collection."""
     id: str
     type: Literal["table"]
     version: str
-    schema_: Schema = Field(alias="schema")
+    auth: Optional[str]
+    authorizationGrantor: Optional[str]
     temporal: Optional[Temporal]
+    schema_: Schema = Field(alias="schema")
 
 
 class TableListItem(BaseModel):
+    """Table list item in Amsterdam schema dataset."""
     id: str
     ref: str = Field(alias="$ref")
     activeVersions: dict[str, str]
 
 
 class Dataset(BaseModel):
+    """Amsterdam schema: dataset; corresponds to GOB catalog."""
     type: Literal["dataset"]
     id: str
     title: str
