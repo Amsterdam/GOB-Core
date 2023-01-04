@@ -11,11 +11,14 @@ _CONVERSIONS = {
     "commerciele_vestiging": "comm_vstgng",
     "maatschappelijke_activiteit": "maatsch_act",
     "heeft_sbi_activiteiten": "heeft_sbi_act",
-    "refereert_aan_meetbouten_referentiepunten": "meetbouten_refpnt_rft_aan"
+    "refereert_aan_meetbouten_referentiepunten": "meetbouten_refpnt_rft_aan",
+    "betrokken_bij_brk_zakelijke_rechten": "betrokken_bij_brk_zrt",
+    "is_beperkt_tot_brk_tenaamstellingen": "is_beperkt_tot_brk_tng",
+    "ontstaan_uit_brk_zakelijke_rechten": "ontstaan_uit_brk_zrt",
 }
 
 
-class NameCompressor():
+class NameCompressor:
     # Use the name compressor for all table names that are too long
     #
     # for PostgreSQL the maximimum length = 63
