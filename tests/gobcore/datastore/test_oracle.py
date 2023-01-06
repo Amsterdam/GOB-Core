@@ -26,8 +26,22 @@ class MockConnection:
         return self.cursor_obj
 
 
+@patch("gobcore.datastore.oracle.oracledb.is_thin_mode", MagicMock(return_value=False))
+@patch("gobcore.datastore.oracle.oracledb.init_oracle_client", MagicMock())
 @patch("gobcore.datastore.oracle.SqlDatastore", MagicMock)
 class TestOracleDatastore(TestCase):
+
+    @patch("gobcore.datastore.oracle.oracledb")
+    def test_init(self, mock_oracledb):
+        config = {
+            'username': "username",
+            'password': "password",
+            'host': "host",
+            'port': 1234,
+            'database': 'SID'
+        }
+        OracleDatastore(config)
+        mock_oracledb.init_oracle_client.assert_called()
 
     def test_get_url(self):
         # Leave Oracle SID as it is

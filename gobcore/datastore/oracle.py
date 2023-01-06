@@ -56,6 +56,9 @@ class OracleDatastore(SqlDatastore):
             f.write(ORACLE_CONFIG)
         os.environ['TNS_ADMIN'] = self.oracle_config_dir
 
+        oracledb.init_oracle_client()
+        assert not oracledb.is_thin_mode(), "Oracle Thick mode is required"
+
     def __del__(self):
         shutil.rmtree(self.oracle_config_dir)
 
