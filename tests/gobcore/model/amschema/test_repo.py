@@ -1,22 +1,22 @@
 import json
 from unittest import TestCase
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 from pathlib import Path
-
-from unittest.mock import MagicMock
 
 from gobcore.model import Schema
 from gobcore.model.amschema.repo import AMSchemaError, AMSchemaRepository, REPO_BASE
+
 from ...amschema_fixtures import get_dataset, get_table
 
 
 class TestAMSchemaRepository(TestCase):
+    """Amsterdam Schema Repository tests."""
 
     def test_get_schema(self):
         schema = Schema(datasetId="nap", tableId="peilmerken", version="2.0.0")
 
-        table = get_table()
-        dataset = get_dataset()
+        table = get_table("nap", "peilmerken")
+        dataset = get_dataset("nap")
 
         instance = AMSchemaRepository()
         instance._download_table = MagicMock(return_value=table)
@@ -47,12 +47,17 @@ class TestAMSchemaRepository(TestCase):
     @patch("gobcore.model.amschema.repo.requests")
     def test_download_dataset(self, mock_requests):
         """Test remote (HTTP) AMS schema dataset."""
-        with open(Path(__file__).parent.parent.parent.joinpath('amschema_fixtures/dataset.json')) as f:
+        with open(
+            Path(__file__).parent.parent.parent.joinpath(
+                "amschema_fixtures/nap/dataset.json"
+            ),
+            encoding="utf-8"
+        ) as f:
             filecontents = f.read()
             mock_requests.get.return_value.json = lambda: json.loads(filecontents)
 
         instance = AMSchemaRepository()
-        dataset = get_dataset()
+        dataset = get_dataset("nap")
 
         download_url = "https://download-location.tld/amsterdam-schema/master"
         result = instance._download_dataset(download_url)
@@ -64,11 +69,11 @@ class TestAMSchemaRepository(TestCase):
     def test_local_table(self, mock_cached_dict):
         """Test local AMS schema table."""
         with Path(__file__).parent.parent.parent.joinpath(
-                'amschema_fixtures/table.json').open(encoding="utf-8") as json_file:
+                'amschema_fixtures/nap/peilmerken.json').open(encoding="utf-8") as json_file:
             mock_cached_dict.return_value = json.load(json_file)
 
         instance = AMSchemaRepository()
-        table = get_table()
+        table = get_table("nap", "peilmerken")
 
         local_path = "download-location/amsterdam-schema"
         result = instance._download_table(local_path)

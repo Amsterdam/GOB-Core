@@ -5,12 +5,12 @@ Use that load_schema test instead; it uses a mock dataset.json and table.json th
 """
 from unittest import TestCase
 
+from gobcore.model.amschema.model import ArrayProperty, RefProperty, StringProperty
+
 from ...amschema_fixtures import get_dataset
-from gobcore.model.amschema.model import ArrayProperty, NumberProperty, RefProperty, StringProperty
 
 
 class TestRefProperty(TestCase):
-
     def test_gob_type(self):
         """Test with unknown ref"""
         prop = RefProperty.parse_obj({"$ref": "no_match"})
@@ -20,24 +20,25 @@ class TestRefProperty(TestCase):
 
 
 class TestArrayProperty(TestCase):
-
     def test_gob_representation(self):
         stringprop = StringProperty(type="string")
         prop = ArrayProperty(type="array", items=stringprop)
 
         with self.assertRaises(NotImplementedError):
-            prop.gob_representation(get_dataset())
+            prop.gob_representation(get_dataset("nap"))
 
 
 class TestDataset(TestCase):
-
     def test_srid(self):
-        dataset = get_dataset()
+        dataset = get_dataset("nap")
         dataset.crs = "EPSG:28992"
 
         self.assertEqual(28992, dataset.srid)
 
         dataset.crs = "Something else"
 
-        with self.assertRaisesRegex(Exception, "CRS Something else does not start with EPSG. Don't know what to do with this. Help me?"):
+        with self.assertRaisesRegex(
+            Exception,
+            "CRS Something else does not start with EPSG. Don't know what to do with this. Help me?",
+        ):
             dataset.srid

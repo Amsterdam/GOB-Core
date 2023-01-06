@@ -1,10 +1,11 @@
 import unittest
 from unittest import mock
 
-from ..amschema_fixtures import get_dataset, get_table
 from gobcore.model import Schema
 from gobcore.model.schema import LoadSchemaException, load_schema
 from munch import DefaultMunch
+
+from ..amschema_fixtures import get_dataset, get_table
 
 
 class TestAMSSchema(unittest.TestCase):
@@ -15,8 +16,8 @@ class TestAMSSchema(unittest.TestCase):
     @mock.patch("gobcore.model.schema.AMSchemaRepository")
     def test_load_schema(self, mock_repository):
         schema = Schema(datasetId="dataset", tableId="tableId", version="1.0")
-        dataset = get_dataset()
-        table = get_table()
+        dataset = get_dataset("nap")
+        table = get_table("nap", "peilmerken")
 
         mock_repository.return_value.get_schema.return_value = table, dataset
 
@@ -141,14 +142,18 @@ class TestAMSSchema(unittest.TestCase):
 
     @mock.patch("gobcore.model.schema.AMSchemaRepository")
     def test_load_schema_provided_entity_id(self, mock_repository):
-        dataset = get_dataset()
-        table = get_table()
-        table.schema_.identifier = ['some', 'list']
+        dataset = get_dataset("nap")
+        table = get_table("nap", "peilmerken")
         mock_repository.return_value.get_schema.return_value = table, dataset
 
-        schema = Schema(datasetId="dataset", tableId="tableId", version="1.0", entity_id="provided_entity_id")
-
-        result = load_schema(schema)
+        result = load_schema(
+            Schema(
+                datasetId="dataset",
+                tableId="tableId",
+                version="1.0",
+                entity_id="provided_entity_id"
+            )
+        )
         self.assertEqual("provided_entity_id", result['entity_id'])
 
     @mock.patch("gobcore.model.schema.AMSchemaRepository")
