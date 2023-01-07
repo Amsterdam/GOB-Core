@@ -1,17 +1,20 @@
-from gobcore.typesystem.gob_types import String, Decimal, DateTime, Date, IncompleteDate
+"""GOB secure types."""
+
+
+from abc import abstractmethod
+
+from gobcore.typesystem.gob_types import String, Decimal, DateTime, Date, IncompleteDate, Integer
 from gobcore.secure.crypto import is_encrypted, encrypt, decrypt, read_unprotect, is_protected
 
 
 class Secure(String):
-    """
-    Secure types are derived from the String type
-    """
+    """Secure types are derived from the String type."""
     name = "Secure"
     is_secure = True
+    BaseType = None
 
     def __init__(self, value, level=None):
-        """
-        Initialize a secure value.
+        """Initialize a secure value.
 
         If the value is not yet secured, secure it
 
@@ -26,8 +29,7 @@ class Secure(String):
 
     @classmethod
     def from_value(cls, value, **kwargs):
-        """
-        Initialize a secure value from a read value (import or database)
+        """Initialize a secure value from a read value (import or database).
 
         If the date is read via an import, a confidence level should be supplied
         to encrypt the data. Also the data should first be unprotected, as all
@@ -50,9 +52,12 @@ class Secure(String):
         else:
             return cls.BaseType.from_value(value, **kwargs)
 
+    @abstractmethod
+    def get_typed_value(self, value):
+        ...  # pragma: no cover
+
     def get_value(self, user=None):
-        """
-        Get the value from a secure datatype.
+        """Get the value from a secure datatype.
 
         Access to the value is protected by checking the user authorization levels.
         Only if the authorization level meets the requirements for the given value,
@@ -114,3 +119,11 @@ class SecureIncompleteDate(Secure):
 
     def get_typed_value(self, value):
         return IncompleteDate.from_value(value).to_value
+
+
+class SecureInteger(Secure):
+    name = "SecureInteger"
+    BaseType = Integer
+
+    def get_typed_value(self, value):
+        return int(value)

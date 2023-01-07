@@ -20,7 +20,7 @@ class Property(ABC, BaseModel):
     @property
     def is_secure(self):
         """Determine if type of Property instance is secure."""
-        return self.auth and self.auth != 'OPENBAAR'
+        return self.auth and self.auth not in ["OPENBAAR", "BRK/RS"]
 
     def gob_representation(self, dataset: "Dataset"):
         if self.is_secure:
@@ -71,7 +71,7 @@ class IntegerProperty(Property):
 
     @property
     def gob_type(self):
-        return "GOB.Integer"
+        return "GOB.SecureInteger" if self.is_secure else "GOB.Integer"
 
 
 class RefProperty(Property):
@@ -94,7 +94,7 @@ class RefProperty(Property):
     def gob_representation(self, dataset: "Dataset"):
         return {
             **super().gob_representation(dataset),
-            "srid": dataset.srid
+            "srid": dataset.srid,
         }
 
 
@@ -242,5 +242,7 @@ class Dataset(BaseModel):
     @property
     def srid(self) -> int:
         if not self.crs.startswith("EPSG:"):
-            raise Exception(f"CRS {self.crs} does not start with EPSG. Don't know what to do with this. Help me?")
+            raise Exception(
+                f"CRS {self.crs} does not start with EPSG. Don't know what to do with this. Help me?"
+            )
         return int(self.crs.replace("EPSG:", ""))
