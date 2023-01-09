@@ -3245,7 +3245,8 @@
           "datasetId": "brk2",
           "tableId": "kadastraleobjecten",
           "version": "1.0.0",
-          "entity_id": "identificatie"
+          "entity_id": "identificatie",
+          "base_uri": "https://raw.githubusercontent.com/Amsterdam/amsterdam-schema/brk2_active_dataset"
         }
       },
       "kadastralesubjecten": {
@@ -3256,7 +3257,8 @@
           "datasetId": "brk2",
           "tableId": "kadastralesubjecten",
           "version": "1.0.0",
-          "entity_id": "identificatie"
+          "entity_id": "identificatie",
+          "base_uri": "https://raw.githubusercontent.com/Amsterdam/amsterdam-schema/brk2_active_dataset"
         }
       },
       "meta": {
@@ -3267,7 +3269,8 @@
           "datasetId": "brk2",
           "tableId": "meta",
           "version": "1.0.0",
-          "entity_id": "id"
+          "entity_id": "id",
+          "base_uri": "https://raw.githubusercontent.com/Amsterdam/amsterdam-schema/brk2_active_dataset"
         }
       },
       "zakelijkerechten": {
@@ -3279,7 +3282,8 @@
           "datasetId": "brk2",
           "tableId": "zakelijkerechten",
           "version": "1.0.0",
-          "entity_id": "identificatie"
+          "entity_id": "identificatie",
+          "base_uri": "https://raw.githubusercontent.com/Amsterdam/amsterdam-schema/brk2_active_dataset"
         }
       },
       "tenaamstellingen": {
@@ -3290,7 +3294,8 @@
           "datasetId": "brk2",
           "tableId": "tenaamstellingen",
           "version": "1.0.0",
-          "entity_id": "identificatie"
+          "entity_id": "identificatie",
+          "base_uri": "https://raw.githubusercontent.com/Amsterdam/amsterdam-schema/brk2_active_dataset"
         }
       }
     }
