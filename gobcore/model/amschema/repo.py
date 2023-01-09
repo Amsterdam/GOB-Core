@@ -9,8 +9,8 @@ from gobcore.model import Schema
 from gobcore.model.amschema.model import Dataset, Table
 from gobcore.parse import json_to_cached_dict
 
-REPO_BASE = os.getenv(
-    'REPO_BASE', "https://raw.githubusercontent.com/Amsterdam/amsterdam-schema/master")
+
+REPO_BASE = os.getenv("REPO_BASE", "https://raw.githubusercontent.com/Amsterdam/amsterdam-schema/master")
 
 
 class AMSchemaError(Exception):
@@ -42,14 +42,13 @@ class AMSchemaRepository:
         schema = self._get_file(location)
         return Table.parse_obj(schema)
 
-    def _dataset_uri(self, dataset_id: str):
-        if dataset_id.endswith("Azure"):
-            # Temporary Azure dataset ID’s.
-            return f"{REPO_BASE}/datasets/{snake_case(dataset_id)}/dataset.json"
-        return f"{REPO_BASE}/datasets/{dataset_id}/dataset.json"
+    def _dataset_uri(self, base_uri: str, dataset_id: str):
+        # Temporary Azure dataset ID’s.
+        dataset = snake_case(dataset_id) if dataset_id.endswith("Azure") else dataset_id
+        return f"{base_uri}/datasets/{dataset}/dataset.json"
 
     def get_schema(self, schema: Schema) -> (Table, Dataset):
-        dataset_uri = self._dataset_uri(schema.datasetId)
+        dataset_uri = self._dataset_uri(schema.base_uri or REPO_BASE, schema.datasetId)
         dataset = self._download_dataset(dataset_uri)
 
         try:

@@ -39,6 +39,11 @@ class TestAMSchemaRepository(TestCase):
             schema = Schema(datasetId="nap", tableId="peilmerken", version="2.0.1")
             instance.get_schema(schema)
 
+        # with base_uri specification
+        schema = Schema(datasetId="nap", tableId="peilmerken", version="2.0.0", base_uri="https://dev")
+        instance.get_schema(schema)
+        instance._download_dataset.assert_called_with("https://dev/datasets/nap/dataset.json")
+
     @patch("gobcore.model.amschema.repo.requests")
     def test_download_dataset(self, mock_requests):
         """Test remote (HTTP) AMS schema dataset."""
