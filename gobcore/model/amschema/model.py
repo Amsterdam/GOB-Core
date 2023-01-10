@@ -20,7 +20,7 @@ class Property(ABC, BaseModel):
     @property
     def is_secure(self):
         """Determine if type of Property instance is secure."""
-        return self.auth and self.auth not in ["OPENBAAR", "BRK/RS"]
+        return self.auth == "BRK/RSN"
 
     def gob_representation(self, dataset: "Dataset"):
         if self.is_secure:
