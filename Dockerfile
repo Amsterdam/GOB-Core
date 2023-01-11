@@ -27,7 +27,7 @@ RUN mkdir -m 2755 /airflow && chown datapunt.datapunt /airflow
 COPY gobcore gobcore
 
 # Copy test module and tests to where Jenkins expects them.
-COPY test.sh .flake8 ./
+COPY test.sh pyproject.toml ./
 COPY tests tests
 
 USER datapunt

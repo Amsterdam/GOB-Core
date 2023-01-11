@@ -1,0 +1,77 @@
+[tool.mypy]
+follow_imports = "normal"
+warn_redundant_casts = true
+warn_unused_ignores = true
+disallow_any_generics = true
+check_untyped_defs = true
+no_implicit_reexport = true
+pretty = true
+
+# to be switched to true
+disallow_incomplete_defs = false
+disallow_untyped_defs = false
+disallow_untyped_calls = false
+
+[tool.isort]
+profile = "black"
+skip_gitignore = true
+line_length = 100
+
+[tool.black]
+line-length = 100
+
+[tool.coverage.run]
+branch = false
+omit = ["tests/*"]
+
+[tool.coverage.report]
+show_missing = true
+exclude_lines = [
+    # Have to re-enable the standard pragma
+    "pragma: no cover",
+
+    # ignore type checking
+    "if TYPE_CHECKING:",
+
+    # Don't complain if tests don't hit defensive assertion code:
+    "raise AssertionError",
+    "raise NotImplementedError",
+
+    # Don't complain if non-runnable code isn't run:
+    "if __name__ == .__main__.:",
+
+    # Don't complain about abstract methods, they aren't run:
+    "@(abc\\.)?abstractmethod"
+]
+
+[tool.pytest.ini_options]
+testpaths = "tests"
+cache_dir = "/tmp/.pytest_cache"
+addopts = [
+    "-vv",
+    "--doctest-modules",
+    "--cache-clear"
+]
+
+[tool.flake8]
+exclude = [
+    ".git",
+    "__pycache__",
+    ".mypy_cache",
+    ".pytest",
+    "venv",
+    "tests"
+]
+max-complexity = 6
+max-line-length = 100
+show_source = true
+ignore = [
+    # Missing docstring in __init__
+    "D107",
+    # Missing docstring in public package
+    "D104",
+    # Missing docstring in module
+    "D100",
+    # line break before binary operator
+    "W503"
+]
