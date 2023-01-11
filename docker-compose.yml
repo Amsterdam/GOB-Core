@@ -5,8 +5,5 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    environment:
-      # temporary branch for brk2
-      REPO_BASE: "https://raw.githubusercontent.com/Amsterdam/amsterdam-schema/brk2_active_dataset"
     command: >
       bash -c "./test.sh"
