@@ -6,7 +6,7 @@ from pathlib import Path
 from unittest.mock import MagicMock
 
 from gobcore.model import Schema
-from gobcore.model.amschema.repo import AMSchemaError, AMSchemaRepository, REPO_BASE
+from gobcore.model.amschema.repo import AMSchemaError, AMSchemaRepository
 from ...amschema_fixtures import get_dataset, get_table
 
 
@@ -26,8 +26,8 @@ class TestAMSchemaRepository(TestCase):
         result = instance.get_schema(schema)
         self.assertEqual((table, dataset), result)
 
-        instance._download_dataset.assert_called_with(f"{REPO_BASE}/datasets/nap/dataset.json")
-        instance._download_table.assert_called_with(f"{REPO_BASE}/datasets/nap/peilmerken/v2.0.0.json")
+        instance._download_dataset.assert_called_with(f"{schema.base_uri}/datasets/nap/dataset.json")
+        instance._download_table.assert_called_with(f"{schema.base_uri}/datasets/nap/peilmerken/v2.0.0.json")
 
         # TableId does not exist
         with self.assertRaisesRegex(AMSchemaError, "Table someTable/2.0.0 does not exist in dataset nap"):
@@ -43,6 +43,19 @@ class TestAMSchemaRepository(TestCase):
         schema = Schema(datasetId="nap", tableId="peilmerken", version="2.0.0", base_uri="https://dev")
         instance.get_schema(schema)
         instance._download_dataset.assert_called_with("https://dev/datasets/nap/dataset.json")
+
+    def test_repo_base(self):
+        table = get_table()
+        dataset = get_dataset()
+
+        instance = AMSchemaRepository()
+        instance._download_table = MagicMock(return_value=table)
+        instance._download_dataset = MagicMock(return_value=dataset)
+
+        with patch("gobcore.model.amschema.repo.REPO_BASE", new="https://test.repo"):
+            schema = Schema(datasetId="nap", tableId="peilmerken", version="2.0.0", base_uri="https://dev")
+            instance.get_schema(schema)
+            instance._download_dataset.assert_called_with("https://test.repo/datasets/nap/dataset.json")
 
     @patch("gobcore.model.amschema.repo.requests")
     def test_download_dataset(self, mock_requests):

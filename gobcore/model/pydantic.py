@@ -14,10 +14,11 @@ class Schema(BaseModel):
     version: str
 
     """
-    Optional base_uri specification for this collection, takes precedence over REPO_BASE.
+    Base uri specification, if not set defaults to given value. (master branch)
     Should be a full url which can be appended with /datasets/..
+    REPO_BASE environment variable takes precedence over base_uri.
     """
-    base_uri: Optional[str]
+    base_uri: str = "https://raw.githubusercontent.com/Amsterdam/amsterdam-schema/master"
 
     """Required when 'identifier' in Amsterdam Schema is of type list. Ignored otherwise """
     entity_id: Optional[str]
