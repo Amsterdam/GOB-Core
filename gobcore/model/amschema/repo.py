@@ -10,7 +10,8 @@ from gobcore.model.amschema.model import Dataset, Table
 from gobcore.parse import json_to_cached_dict
 
 
-REPO_BASE = os.getenv("REPO_BASE", "https://raw.githubusercontent.com/Amsterdam/amsterdam-schema/master")
+REPO_BASE_DEFAULT = "https://raw.githubusercontent.com/Amsterdam/amsterdam-schema/master"
+REPO_BASE = os.getenv("REPO_BASE")
 
 
 class AMSchemaError(Exception):
@@ -48,7 +49,10 @@ class AMSchemaRepository:
         return f"{base_uri}/datasets/{dataset}/dataset.json"
 
     def get_schema(self, schema: Schema) -> (Table, Dataset):
-        dataset_uri = self._dataset_uri(schema.base_uri or REPO_BASE, schema.datasetId)
+        if REPO_BASE:
+            dataset_uri = self._dataset_uri(REPO_BASE, schema.datasetId)
+        else:
+            dataset_uri = self._dataset_uri(schema.base_uri or REPO_BASE_DEFAULT, schema.datasetId)
         dataset = self._download_dataset(dataset_uri)
 
         try:
