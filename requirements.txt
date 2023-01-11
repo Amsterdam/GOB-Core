@@ -1,6 +1,7 @@
 coverage~=7.0.1
 cryptography==38.0.4
 flake8~=6.0.0
+flake8-pyproject~=1.2.2
 GDAL==${LIBGDAL_VERSION}
 GeoAlchemy2==0.12.5
 geomet==1.0.0
