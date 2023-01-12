@@ -11,10 +11,10 @@ COPY --from=wheelhouse /opt/wheelhouse /opt/wheelhouse
 WORKDIR /app
 
 # Install required Python packages.
-COPY requirements.txt requirements-dev.txt /app/
+COPY requirements.txt /app/
 RUN LIBGDAL_VERSION=$(gdal-config --version) pip install --no-cache-dir \
-	--find-links /opt/wheelhouse --requirement requirements-dev.txt
-RUN rm requirements.txt && rm requirements-dev.txt
+	--find-links /opt/wheelhouse --requirement requirements.txt
+RUN rm requirements.txt
 
 # Wheelhouse cleanup.
 RUN rm -rf /opt/wheelhouse
