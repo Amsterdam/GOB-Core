@@ -100,3 +100,11 @@ class PostgresDatastore(SqlDatastore):
     def rename_schema(self, schema: str, new_name: str) -> None:
         query = f'ALTER SCHEMA "{schema}" RENAME TO "{new_name}"'
         self.execute(query)
+
+    def is_extension_enabled(self, extension_name: str) -> bool:
+        query = f"SELECT 1 FROM pg_extension WHERE extname='{extension_name}'"
+
+        return len(list(self.query(query))) > 0
+
+    def get_version(self) -> str:
+        return next(self.query("SHOW server_version"))[0]

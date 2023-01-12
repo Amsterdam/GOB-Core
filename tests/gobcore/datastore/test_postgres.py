@@ -179,3 +179,20 @@ class TestPostgresDatastore(TestCase):
         store.execute = MagicMock()
         store.rename_schema('old schema', 'new schema')
         store.execute.assert_called_with('ALTER SCHEMA "old schema" RENAME TO "new schema"')
+
+    def test_is_extension_enabled(self):
+        store = PostgresDatastore({})
+        store.query = MagicMock(return_value=[1])
+
+        self.assertTrue(store.is_extension_enabled("citus"))
+        store.query.assert_called_with("SELECT 1 FROM pg_extension WHERE extname='citus'")
+
+        store.query.return_value = []
+        self.assertFalse(store.is_extension_enabled("citus"))
+
+    def test_get_version(self):
+        store = PostgresDatastore({})
+        store.query = MagicMock(return_value=iter([["12.4.2"]]))
+
+        self.assertEqual("12.4.2", store.get_version())
+        store.query.assert_called_with("SHOW server_version")
