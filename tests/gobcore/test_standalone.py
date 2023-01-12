@@ -127,23 +127,24 @@ class TestStandalone:
 
         mock_handler.assert_not_called()
 
-    def test_build_message_pass_message(self, result_path: Path):
+    def test_build_message_pass_message(self):
         """Test if message-data coming in is just passed along."""
-        message_data_json = json.dumps(
-            {
-                "header": {
-                    "catalogue": "nap", "mode": "full", "collection": "peilmerken",
-                    "entity": "peilmerken", "attribute": None,
-                    "application": "Grondslag", "source": "AMSBI", "depends_on": {},
-                    "enrich": {}, "version": "0.1",
-                    "timestamp": "2022-08-25T14:25:37.118522"
-                },
-                "summary": {
-                    "num_records": 1396, "warnings": [], "errors": [],
-                    "log_counts": {"data_warning": 132}
-                },
-                "contents_ref": "/app/shared/message_broker/20220825.142531.48048adc-cf34-42b5-a344-c8edbed9ff16"}
-        )
+
+        message_data = {
+            "header": {
+                "catalogue": "nap", "mode": "full", "collection": "peilmerken",
+                "entity": "peilmerken", "attribute": None,
+                "application": "Grondslag", "source": "AMSBI", "depends_on": {},
+                "enrich": {}, "version": "0.1",
+                "timestamp": "2022-08-25T14:25:37.118522"
+            },
+            "summary": {
+                "num_records": 1396, "warnings": [], "errors": [],
+                "log_counts": {"data_warning": 132}
+            },
+            "contents_ref": "/app/shared/message_broker/20220825.142531.48048adc-cf34-42b5-a344-c8edbed9ff16"
+        }
+        message_data_json = json.dumps(message_data)
         parser, subparsers = parent_argument_parser()
         subparsers.add_parser(
             name="compare",
@@ -153,12 +154,9 @@ class TestStandalone:
             f"--message-data={message_data_json}",
             "compare",
         ])
-        args.message_result_path = result_path
 
         message = _build_message(args, [])
-        assert message["header"]["catalogue"] == "nap"
-        assert message["header"]["collection"] == "peilmerken"
-        assert message["header"]["source"] == "AMSBI"
+        assert message == message_data
 
     def test_build_message_from_args(self, arg_parser: ArgumentParser):
         args = arg_parser.parse_args([
@@ -167,3 +165,33 @@ class TestStandalone:
         message = _build_message(args, [])
         assert message["header"]["catalogue"] == "test_catalogue"
         assert message["header"]["collection"] is None
+
+    def test_build_message_override_command_line_args(self, arg_parser: ArgumentParser):
+        message_data = {
+            "header": {
+                "catalogue": "nap",
+                "entity": "peilmerken",
+            },
+            "other": {
+                "some": "value",
+            },
+            "str": "some string",
+        }
+
+        args = arg_parser.parse_args([
+            "--message-data", json.dumps(message_data), "import", "--catalogue", "test_catalogue",
+        ])
+        message = _build_message(args, [])
+
+        assert message == {
+            "header": {
+                "catalogue": "test_catalogue",
+                "entity": "peilmerken",
+            },
+            "other": {
+                "some": "value",
+            },
+            "str": "some string",
+        }
+        assert message["header"]["catalogue"] == "test_catalogue"
+        assert "collection" not in message["header"], "Should not initialise missing values"

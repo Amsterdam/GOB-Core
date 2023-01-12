@@ -92,19 +92,30 @@ def _build_message(args: argparse.Namespace, extra_args: list[str]) -> Message:
     :param args: Parsed arguments
     :return: A message with keys as required by different handlers.
     """
-    # Just pass on message if there is message data.
-    if args.message_data is not None:
-        return json.loads(args.message_data)
 
-    header_args = [
-        'catalogue',
-        'collection',
-        'entity',
-        'attribute',
-        'application',
-    ] + extra_args
-
+    # These can be set from the command line
+    header_args = \
+        [
+            'catalogue',
+            'collection',
+            'entity',
+            'attribute',
+            'application',
+        ] + extra_args
     header = {arg: getattr(args, arg, None) for arg in header_args}
+
+    if args.message_data is not None:
+        message = json.loads(args.message_data)
+        override_header_attrs = {k: v for k, v in header.items() if v is not None}
+
+        # Returns message_data, but overrides header attributes set from command line
+        return {
+            **message,
+            "header": {
+                **message.get("header", {}),
+                **override_header_attrs,
+            }
+        }
 
     return {
         "header": header,
