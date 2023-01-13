@@ -2,7 +2,7 @@ cryptography==38.0.4
 GDAL==${LIBGDAL_VERSION}
 GeoAlchemy2==0.12.5
 geomet==1.0.0
-ijson==3.1.4
+ijson~=3.2.0.post0
 munch==2.5.0
 openpyxl==3.0.10
 oracledb~=1.2.1
