@@ -1,27 +1,7 @@
-[tool.mypy]
-follow_imports = "normal"
-warn_redundant_casts = true
-warn_unused_ignores = true
-disallow_any_generics = true
-check_untyped_defs = true
-no_implicit_reexport = true
-pretty = true
-
-# to be switched to true
-disallow_incomplete_defs = false
-disallow_untyped_defs = false
-disallow_untyped_calls = false
-
-[tool.isort]
-profile = "black"
-skip_gitignore = true
-line_length = 100
-
 [tool.black]
-line-length = 100
+line-length = 120
 
 [tool.coverage.run]
-branch = false
 omit = ["tests/*"]
 
 [tool.coverage.report]
@@ -44,15 +24,6 @@ exclude_lines = [
     "@(abc\\.)?abstractmethod"
 ]
 
-[tool.pytest.ini_options]
-testpaths = "tests"
-cache_dir = "/tmp/.pytest_cache"
-addopts = [
-    "-vv",
-    "--doctest-modules",
-    "--cache-clear"
-]
-
 [tool.flake8]
 exclude = [
     ".git",
@@ -63,7 +34,7 @@ exclude = [
     "tests"
 ]
 max-complexity = 6
-max-line-length = 100
+max-line-length = 120
 show_source = true
 ignore = [
     # Missing docstring in __init__
@@ -74,4 +45,52 @@ ignore = [
     "D100",
     # line break before binary operator
     "W503"
+]
+
+[tool.isort]
+profile = "black"
+line_length = 120
+
+[tool.mypy]
+follow_imports = "normal"
+pretty = true
+
+# These options below can be replaced by 'strict = true' when all true
+# Start off with these
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+no_implicit_optional = true
+
+# Getting these passing should be easy
+strict_equality = true
+strict_concatenate = true
+
+# Strongly recommend enabling this one as soon as you can
+check_untyped_defs = true
+
+# These shouldn't be too much additional work, but may be tricky to
+# get passing if you use a lot of untyped libraries
+disallow_subclassing_any = true
+disallow_untyped_decorators = true
+disallow_any_generics = true
+
+# These next few are various gradations of forcing use of type annotations
+disallow_untyped_calls = false
+disallow_incomplete_defs = false
+disallow_untyped_defs = false
+
+# This one isn't too hard to get passing, but return on investment is lower
+no_implicit_reexport = true
+
+# This one can be tricky to get passing if you use a lot of untyped libraries
+warn_return_any = true
+
+[tool.pytest.ini_options]
+testpaths = "tests"
+cache_dir = "/tmp/.pytest_cache"
+addopts = [
+    "-vv",
+    "--doctest-modules",
+    "--cache-clear"
 ]
