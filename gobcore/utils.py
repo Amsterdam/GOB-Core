@@ -64,11 +64,18 @@ class ProgressTicker:
         """Progress ticker ended."""
         print(f"End {self._name} - {self._count}")
 
+    def _report(self):
+        if self._count % self._report_interval == 0:
+            print(f"{self._name} - {self._count}")
+
     def tick(self):
         """Count and print progress message when count is a multiple of report_interval."""
         self._count += 1
-        if self._count % self._report_interval == 0:
-            print(f"{self._name} - {self._count}")
+        self._report()
+
+    def ticks(self, count: int):
+        self._count += count
+        self._report()
 
 
 def get_hostname() -> str:

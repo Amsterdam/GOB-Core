@@ -45,6 +45,18 @@ class TestProgressTicker(TestCase):
             else:
                 mock_print.assert_not_called()
 
+    @patch("builtins.print")
+    def test_ticks(self, mock_print):
+        with self.ticker:
+            self.ticker.ticks(10)
+
+            mock_print.assert_called_once()
+            assert self.ticker._count == 10
+
+            self.ticker.ticks(5)
+            mock_print.assert_called_with(f'TickerName - 15')
+            assert self.ticker._count == 15
+
 
 class TestUtilFunctions(TestCase):
 
