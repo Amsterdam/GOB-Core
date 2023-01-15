@@ -75,17 +75,10 @@ class ContentsReader:
         :param filename:
         """
         self.filename = filename
-        self.file = open(self.filename, "r")
-        # Use prefix='item' to get per entity (contents = [entity, entity, ...])
-        self._items = ijson.items(self.file, prefix="item")
 
     def items(self):
-        for item in self._items:
-            yield item
-        self.close()
-
-    def close(self):
-        self.file.close()
+        with open(self.filename, "rb") as fp:
+            yield from ijson.items(fp, prefix="item")
 
 
 def offload_message(msg, converter, force_offload: bool = False):
@@ -128,9 +121,7 @@ def load_message(msg, converter, params):
         unique_name = msg[_CONTENTS_REF]
         filename = get_filename(unique_name, _MESSAGE_BROKER_FOLDER)
         if params['stream_contents']:
-            reader = ContentsReader(filename)
-            msg[_CONTENTS] = reader.items()
-            msg[_CONTENTS_READER] = reader
+            msg[_CONTENTS] = ContentsReader(filename).items()
         else:
             with open(filename, 'r') as file:
                 msg[_CONTENTS] = converter(file.read())

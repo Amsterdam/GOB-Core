@@ -3,7 +3,7 @@ import json
 import unittest
 from unittest import mock
 from gobcore.utils import get_filename
-from tempfile import TemporaryDirectory
+from tempfile import TemporaryDirectory, NamedTemporaryFile
 
 from gobcore.message_broker.utils import to_json
 from unittest.mock import mock_open, ANY
@@ -168,26 +168,25 @@ class TestOfflineContents(unittest.TestCase):
         mock_remove.assert_called_with(cp_writer.filename)
 
 
-@mock.patch('gobcore.message_broker.offline_contents.ijson', mock.MagicMock())
-@mock.patch('builtins.open')
 class TestContentsReader(unittest.TestCase):
 
-    def test_init(self, mock_open):
+    def test_init(self):
         reader = oc.ContentsReader("filename")
-        mock_open.assert_called_with("filename", "r")
-        self.assertIsNotNone(reader.file)
+        assert reader.filename == "filename"
 
-    def test_items(self, mock_open):
-        reader = oc.ContentsReader("filename")
-        reader.close = mock.MagicMock()
-        items = ['a', 'b', 'c', 'd']
-        reader._items = items
+    @mock.patch('gobcore.message_broker.offline_contents.ijson', mock.MagicMock())
+    @mock.patch('builtins.open')
+    def test_open(self, mock_open):
+        list(oc.ContentsReader("filename").items())
+        mock_open.assert_called_with("filename", "rb")
 
-        self.assertEqual(list(reader.items()), items)
-        reader.close.assert_called_once()
+    def test_items(self):
+        items = [{"key": "value"}]
 
-    def test_close(self, mock_open):
-        reader = oc.ContentsReader("filename")
+        with NamedTemporaryFile(mode="w", delete=False) as tmpfile:
+            tmpfile.write(json.dumps(items))
 
-        reader.close()
-        mock_open.return_value.close.assert_called_once()
+        try:
+            assert list(oc.ContentsReader(tmpfile.name).items()) == items
+        finally:
+            Path(tmpfile.name).unlink()
