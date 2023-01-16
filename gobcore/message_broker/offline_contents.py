@@ -5,16 +5,16 @@ This prevents the message broker from transferring large messages
 
 """
 import gc
-import json
-import ijson
+import ijson.backends.yajl2_c as ijson  # force fastest backend
 import os
 
-from gobcore.typesystem.json import GobTypeJSONEncoder
+from orjson import orjson
+
+from gobcore.typesystem.json import GobTypeORJSONEncoder
 from gobcore.utils import gettotalsizeof, get_filename, get_unique_name
 
 _MAX_CONTENTS_SIZE = 8192                   # Any message contents larger than this size is stored offline
 _CONTENTS = "contents"                      # The name of the message attribute to check for its contents
-_CONTENTS_READER = "contents_reader"        # Message contents is exposed by a ContentsReader instance
 _CONTENTS_REF = "contents_ref"              # The name of the attribute for the reference to the offloaded contents
 _MESSAGE_BROKER_FOLDER = "message_broker"   # The name of the folder where the offloaded contents are stored
 
@@ -22,48 +22,40 @@ _MESSAGE_BROKER_FOLDER = "message_broker"   # The name of the folder where the o
 class ContentsWriter:
 
     def __init__(self, destination: str = None):
-        """
-        Opens a file
-        The entities are written to the file as an array
-        """
+        """The entities are written to the file as jsonlines. (see https://jsonlines.org/)"""
         unique_name = get_unique_name()
-        destination = destination or _MESSAGE_BROKER_FOLDER
-        self.filename = get_filename(unique_name, destination)
+        self.filename = get_filename(unique_name, destination or _MESSAGE_BROKER_FOLDER)
+        self.default = GobTypeORJSONEncoder()
 
     def __enter__(self):
-        self.open()
+        if os.path.exists(self.filename):
+            raise FileExistsError(self.filename)
+
+        self.file = open(self.filename, "ab")
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self.close()
+        self.file.close()
+
         if exc_type is not None:
             os.remove(self.filename)
 
-    def open(self):
-        self.file = open(self.filename, 'w')
-        self.file.write("[")
-        self.empty = True
-
-    def write(self, entity):
+    def write(self, entity: dict, **kwargs):
         """
-        Write an entity to the file
+        Write a serialized entity to file seperated by '\n'
 
-        Separate entities with a comma
         :param entity:
+        :param kwargs: optional kwargs passed to orjson.dumps
         :return:
         """
-        if not self.empty:
-            self.file.write(",\n")
-        self.file.write(json.dumps(entity, cls=GobTypeJSONEncoder, allow_nan=False))
-        self.empty = False
-
-    def close(self):
-        """
-        Terminates the array and closes the file
-        :return:
-        """
-        self.file.write("]")
-        self.file.close()
+        self.file.write(
+            orjson.dumps(
+                entity,
+                default=self.default,
+                option=orjson.OPT_PASSTHROUGH_DATETIME | orjson.OPT_APPEND_NEWLINE,
+                **kwargs
+            )
+        )
 
 
 class ContentsReader:
@@ -76,9 +68,17 @@ class ContentsReader:
         """
         self.filename = filename
 
+    @property
+    def _has_contents(self):
+        try:
+            return os.stat(self.filename).st_size > 0
+        except OSError:
+            return False
+
     def items(self):
-        with open(self.filename, "rb") as fp:
-            yield from ijson.items(fp, prefix="item")
+        if self._has_contents:
+            with open(self.filename, "rb") as fp:
+                yield from ijson.items(fp, multiple_values=True, prefix="")
 
 
 def offload_message(msg, converter, force_offload: bool = False):
@@ -117,14 +117,17 @@ def load_message(msg, converter, params):
     :return:
     """
     unique_name = None
+
     if _CONTENTS_REF in msg:
         unique_name = msg[_CONTENTS_REF]
         filename = get_filename(unique_name, _MESSAGE_BROKER_FOLDER)
+
         if params['stream_contents']:
             msg[_CONTENTS] = ContentsReader(filename).items()
         else:
             with open(filename, 'r') as file:
                 msg[_CONTENTS] = converter(file.read())
+
         del msg[_CONTENTS_REF]
     return msg, unique_name
 
@@ -138,10 +141,6 @@ def end_message(msg, unique_name):
     :return: None
     """
     if unique_name:
-        reader = msg.get(_CONTENTS_READER)
-        if reader is not None:
-            reader.close()
-
         filename = get_filename(unique_name, _MESSAGE_BROKER_FOLDER)
         try:
             os.remove(filename)
@@ -149,6 +148,5 @@ def end_message(msg, unique_name):
             print(f"Remove failed ({str(e)})", filename)
 
     # Clear message and run garbage collection
-    for key in list(msg.keys()):
-        del msg[key]
+    msg.clear()
     gc.collect()

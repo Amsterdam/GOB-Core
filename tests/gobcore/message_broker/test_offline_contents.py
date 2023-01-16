@@ -1,3 +1,4 @@
+import datetime
 import json
 
 import unittest
@@ -6,7 +7,7 @@ from gobcore.utils import get_filename
 from tempfile import TemporaryDirectory, NamedTemporaryFile
 
 from gobcore.message_broker.utils import to_json
-from unittest.mock import mock_open, ANY
+from unittest.mock import mock_open, ANY, patch, PropertyMock, MagicMock
 from pathlib import Path
 
 import gobcore.message_broker.config as config
@@ -52,19 +53,11 @@ class TestOfflineContents(unittest.TestCase):
 
     @mock.patch('gobcore.message_broker.offline_contents.get_filename', return_value="filename")
     @mock.patch('os.remove')
-    def testEndMessageCloseReader(self, mocked_remove, mocked_filename):
-        reader = mock.MagicMock()
-        oc.end_message({'some': 'content', 'contents_reader': reader}, 'unique name')
-        reader.close.assert_called_once()
-
-    @mock.patch('gobcore.message_broker.offline_contents.get_filename', return_value="filename")
-    @mock.patch('os.remove')
     @mock.patch('builtins.print')
     def testEndMessageRemoveFailed(self, mocked_print, mocked_remove, mocked_filename):
         mocked_remove.side_effect = Exception
         reader = mock.MagicMock()
         oc.end_message({'some': 'content', 'contents_reader': reader}, 'unique name')
-        reader.close.assert_called_once()
         mocked_print.assert_called_once()
         self.assertTrue(mocked_print.call_args[0][0].startswith('Remove failed'))
 
@@ -128,44 +121,76 @@ class TestOfflineContents(unittest.TestCase):
             handle = mocked_reader()
             handle.read.assert_called()
 
-    @mock.patch('gobcore.message_broker.offline_contents.get_filename', return_value="filename")
-    def testLoadMessageReader(self, mocked_filename):
+    @patch("gobcore.message_broker.offline_contents.get_filename", MagicMock(return_value="filename"))
+    def testLoadMessageReader(self):
         mocked_reader = mock_open(read_data="some data")
-        with mock.patch('builtins.open', mocked_reader):
+        expected = ({"any": "value", "contents": ANY}, "unique_name")
+
+        with mock.patch("builtins.open", mocked_reader):
             params = {"stream_contents": True}
-            self.assertEqual(oc.load_message({"contents_ref": "unique_name", "any": "value"}, converter, params),
-                             ({"any": "value", "contents": ANY, "contents_reader": ANY}, "unique_name"))
+            actual = oc.load_message({"contents_ref": "unique_name", "any": "value"}, converter, params)
 
-    @mock.patch('os.remove')
-    @mock.patch('builtins.open')
-    def testContentsWriter(self, mock_open, mock_remove):
-        cp_writer = None
-        with oc.ContentsWriter() as writer:
-            mock_open.assert_called_with(writer.filename, "w")
+        assert actual == expected
 
-            writer.file.write.assert_called_with("[")
-            writer.file.reset_mock()
 
-            writer.write({})
-            writer.file.write.assert_called_with("{}")
-            writer.file.reset_mock()
+class TestContentsWriter(unittest.TestCase):
 
-            writer.write({})
-            writer.file.write.assert_has_calls([mock.call(",\n"), mock.call("{}")])
+    def test_init(self):
+        writer = oc.ContentsWriter()
+        assert oc._MESSAGE_BROKER_FOLDER in writer.filename
 
-            cp_writer = writer
+        writer = oc.ContentsWriter("destination")
+        assert "destination" in writer.filename
 
-        cp_writer.file.close.assert_called()
-        mock_remove.assert_not_called()
+    @patch("gobcore.message_broker.offline_contents.os.path")
+    @patch("builtins.open")
+    def test_enter(self, mock_open, mock_path):
+        with self.assertRaises(FileExistsError):
+            mock_path.exists = lambda x: True
+            oc.ContentsWriter().__enter__()
 
-        try:
-            with oc.ContentsWriter() as writer:
-                cp_writer = writer
-                raise Exception("Any exception")
-        except Exception:
+        mock_path.exists = lambda x: False
+        cw = oc.ContentsWriter()
+        cw.__enter__()
+        mock_open.assert_called_with(cw.filename, "ab")
+
+    @patch("os.remove")
+    @patch("builtins.open")
+    def test_exit(self, mock_open, mock_remove):
+        with oc.ContentsWriter():
             pass
 
-        mock_remove.assert_called_with(cp_writer.filename)
+        mock_open.return_value.close.assert_called()
+        mock_remove.assert_not_called()
+
+        mock_open.reset_mock()
+
+        with self.assertRaises(Exception):
+            with oc.ContentsWriter() as cw:
+                raise Exception
+
+        mock_open.return_value.close.assert_called()
+        mock_remove.assert_called_with(cw.filename)
+
+    def test_write(self):
+        entity = {
+            "entity": "my value",
+            "datetime": datetime.datetime(2023, 1, 5),
+            "date": datetime.date(2023, 1, 5),
+            "int": 2,
+            "list": [1, 2]
+        }
+        expected = b'{"entity":"my value","datetime":"2023-01-05T00:00:00.000000",' \
+                   b'"date":"2023-01-05","int":2,"list":[1,2]}\n'
+
+        with TemporaryDirectory() as tmpdir:
+            with oc.ContentsWriter(tmpdir) as cw:
+                cw.write(entity)
+
+            with open(cw.filename, mode="rb") as fp:
+                actual = fp.read()
+
+            assert actual == expected
 
 
 class TestContentsReader(unittest.TestCase):
@@ -174,19 +199,46 @@ class TestContentsReader(unittest.TestCase):
         reader = oc.ContentsReader("filename")
         assert reader.filename == "filename"
 
-    @mock.patch('gobcore.message_broker.offline_contents.ijson', mock.MagicMock())
-    @mock.patch('builtins.open')
+    @patch("gobcore.message_broker.offline_contents.ContentsReader._has_contents", PropertyMock(return_value=True))
+    @patch("gobcore.message_broker.offline_contents.ijson", MagicMock())
+    @patch("builtins.open")
     def test_open(self, mock_open):
-        list(oc.ContentsReader("filename").items())
-        mock_open.assert_called_with("filename", "rb")
+        with patch(
+                "gobcore.message_broker.offline_contents.ContentsReader._has_contents",
+                PropertyMock(return_value=True)
+        ):
+            list(oc.ContentsReader("filename").items())
+            mock_open.assert_called_with("filename", "rb")
 
     def test_items(self):
-        items = [{"key": "value"}]
+        items = [{"key": "value"}, {"key2": "value2"}]
 
         with NamedTemporaryFile(mode="w", delete=False) as tmpfile:
-            tmpfile.write(json.dumps(items))
+            for item in items:
+                tmpfile.write(json.dumps(item) + "\n")
 
         try:
             assert list(oc.ContentsReader(tmpfile.name).items()) == items
         finally:
             Path(tmpfile.name).unlink()
+
+    def test_empty_file(self):
+        tmpfile = NamedTemporaryFile(mode="w", delete=False)
+        tmpfile.write("")
+
+        try:
+            assert list(oc.ContentsReader(tmpfile.name).items()) == []
+        finally:
+            Path(tmpfile.name).unlink()
+
+    def test_file_by_contentswriter(self):
+        entities = [{"key1": "value1"}, {"key2": "value2"}, {"key3": 10}]
+
+        with TemporaryDirectory() as tmpdir:
+
+            with oc.ContentsWriter(tmpdir) as cw:
+                for entity in entities:
+                    cw.write(entity)
+
+            actual = list(oc.ContentsReader(cw.filename).items())
+            assert actual == entities

@@ -3,6 +3,8 @@ import decimal
 import json
 import enum
 
+from orjson import orjson
+
 from gobcore.typesystem.gob_types import GOBType
 
 
@@ -40,3 +42,23 @@ class GobTypeJSONEncoder(json.JSONEncoder):
             return str(obj.value)
 
         return super().default(obj)
+
+
+class GobTypeORJSONEncoder:
+
+    def __call__(self, obj):  # noqa: C901 (Function is too complex)
+        if isinstance(obj, GOBType):
+            return orjson.loads(obj.json)
+
+        elif type(obj) is datetime.date:
+            return obj.isoformat()
+
+        elif type(obj) is datetime.datetime:
+            # force YYYY-MM-DDTHH:MM:SS.ffffff
+            return obj.isoformat(timespec="microseconds")
+
+        elif isinstance(obj, decimal.Decimal):
+            return str(obj)
+
+        else:
+            raise TypeError(type(obj))
