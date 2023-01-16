@@ -1,12 +1,15 @@
 import enum
+import functools
 import json
 import unittest
 import datetime
 import decimal
 
+from orjson import orjson
+
 from gobcore.typesystem.gob_geotypes import Point
 from gobcore.typesystem.gob_types import String, Integer, Decimal, Boolean, JSON
-from gobcore.typesystem.json import GobTypeJSONEncoder
+from gobcore.typesystem.json import GobTypeJSONEncoder, GobTypeORJSONEncoder
 
 from tests.gobcore import fixtures
 
@@ -92,3 +95,65 @@ class TestJsonEncoding(unittest.TestCase):
             gob_type = JSON.from_value(json_string)
             to_json = json.dumps(gob_type, cls=GobTypeJSONEncoder)
             self.assertEqual(json_string, to_json)
+
+
+class TestORJSONEncoding(unittest.TestCase):
+
+    def setUp(self) -> None:
+        self.kwargs = {
+            "default": GobTypeORJSONEncoder(),
+            "option": orjson.OPT_PASSTHROUGH_DATETIME
+        }
+        self.dump = functools.partial(orjson.dumps, **self.kwargs)
+
+    def test_geo_json(self):
+        assert self.dump(Point.from_values(x=1, y=2)) == b'{"type":"Point","coordinates":[1.0,2.0]}'
+
+    def test_decimal(self):
+        assert self.dump(decimal.Decimal("1.5")) == b'"1.5"'
+
+    def test_date(self):
+        assert self.dump(datetime.date(2000, 12, 20)) == b'"2000-12-20"'
+
+    def test_datetime(self):
+        assert self.dump(datetime.datetime(2000, 12, 20, 11, 25, 30)) == b'"2000-12-20T11:25:30.000000"'
+
+    def test_enum(self):
+        assert self.dump(MockEnum.attribute1) == b'"1"'
+        assert self.dump(MockEnum.attribute2) == b'2'
+
+    def test_normal_json(self):
+        # non primitives should be quoted
+        assert self.dump({'string': String.from_value(123)}) == b'{"string":"123"}'
+
+        # Nones should be null
+        assert self.dump({'string': String.from_value(None)}) == b'{"string":null}'
+
+        # Integer should be primitive
+        assert self.dump({'string': Integer.from_value(123)}) == b'{"string":123}'
+
+        # Decimal should be primitive
+        assert self.dump({'string': Decimal.from_value("123,4", decimal_separator=',')}) == b'{"string":123.4}'
+
+        # Boolean should be primitive
+        assert self.dump({"string": Boolean.from_value("N", format='YN')}) == b'{"string":false}'
+
+    def test_fallthrough(self):
+        class UnknownType:
+            pass
+
+        with self.assertRaises(TypeError, msg="Type is not JSON serializable: UnknownType"):
+            self.dump({'unknown_type': UnknownType()})
+
+    def test_json_json(self):
+        samples = {
+            '{"coordinates": [1.0, 2.0], "type": "Point"}': b'{"coordinates":[1.0,2.0],"type":"Point"}',
+            '{"string": "123"}': b'{"string":"123"}',
+            '{"string": null}': b'{"string":null}',
+            '{"string": 123}': b'{"string":123}',
+            '{"string": 123.4}': b'{"string":123.4}',
+            '{"string": false}': b'{"string":false}',
+            f'["abcd e 123 (#$&", "{True}", "asldkfj #($&^"]': b'["abcd e 123 (#$&","True","asldkfj #($&^"]'
+        }
+        for sample, expected in samples.items():
+            assert self.dump(JSON.from_value(sample)) == expected
