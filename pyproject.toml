@@ -1,9 +1,6 @@
 [tool.black]
 line-length = 120
 
-[tool.coverage.run]
-omit = ["tests/*"]
-
 [tool.coverage.report]
 show_missing = true
 exclude_lines = [
@@ -25,14 +22,7 @@ exclude_lines = [
 ]
 
 [tool.flake8]
-exclude = [
-    ".git",
-    "__pycache__",
-    ".mypy_cache",
-    ".pytest",
-    "venv",
-    "tests"
-]
+exclude = ["tests"]
 max-complexity = 6
 max-line-length = 120
 show_source = true
@@ -54,6 +44,7 @@ line_length = 120
 [tool.mypy]
 follow_imports = "normal"
 pretty = true
+cache_dir = "/tmp/.mypy_cache"
 
 # These options below can be replaced by 'strict = true' when all true
 # Start off with these

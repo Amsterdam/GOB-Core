@@ -90,7 +90,7 @@ echo "Running mypy"
 # mypy "${FILES[@]}"
 
 echo "Running unit tests"
-coverage run -m pytest
+coverage run --source=gobcore -m pytest
 
 echo "Reporting coverage"
 coverage report --fail-under=100
