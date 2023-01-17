@@ -1,5 +1,7 @@
 [tool.black]
 line-length = 120
+color = true
+verbose = true
 
 [tool.coverage.report]
 show_missing = true
