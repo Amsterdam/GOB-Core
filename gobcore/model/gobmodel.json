@@ -3289,12 +3289,12 @@
       "tenaamstellingen": {
         "version": "0.1",
         "abbreviation": "TNG",
-        "entity_id": "identificatie",
+        "entity_id": "neuron_id",
         "schema": {
           "datasetId": "brk2",
           "tableId": "tenaamstellingen",
           "version": "1.0.0",
-          "entity_id": "identificatie",
+          "entity_id": "neuron_id",
           "base_uri": "https://raw.githubusercontent.com/Amsterdam/amsterdam-schema/brk2_active_dataset"
         }
       }
