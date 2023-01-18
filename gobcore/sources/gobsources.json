@@ -957,7 +957,7 @@
         },
         "is_beperkt_tot_brk_tenaamstellingen": {
           "method": "equals",
-          "destination_attribute": "identificatie"
+          "destination_attribute": "neuron_id"
         },
         "rust_op_brk_kadastraal_object": {
           "method": "equals",
