@@ -1,4 +1,6 @@
-# Converted table names
+"""Shorten table names."""
+
+
 _CONVERSIONS = {
     "is_bron_voor_aantekening_kadastraal_object": "bron_kad_obj",
     "ontstaan_uit_appartementsrechtsplitsing_vve": "ontst_apprechtsplit_vve",
@@ -15,20 +17,19 @@ _CONVERSIONS = {
     "betrokken_bij_brk_zakelijke_rechten": "betrokken_bij_brk_zrt",
     "is_beperkt_tot_brk_tenaamstellingen": "is_beperkt_tot_brk_tng",
     "ontstaan_uit_brk_zakelijke_rechten": "ontstaan_uit_brk_zrt",
+    "betrokken_samenwerkingsverband_brk_subject": "betr_samenwerkverband_brk_sjt",
+    "betrokken_gorzen_en_aanwassen_brk_subject": "betr_gorzen_aanwassen_brk_sjt",
 }
 
 
 class NameCompressor:
-    # Use the name compressor for all table names that are too long
-    #
-    # for PostgreSQL the maximimum length = 63
-    # But simply testing for this length is not enough
-    #
-    # The name is also used with prefixes:
-    # - mv_ for materialized views
-    # And postfixes
-    # _tmp for temporary tables
-    #
+    """Use the name compressor for all table names that are too long.
+
+    For PostgreSQL the maximimum length = 63 but simply testing for this length is not enough.
+
+    The name is also used with prefixes: 'mv_' for materialized views.
+    And postfixes: '_tmp' for temporary tables.
+    """
 
     # Warn if name exceeds this length
     LONG_NAME_LENGTH = 55
@@ -39,6 +40,7 @@ class NameCompressor:
 
     @classmethod
     def compress_name(cls, name):
+        """Compress (shorten) table name."""
         for src, dst in _CONVERSIONS.items():
             name = name.replace(src, cls._compressed_value(dst))
 
@@ -49,6 +51,7 @@ class NameCompressor:
 
     @classmethod
     def uncompress_name(cls, name):
+        """Uncompress table name."""
         for src, dst in _CONVERSIONS.items():
             name = name.replace(cls._compressed_value(dst), src)
         return name

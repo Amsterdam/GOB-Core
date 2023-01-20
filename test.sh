@@ -46,7 +46,7 @@ FILES=(
 #  gobcore/model/events.py
 #  gobcore/model/metadata.py
 #  gobcore/model/migrations/__init__.py
-#  gobcore/model/name_compressor.py
+  gobcore/model/name_compressor.py
 #  gobcore/model/pydantic.py
 #  gobcore/model/quality.py
 #  gobcore/model/relations.py

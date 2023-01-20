@@ -965,6 +965,22 @@
         }
       },
       "tenaamstellingen": {
+        "van_brk_kadastraalsubject": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "betrokken_partner_brk_subject": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "betrokken_samenwerkingsverband_brk_subject": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "betrokken_gorzen_en_aanwassen_brk_subject": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
         "van_brk_zakelijk_recht": {
           "method": "equals",
           "destination_attribute": "identificatie"
