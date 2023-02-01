@@ -20,6 +20,7 @@ CLEAN_FILES=(
   gobcore/status/__init__.py
   gobcore/views/__init__.py
   gobcore/workflow/__init__.py
+  gobcore/workflow/start_workflow.py
 )
 
 # Uncomment files to pass through Flake8 & Black checks. Move mypy clean files to CLEAN_FILES.
@@ -91,7 +92,6 @@ DIRTY_FILES=(
 #  gobcore/typesystem/json.py
   gobcore/utils.py
 #  gobcore/workflow/start_commands.py
-#  gobcore/workflow/start_workflow.py
 )
 
 # Combine CLEAN_FILES and DIRTY_FILES.
