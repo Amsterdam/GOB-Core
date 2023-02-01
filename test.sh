@@ -16,6 +16,7 @@ CLEAN_FILES=(
   gobcore/enum.py
   gobcore/exceptions.py
   gobcore/parse.py
+  gobcore/sources/__init__.py
   gobcore/status/__init__.py
   gobcore/views/__init__.py
   gobcore/workflow/__init__.py
@@ -81,7 +82,6 @@ DIRTY_FILES=(
 #  gobcore/secure/cryptos/fernet.py
 #  gobcore/secure/request.py
 #  gobcore/secure/user.py
-#  gobcore/sources/__init__.py
 #  gobcore/standalone.py
 #  gobcore/status/heartbeat.py
 #  gobcore/typesystem/__init__.py
