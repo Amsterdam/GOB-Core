@@ -1,16 +1,16 @@
+import socket
+import uuid
 from datetime import datetime
 from itertools import chain
 from pathlib import Path
-import socket
 from sys import getsizeof
-import uuid
 
 from gobcore.message_broker.config import GOB_SHARED_DIR
 from gobcore.message_broker.typing import Service
 
 
 def gettotalsizeof(o):
-    """ Returns the approximate memory footprint an object and all of its contents.
+    """Return the approximate memory footprint an object and all of its contents.
 
     Automatically finds the contents of the following builtin containers and
     their subclasses:  tuple, list, dict, set and frozenset.
@@ -41,13 +41,11 @@ def gettotalsizeof(o):
     return sizeof(o)
 
 
-class ProgressTicker():
-    """
-    Simple progress ticker
-    """
+class ProgressTicker:
+    """Simple progress ticker."""
 
     def __init__(self, name, report_interval):
-        """
+        """Initialize ProgressTicker.
 
         :param name: the name of the process
         :param report_interval: the interval at which to print a short progress message
@@ -57,60 +55,50 @@ class ProgressTicker():
         self._count = 0
 
     def __enter__(self):
+        """Return ProgressTicker instance."""
         print(f"Start {self._name}")
         return self
 
     def __exit__(self, *args):
+        """Progress ticker ended."""
         print(f"End {self._name} - {self._count}")
 
     def tick(self):
+        """Count and print progress message when count is a multiple of report_interval."""
         self._count += 1
         if self._count % self._report_interval == 0:
             print(f"{self._name} - {self._count}")
 
 
-def get_hostname():
-    """
-    :return: a string containing the hostname of the machine where the Python interpreter is currently executing
-    """
+def get_hostname() -> str:
+    """Return the hostname of the machine where the Python interpreter is currently executing."""
     return socket.gethostname()
 
 
-def get_ip_address():
-    """
-    :return: a string containing the IPv4 address of the hostname
-    """
+def get_ip_address() -> str:
+    """Return IPv4 address of the host."""
     return socket.gethostbyname(get_hostname())
 
 
-def get_dns():
-    """
-    :return: a string containing the IPv4 address of the dns resolver or None if not found
-    """
+def get_dns() -> str:
+    """Return the IPv4 address of the DNS resolver or None if not found."""
     try:
-        with open('/etc/resolv.conf') as fp:
+        with open("/etc/resolv.conf") as fp:
             for line in fp.readlines():
                 columns = line.split()
-                if len(columns) >= 2 and columns[0] == 'nameserver':
+                if len(columns) >= 2 and columns[0] == "nameserver":
                     return columns[1:][0]
     except Exception:
         pass
 
 
-def get_host_info():
-    """
-    :return: a dictionary containing hostname, ip adress and dns of the machine
-             where the Python interpreter is currently executing
-    """
-    return {
-        'name': get_hostname(),
-        'address': get_ip_address(),
-        'dns': get_dns()
-    }
+def get_host_info() -> dict:
+    """Return a dictionary containing hostname, IP address and DNS resolver of the host."""
+    return {"name": get_hostname(), "address": get_ip_address(), "dns": get_dns()}
 
 
 def get_unique_name():
-    """Returns a unique name for files to offload content
+    """Return a unique name for files to offload content.
 
     :return:
     """
@@ -120,7 +108,7 @@ def get_unique_name():
 
 
 def get_filename(name: str, offload_folder: str) -> str:
-    """Returns the full filename given a name of a file
+    """Return the full file path given a name of a file.
 
     Additionally, creates parent folders if they don't exist.
 
@@ -134,8 +122,8 @@ def get_filename(name: str, offload_folder: str) -> str:
 
 
 def get_logger_name(service: Service) -> str:
-    """
-    Creates a name for a logger from the servicedefinition.
+    """Create a name for a logger from the service definition.
+
     This is defined by the `logger` key, with a fallback to the queue name.
     The returned value must be a string, nameless loggers are not allowed.
 

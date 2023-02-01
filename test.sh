@@ -3,8 +3,13 @@
 set -u # crash on missing env
 set -e # stop on any error
 
+echo() {
+   builtin echo -e "$@"
+}
+
 export COVERAGE_FILE="/tmp/.coverage"
 
+# Uncomment files to pass through checks
 FILES=(
 #  gobcore/__init__.py
 #  gobcore/datastore/__init__.py
@@ -78,30 +83,30 @@ FILES=(
 #  gobcore/typesystem/gob_secure_types.py
 #  gobcore/typesystem/gob_types.py
 #  gobcore/typesystem/json.py
-#  gobcore/utils.py
+  gobcore/utils.py
 #  gobcore/views/__init__.py
 #  gobcore/workflow/__init__.py
 #  gobcore/workflow/start_commands.py
 #  gobcore/workflow/start_workflow.py
 )
 
-echo "Running mypy"
+echo "Not yet running mypy"
 # temporary disabled, fix mypy for gobcore/__init__.py first
 # mypy "${FILES[@]}"
 
-echo "Running unit tests"
+echo "\nRunning unit tests"
 coverage run --source=gobcore -m pytest
 
-echo "Reporting coverage"
+echo "Coverage report"
 coverage report --fail-under=100
 
-echo "Check if black finds no potential reformat fixes"
+echo "\nCheck if Black finds no potential reformat fixes"
 black --check --diff "${FILES[@]}"
 
-echo "Check for potential import sort"
-isort --check --diff "${FILES[@]}"
+echo "\nCheck for potential import sort"
+isort --check --diff --src-path=gobcore "${FILES[@]}"
 
-echo "Running flake8"
+echo "\nRunning Flake8 style checks"
 flake8 "${FILES[@]}"
 
-echo "Checks complete"
+echo "\nChecks complete"
