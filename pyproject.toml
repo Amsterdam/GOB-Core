@@ -79,6 +79,25 @@ no_implicit_reexport = true
 # This one can be tricky to get passing if you use a lot of untyped libraries
 warn_return_any = true
 
+# Disable import checks for non typed packages
+[[tool.mypy.overrides]]
+module = ["pika.*"]
+ignore_missing_imports = true
+
+# Disable mypy checks for `dirty' gobcore modules
+[[tool.mypy.overrides]]
+module = [
+    "gobcore.events.*",
+    "gobcore.logging.*",
+    "gobcore.message_broker.*",
+    "gobcore.model.*",
+    "gobcore.quality.*",
+    "gobcore.secure.*",
+    "gobcore.typesystem.*",
+    "gobcore.utils",
+]
+ignore_errors = true
+
 [tool.pytest.ini_options]
 testpaths = "tests"
 cache_dir = "/tmp/.pytest_cache"
