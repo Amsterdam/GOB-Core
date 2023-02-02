@@ -18,6 +18,7 @@ CLEAN_FILES=(
   gobcore/parse.py
   gobcore/sources/__init__.py
   gobcore/status/__init__.py
+  gobcore/typing.py
   gobcore/views/__init__.py
   gobcore/workflow/__init__.py
   gobcore/workflow/start_workflow.py
