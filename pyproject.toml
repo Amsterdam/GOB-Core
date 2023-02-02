@@ -94,7 +94,6 @@ module = [
     "gobcore.quality.*",
     "gobcore.secure.*",
     "gobcore.typesystem.*",
-    "gobcore.utils",
 ]
 ignore_errors = true
 

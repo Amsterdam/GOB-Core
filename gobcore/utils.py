@@ -4,6 +4,7 @@ from datetime import datetime
 from itertools import chain
 from pathlib import Path
 from sys import getsizeof
+from typing import Optional
 
 from gobcore.message_broker.config import GOB_SHARED_DIR
 from gobcore.message_broker.typing import Service
@@ -80,7 +81,7 @@ def get_ip_address() -> str:
     return socket.gethostbyname(get_hostname())
 
 
-def get_dns() -> str:
+def get_dns() -> Optional[str]:
     """Return the IPv4 address of the DNS resolver or None if not found."""
     try:
         with open("/etc/resolv.conf") as fp:
@@ -88,11 +89,12 @@ def get_dns() -> str:
                 columns = line.split()
                 if len(columns) >= 2 and columns[0] == "nameserver":
                     return columns[1:][0]
+            return None  # pragma: no cover
     except Exception:
-        pass
+        return None
 
 
-def get_host_info() -> dict:
+def get_host_info() -> dict[str, Optional[str]]:
     """Return a dictionary containing hostname, IP address and DNS resolver of the host."""
     return {"name": get_hostname(), "address": get_ip_address(), "dns": get_dns()}
 

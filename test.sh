@@ -19,6 +19,7 @@ CLEAN_FILES=(
   gobcore/sources/__init__.py
   gobcore/status/__init__.py
   gobcore/typing.py
+  gobcore/utils.py
   gobcore/views/__init__.py
   gobcore/workflow/__init__.py
   gobcore/workflow/start_workflow.py
@@ -91,7 +92,6 @@ DIRTY_FILES=(
 #  gobcore/typesystem/gob_secure_types.py
 #  gobcore/typesystem/gob_types.py
 #  gobcore/typesystem/json.py
-  gobcore/utils.py
 #  gobcore/workflow/start_commands.py
 )
 

@@ -6,7 +6,7 @@ class Exchange(TypedDict, total=False):
 
 
 class Queue(TypedDict):
-    queue: Union[str, Callable[..., Any]]
+    queue: str
 
 
 class QueueOptional(TypedDict, total=False):
