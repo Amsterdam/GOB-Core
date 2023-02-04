@@ -1,4 +1,6 @@
 """Typing for GOB Core."""
 
-CatalogNameType = str
-CollectionNameType = str
+from typing import NewType
+
+CatalogName = NewType("CatalogName", str)
+CollectionName = NewType("CollectionName", str)

@@ -3,18 +3,19 @@
 
 import os
 from collections import defaultdict
+from typing import NewType, Optional
 
 from gobcore.model import GOBModel
 from gobcore.parse import json_to_cached_dict
-from gobcore.typing import CatalogNameType, CollectionNameType
+from gobcore.typing import CatalogName, CollectionName
 
-ReferenceNameType = str
+ReferenceName = NewType("ReferenceName", str)
 RelationType = dict[str, str]
 RelationListType = list[RelationType]
 
-SourceType = dict[CatalogNameType, dict[CollectionNameType, dict[ReferenceNameType, RelationType]]]
-SourceNameType = str
-GobSourcesType = dict[SourceNameType, SourceType]
+SourceName = NewType("SourceName", str)
+SourceType = NewType("SourceType", dict[CatalogName, dict[CollectionName, dict[ReferenceName, RelationType]]])
+GobSourcesType = NewType("GobSourcesType", dict[SourceName, SourceType])
 
 
 class GOBSources:
@@ -34,7 +35,7 @@ class GOBSources:
         for source_name, source in data.items():
             self._extract_relations(source_name, source)
 
-    def _extract_relations(self, source_name: SourceNameType, source: SourceType) -> None:
+    def _extract_relations(self, source_name: SourceName, source: SourceType) -> None:
         for catalog_name, catalog in self.model.items():
             for collection_name, collection in catalog["collections"].items():
                 for field_name, spec in collection["references"].items():
@@ -54,10 +55,10 @@ class GOBSources:
     def _get_field_relation(
         self,
         source: SourceType,
-        catalog_name: CatalogNameType,
-        collection_name: CollectionNameType,
-        field_name: ReferenceNameType,
-    ) -> RelationType:
+        catalog_name: CatalogName,
+        collection_name: CollectionName,
+        field_name: ReferenceName,
+    ) -> Optional[dict[str, str]]:
         try:
             relation = source[catalog_name][collection_name][field_name]
         except KeyError:
@@ -66,7 +67,7 @@ class GOBSources:
             return relation
 
     def get_field_relations(
-        self, catalog_name: CatalogNameType, collection_name: CollectionNameType, field_name: ReferenceNameType
+        self, catalog_name: CatalogName, collection_name: CollectionName, field_name: ReferenceName
     ) -> RelationListType:
         """Get all the relations for the specified field in the given catalog - collection.
 
@@ -84,6 +85,6 @@ class GOBSources:
         except KeyError:
             return []
 
-    def get_relations(self, catalog_name: CatalogNameType, collection_name: CollectionNameType) -> RelationListType:
+    def get_relations(self, catalog_name: CatalogName, collection_name: CollectionName) -> RelationListType:
         """Return all the relations for the given catalog - collection."""
         return self._relations[catalog_name][collection_name]
