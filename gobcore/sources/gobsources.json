@@ -984,6 +984,56 @@
         "van_brk_zakelijk_recht": {
           "method": "equals",
           "destination_attribute": "identificatie"
+        },
+        "is_gebaseerd_op_brk_stukdelen": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        }
+      },
+      "stukdelen": {
+        "is_bron_voor_brk_tenaamstelling": {
+          "method": "equals",
+          "destination_attribute": "neuron_id"
+        },
+        "is_bron_voor_brk_aantekening_kadastraal_object": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "is_bron_voor_brk_aantekening_recht": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "is_bron_voor_brk_zakelijk_recht": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        }
+      },
+      "aantekeningenrechten": {
+        "betrokken_brk_tenaamstelling": {
+          "method": "equals",
+          "destination_attribute": "neuron_id"
+        },
+        "heeft_brk_betrokken_persoon": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "is_gebaseerd_op_brk_stukdeel": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        }
+      },
+      "aantekeningenkadastraleobjecten": {
+        "heeft_brk_betrokken_persoon": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "heeft_betrekking_op_brk_kadastraal_object": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "is_gebaseerd_op_brk_stukdeel": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
         }
       }
     },

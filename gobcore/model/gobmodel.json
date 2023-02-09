@@ -3293,8 +3293,45 @@
         "schema": {
           "datasetId": "brk2",
           "tableId": "tenaamstellingen",
-          "version": "1.0.1",
+          "version": "1.1.0",
           "entity_id": "neuron_id",
+          "base_uri": "https://raw.githubusercontent.com/Amsterdam/amsterdam-schema/brk2_active_dataset"
+        }
+      },
+      "stukdelen": {
+        "version": "0.1",
+        "abbreviation": "SDL",
+        "entity_id": "identificatie",
+        "schema": {
+          "datasetId": "brk2",
+          "tableId": "stukdelen",
+          "version": "1.0.0",
+          "entity_id": "identificatie",
+          "base_uri": "https://raw.githubusercontent.com/Amsterdam/amsterdam-schema/brk2_active_dataset"
+        }
+      },
+      "aantekeningenrechten": {
+        "version": "0.1",
+        "abbreviation": "ART",
+        "entity_id": "identificatie",
+        "schema": {
+          "datasetId": "brk2",
+          "tableId": "aantekeningenrechten",
+          "version": "1.0.0",
+          "entity_id": "identificatie",
+          "base_uri": "https://raw.githubusercontent.com/Amsterdam/amsterdam-schema/brk2_active_dataset"
+        }
+      },
+      "aantekeningenkadastraleobjecten": {
+        "version": "0.1",
+        "abbreviation": "AKT",
+        "entity_id": "identificatie",
+        "has_states": true,
+        "schema": {
+          "datasetId": "brk2",
+          "tableId": "aantekeningenkadastraleobjecten",
+          "version": "1.0.0",
+          "entity_id": "identificatie",
           "base_uri": "https://raw.githubusercontent.com/Amsterdam/amsterdam-schema/brk2_active_dataset"
         }
       }
