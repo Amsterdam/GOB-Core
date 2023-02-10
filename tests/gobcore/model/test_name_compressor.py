@@ -1,10 +1,9 @@
-from collections import OrderedDict
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
 from gobcore.model.name_compressor import NameCompressor
 
-MOCK_CONVERSIONS = OrderedDict([("something very special", "nothing")])
+MOCK_CONVERSIONS = {"something very special": "nothing"}
 
 
 class TestNameCompressor(TestCase):
