@@ -23,6 +23,7 @@ _CONVERSIONS = {
     "_hft_btrk_p__brk_kadastraal_object": "hft_btrk_op_brk_kot",
     "is_bron_voor_brk_aantekening_recht": "is_bron_voor_brk_art",
     "__ondrdl_vn__brk_kadastrale_gemeente": "onderdeel_van_brk_kge",
+    "is_ontstaan_uit_brk_kadastraalobject": "is_ontstaan_uit_brk_kot",
 }
 
 

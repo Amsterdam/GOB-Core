@@ -917,15 +917,15 @@
     },
     "brk2": {
       "kadastraleobjecten": {
-        "heeft_een_relatie_met_verblijfsobject": {
+        "heeft_een_relatie_met_bag_verblijfsobject": {
           "method": "equals",
           "destination_attribute": "identificatie"
         },
-        "is_ontstaan_uit_g_perceel": {
+        "is_ontstaan_uit_brk_g_perceel": {
           "method": "equals",
           "destination_attribute": "identificatie"
         },
-        "is_ontstaan_uit_kadastraalobject": {
+        "is_ontstaan_uit_brk_kadastraalobject": {
           "method": "equals",
           "destination_attribute": "identificatie"
         }
