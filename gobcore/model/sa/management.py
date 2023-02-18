@@ -1,14 +1,11 @@
-"""Management
+"""SQLAlchemy Management Models."""
 
-SQLAlchemy Management Models
-
-"""
 import datetime
 
-from sqlalchemy import Column, DateTime, Integer, JSON, String, Boolean, ForeignKey, Index
+from sqlalchemy import JSON, Boolean, Column, DateTime, ForeignKey, Index, Integer, String
 from sqlalchemy.dialects.postgresql import ARRAY
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.mutable import MutableDict
+from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
 

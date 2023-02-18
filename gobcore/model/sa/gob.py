@@ -1,31 +1,26 @@
-"""GOB
-
-SQLAlchemy GOB Models
-"""
+"""SQLAlchemy GOB Models."""
 
 
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.schema import UniqueConstraint, ForeignKeyConstraint
+from sqlalchemy.orm import declarative_base
+from sqlalchemy.schema import ForeignKeyConstraint, UniqueConstraint
 
 from gobcore.model import GOBModel
+
 # Import data definitions
 from gobcore.model.events import EVENTS, EVENTS_DESCRIPTION
-from gobcore.model.metadata import FIELD
-from gobcore.model.metadata import columns_to_fields
-from gobcore.model.relations import split_relation_table_name
+from gobcore.model.metadata import FIELD, columns_to_fields
 from gobcore.model.name_compressor import NameCompressor
+from gobcore.model.relations import split_relation_table_name
 from gobcore.typesystem import get_gob_type
 
 TABLE_TYPE_RELATION = 'relation_table'
 TABLE_TYPE_ENTITY = 'entity_table'
 
-Base = None
+Base = declarative_base()
 
 
 def get_base():
-    global Base
-    if not Base:
-        Base = declarative_base()
+    """Backwards compatibility."""
     return Base
 
 
