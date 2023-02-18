@@ -18,7 +18,7 @@ RUNS_IN_OWN_THREAD = "own_thread"   # Service that runs in a separate thread
 LOG_HANDLERS = [StdoutHandler(), RequestsHandler()]
 
 # Assure that heartbeats are sent at every HEARTBEAT_INTERVAL
-assert (HEARTBEAT_INTERVAL % CHECK_CONNECTION == 0)
+assert HEARTBEAT_INTERVAL % CHECK_CONNECTION == 0
 
 
 def _on_message(connection: AsyncConnection, service: Service, msg: dict[str, Any]) -> bool:
