@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Dict, Any, Tuple
 
 from gobcore.logging.logger import logger, StdoutHandler
-from gobcore.message_broker.offline_contents import offload_message, load_message
+from gobcore.message_broker.offline_contents import offload_message, load_message, _CONTENTS
 from gobcore.message_broker.typing import ServiceDefinition
 from gobcore.message_broker.utils import to_json, from_json
 from gobcore.utils import get_logger_name
@@ -61,22 +61,16 @@ def run_as_standalone(
     pass_args = service.get('pass_args_standalone', [])
     message = _build_message(args, pass_args)
     # Load offloaded 'contents_ref'-data into message
-    message_in, offloaded_filename = load_message(
-        msg=message,
-        converter=from_json,
-        params={"stream_contents": False}
-    )
+    message_in, _ = load_message(message, params={"stream_contents": True})
 
     with logger.configure_context(message_in, get_logger_name(service), LOG_HANDLERS):
         message_out = service["handler"](message_in)
 
-    message_out_offloaded = offload_message(
-        msg=message_out,
-        converter=to_json,
-        force_offload=True
-    )
+    # Make sure we dont serialize a content streamer
+    message_out.pop(_CONTENTS, None)
 
-    _write_message(message_out_offloaded, Path(args.message_result_path))
+    _write_message(message_out, Path(args.message_result_path))
+
     if errors := _get_errors(message_out):
         print(errors)  # TODO: logger.error?
         return 1

@@ -5,6 +5,8 @@ This prevents the message broker from transferring large messages
 
 """
 import gc
+from typing import Callable, Any
+
 import ijson.backends.yajl2_c as ijson  # force fastest backend
 import os
 
@@ -109,14 +111,16 @@ def offload_message(msg, converter, force_offload: bool = False):
     return msg
 
 
-def load_message(msg, converter, params):
+def load_message(msg, converter: Callable[[str], str] = None, params: dict[str, Any] = None):
     """Load the message contents if it has been offloaded
 
     :param msg:
     :param converter:
+    :param params:
     :return:
     """
     unique_name = None
+    params = params or {}
 
     if _CONTENTS_REF in msg:
         unique_name = msg[_CONTENTS_REF]
