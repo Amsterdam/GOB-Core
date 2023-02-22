@@ -44,7 +44,10 @@ class TestStandalone:
         ])
         args.message_result_path = result_path
 
-        mock_handler = Mock(return_value={})
+        mock_handler = Mock(return_value={
+            "contents": (item for item in [1, 2]),  # should NOT be in return.json
+            "contents_ref": "/my/data/json"
+        })
         servicedefinition = get_servicedefinition_fixture(mock_handler, "import")
         servicedefinition["import"]["logger"] = "the logger"
         servicedefinition["import"]["pass_args_standalone"] = ["mode"]
@@ -58,6 +61,7 @@ class TestStandalone:
             mock_logger.configure_context.assert_called_with(message_in, "THE LOGGER", LOG_HANDLERS)
 
         mock_handler.assert_called_with(message_in)
+        assert result_path.read_text() == '{"contents_ref": "/my/data/json"}'
 
     def test_run_as_standalone_no_mode(self, result_path: Path):
         # Arg parser without mode
