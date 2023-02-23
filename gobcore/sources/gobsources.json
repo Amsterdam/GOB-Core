@@ -943,7 +943,7 @@
           "method": "equals",
           "destination_attribute": "identificatie"
         },
-        "ontstaan_uit_appartementsrechtsplitsing_vve": {
+        "vve_identificatie_ontstaan_uit": {
           "method": "equals",
           "destination_attribute": "identificatie"
         },
@@ -951,7 +951,7 @@
           "method": "equals",
           "destination_attribute": "identificatie"
         },
-        "betrokken_bij_appartementsrechtsplitsing_vve": {
+        "vve_identificatie_betrokken_bij": {
           "method": "equals",
           "destination_attribute": "identificatie"
         },
