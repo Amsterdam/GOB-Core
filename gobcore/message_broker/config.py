@@ -48,6 +48,7 @@ LOG_EXCHANGE = "gob.log"
 STATUS_EXCHANGE = "gob.status"
 AUDIT_LOG_EXCHANGE = "gob.audit"
 ISSUE_EXCHANGE = "gob.issue"
+EVENTS_EXCHANGE = "gob.events"
 
 EXCHANGES = [
     WORKFLOW_EXCHANGE,
@@ -55,6 +56,7 @@ EXCHANGES = [
     STATUS_EXCHANGE,
     AUDIT_LOG_EXCHANGE,
     ISSUE_EXCHANGE,
+    EVENTS_EXCHANGE,
 ]
 
 COMPARE = 'compare'
