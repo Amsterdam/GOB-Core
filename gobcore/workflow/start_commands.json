@@ -181,9 +181,9 @@
       }
     ]
   },
-  "kafka_produce": {
+  "event_produce": {
     "description": "Send last Kafka events for catalogue/collection",
-    "workflow": "kafka_produce",
+    "workflow": "event_produce",
     "args": [
       {
         "name": "catalogue",
