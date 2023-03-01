@@ -3244,7 +3244,7 @@
         "schema": {
           "datasetId": "brk2",
           "tableId": "kadastraleobjecten",
-          "version": "1.1.0",
+          "version": "2.0.0",
           "entity_id": "identificatie",
           "base_uri": "https://raw.githubusercontent.com/Amsterdam/amsterdam-schema/brk2_active_dataset"
         }
