@@ -1080,58 +1080,6 @@
           "none_allowed": true
         }
       }
-    },
-    "brp": {
-      "personen": {
-        "heeft_persoonsverblijfplaatsen": {
-          "method": "equals",
-          "destination_attribute": "van_persoon",
-          "multiple_allowed": true
-        },
-        "heeft_overlijden_gegevens": {
-          "method": "equals",
-          "destination_attribute": "identificatie"
-        },
-        "heeft_verbintenis": {
-          "method": "equals",
-          "destination_attribute": "identificatie"
-        },
-        "heeft_inschrijving": {
-          "method": "equals",
-          "destination_attribute": "identificatie"
-        },
-        "heeft_ouder1": {
-          "method": "equals",
-          "destination_attribute": "identificatie"
-        },
-        "heeft_ouder2": {
-          "method": "equals",
-          "destination_attribute": "identificatie"
-        }
-      },
-      "verblijfplaatsen": {
-        "is_verblijfsobject": {
-          "method": "equals",
-          "destination_attribute": "identificatie"
-        },
-        "is_ligplaats": {
-          "method": "equals",
-          "destination_attribute": "identificatie"
-        },
-        "is_standplaats": {
-          "method": "equals",
-          "destination_attribute": "identificatie"
-        },
-        "heeft_nummeraanduiding": {
-          "method": "equals",
-          "destination_attribute": "identificatie"
-        },
-        "heeft_persoonsverblijfplaatsen": {
-          "method": "equals",
-          "destination_attribute": "met_verblijfplaats",
-          "multiple_allowed": true
-        }
-      }
     }
   },
   "BAGExtract": {
