@@ -24,7 +24,7 @@ class TestUserDict(TestCase):
     def test_model_catalogs(self):
         """GOBModel catalog checks."""
         # Catalog count.
-        self.assertEqual(len(self.gob_model), 14, msg="catalog count has changed")
+        self.assertEqual(len(self.gob_model), 13, msg="catalog count has changed")
         # Catalog 'doesnotexist" should not exist.
         self.assertIsNone(
             self.gob_model.get('doesnotexist'), msg="Catalog 'doesnotexist' should not exist!")
