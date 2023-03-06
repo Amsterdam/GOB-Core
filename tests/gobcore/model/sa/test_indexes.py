@@ -110,11 +110,32 @@ class TestIndexes(unittest.TestCase):
 
         def get_collection_from_ref(self, ref: str):
             cat, coll = self.get_catalog_collection_names_from_ref(ref)
-            return self.model[cat]['collections'][coll]
+            try:
+                return self.model[cat]['collections'][coll]
+            except KeyError:
+                return
 
         def get_catalog_collection_names_from_ref(self, ref: str):
             spl = ref.split(':')
             return spl[0], spl[1]
+
+    class MockModelDstNotKnown(MockModelForGetIndexes):
+        model = {
+            'catalog_a': {
+                'abbreviation': 'ca',
+                'collections': {
+                    'collection_a2': {
+                        'abbreviation': 'coa2',
+                        'all_fields': {
+                            'reference_not_known': {
+                                'type': 'GOB.Reference',
+                                'ref': 'catalog_b:collection_a2b'
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
     class MockSourcesForGetIndexes():
         sources = {
@@ -135,7 +156,10 @@ class TestIndexes(unittest.TestCase):
             pass
 
         def get_field_relations(self, catalog_name, collection_name, col):
-            return self.sources[catalog_name][collection_name][col]
+            try:
+                return self.sources[catalog_name][collection_name][col]
+            except KeyError:
+                return []
 
     @patch("gobcore.model.sa.indexes.GOBSources", MockSourcesForGetIndexes)
     def test_get_indexes(self):
@@ -310,3 +334,8 @@ class TestIndexes(unittest.TestCase):
             }
         }
         self.assertEqual(result, expected)
+
+    @patch("gobcore.model.sa.indexes.GOBSources", MockSourcesForGetIndexes)
+    def test_get_indexes_dst_not_defined(self):
+        model = self.MockModelDstNotKnown()
+        result = get_indexes(model)

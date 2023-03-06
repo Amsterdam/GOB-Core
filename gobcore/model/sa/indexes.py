@@ -98,10 +98,11 @@ def _relation_indexes_for_collection(model, catalog_name, collection_name, colle
         dst_index_table = model.get_table_name_from_ref(ref)
         dst_collection = model.get_collection_from_ref(ref)
         dst_catalog_name, dst_collection_name = model.get_catalog_collection_names_from_ref(ref)
-        dst_catalog = model[dst_catalog_name]
+
         relations = sources.get_field_relations(catalog_name, collection_name, col)
 
         for relation in relations:
+            dst_catalog = model[dst_catalog_name]  # only get destination when relation is defined
             dst_idx_prefix = f"{dst_catalog['abbreviation']}_{dst_collection['abbreviation']}".lower()
             src_index_col = f"{relation['source_attribute'] if 'source_attribute' in relation else col}"
 
