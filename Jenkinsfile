@@ -23,12 +23,14 @@ node('GOBBUILD') {
     }
 
     stage('Test') {
-        tryStep "test", {
-            sh "docker-compose -p gobcore build && " +
-               "docker-compose -p gobcore run --rm test"
+        lock("gob-core-test") {
+            tryStep "test", {
+                sh "docker-compose -p gobcore build && " +
+                   "docker-compose -p gobcore run --rm test"
 
-        }, {
-            sh "docker-compose -p gobcore down"
+            }, {
+                sh "docker-compose -p gobcore down"
+            }
         }
     }
 
