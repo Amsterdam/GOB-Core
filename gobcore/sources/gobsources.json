@@ -1009,7 +1009,8 @@
       "stukdelen": {
         "is_bron_voor_brk_tenaamstelling": {
           "method": "equals",
-          "destination_attribute": "identificatie"
+          "destination_attribute": "identificatie",
+          "none_allowed": true
         },
         "is_bron_voor_brk_aantekening_kadastraal_object": {
           "method": "equals",
@@ -1023,7 +1024,8 @@
         },
         "is_bron_voor_brk_zakelijk_recht": {
           "method": "equals",
-          "destination_attribute": "identificatie"
+          "destination_attribute": "identificatie",
+          "none_allowed": true
         }
       },
       "aantekeningenrechten": {
