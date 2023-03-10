@@ -1047,7 +1047,8 @@
       "aantekeningenkadastraleobjecten": {
         "heeft_brk_betrokken_persoon": {
           "method": "equals",
-          "destination_attribute": "identificatie"
+          "destination_attribute": "identificatie",
+          "none_allowed": true
         },
         "heeft_betrekking_op_brk_kadastraal_object": {
           "method": "equals",
@@ -1055,7 +1056,8 @@
         },
         "is_gebaseerd_op_brk_stukdeel": {
           "method": "equals",
-          "destination_attribute": "identificatie"
+          "destination_attribute": "identificatie",
+          "none_allowed": true
         }
       },
       "kadastralegemeentecodes": {
