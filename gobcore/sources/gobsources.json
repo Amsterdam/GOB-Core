@@ -1035,11 +1035,13 @@
         },
         "heeft_brk_betrokken_persoon": {
           "method": "equals",
-          "destination_attribute": "identificatie"
+          "destination_attribute": "identificatie",
+          "none_allowed": true
         },
         "is_gebaseerd_op_brk_stukdeel": {
           "method": "equals",
-          "destination_attribute": "identificatie"
+          "destination_attribute": "identificatie",
+          "none_allowed": true
         }
       },
       "aantekeningenkadastraleobjecten": {
