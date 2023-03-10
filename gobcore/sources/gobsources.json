@@ -919,13 +919,32 @@
       "kadastraleobjecten": {
         "heeft_een_relatie_met_bag_verblijfsobject": {
           "method": "equals",
-          "destination_attribute": "identificatie"
+          "destination_attribute": "identificatie",
+          "none_allowed": true
         },
         "is_ontstaan_uit_brk_g_perceel": {
           "method": "equals",
-          "destination_attribute": "identificatie"
+          "destination_attribute": "identificatie",
+          "none_allowed": true
         },
         "is_ontstaan_uit_brk_kadastraalobject": {
+          "method": "equals",
+          "destination_attribute": "identificatie",
+          "none_allowed": true
+        },
+        "aangeduid_door_brk_gemeente": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "aangeduid_door_brk_kadastralegemeente": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "aangeduid_door_brk_kadastralegemeentecode": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "aangeduid_door_brk_kadastralesectie": {
           "method": "equals",
           "destination_attribute": "identificatie"
         }
