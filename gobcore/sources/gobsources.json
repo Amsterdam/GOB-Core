@@ -983,15 +983,18 @@
         },
         "betrokken_partner_brk_subject": {
           "method": "equals",
-          "destination_attribute": "identificatie"
+          "destination_attribute": "identificatie",
+          "none_allowed": true
         },
         "betrokken_samenwerkingsverband_brk_subject": {
           "method": "equals",
-          "destination_attribute": "identificatie"
+          "destination_attribute": "identificatie",
+          "none_allowed": true
         },
         "betrokken_gorzen_en_aanwassen_brk_subject": {
           "method": "equals",
-          "destination_attribute": "identificatie"
+          "destination_attribute": "identificatie",
+          "none_allowed": true
         },
         "van_brk_zakelijk_recht": {
           "method": "equals",
@@ -999,7 +1002,8 @@
         },
         "is_gebaseerd_op_brk_stukdelen": {
           "method": "equals",
-          "destination_attribute": "identificatie"
+          "destination_attribute": "identificatie",
+          "none_allowed": true
         }
       },
       "stukdelen": {
