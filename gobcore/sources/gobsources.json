@@ -1043,6 +1043,12 @@
           "method": "equals",
           "destination_attribute": "identificatie"
         }
+      },
+      "kadastralegemeentes": {
+        "ligt_in_brk_gemeente": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        }
       }
     },
     "woz": {
