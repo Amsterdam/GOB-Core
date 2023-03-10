@@ -933,31 +933,43 @@
       "zakelijkerechten": {
         "belast_brk_zakelijke_rechten": {
           "method": "equals",
-          "destination_attribute": "identificatie"
+          "destination_attribute": "identificatie",
+          "none_allowed": true
         },
         "belast_met_brk_zakelijke_rechten": {
           "method": "equals",
-          "destination_attribute": "identificatie"
+          "destination_attribute": "identificatie",
+          "none_allowed": true
         },
         "ontstaan_uit_brk_zakelijke_rechten": {
           "method": "equals",
-          "destination_attribute": "identificatie"
+          "destination_attribute": "identificatie",
+          "none_allowed": true
         },
         "vve_identificatie_ontstaan_uit": {
           "method": "equals",
-          "destination_attribute": "identificatie"
+          "destination_attribute": "identificatie",
+          "none_allowed": true
         },
         "betrokken_bij_brk_zakelijke_rechten": {
           "method": "equals",
-          "destination_attribute": "identificatie"
+          "destination_attribute": "identificatie",
+          "none_allowed": true
         },
         "vve_identificatie_betrokken_bij": {
           "method": "equals",
-          "destination_attribute": "identificatie"
+          "destination_attribute": "identificatie",
+          "none_allowed": true
         },
         "is_beperkt_tot_brk_tenaamstellingen": {
           "method": "equals",
-          "destination_attribute": "identificatie"
+          "destination_attribute": "identificatie",
+          "none_allowed": true
+        },
+        "betrokken_bij_appartementsrechtsplitsing_vve": {
+          "method": "equals",
+          "destination_attribute": "identificatie",
+          "none_allowed": true
         },
         "rust_op_brk_kadastraal_object": {
           "method": "equals",
