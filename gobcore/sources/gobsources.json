@@ -1071,6 +1071,12 @@
           "method": "equals",
           "destination_attribute": "identificatie"
         }
+      },
+      "kadastralesecties": {
+        "is_onderdeel_van_brk_kadastrale_gemeentecode": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        }
       }
     },
     "woz": {
