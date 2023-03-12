@@ -49,3 +49,4 @@ class Service(Exchange, Queue, Key, Handler, Logger, Report, OwnThread, PassArgs
 ServiceDefinition = dict[str, Service]
 
 Message = dict[str, dict[str, Any]]
+Header = dict[str, Any]
