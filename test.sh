@@ -17,6 +17,7 @@ CLEAN_FILES=(
   gobcore/exceptions.py
   gobcore/parse.py
   gobcore/sources/__init__.py
+  gobcore/standalone.py
   gobcore/status/__init__.py
   gobcore/typing.py
   gobcore/utils.py
@@ -85,7 +86,6 @@ DIRTY_FILES=(
 #  gobcore/secure/cryptos/fernet.py
 #  gobcore/secure/request.py
 #  gobcore/secure/user.py
-#  gobcore/standalone.py
 #  gobcore/status/heartbeat.py
 #  gobcore/typesystem/__init__.py
 #  gobcore/typesystem/gob_geotypes.py

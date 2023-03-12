@@ -1,20 +1,18 @@
 import argparse
 import json
+import logging
 from pathlib import Path
-from typing import Dict, Any, Tuple
 
-from gobcore.logging.logger import logger, StdoutHandler
-from gobcore.message_broker.offline_contents import offload_message, load_message, _CONTENTS
-from gobcore.message_broker.typing import ServiceDefinition
-from gobcore.message_broker.utils import to_json, from_json
+from gobcore.logging.logger import StdoutHandler, logger
+from gobcore.message_broker.offline_contents import _CONTENTS, load_message
+from gobcore.message_broker.typing import Message, ServiceDefinition
 from gobcore.utils import get_logger_name
 
-Message = Dict[str, Any]
-LOG_HANDLERS = [StdoutHandler()]
+LOG_HANDLERS: list[logging.Handler] = [StdoutHandler()]
 
 
-def parent_argument_parser() -> Tuple[argparse.ArgumentParser, argparse._SubParsersAction]:
-    """Setup parent argument parser, to which subparsers can be added.
+def parent_argument_parser() -> tuple[argparse.ArgumentParser, argparse.Action]:
+    """Set up parent argument parser, to which subparsers can be added.
 
     Add any 'handler'-functions to the returned subparser, call parse_args() on
     the parent parser when all handlers are added.
@@ -22,31 +20,18 @@ def parent_argument_parser() -> Tuple[argparse.ArgumentParser, argparse._SubPars
     :return: The parent parser and the subparser, to add subcommands to.
     """
     parser = argparse.ArgumentParser(
-        description='Start standalone GOB Tasks',
+        description="Start standalone GOB Tasks",
     )
+    parser.add_argument("--message-data", required=False, help="Message data used by the handler.")
     parser.add_argument(
-        "--message-data",
-        required=False,
-        help="Message data used by the handler."
+        "--message-result-path", default="/airflow/xcom/return.json", help="Path to store result message."
     )
-    parser.add_argument(
-        "--message-result-path",
-        default="/airflow/xcom/return.json",
-        help="Path to store result message."
-    )
-    subparsers = parser.add_subparsers(
-        title="handlers",
-        help="Which handler to run.",
-        dest="handler",
-        required=True
-    )
+    subparsers = parser.add_subparsers(title="handlers", help="Which handler to run.", dest="handler", required=True)
     return parser, subparsers
 
 
-def run_as_standalone(
-        args: argparse.Namespace, service_definition: ServiceDefinition
-) -> int:
-    """Runs application in standalone mode.
+def run_as_standalone(args: argparse.Namespace, service_definition: ServiceDefinition) -> int:
+    """Run application in standalone mode.
 
     Finds the handler to run from the arguments given. For 'start commands' the
     message is constructed from arguments, for example with a catalogue and
@@ -58,7 +43,7 @@ def run_as_standalone(
     :return: the resulting message data from the handler.
     """
     service = service_definition[args.handler]
-    pass_args = service.get('pass_args_standalone', [])
+    pass_args = service.get("pass_args_standalone", [])
     message = _build_message(args, pass_args)
     # Load offloaded 'contents_ref'-data into message
     message_in, _ = load_message(message, params={"stream_contents": True})
@@ -86,16 +71,14 @@ def _build_message(args: argparse.Namespace, extra_args: list[str]) -> Message:
     :param args: Parsed arguments
     :return: A message with keys as required by different handlers.
     """
-
     # These can be set from the command line
-    header_args = \
-        [
-            'catalogue',
-            'collection',
-            'entity',
-            'attribute',
-            'application',
-        ] + extra_args
+    header_args = [
+        "catalogue",
+        "collection",
+        "entity",
+        "attribute",
+        "application",
+    ] + extra_args
     header = {arg: getattr(args, arg, None) for arg in header_args}
 
     if args.message_data is not None:
@@ -108,7 +91,7 @@ def _build_message(args: argparse.Namespace, extra_args: list[str]) -> Message:
             "header": {
                 **message.get("header", {}),
                 **override_header_attrs,
-            }
+            },
         }
 
     return {
@@ -116,8 +99,8 @@ def _build_message(args: argparse.Namespace, extra_args: list[str]) -> Message:
     }
 
 
-def _get_errors(message) -> list[str]:
-    """Returns a list with errors if the result message has any.
+def _get_errors(message: Message) -> list[str]:
+    """Return a list with errors if the result message has any.
 
     :param message: The message to check
     :return: The errors from the 'summary' in the message.

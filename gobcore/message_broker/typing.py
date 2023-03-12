@@ -1,4 +1,4 @@
-from typing import TypedDict, Callable, Union, Any
+from typing import Any, Callable, TypedDict, Union
 
 
 class Exchange(TypedDict, total=False):
@@ -47,3 +47,5 @@ class Service(Exchange, Queue, Key, Handler, Logger, Report, OwnThread, PassArgs
 
 
 ServiceDefinition = dict[str, Service]
+
+Message = dict[str, dict[str, Any]]
