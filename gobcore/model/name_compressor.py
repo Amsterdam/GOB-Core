@@ -24,6 +24,8 @@ _CONVERSIONS = {
     "is_bron_voor_brk_aantekening_recht": "is_bron_voor_brk_art",
     "__ondrdl_vn__brk_kadastrale_gemeente": "onderdeel_van_brk_kge",
     "is_ontstaan_uit_brk_kadastraalobject": "is_ontstaan_uit_brk_kot",
+    "_angdd_dr__brk_kadastralegemeentecode": "angdd_dr__brk_kce",
+    "_angdd_dr__brk_kadastralegemeente": "angdd_dr__brk_kgr",
 }
 
 
