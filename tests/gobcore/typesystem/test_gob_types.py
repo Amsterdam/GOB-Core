@@ -35,7 +35,7 @@ class TestGobTypes(unittest.TestCase):
         # Gobtype can be compared with other gob_type
         self.assertTrue(gob_type == gob_type1)
 
-        # DB ouptut is string
+        # DB output is string
         self.assertIsInstance(gob_type.to_db, str)
 
         # Gobtype cannot be instantiated with something different than a string
@@ -73,7 +73,7 @@ class TestGobTypes(unittest.TestCase):
         with self.assertRaises(GOBException):
             self.assertEqual('"O"', GobType.from_value('Overtime').json)
 
-        # DB ouptut is string
+        # DB output is string
         self.assertIsInstance(GobType.from_value('O').to_db, str)
 
         # Python value is string
@@ -87,7 +87,7 @@ class TestGobTypes(unittest.TestCase):
         self.assertEqual('123', GobType.from_value(123).json)
         self.assertEqual('123', GobType.from_value("123").json)
 
-        # DB ouptut is int
+        # DB output is int
         self.assertIsInstance(GobType.from_value('123').to_db, int)
 
         # Python value is int
@@ -110,7 +110,7 @@ class TestGobTypes(unittest.TestCase):
         self.assertEqual('123', GobType.from_value(123).json)
         self.assertEqual('123', GobType.from_value("123").json)
 
-        # DB ouptut is int
+        # DB output is int
         self.assertIsInstance(GobType.from_value('123').to_db, int)
 
         # Python value is int
@@ -132,8 +132,12 @@ class TestGobTypes(unittest.TestCase):
         self.assertEqual('null', GobType.from_value("nan").json)
         self.assertEqual('123.0', GobType.from_value(123).json)
         self.assertEqual('123.123', GobType.from_value(123.123).json)
+        # Preserve Decimal format
+        self.assertEqual('123.0', GobType('123.0').to_value)
+        self.assertEqual('123.00', GobType('123.00').to_value)
+        self.assertEqual('123.000', GobType('123.000').to_value)
 
-        # DB ouptut is float
+        # DB output is float
         self.assertIsInstance(GobType.from_value('123').to_db, float)
 
         # Python value is string
@@ -211,7 +215,7 @@ class TestGobTypes(unittest.TestCase):
         with self.assertRaises(GOBException):
             GobType.from_value(1)
 
-        # DB ouptut is datetime
+        # DB output is datetime
         self.assertIsInstance(GobType.from_value('2016-05-04').to_db, datetime)
 
         # Python value is datetime
@@ -242,7 +246,7 @@ class TestGobTypes(unittest.TestCase):
         with self.assertRaises(GOBException):
             GobType.from_value(1)
 
-        # DB ouptut is datetime
+        # DB output is datetime
         self.assertIsInstance(GobType.from_value('2016-05-04T12:00:00.123000').to_db, datetime)
 
         # unless an empty string is entered
@@ -290,7 +294,7 @@ class TestGobTypes(unittest.TestCase):
         with self.assertRaises(GOBTypeException):
             GobType.from_value('{"test" = "test"}')
 
-        # DB ouptut is json
+        # DB output is json
         self.assertIsInstance(GobType.from_value('{"key": "value"}').to_db, dict)
 
         # Python value is dict
