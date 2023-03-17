@@ -253,7 +253,7 @@ class Decimal(GOBType):
                 else:
                     # Preserve Decimal format
                     value = str(decimal.Decimal(value))
-            except ValueError:
+            except (ValueError, decimal.InvalidOperation):
                 raise GOBTypeException(f"value '{value}' cannot be interpreted as Decimal")
         super().__init__(value)
 
