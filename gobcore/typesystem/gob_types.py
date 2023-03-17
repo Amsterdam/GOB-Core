@@ -14,13 +14,14 @@ todo:
     think about the tight coupling with SQLAlchemy, is that what we want?
 
 """
-from abc import ABCMeta, abstractmethod
 import datetime
+import decimal
 import json
 import numbers
 import re
+from abc import ABCMeta, abstractmethod
 from math import isnan
-from typing import Tuple, Optional
+from typing import Optional
 
 import sqlalchemy
 
@@ -250,7 +251,8 @@ class Decimal(GOBType):
                     fmt = f".{kwargs['precision']}f"
                     value = format(float(value), fmt)
                 else:
-                    value = str(float(value))
+                    # Preserve Decimal format
+                    value = str(decimal.Decimal(value))
             except ValueError:
                 raise GOBTypeException(f"value '{value}' cannot be interpreted as Decimal")
         super().__init__(value)
@@ -603,14 +605,14 @@ class IncompleteDate(JSON):
             'formatted': self._formatted,
         }) if value is not None else value)
 
-    def __init_from_dict(self, value) -> Tuple[Optional[int], Optional[int], Optional[int]]:
+    def __init_from_dict(self, value) -> tuple[Optional[int], Optional[int], Optional[int]]:
         if not all([v in value for v in ['year', 'month', 'day']]):
             raise GOBTypeException(f"Cannot interpret value '{json.dumps(value)}' as IncompleteDate. "
                                    f"Expecting keys 'year', 'month' and 'day'.")
 
         return value.get('year'), value.get('month'), value.get('day')
 
-    def __init_from_str(self, value: str) -> Tuple[int, int, int]:
+    def __init_from_str(self, value: str) -> tuple[int, int, int]:
         m = re.match(self.pattern, value)
         assert m, f"Value '{value}' cannot be interpreted as IncompleteDate"  # Already checked in constructor.
 
