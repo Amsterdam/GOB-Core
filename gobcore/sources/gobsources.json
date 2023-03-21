@@ -985,11 +985,6 @@
           "destination_attribute": "identificatie",
           "none_allowed": true
         },
-        "betrokken_bij_appartementsrechtsplitsing_vve": {
-          "method": "equals",
-          "destination_attribute": "identificatie",
-          "none_allowed": true
-        },
         "rust_op_brk_kadastraal_object": {
           "method": "equals",
           "destination_attribute": "identificatie"
