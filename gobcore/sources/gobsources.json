@@ -946,7 +946,7 @@
         },
         "aangeduid_door_brk_kadastralesectie": {
           "method": "equals",
-          "destination_attribute": "identificatie"
+          "destination_attribute": "code"
         }
       },
       "zakelijkerechten": {
