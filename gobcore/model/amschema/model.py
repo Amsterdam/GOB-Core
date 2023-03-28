@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from decimal import Decimal
 from enum import Enum
 from typing import Literal, Optional, Union
 
@@ -13,7 +14,7 @@ class Property(ABC, BaseModel):
 
     @property
     @abstractmethod
-    def gob_type(self):  # pragma: no cover
+    def gob_type(self) -> str:  # pragma: no cover
         pass
 
     def gob_representation(self, dataset: "Dataset"):
@@ -53,6 +54,16 @@ class NumberProperty(Property):
     @property
     def gob_type(self):
         return "GOB.Decimal"
+
+    def gob_representation(self, dataset: "Dataset"):
+        """Return the GOB representation of NumberProperty."""
+        if self.multipleOf:
+            _, _, exponent = Decimal(str(self.multipleOf)).as_tuple()
+            return {
+                **super().gob_representation(dataset),
+                "precision": -exponent
+            }
+        return super().gob_representation(dataset)
 
 
 class IntegerProperty(Property):

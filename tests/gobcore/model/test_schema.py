@@ -32,6 +32,7 @@ class TestAMSSchema(unittest.TestCase):
                     'type': 'GOB.Geo.Point'},
                 'hoogte_tov_nap': {
                     'description': 'Hoogte van het peilmerk t.o.v. NAP',
+                    'precision': 2,
                     'type': 'GOB.Decimal'
                 },
                 'identificatie': {
@@ -123,10 +124,12 @@ class TestAMSSchema(unittest.TestCase):
                 },
                 'x_coordinaat_muurvlak': {
                     'description': 'X-coördinaat muurvlak',
+                    'precision': 2,
                     'type': 'GOB.Decimal'
                 },
                 'y_coordinaat_muurvlak': {
                     'description': 'Y-coördinaat muurvlak',
+                    'precision': 2,
                     'type': 'GOB.Decimal'
                 },
             },
