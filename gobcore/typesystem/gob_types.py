@@ -16,7 +16,6 @@ todo:
 
 
 import datetime
-import decimal
 import json
 import numbers
 import re
@@ -263,12 +262,10 @@ class Decimal(GOBType):
             try:
                 if 'precision' in kwargs:
                     fmt = f".{kwargs['precision']}f"
-                    # Preserve Decimal precision
-                    value = str(decimal.Decimal(format(float(value), fmt)))
+                    value = format(float(value), fmt)
                 else:
-                    # Without precision
                     value = str(float(value))
-            except (ValueError, decimal.InvalidOperation) as exc:
+            except ValueError as exc:
                 raise GOBTypeException(f"value '{value}' cannot be interpreted as Decimal: {exc}")
         super().__init__(value)
 
