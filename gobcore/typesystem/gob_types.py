@@ -1,4 +1,4 @@
-"""GOB Types
+"""GOB Types.
 
 Each possible data type in GOB is defined in this module.
 The definition includes:
@@ -12,8 +12,9 @@ todo:
 
 todo:
     think about the tight coupling with SQLAlchemy, is that what we want?
-
 """
+
+
 import datetime
 import decimal
 import json
@@ -30,7 +31,9 @@ from gobcore.model.metadata import FIELD
 
 
 class GOBType(metaclass=ABCMeta):
-    """Abstract baseclass for the GOB Types, use like follows:
+    """Abstract Base Class for GOB Types.
+
+    Use as follows:
 
         # instantiates an instance of a GOB Type (for instance String)
         #   Instantiating can only be done with a string, because the internal representation of a value is string
@@ -88,10 +91,9 @@ class GOBType(metaclass=ABCMeta):
 
     @classmethod
     def from_value_secure(cls, value, typeinfo, **kwargs):
-        """
-        A mapper around from_value to handle secure data.
+        """Mapper around cls.from_value to handle (secure) GOBType values.
 
-        The type information is used to protect the data with the right confidence level.
+        The type information is used to protect the value with the right confidence level.
 
         :param value: the value of the GOBType instance
         :param typeinfo: the GOB Model type information for the given value
@@ -153,6 +155,8 @@ class GOBType(metaclass=ABCMeta):
 
 
 class String(GOBType):
+    """GOBType class for GOB.String."""
+
     name = "String"
     sql_type = sqlalchemy.String
 
@@ -179,6 +183,8 @@ class String(GOBType):
 
 
 class Character(String):
+    """GOBType class for GOB.Character."""
+
     name = "Character"
     sql_type = sqlalchemy.CHAR
 
@@ -200,6 +206,8 @@ class Character(String):
 
 
 class Integer(String):
+    """GOBType class for GOB.Integer."""
+
     name = "Integer"
     sql_type = sqlalchemy.Integer
 
@@ -229,41 +237,48 @@ class Integer(String):
 
 
 class BigInteger(Integer):
+    """GOBType class for GOB.BigInteger."""
+
     name = "BigInteger"
     sql_type = sqlalchemy.BigInteger
 
 
 class PKInteger(Integer):
+    """GOBType class for GOB.PKInteger."""
+
     name = "PKInteger"
     is_pk = True
 
 
 class Decimal(GOBType):
+    """GOBType class for GOB.Decimal."""
+
     name = "Decimal"
     sql_type = sqlalchemy.DECIMAL
 
-    def __init__(self, value, **kwargs):  # noqa: C901
+    def __init__(self, value: Optional[str], **kwargs) -> None:  # noqa: C901
         if value == 'nan':
             value = None
         if value is not None:
             try:
                 if 'precision' in kwargs:
                     fmt = f".{kwargs['precision']}f"
-                    value = format(float(value), fmt)
+                    # Preserve Decimal precision
+                    value = str(decimal.Decimal(format(float(value), fmt)))
                 else:
-                    # Preserve Decimal format
-                    value = str(decimal.Decimal(value))
-            except (ValueError, decimal.InvalidOperation):
-                raise GOBTypeException(f"value '{value}' cannot be interpreted as Decimal")
+                    # Without precision
+                    value = str(float(value))
+            except (ValueError, decimal.InvalidOperation) as exc:
+                raise GOBTypeException(f"value '{value}' cannot be interpreted as Decimal: {exc}")
         super().__init__(value)
 
     @classmethod
     def from_value(cls, value, **kwargs):
-        """ Create a Decimal GOB Type from value and kwargs:
+        """Create a Decimal GOB Type from value and kwargs.
 
             Decimal.from_value("123.0", decimal_separator='.')
 
-        For now decemial separator is optional - setting it would make sense in import,
+        For now decimal separator is optional - setting it would make sense in import,
         but not in transfer and comparison
         """
         decimal_separator_internal = '.'
@@ -290,6 +305,8 @@ class Decimal(GOBType):
 
 
 class Boolean(GOBType):
+    """GOBType class for GOB.Boolean."""
+
     name = "Boolean"
     sql_type = sqlalchemy.Boolean
 
@@ -301,7 +318,7 @@ class Boolean(GOBType):
 
     @classmethod
     def from_value(cls, value, **kwargs):
-        """ Create a Decimal GOB Type from value and kwargs:
+        """Create a Boolean GOB Type from value and kwargs.
 
             Boolean.from_value("N", format="YN")
 
@@ -352,6 +369,8 @@ class Boolean(GOBType):
 
 
 class Date(String):
+    """GOBType class for GOB.Date."""
+
     name = "Date"
     sql_type = sqlalchemy.Date
     internal_format = "%Y-%m-%d"
@@ -390,6 +409,8 @@ class Date(String):
 
 
 class DateTime(Date):
+    """GOBType class for GOB.DateTime."""
+
     name = "DateTime"
     sql_type = sqlalchemy.DateTime
     internal_format = "%Y-%m-%dT%H:%M:%S.%f"
@@ -429,6 +450,8 @@ class DateTime(Date):
 
 
 class JSON(GOBType):
+    """GOBType class for GOB.JSON."""
+
     name = "JSON"
     sql_type = sqlalchemy.dialects.postgresql.JSONB
 
@@ -522,6 +545,8 @@ class JSON(GOBType):
 
 
 class Reference(JSON):
+    """GOBType class for GOB.Reference."""
+
     name = "Reference"
     exclude_keys = (FIELD.REFERENCE_ID, FIELD.SEQNR)  # Legacy. Old way of storing relations.
 
@@ -544,6 +569,8 @@ class Reference(JSON):
 
 
 class ManyReference(Reference):
+    """GOBType class for GOB.ManyReference."""
+
     name = "ManyReference"
 
     def __eq__(self, other, exclude_keys=(FIELD.REFERENCE_ID, FIELD.SEQNR)):
@@ -564,10 +591,14 @@ class ManyReference(Reference):
 
 
 class VeryManyReference(ManyReference):
+    """GOBType class for GOB.VeryManyReference."""
+
     name = "VeryManyReference"
 
 
 class IncompleteDate(JSON):
+    """GOBType class for GOB.IncompleteDate."""
+
     name = "IncompleteDate"
     pattern = r"^(\d{4})-(\d{2})-(\d{2})$"
 

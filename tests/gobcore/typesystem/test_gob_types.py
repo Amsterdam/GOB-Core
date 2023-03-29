@@ -132,10 +132,13 @@ class TestGobTypes(unittest.TestCase):
         self.assertEqual('null', GobType.from_value("nan").json)
         self.assertEqual('123.0', GobType.from_value(123).json)
         self.assertEqual('123.123', GobType.from_value(123.123).json)
-        # Preserve Decimal format
+        # Decimal format (no precision)
+        self.assertEqual('123.0', GobType('123').to_value)
         self.assertEqual('123.0', GobType('123.0').to_value)
-        self.assertEqual('123.00', GobType('123.00').to_value)
-        self.assertEqual('123.000', GobType('123.000').to_value)
+        self.assertEqual('123.0', GobType('123.00').to_value)
+        # Preserve Decimal format (precision).
+        self.assertEqual('123.00', GobType('123.0', precision=2).to_value)
+        self.assertEqual('123.000', GobType('123.0', precision=3).to_value)
 
         # DB output is float
         self.assertIsInstance(GobType.from_value('123').to_db, float)
