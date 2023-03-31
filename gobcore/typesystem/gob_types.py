@@ -30,7 +30,7 @@ from gobcore.exceptions import GOBTypeException
 from gobcore.model.metadata import FIELD
 
 
-def get_kwargs_from_type_info(type_info: dict[str, Any]) -> dict[str, str]:
+def get_kwargs_from_type_info(type_info: dict[str, Any]) -> dict[str, Any]:
     """Return kwargs dictionary from GOB Model field type info."""
     # Collect special keys like 'precision'.
     type_kwargs = {
