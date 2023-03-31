@@ -1,8 +1,8 @@
 # syntax=docker/dockerfile:1
-FROM amsterdam/gob_wheelhouse:3.9-buster as wheelhouse
+FROM amsterdam/gob_wheelhouse:3.9-bullseye as wheelhouse
 
 # Application stage.
-FROM amsterdam/gob_baseimage:3.9-buster as application
+FROM amsterdam/gob_baseimage:3.9-bullseye as application
 
 # Fill the wheelhouse.
 COPY --from=wheelhouse /opt/wheelhouse /opt/wheelhouse
