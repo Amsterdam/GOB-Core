@@ -16,6 +16,7 @@ todo:
 
 
 import datetime
+import decimal
 import json
 import numbers
 import re
@@ -260,12 +261,14 @@ class Decimal(GOBType):
             value = None
         if value is not None:
             try:
-                if 'precision' in kwargs:
+                if "precision" in kwargs:
+                    # Set Decimal precision
                     fmt = f".{kwargs['precision']}f"
-                    value = format(float(value), fmt)
+                    value = format(decimal.Decimal(value), fmt)
                 else:
-                    value = str(float(value))
-            except ValueError as exc:
+                    # Preserve Decimal precision
+                    value = str(decimal.Decimal(value))
+            except (ValueError, decimal.InvalidOperation) as exc:
                 raise GOBTypeException(f"value '{value}' cannot be interpreted as Decimal: {exc}")
         super().__init__(value)
 
@@ -288,13 +291,13 @@ class Decimal(GOBType):
 
     @property
     def json(self):
-        return json.dumps(float(self._string)) if self._string is not None else json.dumps(None)
+        return json.dumps(self._string) if self._string is not None else json.dumps(None)
 
     @property
     def to_db(self):
         if self._string is None:
             return None
-        return float(self._string)
+        return decimal.Decimal(self._string)
 
     @property
     def to_value(self):

@@ -1,12 +1,13 @@
-import random
+import decimal
 import json
+import random
 import unittest
+from datetime import date, datetime
 from unittest import mock
-from datetime import datetime, date
 
 from gobcore.exceptions import GOBException, GOBTypeException
-from gobcore.typesystem import get_gob_type, is_gob_json_type, _gob_types
-from gobcore.typesystem.gob_types import GOBType, Boolean, Date, JSON
+from gobcore.typesystem import _gob_types, get_gob_type, is_gob_json_type
+from gobcore.typesystem.gob_types import JSON, Boolean, Date, GOBType
 from tests.gobcore import fixtures
 
 
@@ -130,28 +131,28 @@ class TestGobTypes(unittest.TestCase):
         self.assertEqual(GobType.name, "Decimal")
         self.assertEqual('null', GobType.from_value(None).json)
         self.assertEqual('null', GobType.from_value("nan").json)
-        self.assertEqual('123.0', GobType.from_value(123).json)
-        self.assertEqual('123.123', GobType.from_value(123.123).json)
-        # Decimal format (no precision)
-        self.assertEqual('123.0', GobType('123').to_value)
+        # Decimal format: preserve precision
+        self.assertEqual('"123"', GobType.from_value("123").json)
+        self.assertEqual('"123.123"', GobType.from_value("123.123").json)
+        self.assertEqual('123', GobType('123').to_value)
         self.assertEqual('123.0', GobType('123.0').to_value)
-        self.assertEqual('123.0', GobType('123.00').to_value)
-        # Preserve Decimal format (precision).
+        self.assertEqual('123.00', GobType('123.00').to_value)
+        # Decimal format: set precision
         self.assertEqual('123.00', GobType('123.0', precision=2).to_value)
         self.assertEqual('123.000', GobType('123.0', precision=3).to_value)
 
-        # DB output is float
-        self.assertIsInstance(GobType.from_value('123').to_db, float)
+        # DB output is decimal.Decimal
+        self.assertIsInstance(GobType.from_value('123').to_db, decimal.Decimal)
 
         # Python value is string
         self.assertIsInstance(GobType.from_value('123').to_value, str)
 
         with self.assertRaises(GOBException):
             GobType.from_value("123,123")
-        self.assertEqual('123.123', GobType.from_value("123,123", decimal_separator=',').json)
-        self.assertEqual('123.1', GobType.from_value("123.123", precision=1).json)
-        self.assertEqual('123.1000', str(GobType.from_value("123.1", precision=4)))
-        self.assertEqual('123.1', GobType.from_value("123.1", precision=4).json)
+        self.assertEqual('"123.123"', GobType.from_value("123,123", decimal_separator=',').json)
+        self.assertEqual('"123.1"', GobType.from_value("123.123", precision=1).json)
+        self.assertEqual('123.1000', GobType.from_value("123.1", precision=4))
+        self.assertEqual('"123.1000"', GobType.from_value("123.1", precision=4).json)
 
         with self.assertRaises(GOBException):
             GobType.from_value('N')
@@ -377,7 +378,7 @@ class TestGobTypes(unittest.TestCase):
             GobType.from_value('2020-invalid')
 
     def test_None_to_db(self):
-        from gobcore.typesystem import gob_types, gob_geotypes
+        from gobcore.typesystem import gob_geotypes, gob_types
         GOB = gob_types
         GEO = gob_geotypes
 
