@@ -22,7 +22,9 @@ class TestSqlServerDatastore(TestCase):
         store.connect()
 
         self.assertEqual(mock_pyodbc.connect.return_value, store.connection)
-        mock_pyodbc.connect.assert_called_with('DRIVER={DRIVER};SERVER=HOST,PORT;DATABASE=DB;UID=USER;PWD=PASS', autocommit=True)
+
+        conn = "DRIVER={DRIVER};SERVER=HOST,PORT;DATABASE=DB;ENCRYPT=optional;UID=USER;PWD=PASS"
+        mock_pyodbc.connect.assert_called_with(conn, autocommit=True)
 
     def test_disconnect(self):
         store = SqlServerDatastore({})

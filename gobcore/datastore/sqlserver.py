@@ -6,7 +6,7 @@ from typing import List
 from gobcore.datastore.sql import SqlDatastore
 
 # Can be ODBC driver name or path such as /usr/local/lib/libtdsodbc.so
-SQLSERVER_ODBC_DRIVER = os.getenv('SQLSERVER_ODBC_DRIVER', 'ODBC Driver 17 for SQL Server')
+SQLSERVER_ODBC_DRIVER = os.getenv('SQLSERVER_ODBC_DRIVER', 'ODBC Driver 18 for SQL Server')
 
 
 class SqlServerDatastore(SqlDatastore):
@@ -15,11 +15,14 @@ class SqlServerDatastore(SqlDatastore):
         super(SqlServerDatastore, self).__init__(connection_config, read_config)
 
     def connect(self):
-        connstring = f"DRIVER={{{SQLSERVER_ODBC_DRIVER}}};" \
-                     f"SERVER={self.connection_config['host']},{self.connection_config['port']};" \
-                     f"DATABASE={self.connection_config['database']};" \
-                     f"UID={self.connection_config['username']};" \
-                     f"PWD={self.connection_config['password']}"
+        connstring = (
+            f"DRIVER={{{SQLSERVER_ODBC_DRIVER}}};"
+            f"SERVER={self.connection_config['host']},{self.connection_config['port']};"
+            f"DATABASE={self.connection_config['database']};"
+            f"ENCRYPT=optional;"  # v18 default is yes, not supported by DECOS
+            f"UID={self.connection_config['username']};"
+            f"PWD={self.connection_config['password']}"
+        )
 
         self.connection = pyodbc.connect(connstring, autocommit=True)
 
