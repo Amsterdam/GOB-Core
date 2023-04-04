@@ -3,13 +3,16 @@
 GOB data consists of entities with attributes, eg Meetbout = { identificatie, locatie, ... }
 The possible types for each attribute are defined in this module.
 The definition and characteristics of each type is in the gob_types module
-
 """
-import sqlalchemy
+
+
+from typing import Any, Optional
+
 import geoalchemy2
+import sqlalchemy
 
 from gobcore.exceptions import GOBException
-from gobcore.typesystem import gob_types, gob_secure_types, gob_geotypes
+from gobcore.typesystem import gob_geotypes, gob_secure_types, gob_types
 
 # The possible type definitions are imported from the gob_types module
 GOB = gob_types
@@ -76,11 +79,10 @@ _gob_postgres_sql_types_list = [
 ]
 
 
-def enhance_type_info(type_info):
-    """Enhance type info with gob types.
+def enhance_type_info(type_info: dict[str, Any]) -> None:
+    """Enhance GOBModel field type info with GOBType class.
 
-    For every type attribute a corresponding gob_type attribute is set
-    that contains the GOB type class.
+    For every "type" key a corresponding "gob_type" key is set that contains the GOBType class.
 
     :param type_info:
     :return:
@@ -88,29 +90,28 @@ def enhance_type_info(type_info):
     if type_info.get("type") and not isinstance(type_info["type"], dict):
         type_info["gob_type"] = get_gob_type(type_info["type"])
     for value in type_info.values():
-        # Recurse into type info to add type info for each "type" attribute
+        # Recurse into GOB.JSON values to add a "gob_type" key for each attribute dict with a "type" key
         if isinstance(value, dict):
             enhance_type_info(value)
 
 
-def get_gob_type_from_info(typeinfo):
-    """
-    Return the GOB type for the given type info
+def get_gob_type_from_info(type_info):
+    """Return the GOBType class for the given GOBModel type info.
+
     The type info is enhanced (adding GOB types to it)
-    :param typeinfo:
+    :param type_info:
     :return:
     """
-    if not typeinfo.get("gob_type"):
-        enhance_type_info(typeinfo)
-    return typeinfo["gob_type"]
+    if not type_info.get("gob_type"):
+        enhance_type_info(type_info)
+    return type_info["gob_type"]
 
 
 def get_gob_type(name):
-    """
-    Get the type definition for a given type name
+    """Return GOBType class for a given GOBModel type name.
 
     Example:
-        get_gob_type("string") => GOBType:String
+        get_gob_type("GOB.String") => GOBType:String class
 
     :param name:
     :return: the type definition (class) for the given type name
@@ -119,12 +120,12 @@ def get_gob_type(name):
 
 
 def fully_qualified_type_name(gob_type):
+    """Return the fully qualified type name of GOBType class."""
     return f"GOB.{gob_type.name}"
 
 
 def is_gob_reference_type(type_name):
-    """
-    Tels if type_name is the name of a GOB Reference type
+    """Tell if type_name is the name of a GOB Reference type.
 
     :param type_name:
     :return:
@@ -133,7 +134,7 @@ def is_gob_reference_type(type_name):
                          for t in [GOB.Reference, GOB.ManyReference, GOB.VeryManyReference]]
 
 
-def is_gob_geo_type(name):
+def is_gob_geo_type(name) -> bool:
     """Returns a boolean value
 
     :param name:
@@ -172,27 +173,30 @@ def get_gob_type_from_sql_type(sql_type):
     raise GOBException(f"No GOBType found for SQLType: {sql_type}")
 
 
-def get_modifications(entity, data, model):     # noqa: C901
-    """Get a list of modifications
+def get_modifications(
+    entity: Optional[Any], data: Optional[dict[str, Any]], model: dict[str, Any]
+) -> list[dict[str, str]]:  # noqa: C901
+    """Return a list with compare result modifications.
 
-    :param entity: an object with named attributes with values
-    :param data: a dict with named keys and changed values
-    :param model: a dict describing the model of both entity and data
+    :param entity: a SQLAlchemy object with named attributes with old values
+    :param data: a dict with named keys and changed source values
+    :param model: a dict describing the model of both entity and data (collection["all_fields"])
 
     :return: a list of modification-dicts: `{'key': "fieldname", 'old_value': "old_value", 'new_value': "new_value"}`
     """
-    modifications = []
+    modifications: list[dict[str, str]] = []
 
     if entity is None or data is None:
         return modifications
 
-    for field_name, field in model.items():
-        gob_type = get_gob_type(field['type'])
-        old_value = gob_type.from_value(getattr(entity, field_name))
+    for field_name, field_info in model.items():
+        gob_type = get_gob_type_from_info(field_info)
+        field_kwargs = gob_types.get_kwargs_from_type_info(field_info)
+        old_value = gob_type.from_value(getattr(entity, field_name), **field_kwargs)
 
         # Try to get the new value from the data, if missing, skip this field
         try:
-            new_value = gob_type.from_value(data[field_name])
+            new_value = gob_type.from_value(data[field_name], **field_kwargs)
         except KeyError:
             continue
 
@@ -203,7 +207,7 @@ def get_modifications(entity, data, model):     # noqa: C901
 
 
 def get_value(entity):
-    """Get a dictionatry with python objects of an entity of GOBTypes
+    """Return a dictionary with Python objects of an entity of GOBTypes.
 
     :param entity: an object with named attributes with values
 
