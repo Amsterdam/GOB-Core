@@ -429,7 +429,7 @@
         "schema": {
           "datasetId": "meetboutenAzure",
           "tableId": "meetbouten",
-          "version": "2.0.0"
+          "version": "2.1.0"
         },
         "legacy_attributes": {
           "identificatie": {
@@ -478,11 +478,11 @@
             }
           },
           "x_coordinaat_muurvlak": {
-            "type": "GOB.Decimal",
+            "type": "GOB.Integer",
             "description": "X-coördinaat muurvlak"
           },
           "y_coordinaat_muurvlak": {
-            "type": "GOB.Decimal",
+            "type": "GOB.Integer",
             "description": "Y-coördinaat muurvlak"
           },
           "windrichting": {
@@ -618,7 +618,7 @@
         "schema": {
           "datasetId": "meetboutenAzure",
           "tableId": "referentiepunten",
-          "version": "2.0.0"
+          "version": "2.1.0"
         },
         "legacy_attributes": {
           "identificatie": {
@@ -675,11 +675,11 @@
             }
           },
           "x_coordinaat_muurvlak": {
-            "type": "GOB.Decimal",
+            "type": "GOB.Integer",
             "description": "X-coördinaat muurvlak"
           },
           "y_coordinaat_muurvlak": {
-            "type": "GOB.Decimal",
+            "type": "GOB.Integer",
             "description": "Y-coördinaat muurvlak"
           },
           "windrichting": {
@@ -761,7 +761,7 @@
         "schema": {
           "datasetId": "napAzure",
           "tableId": "peilmerken",
-          "version": "2.0.0"
+          "version": "2.1.0"
         },
         "legacy_attributes": {
           "identificatie": {
@@ -797,11 +797,11 @@
             "description": "Windrichting"
           },
           "x_coordinaat_muurvlak": {
-            "type": "GOB.Decimal",
+            "type": "GOB.Integer",
             "description": "X-coördinaat muurvlak"
           },
           "y_coordinaat_muurvlak": {
-            "type": "GOB.Decimal",
+            "type": "GOB.Integer",
             "description": "Y-coördinaat muurvlak"
           },
           "rws_nummer": {
