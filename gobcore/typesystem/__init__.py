@@ -6,7 +6,7 @@ The definition and characteristics of each type is in the gob_types module
 """
 
 
-from typing import Any, Optional
+from typing import Any, Optional, TypedDict
 
 import geoalchemy2
 import sqlalchemy
@@ -173,9 +173,17 @@ def get_gob_type_from_sql_type(sql_type):
     raise GOBException(f"No GOBType found for SQLType: {sql_type}")
 
 
+class Modification(TypedDict):
+    """Modification dictionary."""
+
+    key: str
+    old_value: gob_types.GOBType
+    new_value: gob_types.GOBType
+
+
 def get_modifications(
     entity: Optional[Any], data: Optional[dict[str, Any]], model: dict[str, Any]
-) -> list[dict[str, str]]:  # noqa: C901
+) -> list[Modification]:
     """Return a list with compare result modifications.
 
     :param entity: a SQLAlchemy object with named attributes with old values
@@ -184,7 +192,7 @@ def get_modifications(
 
     :return: a list of modification-dicts: `{'key': "fieldname", 'old_value': "old_value", 'new_value': "new_value"}`
     """
-    modifications: list[dict[str, str]] = []
+    modifications: list[Modification] = []
 
     if entity is None or data is None:
         return modifications
