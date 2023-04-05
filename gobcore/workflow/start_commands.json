@@ -182,7 +182,7 @@
     ]
   },
   "event_produce": {
-    "description": "Send last Kafka events for catalogue/collection",
+    "description": "Produce events for external consumers for catalogue/collection",
     "workflow": "event_produce",
     "args": [
       {
@@ -194,6 +194,11 @@
         "name": "collection",
         "required": true,
         "description": "The name of the data collection (example: \"metingen\")"
+      },
+      {
+        "name": "mode",
+        "description": "The produce mode: update (regular) or full (initial load)",
+        "default": "update"
       }
     ]
   }
