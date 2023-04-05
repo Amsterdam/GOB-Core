@@ -1,23 +1,31 @@
 from unittest import TestCase
 from unittest.mock import patch
 
-from gobcore.typesystem import get_modifications, get_value, is_gob_reference_type, GOB, _gob_types_dict
-from gobcore.typesystem import enhance_type_info, get_gob_type_from_info
+from gobcore.typesystem import (
+    GOB,
+    _gob_types_dict,
+    enhance_type_info,
+    get_gob_type_from_info,
+    get_modifications,
+    get_value,
+    is_gob_reference_type,
+)
 
 
 class TestTypesystem(TestCase):
 
-    @patch('gobcore.typesystem.get_gob_type')
-    def test_get_modifications(self, mock_get_gob_type):
+    def test_get_modifications(self):
+        """Test get_modifications with changed values."""
+
         self.assertEqual([], get_modifications(None, 'data', 'model'), 'Should return empty list when model is None')
         self.assertEqual([], get_modifications('entity', None, 'model'), 'Should return empty list when data is None')
 
         model = {
             'field1': {
-                'type': 'the type',
+                'type': 'GOB.String',
             },
             'field2': {
-                'type': 'field2 type',
+                'type': 'GOB.String',
             }
         }
 
@@ -35,19 +43,17 @@ class TestTypesystem(TestCase):
             {'key': 'field1', 'old_value': 'oldField1value', 'new_value': 'newField1value'},
         ]
 
-        mock_get_gob_type.return_value.from_value = lambda x, **kwargs: x
-
         self.assertEqual(expected_result, get_modifications(entity, data, model))
 
-    @patch('gobcore.typesystem.get_gob_type')
-    def test_get_modifications_no_fields(self, mock_get_gob_type):
+    def test_get_modifications_no_fields(self):
+        """Test get_modifications with missing values."""
 
         model = {
             'field1': {
-                'type': 'the type',
+                'type': 'GOB.String',
             },
             'field2': {
-                'type': 'field2 type',
+                'type': 'GOB.String',
             }
         }
 
@@ -59,9 +65,32 @@ class TestTypesystem(TestCase):
         data = {}
         expected_result = []
 
-        mock_get_gob_type.return_value.side_effect = KeyError
-
         self.assertEqual(expected_result, get_modifications(entity, data, model))
+
+    def test_get_modifications_decimal_precision(self):
+        """Test get_modifications with Decimal precision."""
+
+        model = {
+            'field1': {
+                'type': 'GOB.String',
+            },
+            'field2': {
+                'type': 'GOB.Decimal',
+                'precision': 2,
+            }
+        }
+
+        entity = type('MockEntity', (object,), {
+            'field1': 'oldField1value',
+            'field2': 12.0,
+        })
+
+        data = {
+            'field1': 'oldField1value',
+            'field2': 12.00
+        }
+
+        self.assertEqual([], get_modifications(entity, data, model))
 
     def test_get_value(self):
         entity = {

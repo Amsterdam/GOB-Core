@@ -133,6 +133,8 @@ class TestORJSONEncoding(unittest.TestCase):
 
         # Decimal should be quoted
         assert self.dump({'string': Decimal.from_value("123,40", decimal_separator=',')}) == b'{"string":"123.40"}'
+        # Decimal in JSON should honor precision
+        assert self.dump({'decimal': Decimal.from_value("123", precision=2)}) == b'{"decimal":"123.00"}'
 
         # Boolean should be primitive
         assert self.dump({"string": Boolean.from_value("N", format='YN')}) == b'{"string":false}'
