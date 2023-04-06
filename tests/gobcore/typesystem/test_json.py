@@ -1,16 +1,15 @@
+import datetime
+import decimal
 import enum
 import functools
 import json
 import unittest
-import datetime
-import decimal
 
 from orjson import orjson
 
 from gobcore.typesystem.gob_geotypes import Point
-from gobcore.typesystem.gob_types import String, Integer, Decimal, Boolean, JSON
+from gobcore.typesystem.gob_types import JSON, Boolean, Decimal, Integer, String
 from gobcore.typesystem.json import GobTypeJSONEncoder, GobTypeORJSONEncoder
-
 from tests.gobcore import fixtures
 
 
@@ -64,10 +63,10 @@ class TestJsonEncoding(unittest.TestCase):
         to_json = json.dumps({'string': gob_type}, cls=GobTypeJSONEncoder)
         self.assertEqual('{"string": 123}', to_json)
 
-        # Decimal should be primitive
-        gob_type = Decimal.from_value("123,4", decimal_separator=',')
-        to_json = json.dumps({'string': gob_type}, cls=GobTypeJSONEncoder)
-        self.assertEqual('{"string": 123.4}', to_json)
+        # Decimal should be quoted
+        gob_decimal = Decimal.from_value("123,4", decimal_separator=',')
+        to_json = json.dumps({'string': gob_decimal}, cls=GobTypeJSONEncoder)
+        self.assertEqual('{"string": "123.4"}', to_json)
 
         # Boolean should be primitive
         gob_type = Boolean.from_value("N", format='YN')
@@ -132,8 +131,10 @@ class TestORJSONEncoding(unittest.TestCase):
         # Integer should be primitive
         assert self.dump({'string': Integer.from_value(123)}) == b'{"string":123}'
 
-        # Decimal should be primitive
-        assert self.dump({'string': Decimal.from_value("123,4", decimal_separator=',')}) == b'{"string":123.4}'
+        # Decimal should be quoted
+        assert self.dump({'string': Decimal.from_value("123,40", decimal_separator=',')}) == b'{"string":"123.40"}'
+        # Decimal in JSON should honor precision
+        assert self.dump({'decimal': Decimal.from_value("123", precision=2)}) == b'{"decimal":"123.00"}'
 
         # Boolean should be primitive
         assert self.dump({"string": Boolean.from_value("N", format='YN')}) == b'{"string":false}'

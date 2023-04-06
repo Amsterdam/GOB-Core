@@ -1,4 +1,4 @@
-"""GOB Events
+"""GOB Events.
 
 Each possible event in GOB is defined in this module.
 The definition includes:
@@ -11,11 +11,13 @@ todo: The delete and confirm actions contain too much data. Contents can be left
     See also the examples in the action classes
 """
 
+
 from abc import ABCMeta, abstractmethod
 
 from gobcore.exceptions import GOBException
 from gobcore.model import GOBModel
-from gobcore.typesystem import get_gob_type
+from gobcore.typesystem import get_gob_type_from_info
+from gobcore.typesystem.gob_types import get_kwargs_from_type_info
 
 hash_key = '_hash'
 modifications_key = 'modifications'
@@ -88,7 +90,7 @@ class ImportEvent(metaclass=ABCMeta):
             setattr(entity, key, value)
 
     def get_attribute_dict(self):
-        """Gets an dict with attributes to insert entities in bulk
+        """Return a dict with attributes to insert entities in bulk.
 
         :return:
         """
@@ -100,8 +102,10 @@ class ImportEvent(metaclass=ABCMeta):
 
         for key, value in self._data.items():
             if key not in self.skip:
-                gob_type = get_gob_type(self._model['all_fields'][key]['type'])
-                entity[key] = gob_type.from_value(value).to_db
+                type_info = self._model['all_fields'][key]
+                gob_type = get_gob_type_from_info(type_info)
+                entity[key] = gob_type.from_value(value, **get_kwargs_from_type_info(type_info)).to_db
+
         return entity
 
 

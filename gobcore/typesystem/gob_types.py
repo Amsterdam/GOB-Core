@@ -16,17 +16,27 @@ todo:
 
 
 import datetime
+import decimal
 import json
 import numbers
 import re
 from abc import ABCMeta, abstractmethod
 from math import isnan
-from typing import Optional
+from typing import Any, Optional
 
 import sqlalchemy
 
 from gobcore.exceptions import GOBTypeException
 from gobcore.model.metadata import FIELD
+
+
+def get_kwargs_from_type_info(type_info: dict[str, Any]) -> dict[str, Any]:
+    """Return kwargs dictionary from GOB Model field type info."""
+    # Collect special keys like 'precision'.
+    type_kwargs = {
+        key: value for key, value in type_info.items() if key not in ["type", "gob_type", "description", "ref"]
+    }
+    return type_kwargs
 
 
 class GOBType(metaclass=ABCMeta):
@@ -89,25 +99,29 @@ class GOBType(metaclass=ABCMeta):
         return self._string == str(other) if isinstance(other, GOBType) else self._string == other
 
     @classmethod
-    def from_value_secure(cls, value, typeinfo, **kwargs):
+    def from_value_secure(cls, value, type_info, **kwargs):
         """Mapper around cls.from_value to handle (secure) GOBType values.
 
         The type information is used to protect the value with the right confidence level.
 
         :param value: the value of the GOBType instance
-        :param typeinfo: the GOB Model type information for the given value
+        :param type_info: the GOB Model field type information for the given value
         :param kwargs:
         :return: GOBType
         """
         if cls.is_secure:
             # Secure types require a confidence level
-            kwargs["level"] = typeinfo["level"]
+            kwargs["level"] = type_info["level"]
+        # GOB.JSON
         if isinstance(value, dict):
             # Attributes are either defined in the 'secure' dict or the 'attributes' dict. Pass either.
-            if typeinfo.get("secure"):
-                kwargs["secure"] = typeinfo["secure"]
-            elif typeinfo.get("attributes"):
-                kwargs["attributes"] = typeinfo["attributes"]
+            if type_info.get("secure"):
+                kwargs["secure"] = type_info["secure"]
+            elif type_info.get("attributes"):
+                kwargs["attributes"] = type_info["attributes"]
+        else:
+            # Update kwargs with GOB Model field type info dict.
+            kwargs = get_kwargs_from_type_info(type_info) | kwargs
         return cls.from_value(value, **kwargs)
 
     @classmethod
@@ -123,7 +137,7 @@ class GOBType(metaclass=ABCMeta):
     @property
     @abstractmethod
     def json(self):
-        """Json string representation of the GOBType instance
+        """JSON string representation of the GOBType instance for ContentsWriter.
 
         :return: JSON String
         """
@@ -260,12 +274,14 @@ class Decimal(GOBType):
             value = None
         if value is not None:
             try:
-                if 'precision' in kwargs:
+                if "precision" in kwargs:
+                    # Set Decimal precision
                     fmt = f".{kwargs['precision']}f"
-                    value = format(float(value), fmt)
+                    value = format(decimal.Decimal(value), fmt)
                 else:
-                    value = str(float(value))
-            except ValueError as exc:
+                    # Preserve Decimal precision
+                    value = str(decimal.Decimal(value))
+            except (ValueError, decimal.InvalidOperation) as exc:
                 raise GOBTypeException(f"value '{value}' cannot be interpreted as Decimal: {exc}")
         super().__init__(value)
 
@@ -273,7 +289,7 @@ class Decimal(GOBType):
     def from_value(cls, value, **kwargs):
         """Create a Decimal GOB Type from value and kwargs.
 
-            Decimal.from_value("123.0", decimal_separator='.')
+            Decimal.from_value("123.0", decimal_separator='.', **get_kwargs_from_type_info(type_info))
 
         For now decimal separator is optional - setting it would make sense in import,
         but not in transfer and comparison
@@ -288,13 +304,13 @@ class Decimal(GOBType):
 
     @property
     def json(self):
-        return json.dumps(float(self._string)) if self._string is not None else json.dumps(None)
+        return json.dumps(self._string) if self._string is not None else json.dumps(None)
 
     @property
     def to_db(self):
         if self._string is None:
             return None
-        return float(self._string)
+        return decimal.Decimal(self._string)
 
     @property
     def to_value(self):
@@ -488,7 +504,7 @@ class JSON(GOBType):
 
     @classmethod
     def _process_from_value(cls, value, attributes):
-        """
+        """Recurse into dict (value) to add field keys with values.
 
         :param value:
         :param attributes: Either the 'secure' dict or 'attributes' dict from the field definition
@@ -498,11 +514,10 @@ class JSON(GOBType):
             if isinstance(attr_value, dict):
                 cls._process_from_value(attr_value, attributes)
             elif attributes.get(attr):
-                attribute = attributes[attr]
-                gob_type = attribute['gob_type']
-                type_kwargs = {k: v for k, v in attribute.items()
-                               if k not in ['type', 'gob_type', 'source_mapping', 'filters']}
-                value[attr] = gob_type.from_value_secure(attr_value, attribute, **type_kwargs).to_value
+                type_info = attributes[attr]
+                type_kwargs = get_kwargs_from_type_info(type_info)
+                gob_type = type_info['gob_type']
+                value[attr] = gob_type.from_value_secure(attr_value, type_info, **type_kwargs).to_value
 
     @classmethod
     def from_value(cls, value, **kwargs):
