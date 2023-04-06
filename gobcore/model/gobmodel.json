@@ -531,7 +531,7 @@
         "schema": {
           "datasetId": "meetboutenAzure",
           "tableId": "metingen",
-          "version": "2.0.0"
+          "version": "2.0.1"
         },
         "legacy_attributes": {
           "identificatie": {
@@ -618,7 +618,7 @@
         "schema": {
           "datasetId": "meetboutenAzure",
           "tableId": "referentiepunten",
-          "version": "2.1.0"
+          "version": "2.1.1"
         },
         "legacy_attributes": {
           "identificatie": {
@@ -761,7 +761,7 @@
         "schema": {
           "datasetId": "napAzure",
           "tableId": "peilmerken",
-          "version": "2.1.0"
+          "version": "2.1.1"
         },
         "legacy_attributes": {
           "identificatie": {
