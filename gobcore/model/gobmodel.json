@@ -3244,7 +3244,7 @@
         "schema": {
           "datasetId": "brk2",
           "tableId": "kadastraleobjecten",
-          "version": "2.1.1",
+          "version": "2.2.0",
           "entity_id": "identificatie"
         }
       },
@@ -3324,7 +3324,7 @@
         "schema": {
           "datasetId": "brk2",
           "tableId": "aantekeningenkadastraleobjecten",
-          "version": "1.0.0",
+          "version": "1.1.0",
           "entity_id": "identificatie"
         }
       },
