@@ -4,7 +4,6 @@ Relations are automatically derived from the GOB Model specification.
 """
 
 from collections import defaultdict
-from typing import Tuple
 
 from gobcore.model.metadata import FIELD, DESCRIPTION
 from gobcore.model.name_compressor import NameCompressor
@@ -340,7 +339,7 @@ def create_relation(src, validity, dst, derivation):
         f"dst_{FIELD.SEQNR}": dst[FIELD.SEQNR]
     }
 
-def get_catalog_collection_relation_name(model, rel_collection_name: str) -> Tuple[str, str, str]:
+def get_catalog_collection_relation_name(model, rel_collection_name: str) -> tuple[str, str, str]:
     """Return the full catalog name, collection name and relation name for a given rel_collection_name.
 
     For example, get_catalog_collection_relation_name(model, 'nap_pmk_gbd_bbk_ligt_in_bouwblok') will return
