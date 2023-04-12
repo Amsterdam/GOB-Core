@@ -933,8 +933,9 @@
           "none_allowed": true
         },
         "aangeduid_door_brk_gemeente": {
-          "method": "equals",
-          "destination_attribute": "identificatie"
+          "method": "lies_in",
+          "source_attribute": "geometrie",
+          "destination_attribute": "geometrie"
         },
         "aangeduid_door_brk_kadastralegemeente": {
           "method": "equals",
@@ -1083,7 +1084,7 @@
       "kadastralegemeentes": {
         "ligt_in_brk_gemeente": {
           "method": "equals",
-          "destination_attribute": "identificatie"
+          "destination_attribute": "naam"
         }
       },
       "kadastralesecties": {
