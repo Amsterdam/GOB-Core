@@ -3,7 +3,8 @@ from unittest import mock
 
 from gobcore.model.relations import _get_relation, _get_relation_name, get_relation_name, get_relations, \
     create_relation, get_inverse_relations, get_fieldnames_for_missing_relations, split_relation_table_name, \
-    get_reference_name_from_relation_table_name, _get_destination, get_relations_for_collection
+    get_reference_name_from_relation_table_name, _get_destination, get_relations_for_collection, \
+    get_catalog_collection_relation_name
 from gobcore.model import GOBModel
 from gobcore.exceptions import GOBException
 
@@ -363,3 +364,11 @@ class TestRelations(unittest.TestCase):
 
         # Reset GOBModel data
         GOBModel._initialised = False
+
+    def test_get_catalog_collection_relation_name(self):
+        gobmodel = GOBModel()
+
+        self.assertEqual(
+            ("nap", "peilmerken", "ligt_in_gebieden_bouwblok"),
+            get_catalog_collection_relation_name(gobmodel, "nap_pmk_gbd_bbk_ligt_in_gebieden_bouwblok")
+        )
