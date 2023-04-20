@@ -7,7 +7,7 @@ from unittest import mock
 
 from gobcore.exceptions import GOBException, GOBTypeException
 from gobcore.typesystem import _gob_types, get_gob_type, is_gob_json_type
-from gobcore.typesystem.gob_types import JSON, Boolean, Date, GOBType
+from gobcore.typesystem.gob_types import JSON, Boolean, Date, GOBType, Decimal
 from tests.gobcore import fixtures
 
 
@@ -472,3 +472,36 @@ class TestJSON(unittest.TestCase):
     def test_to_value_string_none(self):
         js = JSON(None)
         self.assertIsNone(js.to_value)
+
+class TestDecimal(unittest.TestCase):
+    @mock.patch("gobcore.typesystem.gob_types.sqlalchemy.Column")
+    def test_get_column_definition(self, mock_column):
+        prev_sql_type = Decimal.sql_type
+        mock_type = mock.MagicMock()
+        Decimal.sql_type = mock_type
+
+        # No args
+        res = Decimal.get_column_definition("some_column")
+        mock_type.assert_called_once_with()
+        mock_column.assert_called_with(
+            "some_column",
+            mock_type.return_value,
+            primary_key=False,
+            autoincrement=False
+        )
+        self.assertEqual(res, mock_column.return_value)
+
+        # With precision
+        mock_type.reset_mock()
+        res = Decimal.get_column_definition("some_column", precision=2)
+        mock_type.assert_called_once_with(scale=2, precision=10)
+        mock_column.assert_called_with(
+            "some_column",
+            mock_type.return_value,
+            primary_key=False,
+            autoincrement=False
+        )
+        self.assertEqual(res, mock_column.return_value)
+
+        # Reset
+        Decimal.sql_type = prev_sql_type

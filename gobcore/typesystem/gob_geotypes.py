@@ -112,6 +112,14 @@ class GEOType(GOBType):
         # is wkt string
         return cls(wkt_value)
 
+    @classmethod
+    def srid_from_kwargs(cls, **kwargs):
+        srid = kwargs['srid'] if 'srid' in kwargs else cls._srid
+
+        if srid == 'RD':
+            srid = 28992
+        return srid
+
 
 class Point(GEOType):
     name = "Point"
@@ -142,7 +150,7 @@ class Point(GEOType):
 
     @classmethod
     def get_column_definition(cls, column_name, **kwargs):
-        srid = kwargs['srid'] if 'srid' in kwargs else cls._srid
+        srid = cls.srid_from_kwargs(**kwargs)
         return sqlalchemy.Column(column_name, geoalchemy2.Geometry(geometry_type='POINT', srid=srid))
 
 
@@ -170,7 +178,7 @@ class Polygon(GEOType):
         :param kwargs: arguments
         :return: sqlalchemy.Column
         """
-        srid = kwargs['srid'] if 'srid' in kwargs else cls._srid
+        srid = cls.srid_from_kwargs(**kwargs)
         return sqlalchemy.Column(column_name, geoalchemy2.Geometry(geometry_type='POLYGON', srid=srid))
 
 
@@ -212,5 +220,5 @@ class Geometry(GEOType):
         :param kwargs: arguments
         :return: sqlalchemy.Geometry
         """
-        srid = kwargs['srid'] if 'srid' in kwargs else cls._srid
+        srid = cls.srid_from_kwargs(**kwargs)
         return sqlalchemy.Column(column_name, geoalchemy2.Geometry(geometry_type='GEOMETRY', srid=srid))

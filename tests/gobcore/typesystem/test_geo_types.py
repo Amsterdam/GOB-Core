@@ -186,3 +186,41 @@ class TestGeometry(unittest.TestCase):
         # Geometries can be None
         result = Geometry.from_value(None)
         self.assertIsInstance(result, Geometry)
+
+    @patch("gobcore.typesystem.gob_geotypes.sqlalchemy.Column")
+    @patch("gobcore.typesystem.gob_geotypes.geoalchemy2.Geometry")
+    def test_get_column_definition(self, mock_geometry, mock_column):
+        # Test default
+        Geometry.get_column_definition("some_column")
+        mock_column.assert_called_with(
+            "some_column",
+            mock_geometry.return_value
+        )
+        mock_geometry.assert_called_once_with(
+            geometry_type="GEOMETRY",
+            srid=28992
+        )
+
+        # Test SRID in kwargs
+        mock_geometry.reset_mock()
+        Geometry.get_column_definition("some_column", srid=123)
+        mock_column.assert_called_with(
+            "some_column",
+            mock_geometry.return_value
+        )
+        mock_geometry.assert_called_once_with(
+            geometry_type="GEOMETRY",
+            srid=123
+        )
+
+        # Test RD
+        mock_geometry.reset_mock()
+        Geometry.get_column_definition("some_column", srid="RD")
+        mock_column.assert_called_with(
+            "some_column",
+            mock_geometry.return_value
+        )
+        mock_geometry.assert_called_once_with(
+            geometry_type="GEOMETRY",
+            srid=28992
+        )

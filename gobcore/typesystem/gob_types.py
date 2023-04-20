@@ -162,7 +162,7 @@ class GOBType(metaclass=ABCMeta):
         pass  # pragma: no cover
 
     @classmethod
-    def get_column_definition(cls, column_name):
+    def get_column_definition(cls, column_name, **kwargs):
         """Returns the SQL Alchemy column definition for the type """
         return sqlalchemy.Column(column_name, cls.sql_type, primary_key=cls.is_pk, autoincrement=cls.is_pk)
 
@@ -315,6 +315,22 @@ class Decimal(GOBType):
     @property
     def to_value(self):
         return self._string
+
+    @classmethod
+    def get_column_definition(cls, column_name, **kwargs):
+        """Returns the SQL Alchemy column definition for the type """
+        type_kwargs = {}
+        if "precision" in kwargs:
+            type_kwargs |= {
+                "scale": kwargs["precision"],
+                "precision": kwargs.get("length", 10),
+            }
+        return sqlalchemy.Column(
+            column_name,
+            cls.sql_type(**type_kwargs),
+            primary_key=cls.is_pk,
+            autoincrement=cls.is_pk
+        )
 
 
 class Boolean(GOBType):

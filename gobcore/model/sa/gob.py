@@ -34,7 +34,7 @@ def get_column(column_name, column_specification):
     :return: sqlalchemy.Column
     """
     gob_type = get_gob_type(column_specification["type"])
-    column = gob_type.get_column_definition(column_name)
+    column = gob_type.get_column_definition(column_name, **column_specification)
     column.doc = column_specification["description"]
     return column
 
