@@ -1270,7 +1270,7 @@
           },
           "ligt_in_gemeente": {
             "type": "GOB.Reference",
-            "ref": "brk:gemeentes",
+            "ref": "brk2:gemeentes",
             "description": "De gemeente waarin de woonplaats ligt."
           },
           "heeft_dossier": {
