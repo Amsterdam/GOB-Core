@@ -1,9 +1,13 @@
 import datetime
+from pathlib import Path
+from typing import Iterator
+
 from dateutil import parser
 import json
 
 from gobcore.message_broker.config import IMPORT, RELATE, RELATE_CHECK
 from gobcore.message_broker.offline_contents import ContentsWriter
+from gobcore.message_broker.typing import Message, Header
 from gobcore.message_broker.utils import to_json
 from gobcore.model import FIELD
 from gobcore.logging.logger import logger, LoggerManager
@@ -239,7 +243,7 @@ class Issue():
         return args
 
 
-def log_issue(logger_: LoggerManager, level: str, issue: Issue) -> None:
+def log_issue(logger_: LoggerManager, level: str, issue: Issue):
     """Logs Issue
 
     Only issues without an entity_id are actually written as log messages. All other issues are added
@@ -265,7 +269,7 @@ def log_issue(logger_: LoggerManager, level: str, issue: Issue) -> None:
         }[level](issue.msg(), issue.log_args())
 
 
-def is_functional_process(process):
+def is_functional_process(process: str) -> bool:
     """
     A functional process is to import or check relations
     Other process steps like compare, apply and store events are considered technical process steps
@@ -273,55 +277,29 @@ def is_functional_process(process):
     :param process:
     :return:
     """
-    functional_processes = [process.lower() for process in [IMPORT, RELATE, RELATE_CHECK]]
-    return process.lower() in functional_processes
+    return process.lower() in {process.lower() for process in [IMPORT, RELATE, RELATE_CHECK]}
 
 
-def process_issues(msg):
-    issues = logger.get_issues()  # returns generator
+def process_issues(msg: Message):
+    header: Header = msg.get("header", {})
+    quality_update = QualityUpdate.from_msg(msg)
+    quality_update.process = logger.name
 
-    header = msg.get('header', {})
+    if all([
+        # skip workflow conditions
+        "is_split" not in header,
+        quality_update.catalogue != QualityUpdate.CATALOG,
+        quality_update.collection is not None,
+        quality_update.process is not None,
 
-    # Issues are processed as updates to the quality catalog
-    quality_update = QualityUpdate()
-
-    # Enrich bevinding with logger info
-    quality_update.proces = logger.name
-
-    # Don't process issues of unnamed process
-    if quality_update.proces is None:
-        return
-
-    # Enrich bevinding with msg info
-    for attribute in ['source', 'application', 'catalogue', 'collection', 'attribute']:
-        setattr(quality_update, attribute, header.get(f"original_{attribute}", header.get(attribute)))
-
-    # Only log quality for functional steps
-    # Otherwise only log issues if there are any issues
-    if not (is_functional_process(quality_update.proces) or logger.has_issue()):
-        # Functional process issues are always processed, even if they are empty
-        # Otherwise a check is made if there are any issues, if not then skip the empty set
-        # So even an non-functional process may report Issues
-        return
-
-    # Skip GOBPrepare jobs
-    # Don't Quality check yourself
-    # Don't check jobs where no collection is present
-    # Don't check splitter job (logs nothing)
-    if any([
-        quality_update.application == 'GOBPrepare',
-        quality_update.catalogue == QualityUpdate.CATALOG,
-        quality_update.collection is None,
-        header.get('is_split')
+        # Start workflow if there is an issue or is a functional process
+        logger.has_issue() or is_functional_process(quality_update.process)
     ]):
-        return
-
-    _start_issue_workflow(header, issues, quality_update)
-
-    logger.clear_issues()
+        _start_issue_workflow(header, logger.get_issues(), quality_update)
+        logger.clear_issues()
 
 
-def _start_issue_workflow(header, issues, quality_update):
+def _start_issue_workflow(header: Header, issues: Iterator[dict], quality_update: QualityUpdate):
     catalogue = header.get('catalogue')
     collection = header.get('collection')
 
@@ -351,3 +329,5 @@ def _start_issue_workflow(header, issues, quality_update):
 
     if progress._count:
         start_workflow(workflow, wf_msg)
+    else:
+        Path(writer.filename).unlink(missing_ok=True)
