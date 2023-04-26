@@ -330,4 +330,5 @@ def _start_issue_workflow(header: Header, issues: Iterator[dict], quality_update
     if progress._count:
         start_workflow(workflow, wf_msg)
     else:
+        # remove empty file created by ContentsWriter
         Path(writer.filename).unlink(missing_ok=True)

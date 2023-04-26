@@ -358,8 +358,8 @@ class TestIssue(TestCase):
 
     @patch('gobcore.quality.issue.Issue')
     @patch('gobcore.quality.issue.start_workflow')
-    @patch('gobcore.quality.issue.ContentsWriter', MagicMock())
-    def test_start_issue_workflow(self, mock_start_workflow, mock_issue):
+    @patch('gobcore.quality.issue.ContentsWriter')
+    def test_start_issue_workflow(self, mock_writer, mock_start_workflow, mock_issue):
         header = {
             'catalogue': 'qa',
             'collection': 'any collection',
@@ -368,8 +368,15 @@ class TestIssue(TestCase):
         quality_update = MagicMock()
 
         _start_issue_workflow(header, issues, quality_update)
-        
         mock_start_workflow.assert_called()
+
+        mock_start_workflow.reset_mock()
+
+        with patch("gobcore.quality.issue.Path") as mock_path:
+            _start_issue_workflow(header, [], quality_update)
+            mock_start_workflow.assert_not_called()
+            mock_path.assert_called_with(mock_writer.return_value.__enter__.return_value.filename)
+            mock_path.return_value.unlink.assert_called_with(missing_ok=True)
 
     def test_state_attributes(self):
         entity = {
