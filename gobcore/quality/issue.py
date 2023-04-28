@@ -285,16 +285,16 @@ def process_issues(msg: Message):
     quality_update = QualityUpdate.from_msg(msg)
     quality_update.process = logger.name
 
-    if all([
+    if (
         # skip workflow conditions
-        "is_split" not in header,
-        quality_update.catalogue != QualityUpdate.CATALOG,
-        quality_update.collection is not None,
-        quality_update.process is not None,
+        "is_split" not in header
+        and quality_update.catalogue != QualityUpdate.CATALOG
+        and quality_update.collection is not None
+        and quality_update.process is not None
 
         # Start workflow if there is an issue or is a functional process
-        logger.has_issue() or is_functional_process(quality_update.process)
-    ]):
+        and (logger.has_issue() or is_functional_process(quality_update.process))
+    ):
         _start_issue_workflow(header, logger.get_issues(), quality_update)
         logger.clear_issues()
 
