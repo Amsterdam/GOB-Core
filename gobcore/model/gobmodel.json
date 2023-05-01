@@ -2286,6 +2286,7 @@
           },
           "grootte": {
             "type": "GOB.Decimal",
+            "precision": 2,
             "description": "De grootte van een kadastraal object is de oppervlakte van het kadastrale perceel. Dit kan bij een deelperceel een geschatte grootte zijn."
           },
           "soort_cultuur_bebouwd": {
@@ -2327,6 +2328,7 @@
           },
           "perceelnummer_rotatie": {
             "type": "GOB.Decimal",
+            "precision": 3,
             "description": "Rotatie van het perceelnummer ten behoeve van afbeelding op de kaart. Perceelnummers worden bijvoorbeeld gekanteld om in een smal perceel te passen"
           },
           "perceelnummer_verschuiving": {
@@ -3244,7 +3246,7 @@
         "schema": {
           "datasetId": "brk2",
           "tableId": "kadastraleobjecten",
-          "version": "2.2.0",
+          "version": "2.2.1",
           "entity_id": "identificatie"
         }
       },
