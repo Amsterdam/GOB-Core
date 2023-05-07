@@ -15,6 +15,11 @@ class GOBCollection(UserDict[str, Any]):
         self.data = collection
 
     @property
+    def has_states(self) -> bool:
+        """Tell if a collection has states."""
+        return self.get("has_states") is True
+
+    @property
     def reference(self) -> str:
         """Return catalog_name:collection_name reference."""
         return f"{self.catalog_name}:{self.name}"

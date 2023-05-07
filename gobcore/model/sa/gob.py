@@ -5,6 +5,7 @@ from sqlalchemy.orm import declarative_base
 from sqlalchemy.schema import ForeignKeyConstraint, UniqueConstraint
 
 from gobcore.model import GOBModel
+from gobcore.model.collection import GOBCollection
 
 # Import data definitions
 from gobcore.model.events import EVENTS, EVENTS_DESCRIPTION
@@ -57,7 +58,9 @@ def _create_model_type(table_name, columns, has_states, table_args):
     })
 
 
-def columns_to_model(model: GOBModel, catalog_name, table_name, columns, has_states=False, constraint_columns=None):
+def columns_to_model(
+    model: GOBModel, catalog_name: str, table_name: str, columns, has_states=False, constraint_columns=None
+):
     """Create a model out of table_name and GOB column specification.
 
     :param model: GOBModel instance
@@ -75,46 +78,49 @@ def columns_to_model(model: GOBModel, catalog_name, table_name, columns, has_sta
         # Add FK constraints from relation table to src and dst tables
         relation_info = split_relation_table_name(table_name)
 
-        src_catalog, src_collection = model.get_catalog_collection_from_abbr(relation_info['src_cat_abbr'],
-                                                                             relation_info['src_col_abbr'])
-        dst_catalog, dst_collection = model.get_catalog_collection_from_abbr(relation_info['dst_cat_abbr'],
-                                                                             relation_info['dst_col_abbr'])
+        _, src_collection = model.get_catalog_collection_from_abbr(
+            relation_info["src_cat_abbr"], relation_info["src_col_abbr"]
+        )
+        _, dst_collection = model.get_catalog_collection_from_abbr(
+            relation_info["dst_cat_abbr"], relation_info["dst_col_abbr"]
+        )
 
-        def fk_constraint(to_catalog: dict, to_collection: dict, srcdst: str) -> ForeignKeyConstraint:
+        def fk_constraint(to_collection: GOBCollection, srcdst: str) -> ForeignKeyConstraint:
             """Creates FK constraint to given catalog and collection from as src or dst
 
             Example:
             foreign key from (src_id, src_volgnummer) to (_id, volgnummer), or
             foreign key from (dst_id) to (_id)
 
-            :param to_catalog:
             :param to_collection:
             :param srcdst: src or dst
             :return:
             """
-            tablename = model.get_table_name(to_catalog['name'], to_collection['name'])
-            has_states = to_collection.get('has_states', False)
-
             return ForeignKeyConstraint(
                 # Source columns (src or dst)
-                [f"{srcdst}_{col}" for col in (
-                    [FIELD.REFERENCE_ID, FIELD.SEQNR] if has_states else [FIELD.REFERENCE_ID]
-                )],
+                [
+                    f"{srcdst}_{col}"
+                    for col in ([FIELD.REFERENCE_ID, FIELD.SEQNR] if to_collection.has_states else [FIELD.REFERENCE_ID])
+                ],
                 # Destination columns, prefixed with destination table name
-                [f"{tablename}.{col}" for col in ([FIELD.ID, FIELD.SEQNR] if has_states else [FIELD.ID])],
+                [
+                    f"{to_collection.table_name}.{col}"
+                    for col in ([FIELD.ID, FIELD.SEQNR] if to_collection.has_states else [FIELD.ID])
+                ],
                 name=f"{NameCompressor.compress_name(table_name)}_{srcdst[0]}fk"
             )
 
-        unique_constraint_source_id = UniqueConstraint(FIELD.SOURCE_ID,
-                                                       name=f"{NameCompressor.compress_name(table_name)}_uniq")
+        unique_constraint_source_id = UniqueConstraint(
+            FIELD.SOURCE_ID, name=f"{NameCompressor.compress_name(table_name)}_uniq"
+        )
 
-        if relation_info['reference_name'] in src_collection["very_many_references"].keys():
+        if relation_info["reference_name"] in src_collection["very_many_references"].keys():
             # Do not create FK constraints for very many references
             table_args = (unique_constraint_source_id, unique_constraint_tid,)
         else:
             table_args = (
-                fk_constraint(src_catalog, src_collection, 'src'),
-                fk_constraint(dst_catalog, dst_collection, 'dst'),
+                fk_constraint(src_collection, 'src'),
+                fk_constraint(dst_collection, 'dst'),
                 unique_constraint_source_id,
                 unique_constraint_tid,
             )
@@ -158,7 +164,7 @@ def get_sqlalchemy_models(model: GOBModel):
     )
 
     for catalog_name in model:
-        for collection_name, collection in model[catalog_name]['collections'].items():
+        for collection in model[catalog_name].collection.values():
             # "attributes": {
             #     "attribute_name": {
             #         "type": "GOB type name, e.g. GOB.String",
@@ -167,10 +173,10 @@ def get_sqlalchemy_models(model: GOBModel):
             #     }, ...
             # }
 
-            # the GOB model for the specified entity
-            table_name = model.get_table_name(catalog_name, collection_name)
-            models[table_name] = columns_to_model(model, catalog_name, table_name, collection['all_fields'],
-                                                  has_states=collection.get('has_states', False))
+            # The model for the specified collection
+            models[collection.table_name] = columns_to_model(
+                model, catalog_name, collection.table_name, collection["all_fields"], has_states=collection.has_states
+            )
 
     model.__class__.sqlalchemy_models = models
     return models

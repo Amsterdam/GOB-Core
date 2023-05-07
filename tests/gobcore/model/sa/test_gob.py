@@ -2,6 +2,7 @@ import unittest
 from unittest.mock import patch
 
 from gobcore.model import GOBModel
+from gobcore.model.collection import GOBCollection
 from gobcore.model.sa.gob import get_sqlalchemy_models, columns_to_model
 
 
@@ -34,16 +35,21 @@ class TestGob(unittest.TestCase):
         self.assertEqual(GOBModel.sqlalchemy_models, models)
 
     class MockModel:
-        collections = {
-            'col1': {
-                'name': 'collection 1',
+        col_data = {
+            'c1': {
+                'abbreviation': 'col1',
                 'very_many_references': {'very_many_reference': {}}
             },
-            'col2': {
-                'name': 'collection 2',
+            'c2': {
+                'abbreviation': 'col2',
                 'very_many_references': {}
             }
         }
+        collections = {
+            'col1': GOBCollection('collection 1', col_data['c1'], 'catalog'),
+            'col2': GOBCollection('collection 2', col_data['c2'], 'catalog')
+        }
+
         catalogs = {
             'cat1': {
                 'name': 'catalog 1',
@@ -55,9 +61,6 @@ class TestGob(unittest.TestCase):
 
         def get_catalog_collection_from_abbr(self, cat_abbr, col_abbr):
             return self.catalogs[cat_abbr], self.collections[col_abbr]
-
-        def get_table_name(self, catalog_name, collection_name):
-            return f"{catalog_name}_{collection_name}"
 
     class MockForeignKeyConstraint:
 
