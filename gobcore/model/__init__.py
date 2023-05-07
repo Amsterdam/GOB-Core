@@ -40,7 +40,6 @@ class CatalogBase(BaseModel):
     class Config:
         """Pydantic config."""
         allow_mutation = False
-        arbitrary_types_allowed = True
         extra = "forbid"
 
 
@@ -76,7 +75,7 @@ class GOBCatalog(CatalogBase, UserDict[str, Any]):
         return None
 
 
-def upgrade_to_gob_classes(model: dict[str, Any]) -> None:
+def upgrade_to_gob_classes(model: 'GOBModel') -> None:
     """Upgrade catalog and collections dictionaries to GOB classes."""
     for catalog_name, catalog in model.items():
         catalog_collections = {}
@@ -260,7 +259,7 @@ class GOBModel(UserDict):
         """Helper function to generate all table names."""
         table_names = []
         for catalog in self.values():
-            for collection in catalog['collections'].values():
+            for collection in catalog.collection.values():
                 table_names.append(collection.table_name)
         return table_names
 
@@ -303,7 +302,7 @@ class GOBModel(UserDict):
         """
         catalog_name, collection_name = self.split_ref(ref)
         try:
-            return self[catalog_name]['collections'][collection_name]
+            return self[catalog_name].collection[collection_name]
         except KeyError:
             return None
 

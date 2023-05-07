@@ -222,7 +222,7 @@ class TestModel(TestCase):
         self.model.has_states.assert_called_with('meetbouten', 'meetbouten')
 
     def test_get_table_name_from_ref(self):
-        self.assertEqual("abc_def", self.model.get_table_name_from_ref("abc:def"))
+        self.assertEqual("nap_peilmerken", self.model.get_table_name_from_ref("nap:peilmerken"))
 
     def test_get_table_name_from_ref_error(self):
         with self.assertRaises(GOBException):
@@ -243,7 +243,7 @@ class TestModel(TestCase):
     def test_get_collection_from_ref(self):
         collections = MagicMock(spec_set=dict, name="collections")
         collections.__getitem__.return_value = {"fake": "collection"}
-        self.model.data = {'some': {'collections': collections}}
+        self.model['some'] = Mock(name="catalog", collection=collections)
         self.model.split_ref = Mock(
             spec_set=self.model.split_ref, name="split_ref", return_value=("some", "reference"))
 
@@ -383,11 +383,15 @@ class TestModel(TestCase):
                 'collections': {
                     'col_a': {
                         'abbreviation': 'coa',
-                        'some other': 'data',
+                        'version': '0.1',
+                        'entity_id': 'id_a',
+                        'attributes': {},
                     },
                     'col_b': {
                         'abbreviation': 'cob',
-                        'some other': 'data',
+                        'version': '0.2',
+                        'entity_id': 'id_b',
+                        'attributes': {},
                     }
                 }
             }

@@ -26,15 +26,20 @@ class TestIndexes(unittest.TestCase):
                 "description": "Catalog A",
                 'collections': {
                     'collection_a1': {
+                        "version": "0.1",
                         'abbreviation': 'coa1',
+                        "entity_id": "identificatie",
                         'all_fields': {
                             FIELD.ID: {'type': 'GOB.String'},
                             FIELD.APPLICATION: {'type': 'GOB.String'},
                             'a': {'type': 'GOB.String'}
-                        }
+                        },
+                        'attributes': {}
                     },
                     'collection_a2': {
+                        "version": "0.1",
                         'abbreviation': 'coa2',
+                        "entity_id": "identificatie",
                         'all_fields': {
                             FIELD.GOBID: {'type': 'GOB.String'},
                             FIELD.SEQNR: {'type': 'GOB.Integer'},
@@ -56,7 +61,8 @@ class TestIndexes(unittest.TestCase):
                             'str': {
                                 'type': 'GOB.String'
                             }
-                        }
+                        },
+                        'attributes': {}
                     }
                 }
             },
@@ -66,10 +72,13 @@ class TestIndexes(unittest.TestCase):
                 "description": "Catalog B",
                 'collections': {
                     'collection_b3': {
+                        "version": "0.1",
                         'abbreviation': 'cob3',
+                        "entity_id": "identificatie",
                         'all_fields': {
                             FIELD.EXPIRATION_DATE: {'type': 'GOB.DateTime'}
-                        }
+                        },
+                        'attributes': {}
                     }
                 }
             },
@@ -79,15 +88,20 @@ class TestIndexes(unittest.TestCase):
                 "description": "Catalog Relations",
                 'collections': {
                     'relation_a': {
+                        "version": "0.1",
                         'abbreviation': 'ra',
+                        "entity_id": "identificatie",
                         'all_fields': {
                             FIELD.SOURCE_VALUE: {'type': 'GOB.String'},
                             FIELD.GOBID: {'type': 'GOB.String'},
                             FIELD.EXPIRATION_DATE: {'type': 'GOB.DateTime'}
-                        }
+                        },
+                        'attributes': {}
                     },
                     'relation_b': {
+                        "version": "0.1",
                         'abbreviation': 'rb',
+                        "entity_id": "identificatie",
                         'all_fields': {
                             f'src{FIELD.ID}': {'type': 'GOB.String'},
                             f'src{FIELD.SEQNR}': {'type': 'GOB.Integer'},
@@ -97,7 +111,8 @@ class TestIndexes(unittest.TestCase):
                             FIELD.SOURCE_VALUE: {'type': 'GOB.String'},
                             FIELD.APPLICATION: {'type': 'GOB.String'},
                             FIELD.LAST_SRC_EVENT: {'type': 'GOB.Integer'}
-                        }
+                        },
+                        'attributes': {}
                     }
                 }
             }
@@ -125,13 +140,16 @@ class TestIndexes(unittest.TestCase):
                 "description": "Catalog A",
                 'collections': {
                     'collection_a2': {
+                        "version": "0.1",
                         'abbreviation': 'coa2',
+                        "entity_id": "identificatie",
                         'all_fields': {
                             'reference_not_known': {
                                 'type': 'GOB.Reference',
                                 'ref': 'catalog_b:collection_a2b'
                             }
-                        }
+                        },
+                        'attributes': {}
                     }
                 }
             }
