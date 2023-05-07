@@ -84,32 +84,27 @@ def _hash(string):
     return hashlib.md5(string.encode()).hexdigest()
 
 
-def _relation_indexes_for_collection(model, catalog_name, collection_name, collection, idx_prefix):
+def _relation_indexes_for_collection(model, collection, idx_prefix):
+    """Generate indexes on referenced columns (GOB.Reference and GOB.ManyReference)."""
     sources = GOBSources(model)
-
     indexes = {}
-    table_name = model.get_table_name(catalog_name, collection_name)
-
-    reference_columns = {column: desc['ref'] for column, desc in collection['all_fields'].items() if
-                         desc['type'] in ['GOB.Reference', 'GOB.ManyReference']}
+    reference_columns = {column: field_info['ref'] for column, field_info in collection['all_fields'].items() if
+                         field_info['type'] in ['GOB.Reference', 'GOB.ManyReference']}
 
     # Search source and destination attributes for relation and define index
     for col, ref in reference_columns.items():
-        dst_index_table = model.get_table_name_from_ref(ref)
         dst_collection = model.get_collection_from_ref(ref)
-        dst_catalog_name, dst_collection_name = model.get_catalog_collection_names_from_ref(ref)
 
-        relations = sources.get_field_relations(catalog_name, collection_name, col)
-
+        relations = sources.get_field_relations(collection.catalog_name, collection.name, col)
         for relation in relations:
-            dst_catalog = model[dst_catalog_name]  # only get destination when relation is defined
-            dst_idx_prefix = f"{dst_catalog['abbreviation']}_{dst_collection['abbreviation']}".lower()
+            dst_catalog = model[dst_collection.catalog_name]  # only get destination when relation is defined
+            dst_idx_prefix = f"{dst_catalog.abbreviation}_{dst_collection.abbreviation}".lower()
             src_index_col = f"{relation['source_attribute'] if 'source_attribute' in relation else col}"
 
             # Source column
             name = _hashed_index_name(idx_prefix, _remove_leading_underscore(src_index_col))
             indexes[name] = {
-                "table_name": table_name,
+                "table_name": collection.table_name,
                 "columns": [src_index_col],
             }
 
@@ -121,7 +116,7 @@ def _relation_indexes_for_collection(model, catalog_name, collection_name, colle
             )
 
             indexes[name] = {
-                "table_name": dst_index_table,
+                "table_name": dst_collection.table_name,
                 "columns": [relation['destination_attribute']],
                 "type": _get_special_column_type(
                     dst_collection['all_fields'][relation['destination_attribute']]['type']
@@ -132,28 +127,25 @@ def _relation_indexes_for_collection(model, catalog_name, collection_name, colle
 
 
 def get_indexes(model) -> dict:
+    """Return indexes for collection tables."""
     indexes = {}
 
-    for catalog_name, catalog in model.items():
-        for collection_name, collection in model[catalog_name]['collections'].items():
-            entity = collection['all_fields']
-            table_name = model.get_table_name(catalog_name, collection_name)
-            is_relation_table = table_name.startswith('rel_')
-
-            if is_relation_table:
-                split_table_name = table_name.split('_')
+    for catalog in model.values():
+        for collection in catalog["collections"].values():
+            if collection.is_relation:
+                split_table_name = collection.table_name.split("_")
                 prefix = '_'.join(split_table_name[:5]) + '_' + _hash('_'.join(split_table_name[5:]))[:8]
             else:
-                prefix = f"{catalog['abbreviation']}_{collection['abbreviation']}".lower()
+                prefix = f"{catalog.abbreviation}_{collection.abbreviation}".lower()
 
             # Generate indexes on default columns
             for idx_name, columns in _default_indexes_for_columns(
-                    list(entity.keys()),
-                    TABLE_TYPE_RELATION if is_relation_table else TABLE_TYPE_ENTITY
+                list(collection["all_fields"].keys()),
+                TABLE_TYPE_RELATION if collection.is_relation else TABLE_TYPE_ENTITY
             ).items():
                 indexes[_hashed_index_name(prefix, idx_name)] = {
                     "columns": columns,
-                    "table_name": table_name,
+                    "table_name": collection.table_name,
                 }
 
             # Add source, last event index
@@ -161,17 +153,17 @@ def get_indexes(model) -> dict:
             idx_name = "_".join([_remove_leading_underscore(column) for column in columns])
             indexes[_hashed_index_name(prefix, idx_name)] = {
                 "columns": columns,
-                "table_name": table_name,
+                "table_name": collection.table_name,
             }
 
             # Generate indexes on referenced columns (GOB.Reference and GOB.ManyReference)
             indexes.update(
-                **_relation_indexes_for_collection(model, catalog_name, collection_name, collection, prefix))
+                **_relation_indexes_for_collection(model, collection, prefix))
 
             # Create special COALESCE(_expiration_date, '9999-12-31'::timestamp without time zone') index
             indexes[_hashed_index_name(prefix, f"{FIELD.EXPIRATION_DATE}_coalesce")] = {
                 "columns": [f"COALESCE({FIELD.EXPIRATION_DATE}, '9999-12-31'::timestamp without time zone)"],
-                "table_name": table_name,
+                "table_name": collection.table_name,
             }
 
     return indexes

@@ -1,7 +1,8 @@
 import unittest
+from collections import UserDict
 from unittest.mock import patch
 
-from gobcore.model import FIELD
+from gobcore.model import FIELD, GOBCatalog, upgrade_to_gob_classes
 from gobcore.model.sa.indexes import _get_special_column_type, get_indexes
 
 
@@ -17,10 +18,12 @@ class TestIndexes(unittest.TestCase):
         self.assertEqual("json", _get_special_column_type("jsoncolumn"))
         self.assertIsNone(_get_special_column_type(None))
 
-    class MockModelForGetIndexes:
-        model = {
+    class MockModelForGetIndexes(UserDict):
+        data = {
             'catalog_a': {
+                "version": "0.1",
                 'abbreviation': 'ca',
+                "description": "Catalog A",
                 'collections': {
                     'collection_a1': {
                         'abbreviation': 'coa1',
@@ -58,7 +61,9 @@ class TestIndexes(unittest.TestCase):
                 }
             },
             'catalog_b': {
+                "version": "0.1",
                 'abbreviation': 'cb',
+                "description": "Catalog B",
                 'collections': {
                     'collection_b3': {
                         'abbreviation': 'cob3',
@@ -69,7 +74,9 @@ class TestIndexes(unittest.TestCase):
                 }
             },
             'rel': {
+                "version": "0.1",
                 'abbreviation': 'rel',
+                "description": "Catalog Relations",
                 'collections': {
                     'relation_a': {
                         'abbreviation': 'ra',
@@ -96,33 +103,26 @@ class TestIndexes(unittest.TestCase):
             }
         }
 
-        def __getitem__(self, catalog_name):
-            return self.model[catalog_name]
-
-        def items(self):
-            return self.model.items()
-
-        def get_table_name(self, catalog_name, collection_name):
-            return f'{catalog_name}_{collection_name}'.lower()
-
-        def get_table_name_from_ref(self, ref: str):
-            return ref.replace(':', '_')
+        def __init__(self):
+            upgrade_to_gob_classes(self)
 
         def get_collection_from_ref(self, ref: str):
             cat, coll = self.get_catalog_collection_names_from_ref(ref)
             try:
-                return self.model[cat]['collections'][coll]
+                return self[cat]['collections'][coll]
             except KeyError:
-                return
+                return None
 
         def get_catalog_collection_names_from_ref(self, ref: str):
             spl = ref.split(':')
             return spl[0], spl[1]
 
     class MockModelDstNotKnown(MockModelForGetIndexes):
-        model = {
+        data = {
             'catalog_a': {
+                "version": "0.1",
                 'abbreviation': 'ca',
+                "description": "Catalog A",
                 'collections': {
                     'collection_a2': {
                         'abbreviation': 'coa2',

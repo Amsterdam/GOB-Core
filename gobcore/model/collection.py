@@ -29,6 +29,11 @@ class GOBCollection(UserDict[str, Any]):
         """Return collection table name."""
         return f"{self.catalog_name}_{self.name}".lower()
 
+    @property
+    def is_relation(self) -> bool:
+        """Tell if I'm the relation collection."""
+        return self.catalog_name == "rel"
+
     def matches_abbreviation(self, abbr: str) -> bool:
         """Return True if uppercased `abbr' matches collection abbreviation."""
         return abbr.upper() == self.abbreviation
