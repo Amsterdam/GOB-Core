@@ -1,12 +1,12 @@
 """GOBModel tests."""
 
-from unittest import TestCase
-from unittest.mock import Mock, MagicMock, patch
-from typing import ItemsView, KeysView
 import copy
+from typing import ItemsView, KeysView
+from unittest import TestCase
+from unittest.mock import MagicMock, Mock, patch
 
 from gobcore.exceptions import GOBException
-from gobcore.model import GOBModel, NoSuchCollectionException, NoSuchCatalogException, Schema
+from gobcore.model import GOBModel, NoSuchCatalogException, NoSuchCollectionException, Schema, upgrade_to_gob_classes
 from tests.gobcore.fixtures import random_string
 
 
@@ -92,6 +92,8 @@ class TestModel(TestCase):
 
         # Test non existing abbreviation
         self.assertEqual(None, self.model.get_reference_by_abbreviations('xxx', 'xxx'))
+        self.assertEqual(
+            None, self.model.get_reference_by_abbreviations('mbn', 'xyz9'))
 
     def test_amschema_entity_id(self):
         """Amsterdam schema identifiers to collection model entity_id tests."""
@@ -376,6 +378,8 @@ class TestModel(TestCase):
         self.model.data = {
             'cat_a': {
                 'abbreviation': 'ca',
+                'version': '1.0',
+                'description': 'Catalog beschrijving',
                 'collections': {
                     'col_a': {
                         'abbreviation': 'coa',
@@ -388,23 +392,12 @@ class TestModel(TestCase):
                 }
             }
         }
+        upgrade_to_gob_classes(self.model)
 
-        self.assertEqual(({
-            'abbreviation': 'ca',
-            'collections': {
-                'col_a': {
-                    'abbreviation': 'coa',
-                    'some other': 'data',
-                },
-                'col_b': {
-                    'abbreviation': 'cob',
-                    'some other': 'data',
-                }
-            }
-        }, {
-            'abbreviation': 'cob',
-            'some other': 'data',
-        }), self.model.get_catalog_collection_from_abbr('ca', 'cob'))
+        self.assertEqual(
+            (self.model['cat_a'], self.model['cat_a']['collections']['col_b']),
+            self.model.get_catalog_collection_from_abbr('ca', 'cob')
+        )
 
         with self.assertRaises(NoSuchCatalogException):
             self.model.get_catalog_collection_from_abbr('cc', 'cob')
