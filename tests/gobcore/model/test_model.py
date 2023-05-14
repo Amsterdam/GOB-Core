@@ -385,12 +385,16 @@ class TestModel(TestCase):
                         'abbreviation': 'coa',
                         'version': '0.1',
                         'entity_id': 'id_a',
+                        'all_fields': {},
+                        'fields': {},
                         'attributes': {},
                     },
                     'col_b': {
                         'abbreviation': 'cob',
                         'version': '0.2',
                         'entity_id': 'id_b',
+                        'all_fields': {},
+                        'fields': {},
                         'attributes': {},
                     }
                 }

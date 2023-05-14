@@ -40,6 +40,8 @@ class TestGob(unittest.TestCase):
                 'version': '1.0',
                 'abbreviation': 'col1',
                 'entity_id': 'identificatie',
+                'all_fields': {},
+                'fields': {},
                 'attributes': {},
                 'very_many_references': {'very_many_reference': {}}
             },
@@ -47,6 +49,8 @@ class TestGob(unittest.TestCase):
                 'version': '1.0',
                 'abbreviation': 'col2',
                 'entity_id': 'identificatie',
+                'all_fields': {},
+                'fields': {},
                 'attributes': {},
                 'very_many_references': {}
             }

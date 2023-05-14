@@ -2,9 +2,11 @@
 
 
 from collections import UserDict
-from typing import Any, Optional
+from typing import Any, Literal, NewType, Optional, Union
 
-from pydantic import BaseModel, Field, constr, validator
+from pydantic import BaseModel, Field, StrictBool, constr, validator
+
+from gobcore.model.metadata import FIXED_COLUMNS, METADATA_COLUMNS, STATE_COLUMNS
 
 
 class CollectionSchema(BaseModel):
@@ -22,6 +24,44 @@ class CollectionSchema(BaseModel):
         extra = "forbid"
 
 
+FieldKind = NewType("FieldKind", Literal["attribute", "state", "fixed", "private", "public", "json"])
+
+
+class GOBField(BaseModel):
+    """GOB Field."""
+
+    name: str
+    type: str
+    description: Optional[str] = Field(repr=False)
+    config: dict[str, Any] = Field(repr=False)
+    kind: FieldKind
+    attributes: Optional[dict[str, "GOBField"]] = Field(repr=False)
+
+    class Config:
+        """Pydantic config."""
+
+        allow_mutation = False
+        extra = "forbid"
+
+    @validator("attributes", pre=True)
+    def json_attributes(
+        cls, json_attrs: dict[str, dict[str, str]]
+    ) -> Optional[dict[str, dict[str, Union[dict[str, str], str, None]]]]:
+        """Initialise GOBField JSON attributes dictionary."""
+        if json_attrs:
+            attributes = {}
+            for key, value in json_attrs.items():
+                attributes[key] = {
+                    "name": key,
+                    "type": value["type"],
+                    "description": value.get("description"),
+                    "config": {k: v for k, v in value.items() if not k in ["type", "description"]},
+                    "kind": "attribute",
+                }
+            return attributes
+        return None
+
+
 class CollectionBase(BaseModel):
     """GOB Collection Base."""
 
@@ -29,8 +69,10 @@ class CollectionBase(BaseModel):
     name: str
     catalog_name: str
     entity_id: str
-    has_states: bool
-    attributes: dict[str, Any] = Field(repr=False)
+    has_states: StrictBool
+    all_fields: dict[str, GOBField] = Field(repr=False)
+    fields: dict[str, GOBField] = Field(repr=False)
+    attributes: dict[str, GOBField] = Field(repr=False)
     abbreviation: constr(to_upper=True)
     version: str
     description: str = Field(repr=False)
@@ -42,6 +84,42 @@ class CollectionBase(BaseModel):
 
         allow_mutation = False
         extra = "forbid"
+
+    @validator("all_fields", pre=True)
+    def fill_all_fields(cls, dict_fields: dict[str, dict[str, Any]]) -> dict[str, dict[str, Optional[Any]]]:
+        """Initialise CollectionBase all_fields dictionary."""
+        all_fields = {}
+        for key, value in dict_fields.items():
+            json_attrs = value.get("attributes")
+            if json_attrs:
+                kind = "json"
+            elif key in FIXED_COLUMNS:
+                kind = "fixed"
+            elif key in STATE_COLUMNS:
+                kind = "state"
+            elif key in METADATA_COLUMNS["private"]:
+                kind = "private"
+            elif key in METADATA_COLUMNS["public"]:
+                kind = "public"
+            else:
+                kind = "attribute"
+            all_fields[key] = {
+                "name": key,
+                "type": value["type"],
+                "description": value.get("description"),
+                "config": {k: v for k, v in value.items() if not k in ["type", "description", "attributes"]},
+                "kind": kind,
+                "attributes": json_attrs,
+            }
+        return all_fields
+
+    @validator("fields", "attributes", pre=True)
+    def fill_fields(cls, dict_fields: dict[str, dict[str, Any]], values) -> dict[str, dict[str, Optional[Any]]]:
+        """Initialise CollectionBase fields and attributes dictionary."""
+        fields = {}
+        for key in dict_fields:
+            fields[key] = values["all_fields"][key]
+        return fields
 
     @validator("schema_", pre=True)
     def collection_schema(cls, schema: Optional[dict[str, str]]) -> Optional[dict[str, str]]:
@@ -69,6 +147,8 @@ class GOBCollection(CollectionBase, UserDict[str, Any]):
             has_states=collection.get("has_states") is True,
             abbreviation=collection["abbreviation"],
             version=collection["version"],
+            all_fields=collection["all_fields"],
+            fields=collection["fields"],
             attributes=collection["attributes"],
             description=collection.get("description", ""),
             schema=collection.get("schema"),
@@ -87,7 +167,7 @@ class GOBCollection(CollectionBase, UserDict[str, Any]):
 
     @property
     def is_relation(self) -> bool:
-        """Tell if I'm the relation collection."""
+        """Tell if collection is a relation collection."""
         return self.catalog_name == "rel"
 
     def matches_abbreviation(self, abbr: str) -> bool:

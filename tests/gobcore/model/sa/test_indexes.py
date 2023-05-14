@@ -34,6 +34,7 @@ class TestIndexes(unittest.TestCase):
                             FIELD.APPLICATION: {'type': 'GOB.String'},
                             'a': {'type': 'GOB.String'}
                         },
+                        'fields': {},
                         'attributes': {}
                     },
                     'collection_a2': {
@@ -62,6 +63,7 @@ class TestIndexes(unittest.TestCase):
                                 'type': 'GOB.String'
                             }
                         },
+                        'fields': {},
                         'attributes': {}
                     }
                 }
@@ -78,6 +80,7 @@ class TestIndexes(unittest.TestCase):
                         'all_fields': {
                             FIELD.EXPIRATION_DATE: {'type': 'GOB.DateTime'}
                         },
+                        'fields': {},
                         'attributes': {}
                     }
                 }
@@ -96,6 +99,7 @@ class TestIndexes(unittest.TestCase):
                             FIELD.GOBID: {'type': 'GOB.String'},
                             FIELD.EXPIRATION_DATE: {'type': 'GOB.DateTime'}
                         },
+                        'fields': {},
                         'attributes': {}
                     },
                     'relation_b': {
@@ -112,6 +116,7 @@ class TestIndexes(unittest.TestCase):
                             FIELD.APPLICATION: {'type': 'GOB.String'},
                             FIELD.LAST_SRC_EVENT: {'type': 'GOB.Integer'}
                         },
+                        'fields': {},
                         'attributes': {}
                     }
                 }
@@ -149,6 +154,7 @@ class TestIndexes(unittest.TestCase):
                                 'ref': 'catalog_b:collection_a2b'
                             }
                         },
+                        'fields': {},
                         'attributes': {}
                     }
                 }
