@@ -35,7 +35,7 @@ class CatalogBase(BaseModel):
     abbreviation: constr(to_upper=True)
     version: str
     description: str = Field(repr=False)
-    collection: dict[str, GOBCollection] = Field(repr=False)
+    collections: dict[str, GOBCollection] = Field(repr=False)
 
     class Config:
         """Pydantic config."""
@@ -54,7 +54,7 @@ class GOBCatalog(CatalogBase, UserDict[str, Any]):
             abbreviation=catalog["abbreviation"],
             version=catalog["version"],
             description=catalog["description"],
-            collection=catalog["collections"],
+            collections=catalog["collections"],
         )
 
     def matches_abbreviation(self, abbr: str) -> bool:
@@ -63,7 +63,7 @@ class GOBCatalog(CatalogBase, UserDict[str, Any]):
 
     def get_collection_from_abbr(self, collection_abbr) -> Optional[GOBCollection]:
         """Return collection by collection abbreviation."""
-        for collection in self.collection.values():
+        for collection in self.collections.values():
             if collection.matches_abbreviation(collection_abbr):
                 return collection
         return None
@@ -259,7 +259,7 @@ class GOBModel(UserDict):
         """Helper function to generate all table names."""
         table_names = []
         for catalog in self.values():
-            for collection in catalog.collection.values():
+            for collection in catalog.collections.values():
                 table_names.append(collection.table_name)
         return table_names
 

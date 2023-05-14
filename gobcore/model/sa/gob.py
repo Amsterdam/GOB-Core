@@ -164,7 +164,7 @@ def get_sqlalchemy_models(model: GOBModel):
     )
 
     for catalog_name in model:
-        for collection in model[catalog_name].collection.values():
+        for collection in model[catalog_name].collections.values():
             # "attributes": {
             #     "attribute_name": {
             #         "type": "GOB type name, e.g. GOB.String",
