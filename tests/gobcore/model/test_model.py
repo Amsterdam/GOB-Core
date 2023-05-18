@@ -243,7 +243,7 @@ class TestModel(TestCase):
     def test_get_collection_from_ref(self):
         collections = MagicMock(spec_set=dict, name="collections")
         collections.__getitem__.return_value = {"fake": "collection"}
-        self.model['some'] = Mock(name="catalog", collection=collections)
+        self.model['some'] = Mock(name="catalog", collections=collections)
         self.model.split_ref = Mock(
             spec_set=self.model.split_ref, name="split_ref", return_value=("some", "reference"))
 
@@ -388,6 +388,8 @@ class TestModel(TestCase):
                         'all_fields': {},
                         'fields': {},
                         'attributes': {},
+                        'references': {},
+                        'very_many_references': {},
                     },
                     'col_b': {
                         'abbreviation': 'cob',
@@ -396,6 +398,8 @@ class TestModel(TestCase):
                         'all_fields': {},
                         'fields': {},
                         'attributes': {},
+                        'references': {},
+                        'very_many_references': {},
                     }
                 }
             }

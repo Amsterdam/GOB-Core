@@ -73,6 +73,8 @@ class CollectionBase(BaseModel):
     all_fields: dict[str, GOBField] = Field(repr=False)
     fields: dict[str, GOBField] = Field(repr=False)
     attributes: dict[str, GOBField] = Field(repr=False)
+    references: dict[str, GOBField] = Field(repr=False)
+    very_many_references: dict[str, GOBField] = Field(repr=False)
     abbreviation: constr(to_upper=True)
     version: str
     description: str = Field(repr=False)
@@ -113,7 +115,7 @@ class CollectionBase(BaseModel):
             }
         return all_fields
 
-    @validator("fields", "attributes", pre=True)
+    @validator("fields", "attributes", "references", "very_many_references", pre=True)
     def fill_fields(cls, dict_fields: dict[str, dict[str, Any]], values) -> dict[str, dict[str, Optional[Any]]]:
         """Initialise CollectionBase fields and attributes dictionary."""
         fields = {}
@@ -150,6 +152,8 @@ class GOBCollection(CollectionBase, UserDict[str, Any]):
             all_fields=collection["all_fields"],
             fields=collection["fields"],
             attributes=collection["attributes"],
+            references=collection["references"],
+            very_many_references=collection["very_many_references"],
             description=collection.get("description", ""),
             schema=collection.get("schema"),
             api=collection.get("api"),

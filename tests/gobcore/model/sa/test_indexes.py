@@ -35,7 +35,9 @@ class TestIndexes(unittest.TestCase):
                             'a': {'type': 'GOB.String'}
                         },
                         'fields': {},
-                        'attributes': {}
+                        'attributes': {},
+                        'references': {},
+                        'very_many_references': {}
                     },
                     'collection_a2': {
                         "version": "0.1",
@@ -64,7 +66,9 @@ class TestIndexes(unittest.TestCase):
                             }
                         },
                         'fields': {},
-                        'attributes': {}
+                        'attributes': {},
+                        'references': {},
+                        'very_many_references': {}
                     }
                 }
             },
@@ -81,7 +85,9 @@ class TestIndexes(unittest.TestCase):
                             FIELD.EXPIRATION_DATE: {'type': 'GOB.DateTime'}
                         },
                         'fields': {},
-                        'attributes': {}
+                        'attributes': {},
+                        'references': {},
+                        'very_many_references': {}
                     }
                 }
             },
@@ -100,7 +106,9 @@ class TestIndexes(unittest.TestCase):
                             FIELD.EXPIRATION_DATE: {'type': 'GOB.DateTime'}
                         },
                         'fields': {},
-                        'attributes': {}
+                        'attributes': {},
+                        'references': {},
+                        'very_many_references': {}
                     },
                     'relation_b': {
                         "version": "0.1",
@@ -117,7 +125,9 @@ class TestIndexes(unittest.TestCase):
                             FIELD.LAST_SRC_EVENT: {'type': 'GOB.Integer'}
                         },
                         'fields': {},
-                        'attributes': {}
+                        'attributes': {},
+                        'references': {},
+                        'very_many_references': {}
                     }
                 }
             }
@@ -155,7 +165,9 @@ class TestIndexes(unittest.TestCase):
                             }
                         },
                         'fields': {},
-                        'attributes': {}
+                        'attributes': {},
+                        'references': {},
+                        'very_many_references': {}
                     }
                 }
             }

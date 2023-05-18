@@ -40,10 +40,19 @@ class TestGob(unittest.TestCase):
                 'version': '1.0',
                 'abbreviation': 'col1',
                 'entity_id': 'identificatie',
-                'all_fields': {},
+                'all_fields': {'very_many_reference': {
+                    "type": "GOB.ManyReference",
+                    "ref": "cat:col"
+                    }
+                },
                 'fields': {},
                 'attributes': {},
-                'very_many_references': {'very_many_reference': {}}
+                'references': {},
+                'very_many_references': {'very_many_reference': {
+                    "type": "GOB.ManyReference",
+                    "ref": "cat:col"
+                    }
+                }
             },
             'c2': {
                 'version': '1.0',
@@ -52,6 +61,7 @@ class TestGob(unittest.TestCase):
                 'all_fields': {},
                 'fields': {},
                 'attributes': {},
+                'references': {},
                 'very_many_references': {}
             }
         }

@@ -295,14 +295,14 @@ class GOBModel(UserDict):
         return self.split_ref(ref)
 
     def get_collection_from_ref(self, ref: str) -> Optional[GOBCollection]:
-        """Returns collection ref is referring to.
+        """Return collection ref is referring to.
 
         :param ref:
         :return:
         """
         catalog_name, collection_name = self.split_ref(ref)
         try:
-            return self[catalog_name].collection[collection_name]
+            return self[catalog_name].collections[collection_name]
         except KeyError:
             return None
 
