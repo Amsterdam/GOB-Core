@@ -119,8 +119,10 @@ class CollectionBase(BaseModel):
     def fill_fields(cls, dict_fields: dict[str, dict[str, Any]], values) -> dict[str, dict[str, Optional[Any]]]:
         """Initialise CollectionBase fields and attributes dictionary."""
         fields = {}
-        for key in dict_fields:
-            fields[key] = values["all_fields"][key]
+        # Make sure all fields are valid
+        if "all_fields" in values:
+            for key in dict_fields:
+                fields[key] = values["all_fields"][key]
         return fields
 
     @validator("schema_", pre=True)
