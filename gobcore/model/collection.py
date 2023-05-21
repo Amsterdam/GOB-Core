@@ -24,7 +24,7 @@ class CollectionSchema(BaseModel):
         extra = "forbid"
 
 
-FieldKind = NewType("FieldKind", Literal["attribute", "state", "fixed", "private", "public", "json"])
+FieldKind = Literal["attribute", "state", "fixed", "private", "public", "json"]
 
 
 class GOBField(BaseModel):
@@ -45,10 +45,12 @@ class GOBField(BaseModel):
 
     @validator("attributes", pre=True)
     def json_attributes(
-        cls, json_attrs: dict[str, dict[str, str]]
+        cls, json_attrs: dict[str, dict[str, str]], values: dict[str, Any]
     ) -> Optional[dict[str, dict[str, Union[dict[str, str], str, None]]]]:
         """Initialise GOBField JSON attributes dictionary."""
         if json_attrs:
+            if values["type"] not in ["GOB.JSON", "GOB.IncompleteDate"]:
+                raise TypeError(f"Invalid GOB type {values['type']}; expected 'GOB.JSON' or 'GOB.IncompleteDate'")
             attributes = {}
             for key, value in json_attrs.items():
                 attributes[key] = {
@@ -75,7 +77,7 @@ class CollectionBase(BaseModel):
     attributes: dict[str, GOBField] = Field(repr=False)
     references: dict[str, GOBField] = Field(repr=False)
     very_many_references: dict[str, GOBField] = Field(repr=False)
-    abbreviation: constr(to_upper=True)
+    abbreviation: constr(to_upper=True)  # type: ignore[valid-type]
     version: str
     description: str = Field(repr=False)
     schema_: Optional[CollectionSchema] = Field(alias="schema", repr=False)
