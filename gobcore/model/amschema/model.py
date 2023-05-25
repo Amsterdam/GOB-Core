@@ -11,6 +11,7 @@ from pydash import snake_case
 class Property(ABC, BaseModel):
     description: Optional[str]
     provenance: Optional[str]
+    shortname: Optional[str]
 
     @property
     @abstractmethod
@@ -20,7 +21,8 @@ class Property(ABC, BaseModel):
     def gob_representation(self, dataset: "Dataset"):
         return {
             "type": self.gob_type,
-            "description": self.description or ""
+            "description": self.description or "",
+            **({"shortname": snake_case(self.shortname)} if self.shortname else {}),
         }
 
 

@@ -157,6 +157,10 @@
       "publiceerbaar": {
         "type": "boolean",
         "description": "Publiceerbaar ja of nee"
+      },
+      "someVeryLongAttributeThatNeedsAShortname": {
+        "type": "string",
+        "shortname": "shortenedAttribute"
       }
     }
   }

@@ -132,6 +132,11 @@ class TestAMSSchema(unittest.TestCase):
                     'precision': 2,
                     'type': 'GOB.Decimal'
                 },
+                'some_very_long_attribute_that_needs_a_shortname': {
+                    'shortname': 'shortened_attribute',
+                    'description': '',
+                    'type': 'GOB.String'
+                }
             },
             'entity_id': 'identificatie',
             'version': 'ams_2.0.0'
