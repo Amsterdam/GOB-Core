@@ -3280,7 +3280,7 @@
         "schema": {
           "datasetId": "brk2",
           "tableId": "zakelijkerechten",
-          "version": "1.5.0",
+          "version": "1.6.0",
           "entity_id": "identificatie"
         }
       },
@@ -3292,7 +3292,7 @@
         "schema": {
           "datasetId": "brk2",
           "tableId": "tenaamstellingen",
-          "version": "2.0.0",
+          "version": "2.1.0",
           "entity_id": "identificatie"
         }
       },
@@ -3303,7 +3303,7 @@
         "schema": {
           "datasetId": "brk2",
           "tableId": "stukdelen",
-          "version": "1.2.0",
+          "version": "1.3.0",
           "entity_id": "identificatie"
         }
       },
@@ -3314,7 +3314,7 @@
         "schema": {
           "datasetId": "brk2",
           "tableId": "aantekeningenrechten",
-          "version": "1.1.0",
+          "version": "1.2.0",
           "entity_id": "identificatie"
         }
       },
@@ -3326,7 +3326,7 @@
         "schema": {
           "datasetId": "brk2",
           "tableId": "aantekeningenkadastraleobjecten",
-          "version": "1.1.0",
+          "version": "1.2.0",
           "entity_id": "identificatie"
         }
       },
