@@ -31,15 +31,12 @@ def load_schema(schema: Schema):
     """
     table, dataset = AMSchemaRepository().get_schema(schema)
 
-    if not schema.entity_id:
-        identifier = _get_entity_id_from_amschema(table)
-
     # Convert to GOBModel format
     return {
-        "attributes": _to_gob(table, dataset),
-        "entity_id": schema.entity_id or identifier,
+        "version": f"ams_{table.version}",
+        "entity_id": schema.entity_id or _get_entity_id_from_amschema(table),
         "has_states": bool(table.temporal),
-        "version": f"ams_{table.version}"
+        "attributes": _to_gob(table, dataset)
     }
 
 
