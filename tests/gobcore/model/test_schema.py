@@ -139,6 +139,7 @@ class TestAMSSchema(unittest.TestCase):
                 }
             },
             'entity_id': 'identificatie',
+            'has_states': False,
             'version': 'ams_2.0.0'
         }
 

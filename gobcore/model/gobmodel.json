@@ -3239,49 +3239,35 @@
     "abbreviation": "BRK2",
     "collections": {
       "kadastraleobjecten": {
-        "version": "0.1",
         "abbreviation": "KOT",
-        "entity_id": "identificatie",
-        "has_states": true,
         "schema": {
           "datasetId": "brk2",
           "tableId": "kadastraleobjecten",
-          "version": "2.2.1",
-          "entity_id": "identificatie"
+          "version": "2.2.1"
         }
       },
       "kadastralesubjecten": {
-        "version": "0.1",
         "abbreviation": "SJT",
-        "entity_id": "identificatie",
         "schema": {
           "datasetId": "brk2",
           "tableId": "kadastralesubjecten",
-          "version": "1.1.0",
-          "entity_id": "identificatie"
+          "version": "1.1.0"
         }
       },
       "meta": {
-        "version": "0.1",
         "abbreviation": "META",
-        "entity_id": "id",
         "schema": {
           "datasetId": "brk2",
           "tableId": "meta",
-          "version": "1.0.0",
-          "entity_id": "id"
+          "version": "1.0.0"
         }
       },
       "zakelijkerechten": {
-        "version": "0.1",
         "abbreviation": "ZRT",
-        "entity_id": "identificatie",
-        "has_states": true,
         "schema": {
           "datasetId": "brk2",
           "tableId": "zakelijkerechten",
-          "version": "1.6.0",
-          "entity_id": "identificatie"
+          "version": "1.6.0"
         }
       },
       "tenaamstellingen": {

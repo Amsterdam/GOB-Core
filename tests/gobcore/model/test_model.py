@@ -90,6 +90,21 @@ class TestModel(TestCase):
         # Test non existing abbreviation
         self.assertEqual(None, self.model.get_reference_by_abbreviations('xxx', 'xxx'))
 
+    def test_amschema_entity_id(self):
+        """Amsterdam schema identifiers to collection model entity_id tests."""
+        brk2_meta = self.model["brk2"]["collections"]["meta"]
+        self.assertEqual(brk2_meta["entity_id"], "id")
+        # Temporal (volgnummer)
+        brk2_kot = self.model["brk2"]["collections"]["kadastraleobjecten"]
+        self.assertEqual(brk2_kot["entity_id"], "identificatie")
+
+    def test_amschema_temporal(self):
+        """Amsterdam schema temporal table to collection model has_states tests."""
+        brk2_sjt = self.model["brk2"]["collections"]["kadastralesubjecten"]
+        self.assertFalse(brk2_sjt["has_states"])
+        brk2_zrt = self.model["brk2"]["collections"]["zakelijkerechten"]
+        self.assertTrue(brk2_zrt["has_states"])
+
     def test_legacy_attributes(self):
         peilmerken = self.model['nap']['collections']['peilmerken']
         self.assertTrue('legacy_attributes' in peilmerken)
