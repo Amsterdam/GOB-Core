@@ -15,7 +15,7 @@ class Property(ABC, BaseModel):
 
     @property
     @abstractmethod
-    def gob_type(self) -> str:  # pragma: no cover
+    def gob_type(self) -> str:
         pass
 
     def gob_representation(self, dataset: "Dataset"):
@@ -217,7 +217,8 @@ class Dataset(BaseModel):
     title: str
     status: str
     version: str
-    crs: str
+    # Coördinaten in het stelsel van de Rijksdriehoeksmeting (RD)
+    crs: str = "EPSG:28992"
     owner: str
     creator: str
     publisher: str
