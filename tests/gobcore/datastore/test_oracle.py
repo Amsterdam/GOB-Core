@@ -1,202 +1,118 @@
 from unittest import TestCase
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
-from gobcore.datastore.oracle import DSN_FAILOVER_ADDRESS_TEMPLATE, OracleDatastore, GOBException
+import oracledb
 
-
-class MockConnection:
-    class CursorObj:
-        def __init__(self, result):
-            self.result = result
-            self.executed = None
-            self.rowfactory = None
-
-        def __iter__(self):
-            for row in self.result:
-                yield row
-
-        def execute(self, query):
-            self.executed = query
-
-    def __init__(self, result):
-        self.cursor_obj = self.CursorObj(result)
-        self.outputtypehandler = None
-
-    def cursor(self):
-        return self.cursor_obj
+from gobcore.datastore.oracle import OracleDatastore, GOBException
 
 
-@patch("gobcore.datastore.oracle.oracledb.is_thin_mode", MagicMock(return_value=False))
-@patch("gobcore.datastore.oracle.oracledb.init_oracle_client", MagicMock())
-@patch("gobcore.datastore.oracle.SqlDatastore", MagicMock)
 class TestOracleDatastore(TestCase):
 
-    @patch("gobcore.datastore.oracle.oracledb")
-    def test_init(self, mock_oracledb):
-        config = {
-            'username': "username",
-            'password': "password",
-            'host': "host",
-            'port': 1234,
-            'database': 'SID'
+    def setUp(self) -> None:
+        self.config = {
+            "username": "username",
+            "password": "password",
+            "host": "host1,host2",  # failover
+            "port": 1234,
+            "database": "SID",
+            "name": "config_name"
         }
-        OracleDatastore(config)
-        mock_oracledb.init_oracle_client.assert_called()
+        OracleDatastore._client_initialised = True
+        self.store = OracleDatastore(self.config)
 
-    def test_get_url(self):
-        # Leave Oracle SID as it is
-        config = {
-            'username': "username",
-            'password': "password",
-            'host': "host",
-            'port': 1234,
-            'database': 'SID'
-        }
-        store = OracleDatastore(config)
+    @patch("gobcore.datastore.oracle.oracledb.init_oracle_client")
+    @patch("gobcore.datastore.oracle.Path")
+    @patch("gobcore.datastore.oracle.TemporaryDirectory")
+    def test_init(self, mock_temp, mock_path, mock_init_client):
+        mock_temp.return_value.__enter__.return_value = "config_dir"
 
-        self.assertEqual("oracle+cx_oracle://username:password@host:1234/SID", str(store.connection_config['url']))
+        OracleDatastore._client_initialised = False
+        OracleDatastore(self.config)
 
-        # Handle Oracle service name
-        config = {
-            'username': "username",
-            'password': "password",
-            'host': "host",
-            'port': "1234",
-            'database': 'x.y.z'
-        }
+        mock_path.assert_called_with("config_dir", "sqlnet.ora")
+        mock_init_client.assert_called_with(config_dir="config_dir")
+        assert OracleDatastore._client_initialised is True
 
-        store = OracleDatastore(config)
-        self.assertEqual("oracle+cx_oracle://username:password@host:1234/?service_name=x.y.z",
-                         str(store.connection_config['url']))
+        mock_init_client.reset_mock()
+        OracleDatastore(self.config)
+        mock_init_client.assert_not_called()
 
-    def test_get_dsn(self):
-        args = {
-            'host': 'localhost',
-            'port': '1234',
-            'database' : 'db'
-        }
-        address_list = [
-            DSN_FAILOVER_ADDRESS_TEMPLATE.format(host='localhost', port='1234'),
-        ]
-        exp_res = '(DESCRIPTION=(FAILOVER=off)(LOAD_BALANCE=off)(CONNECT_TIMEOUT=3)(RETRY_COUNT=3)' \
-                  f'(ADDRESS_LIST={address_list[0]})' \
-                  '(CONNECT_DATA=(SERVICE_NAME=db)))'
-        self.assertEqual(OracleDatastore._get_dsn(**args), exp_res)
+    @patch("gobcore.datastore.oracle.oracledb.connect")
+    def test_connect(self, mock_connect):
+        conn = self.store.connect()
 
-        args['host'] = 'localhost1,localhost2'
-        address_list = [
-            DSN_FAILOVER_ADDRESS_TEMPLATE.format(host='localhost1', port='1234'),
-            DSN_FAILOVER_ADDRESS_TEMPLATE.format(host='localhost2', port='1234')
-        ]
-        exp_res = '(DESCRIPTION=(FAILOVER=on)(LOAD_BALANCE=off)(CONNECT_TIMEOUT=3)(RETRY_COUNT=3)' \
-                  f'(ADDRESS_LIST={"".join(address_list)})' \
-                  '(CONNECT_DATA=(SERVICE_NAME=db)))'
-        self.assertEqual(exp_res, OracleDatastore._get_dsn(**args))
+        assert "(username@SID)" == self.store.user
+        mock_connect.assert_called_with(
+            "username/password@tcp://host1:1234,host2:1234/SID?"
+            "failover=on&load_balance=on&retry_count=3&connection_timeout=3"
+        )
+        assert self.store.connection.outputtypehandler == self.store._output_type_handler
+        assert self.store.connection == conn == mock_connect.return_value
 
-        args['host'] = 'localhost'
-        args['port'] = '1234,1235'
-        address_list=[
-            DSN_FAILOVER_ADDRESS_TEMPLATE.format(host='localhost', port='1234'),
-            DSN_FAILOVER_ADDRESS_TEMPLATE.format(host='localhost', port='1235')
-        ]
-        exp_res = '(DESCRIPTION=(FAILOVER=on)(LOAD_BALANCE=off)(CONNECT_TIMEOUT=3)(RETRY_COUNT=3)' \
-                  f'(ADDRESS_LIST={"".join(address_list)})' \
-                  '(CONNECT_DATA=(SERVICE_NAME=db)))'
-        self.assertEqual(exp_res, OracleDatastore._get_dsn(**args))
+        # single host
+        self.config["host"] = "host"
+        OracleDatastore(self.config).connect()
+        mock_connect.assert_called_with(
+            "username/password@tcp://host:1234/SID?failover=off&load_balance=off&retry_count=3&connection_timeout=3"
+        )
 
+    @patch("gobcore.datastore.oracle.oracledb.connect", side_effect=KeyError("my key"))
+    def test_connect_keyerror(self, _):
+        with self.assertRaisesRegex(GOBException, "my key"):
+            self.store.connect()
 
-    @patch("gobcore.datastore.oracle.oracledb")
-    def test_connect(self, mock_oracledb):
-        config = {
-            'username': 'user',
-            'database': 'db',
-            'password': 'pw',
-            'port': 9999,
-            'host': 'localhost',
-            'name': 'configname',
-        }
+    @patch("gobcore.datastore.oracle.oracledb.connect", side_effect=oracledb.OperationalError("my error"))
+    def test_connect_opserror(self, _):
+        with self.assertRaisesRegex(GOBException, "my error"):
+            self.store.connect()
 
-        mock_oracledb.Connection.return_value = {"connected": True}
-        store = OracleDatastore(config)
-        store.connect()
-        self.assertEqual("(user@db)", store.user)
-        self.assertEqual({"connected": True}, store.connection)
+    @patch("oracledb.Cursor", autospec=True, spec_set=True, description=(("a",), ("B",), ("c",)))
+    def test_makedict(self, mock_cursor):
+        assert {"a": 1, "b": 2, "c": 3} == self.store._dict_cursor(mock_cursor)(*(1, 2, 3, 4))
 
-        address_list = DSN_FAILOVER_ADDRESS_TEMPLATE.format(host=config['host'], port=config['port'])
-        dsn = '(DESCRIPTION=(FAILOVER=off)(LOAD_BALANCE=off)(CONNECT_TIMEOUT=3)(RETRY_COUNT=3)' \
-                  f'(ADDRESS_LIST={"".join(address_list)})' \
-                  '(CONNECT_DATA=(SERVICE_NAME=db)))'
-        mock_oracledb.Connection.assert_called_with(user='user', password='pw', dsn = dsn)
+    @patch("oracledb.Cursor", autospec=True, spec_set=True, arraysize=5)
+    def test_output_type_handler(self, mock_cursor):
+        self.store._output_type_handler(mock_cursor, "name", oracledb.CLOB, 0, 0, 0)
+        mock_cursor.var.assert_called_with(oracledb.LONG_STRING, arraysize=5)
 
-        config = {
-            'username': 'user',
-            'database': 'db',
-            'port': 9999,
-            'host': 'localhost',
-            'name': 'configname',
-        }
-        store = OracleDatastore(config)
+        # some other type
+        result = self.store._output_type_handler(mock_cursor, "name", oracledb.NUMBER, 0, 0, 0)
+        assert result is None
 
-        with self.assertRaises(GOBException):
-            store.connect()
+    @patch("oracledb.Cursor", autospec=True, spec_set=True, arraysize=5, description=(("id",),))
+    @patch("oracledb.Connection", autospec=True, spec_set=True)
+    def test_query(self, mock_conn, mock_cursor):
+        mock_cursor.execute.return_value = (mock_cursor.rowfactory(*row) for row in [(1,), (2,)])
+        mock_conn.cursor.return_value.__enter__.return_value = mock_cursor
+        self.store.connection = mock_conn
 
-    @patch("gobcore.datastore.oracle.OracleDatastore.get_url", MagicMock())
-    def test_disconnect(self):
-        store = OracleDatastore({})
-        connection = MagicMock()
-        store.connection = connection
-        store.disconnect()
-        connection.close.assert_called_once()
-        self.assertIsNone(store.connection)
-        store.disconnect()
+        mock_cursor.execute.return_value = (mock_cursor.rowfactory(*row) for row in [(1,), (2,)])
 
-    @patch("gobcore.datastore.oracle.OracleDatastore.get_url", MagicMock())
-    def test_makedict(self):
-        cursor = type('MockCursor', (object,), {'description': ['a', 'b', 'c']})
-        args = [1, 2, 3, 4]
-        store = OracleDatastore({}, {})
-        createrowfunc = store._makedict(cursor)
+        query = "SELECT this FROM that WHERE this=that;"
+        result = list(self.store.query(query, arraysize=5))
 
-        self.assertEqual({
-            'a': 1,
-            'b': 2,
-            'c': 3,
-        }, createrowfunc(*args))
+        assert 5 == mock_cursor.arraysize
+        assert [{"id": 1}, {"id": 2}] == result
+        mock_cursor.execute.assert_called_with(query[:-1])
 
-    @patch("gobcore.datastore.oracle.OracleDatastore.get_url", MagicMock())
-    @patch('gobcore.datastore.oracle.oracledb.CLOB', "CLOB")
-    @patch('gobcore.datastore.oracle.oracledb.LONG_STRING', "LONG_STRING")
-    def test_output_type_handler(self):
-        cursor = type('Cursor', (object,), {'arraysize': 20, 'var': lambda x, arraysize: x + '_' + str(arraysize)})
-        store = OracleDatastore({}, {})
-        self.assertEqual('LONG_STRING_20', store._output_type_handler(cursor, 'name', 'CLOB', 0, 0, 0))
-        self.assertIsNone(store._output_type_handler(cursor, 'name', 'SOME_OTHER_TYPE', 0, 0, 0))
+    @patch("oracledb.Cursor", autospec=True, spec_set=True)
+    @patch("oracledb.Connection", autospec=True, spec_set=True)
+    def test_execute(self, mock_conn, mock_cursor):
+        mock_conn.cursor.return_value.__enter__.return_value = mock_cursor
+        self.store.connection = mock_conn
 
-    @patch("gobcore.datastore.oracle.OracleDatastore.get_url", MagicMock())
-    def test_query(self):
-        query = "SELECT this FROM that WHERE this=that"
+        self.store.execute("SELECT 1")
 
-        store = OracleDatastore({}, {})
-        store.connection = MockConnection([{"id": 1}, {"id": 2}])
-        store._output_type_handler = MagicMock()
-        store._makedict = MagicMock()
-        list(store.query(query))
+        mock_cursor.execute.assert_called_with("SELECT 1")
+        mock_conn.commit.assert_called_once()
 
-        self.assertEqual(query, store.connection.cursor_obj.executed)
-        self.assertEqual(store._output_type_handler, store.connection.outputtypehandler)
-        self.assertEqual(store._makedict.return_value, store.connection.cursor_obj.rowfactory)
-
-    @patch("gobcore.datastore.oracle.OracleDatastore.get_url", MagicMock())
     def test_not_implemented_methods(self):
         methods = [
             ('write_rows', ['the table', []]),
-            ('execute', ['the query']),
             ('list_tables_for_schema', ['the schema']),
             ('rename_schema', ['old', 'new']),
         ]
 
-        store = OracleDatastore({}, {})
-
         for method, args in methods:
             with self.assertRaises(NotImplementedError):
-                getattr(store, method)(*args)
+                getattr(self.store, method)(*args)
