@@ -9,16 +9,17 @@ from tempfile import TemporaryDirectory
 from gobcore.datastore.sql import SqlDatastore
 from gobcore.exceptions import GOBException
 
+
 # Require encryption on TCP level.
-# If th encryption is enabled, the follwoing SQL gives output
+# Write this config to the sqlnet.ora file and pass it to oracledb.init_oracle_client
+# If the encryption is enabled, the following SQL gives output
 #
-#  select NETWORK_SERVICE_BANNER from v$session_connect_info where
-#    SID = sys_context('USERENV','SID')
-#    AND NETWORK_SERVICE_BANNER LIKE '%ncryption service adapter%'
+#  select NETWORK_SERVICE_BANNER
+#  from v$session_connect_info
+#  where SID = sys_context('USERENV','SID') AND NETWORK_SERVICE_BANNER LIKE '%ncryption service adapter%'
 #
 # Which will display something like:
-#   [{'network_service_banner':
-#     'AES256 Encryption service adapter for Linux: Version 19.0.0.0.0 - Production'}]
+#   [{'network_service_banner': 'AES256 Encryption service adapter for Linux: Version 19.0.0.0.0 - Production'}]
 ORACLE_CONFIG = """
 SQLNET.CRYPTO_CHECKSUM_CLIENT = required
 SQLNET.CRYPTO_CHECKSUM_TYPES_CLIENT = (SHA512)
