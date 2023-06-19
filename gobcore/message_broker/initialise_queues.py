@@ -14,7 +14,7 @@ import requests
 import pika
 
 from gobcore.message_broker.config import CONNECTION_PARAMS,\
-                                          MESSAGE_BROKER, MESSAGE_BROKER_PORT, MESSAGE_BROKER_VHOST,\
+                                          MESSAGE_BROKER, MESSAGE_BROKER_API_PORT, MESSAGE_BROKER_VHOST,\
                                           MESSAGE_BROKER_USER, MESSAGE_BROKER_PASSWORD, QUEUE_CONFIGURATION,\
                                           EXCHANGES
 
@@ -27,7 +27,7 @@ def _create_vhost(vhost):
     :return:
     """
     response = requests.put(
-        url=f"http://{MESSAGE_BROKER}:{MESSAGE_BROKER_PORT}/api/vhosts/{vhost}",
+        url=f"http://{MESSAGE_BROKER}:{MESSAGE_BROKER_API_PORT}/api/vhosts/{vhost}",
         headers={
             "content-type": "application/json"
         },
