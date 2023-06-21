@@ -33,6 +33,9 @@ class OracleDatastore(SqlDatastore):
 
     _client_initialised = False
 
+    SINGLE_HOST_PARAM = (("retry_count", "3"), ("connection_timeout", "3"))
+    MULTI_HOST_PARAM = SINGLE_HOST_PARAM + (("failover", "on"), ("load_balance", "off"))
+
     @classmethod
     def _init_client(cls):
         """
@@ -48,23 +51,34 @@ class OracleDatastore(SqlDatastore):
             cls._client_initialised = True
 
     def __init__(self, connection_config: dict, read_config: dict = None):
-        super(OracleDatastore, self).__init__(connection_config, read_config)
         self._init_client()
+
+        expected_keys = {"host", "port", "database", "username", "password"}
+        if missing := expected_keys - connection_config.keys():
+            raise GOBException(
+                f"Missing configuration for source '{connection_config['name']}': {','.join(sorted(missing))}"
+            )
+
+        super(OracleDatastore, self).__init__(connection_config, read_config)
+        self.user = f"({self.connection_config['username']}@{self.connection_config['database']})"
+
+    @property
+    def single_host(self) -> bool:
+        return len(self.connection_config["host"].split(",")) == 1
 
     def connect(self) -> oracledb.Connection:
         """Connect to the Oracle datasource using oracledb."""
-        config = self.connection_config
+        params = self.SINGLE_HOST_PARAM if self.single_host else self.MULTI_HOST_PARAM
+        dsn = self._build_connection_string(**self.connection_config, params=dict(params))
 
         try:
-            self.user = f"({config['username']}@{config['database']})"
-            dsn = self._get_connection_string(retry_count=3, connection_timeout=3)
             connection = oracledb.connect(dsn)
-            connection.outputtypehandler = self._output_type_handler
-        except KeyError as e:
-            raise GOBException(f"Missing configuration for source '{config['name']}': {e}")
         except oracledb.OperationalError as e:
-            raise GOBException(f"Database connection for source {config['name']} {self.user} failed: {e}")
+            raise GOBException(
+                f"Database connection for source {self.connection_config['name']} {self.user} failed: {e}"
+            )
 
+        connection.outputtypehandler = self._output_type_handler
         self.connection = connection
         return connection
 
@@ -93,24 +107,17 @@ class OracleDatastore(SqlDatastore):
     def rename_schema(self, schema: str, new_name: str) -> None:
         raise NotImplementedError("Please implement rename_schema for OracleDatastore")
 
-    def _get_connection_string(self, **kwargs) -> str:
+    @staticmethod
+    def _build_connection_string(
+            host: str, port: str, database: str, username: str, password: str, params: dict = None, **kwargs
+    ) -> str:
         """
         Returns the connection string for the Oracle database according to 'Easy Connect' syntax.
         see: https://docs.oracle.com/en/database/oracle/oracle-database/21/netag/configuring-naming-methods.html#GUID-8C85D289-6AF3-41BC-848B-BF39D32648BA
         """
-        config = self.connection_config
-        hosts_list = config["host"].split(",")
-        hosts = ",".join(f"{host}:{config['port']}" for host in hosts_list)
-        service_name = config["database"]
-
-        params = {
-            "failover": "on" if len(hosts_list) > 1 else "off",
-            "load_balance": "on" if len(hosts_list) > 1 else "off"
-        } | kwargs
+        hosts = ",".join(f"{host}:{port}" for host in host.split(","))
         params = "&".join(f"{key}={value}".lower() for key, value in params.items())
-
-        connect_string = f"tcp://{hosts}/{service_name}?{params}"
-        return f"{config['username']}/{config['password']}@{connect_string}"
+        return f"{username}/{password}@tcp://{hosts}/{database}?{params}"
 
     @staticmethod
     def _dict_cursor(cursor: oracledb.Cursor) -> Callable[..., dict[str, Any]]:

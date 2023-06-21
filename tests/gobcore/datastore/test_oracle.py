@@ -32,19 +32,23 @@ class TestOracleDatastore(TestCase):
         mock_path.assert_called_with("config_dir", "sqlnet.ora")
         mock_init_client.assert_called_with(config_dir="config_dir")
         assert OracleDatastore._client_initialised is True
+        assert "(username@SID)" == self.store.user
 
         mock_init_client.reset_mock()
         OracleDatastore(self.config)
         mock_init_client.assert_not_called()
 
+    def test_init_missing_keys(self):
+        with self.assertRaisesRegex(GOBException, "database,password,port,username"):
+            OracleDatastore({"name": "my config", "host": "my_host"})
+
     @patch("gobcore.datastore.oracle.oracledb.connect")
     def test_connect(self, mock_connect):
         conn = self.store.connect()
 
-        assert "(username@SID)" == self.store.user
         mock_connect.assert_called_with(
             "username/password@tcp://host1:1234,host2:1234/SID?"
-            "failover=on&load_balance=on&retry_count=3&connection_timeout=3"
+            "retry_count=3&connection_timeout=3&failover=on&load_balance=off"
         )
         assert self.store.connection.outputtypehandler == self.store._output_type_handler
         assert self.store.connection == conn == mock_connect.return_value
@@ -53,13 +57,8 @@ class TestOracleDatastore(TestCase):
         self.config["host"] = "host"
         OracleDatastore(self.config).connect()
         mock_connect.assert_called_with(
-            "username/password@tcp://host:1234/SID?failover=off&load_balance=off&retry_count=3&connection_timeout=3"
+            "username/password@tcp://host:1234/SID?retry_count=3&connection_timeout=3"
         )
-
-    @patch("gobcore.datastore.oracle.oracledb.connect", side_effect=KeyError("my key"))
-    def test_connect_keyerror(self, _):
-        with self.assertRaisesRegex(GOBException, "my key"):
-            self.store.connect()
 
     @patch("gobcore.datastore.oracle.oracledb.connect", side_effect=oracledb.OperationalError("my error"))
     def test_connect_opserror(self, _):
