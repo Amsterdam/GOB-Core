@@ -1,4 +1,4 @@
-cryptography~=40.0.2
+cryptography~=41.0.1
 GDAL==${LIBGDAL_VERSION}
 GeoAlchemy2~=0.13.3
 geomet==1.0.0
