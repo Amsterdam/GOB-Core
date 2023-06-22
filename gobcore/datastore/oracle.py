@@ -33,6 +33,7 @@ class OracleDatastore(SqlDatastore):
 
     _client_initialised = False
 
+    # Parameter values supplied by Neuron administrator (TNSnames)
     SINGLE_HOST_PARAM = (("retry_count", "3"), ("connection_timeout", "3"))
     MULTI_HOST_PARAM = SINGLE_HOST_PARAM + (("failover", "on"), ("load_balance", "off"))
 
