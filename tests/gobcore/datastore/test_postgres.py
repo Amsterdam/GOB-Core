@@ -26,6 +26,9 @@ class MockConnection:
         def execute(self, query):
             return
 
+        def copy_expert(self, query, data):
+            return
+
         def close(self):
             return
 
