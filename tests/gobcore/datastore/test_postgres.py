@@ -164,6 +164,20 @@ class TestPostgresDatastore(TestCase):
         with self.assertRaises(GOBException):
             store.execute('some query')
 
+    def test_copy_expert(self):
+        store = PostgresDatastore({})
+        store.connection = MagicMock()
+        mocked_cursor = store.connection.cursor.return_value.__enter__.return_value
+
+        store.copy_expert('some query', 'some data')
+        mocked_cursor.execute.assert_called_with('some query')
+        store.connection.commit.assert_called_once()
+
+        mocked_cursor.copy_expert.side_effect = Error
+
+        with self.assertRaises(GOBException):
+            store.copy_expert('some query')
+
     def test_list_tables_for_schema(self):
         store = PostgresDatastore({})
         store.query = MagicMock(return_value=[{'table_name': 'table A'}, {'table_name': 'table B'}])
