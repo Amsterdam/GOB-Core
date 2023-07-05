@@ -28,10 +28,6 @@ class SqlDatastore(Datastore, ABC):
         pass  # pragma: no cover
 
     @abstractmethod
-    def copy_expert(self, query: str, data: str) -> None:
-        pass  # pragma: no cover
-
-    @abstractmethod
     def list_tables_for_schema(self, schema: str) -> List[str]:
         pass  # pragma: no cover
 
