@@ -19,9 +19,6 @@ class SqlDatastoreImpl(SqlDatastore):
     def execute(self, query: str) -> None:
         pass
 
-    def copy_expert(self, query: str, data: str) -> None:
-        pass
-
     def list_tables_for_schema(self, schema: str) -> List[str]:
         pass
 

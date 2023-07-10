@@ -92,10 +92,10 @@ class PostgresDatastore(SqlDatastore):
         except psycopg2.Error as e:
             raise GOBException(f'Error executing query: {query[:80]}. Error: {e}')
 
-    def copy_expert(self, query: str, data: str) -> None:
+    def copy_from_stdin(self, query: str, data: str) -> None:
         """Executes Postgres copy from stdin
 
-        :param query, data
+        :params query, data
         :return:
         """
         try:
