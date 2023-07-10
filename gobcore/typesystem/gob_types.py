@@ -21,6 +21,7 @@ import json
 import numbers
 import re
 from abc import ABCMeta, abstractmethod
+from functools import lru_cache, cached_property
 from math import isnan
 from typing import Any, Optional
 
@@ -28,6 +29,9 @@ import sqlalchemy
 
 from gobcore.exceptions import GOBTypeException
 from gobcore.model.metadata import FIELD
+
+
+cache = lru_cache(250_000, typed=True)
 
 
 def get_kwargs_from_type_info(type_info: dict[str, Any]) -> dict[str, Any]:
@@ -202,6 +206,7 @@ class Character(String):
     sql_type = sqlalchemy.CHAR
 
     @classmethod
+    @cache
     def from_value(cls, value, **kwargs) -> GOBType:
         """
         Returns GOBType as a String containing a single character value if input has a string representation with
@@ -286,6 +291,7 @@ class Decimal(GOBType):
         super().__init__(value)
 
     @classmethod
+    @cache
     def from_value(cls, value, **kwargs):
         """Create a Decimal GOB Type from value and kwargs.
 
@@ -346,6 +352,7 @@ class Boolean(GOBType):
         super().__init__(value)
 
     @classmethod
+    @cache
     def from_value(cls, value, **kwargs):
         """Create a Boolean GOB Type from value and kwargs.
 
@@ -405,6 +412,7 @@ class Date(String):
     internal_format = "%Y-%m-%d"
 
     @classmethod
+    @cache
     def from_value(cls, value, **kwargs):
         """ Create a Date GOB type as a string containing a date value in ISO 8601 format:
 
@@ -424,13 +432,13 @@ class Date(String):
 
         return cls(str(value)) if value is not None else cls(None)
 
-    @property
+    @cached_property
     def to_db(self):
         if self._string is None:
             return None
         return datetime.datetime.strptime(self._string, self.internal_format)
 
-    @property
+    @cached_property
     def to_value(self):
         if self._string is None:
             return None
@@ -448,6 +456,7 @@ class DateTime(Date):
         super().__init__(value)
 
     @classmethod
+    @cache
     def from_value(cls, value, **kwargs):
         input_format = kwargs['format'] if 'format' in kwargs else cls.internal_format
 
@@ -457,6 +466,8 @@ class DateTime(Date):
                     if isinstance(value, str) and '.%f' in input_format and len(value) == len('YYYY-MM-DDTHH:MM:SS'):
                         # Add missing microseconds if needed
                         value += '.000000'
+                    elif isinstance(value, str) and len(value) == len('YYYY-MM-DD'):
+                        value += "T00:00:00.000000"
                     value = datetime.datetime.strptime(str(value), input_format)
                 # Transform to internal string format and work around issue: https://bugs.python.org/issue13305
                 value = f"{value.year:04d}-" + value.strftime("%m-%dT%H:%M:%S.%f")
@@ -465,13 +476,13 @@ class DateTime(Date):
 
         return cls(str(value)) if value is not None else cls(None)
 
-    @property
+    @cached_property
     def to_db(self):
         if self._string is None:
             return None
         return datetime.datetime.strptime(self._string, self.internal_format)
 
-    @property
+    @cached_property
     def to_value(self):
         if self._string is None:
             return None
