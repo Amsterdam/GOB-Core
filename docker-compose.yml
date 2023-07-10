@@ -2,6 +2,7 @@ version: "3.7"
 
 services:
   test:
+    container_name: gobcore
     build:
       context: .
       dockerfile: Dockerfile
