@@ -174,7 +174,7 @@ class MODIFY(ImportEvent):
     name = "MODIFY"
     timestamp_field = "_date_modified"
 
-    skip = {"_entity_source_id", "_source_id", "_tid"}
+    skip = {"_entity_source_id", "_source_id", "_tid", "_date_deleted"}
 
     def apply_to(self, entity):
         # Set the hash
