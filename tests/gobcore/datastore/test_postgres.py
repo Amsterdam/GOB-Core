@@ -173,13 +173,13 @@ class TestPostgresDatastore(TestCase):
         mocked_cursor = store.connection.cursor.return_value.__enter__.return_value
 
         store.copy_from_stdin('some query', 'some data')
-        mocked_cursor.copy_expert.assert_called_with('some query')
+        mocked_cursor.copy_expert.assert_called_with('some query', 'some data')
         store.connection.commit.assert_called_once()
 
-        mocked_cursor.copy_from_stdin.side_effect = Error
+        mocked_cursor.copy_expert.side_effect = Error
 
         with self.assertRaises(GOBException):
-            store.copy_from_stdin('some query')
+            store.copy_from_stdin('some query','some data')
 
     def test_list_tables_for_schema(self):
         store = PostgresDatastore({})
