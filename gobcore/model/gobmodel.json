@@ -3360,6 +3360,17 @@
           "version": "1.0.0",
           "entity_id": "identificatie"
         }
+      },
+      "aardzakelijkerechten": {
+        "version": "0.1",
+        "abbreviation": "AZT",
+        "entity_id": "code",
+        "schema": {
+          "datasetId": "brk2",
+          "tableId": "aardzakelijkerechten",
+          "version": "1.0.0",
+          "entity_id": "code"
+        }
       }
     }
   },
