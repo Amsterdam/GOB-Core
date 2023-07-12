@@ -4,8 +4,8 @@ from pathlib import Path
 from gobcore.model.amschema.model import Dataset, Table
 
 
-def get_dataset():
-    path = Path(__file__).parent.joinpath("dataset.json")
+def get_dataset(filename: str = "dataset.json"):
+    path = Path(__file__).parent.joinpath(filename)
     with open(path, 'r') as f:
         return Dataset.parse_obj(json.load(f))
 

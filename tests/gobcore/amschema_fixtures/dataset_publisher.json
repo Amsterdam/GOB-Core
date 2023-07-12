@@ -7,7 +7,9 @@
   "crs": "EPSG:28992",
   "owner": "Basisinformatie",
   "creator": "Kadaster en Rijkswaterstaat",
-  "publisher": "Datateam Basis- en Kernregistraties",
+  "publisher": {
+    "$ref": "publishers/BENK"
+  },
   "auth": "OPENBAAR",
   "authorizationGrantor": "gebruik.basisinformatie@amsterdam.nl",
   "tables": [

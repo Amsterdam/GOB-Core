@@ -41,3 +41,13 @@ class TestDataset(TestCase):
 
         with self.assertRaisesRegex(Exception, "CRS Something else does not start with EPSG. Don't know what to do with this. Help me?"):
             dataset.srid
+
+
+class TestPubilsher(TestCase):
+
+    def test_parse(self):
+        dataset = get_dataset("dataset_publisher.json")
+        assert dataset.publisher.ref == "publishers/BENK"
+
+        dataset = get_dataset()
+        assert dataset.publisher == "Datateam Basis- en Kernregistraties"

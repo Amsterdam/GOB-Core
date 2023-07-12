@@ -211,6 +211,10 @@ class TableListItem(BaseModel):
     activeVersions: dict[str, str]
 
 
+class Publisher(BaseModel):
+    ref: str = Field(alias="$ref", regex="^publishers/[A-Z]+$")
+
+
 class Dataset(BaseModel):
     type: Literal["dataset"]
     id: str
@@ -221,7 +225,7 @@ class Dataset(BaseModel):
     crs: str = "EPSG:28992"
     owner: str
     creator: str
-    publisher: str
+    publisher: Union[str, Publisher]
     auth: str
     authorizationGrantor: str
     tables: list[TableListItem]
