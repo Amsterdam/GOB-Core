@@ -3371,6 +3371,15 @@
           "version": "1.0.0",
           "entity_id": "code"
         }
+      },
+      "erfpachtcanons": {
+        "version": "0.1",
+        "abbreviation": "ECS",
+        "schema": {
+          "datasetId": "brk2",
+          "tableId": "erfpachtcanons",
+          "version": "2.0.0"
+        }
       }
     }
   },
