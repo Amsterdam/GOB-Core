@@ -59,6 +59,6 @@ class NameCompressor:
     @classmethod
     def uncompress_name(cls, name):
         """Uncompress table name."""
-        for src, dst in _CONVERSIONS.items():
+        for src, dst in reversed(_CONVERSIONS.items()):
             name = name.replace(cls._compressed_value(dst), src)
         return name

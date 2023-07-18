@@ -42,13 +42,15 @@ class TestNameCompressor(TestCase):
             mock_print.assert_called()
 
     def test_conversion_order(self):
-        """Test compressing order."""
+        """Test compressing and uncompressing order."""
         # Table for which a single compression is sufficient.
         single_table_name = "rel_brk_akt_brk_kot_heeft_betrekking_op_kadastraal_object"
         single_compressed_name = "rel_brk_akt_brk_kot__hft_btrk_p__kadastraal_object"
         self.assertEqual(NameCompressor.compress_name(single_table_name), single_compressed_name)
+        self.assertEqual(NameCompressor.uncompress_name(single_compressed_name), single_table_name)
 
         # Table for which a double compression is needed.
         double_table_name = "rel_brk2_akt_brk2_kot_heeft_betrekking_op_brk_kadastraal_object"
         double_compressed_name = "rel_brk2_akt_brk2_kot__hft_btrk_op_brk_kot_"
         self.assertEqual(NameCompressor.compress_name(double_table_name), double_compressed_name)
+        self.assertEqual(NameCompressor.uncompress_name(double_compressed_name), double_table_name)
