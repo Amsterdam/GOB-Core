@@ -7,6 +7,8 @@ from typing import Any, Literal, NewType, Optional, Union
 from pydantic import BaseModel, Field, StrictBool, constr, validator
 
 from gobcore.model.metadata import FIXED_COLUMNS, METADATA_COLUMNS, STATE_COLUMNS
+from gobcore.typesystem import get_gob_type
+from gobcore.typesystem.gob_types import GOBType
 
 
 class CollectionSchema(BaseModel):
@@ -62,6 +64,12 @@ class GOBField(BaseModel):
                 }
             return attributes
         return None
+
+
+    @property
+    def gob_type(self) -> GOBType:
+        """Return the GOBType of GOBField."""
+        return get_gob_type(self.type)
 
 
 class CollectionBase(BaseModel):
