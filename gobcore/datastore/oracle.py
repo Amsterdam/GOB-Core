@@ -85,7 +85,7 @@ class OracleDatastore(SqlDatastore):
 
     def query(self, query: str, **kwargs) -> Iterator[dict[str, Any]]:
         """Return query result iterator from the database formatted as dictionary."""
-        with self.connection.cursor() as cur:
+        with self.connection, self.connection.cursor() as cur:
             if "arraysize" in kwargs:
                 cur.arraysize = kwargs["arraysize"]
 
@@ -98,9 +98,9 @@ class OracleDatastore(SqlDatastore):
 
     def execute(self, query: str) -> None:
         """Executes a SQL statement on the database and commits the changes."""
-        with self.connection.cursor() as cur:
+        with self.connection, self.connection.cursor() as cur:
             cur.execute(query)
-        self.connection.commit()
+            self.connection.commit()
 
     def list_tables_for_schema(self, schema: str) -> List[str]:
         raise NotImplementedError("Please implement list_tables_for_schema for OracleDatastore")

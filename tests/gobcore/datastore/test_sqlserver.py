@@ -1,6 +1,8 @@
 from unittest import TestCase
 from unittest.mock import patch, MagicMock
 
+from pyodbc import Connection
+
 from gobcore.datastore.sqlserver import SqlServerDatastore
 
 
@@ -24,16 +26,7 @@ class TestSqlServerDatastore(TestCase):
         self.assertEqual(mock_pyodbc.connect.return_value, store.connection)
 
         conn = "DRIVER={DRIVER};SERVER=HOST,PORT;DATABASE=DB;ENCRYPT=optional;UID=USER;PWD=PASS"
-        mock_pyodbc.connect.assert_called_with(conn, autocommit=True)
-
-    def test_disconnect(self):
-        store = SqlServerDatastore({})
-        connection = MagicMock()
-        store.connection = connection
-        store.disconnect()
-        connection.close.assert_called_once()
-        self.assertIsNone(store.connection)
-        store.disconnect()
+        mock_pyodbc.connect.assert_called_with(conn)
 
     class MockRow:
         cursor_description = [('columnA',), ('otherColumn',), ('intColumn',)]
@@ -46,11 +39,9 @@ class TestSqlServerDatastore(TestCase):
 
     def test_query(self):
         store = SqlServerDatastore({}, {})
-        store.connection = MagicMock()
-        cursor_mock = MagicMock()
+        store.connection = MagicMock(spec=Connection)
+        cursor_mock = store.connection.cursor.return_value.__enter__.return_value
         cursor_mock.fetchall.return_value = [self.MockRow(('a', 'b', 4)), self.MockRow(('c', 'd', 5))]
-
-        store.connection.cursor.return_value = cursor_mock
 
         res = list(store.query('some query'))
 

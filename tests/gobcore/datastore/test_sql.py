@@ -10,7 +10,7 @@ class SqlDatastoreImpl(SqlDatastore):
     def connect(self):
         pass
 
-    def query(self, query):
+    def query(self, query, **kwargs):
         pass
 
     def write_rows(self, table: str, rows: List[list]) -> None:

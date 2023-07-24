@@ -21,19 +21,19 @@ class SqlDatastore(Datastore, ABC):
 
     @abstractmethod
     def write_rows(self, table: str, rows: List[list]) -> None:
-        pass  # pragma: no cover
+        pass
 
     @abstractmethod
     def execute(self, query: str) -> None:
-        pass  # pragma: no cover
+        pass
 
     @abstractmethod
     def list_tables_for_schema(self, schema: str) -> List[str]:
-        pass  # pragma: no cover
+        pass
 
     @abstractmethod
     def rename_schema(self, schema: str, new_name: str) -> None:
-        pass  # pragma: no cover
+        pass
 
     def drop_schema(self, schema: str) -> None:
         """Drops schema with all its contents

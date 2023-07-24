@@ -24,16 +24,10 @@ class SqlServerDatastore(SqlDatastore):
             f"PWD={self.connection_config['password']}"
         )
 
-        self.connection = pyodbc.connect(connstring, autocommit=True)
-
-    def disconnect(self):
-        if self.connection:
-            self.connection.close()
-            self.connection = None
+        self.connection = pyodbc.connect(connstring)
 
     def query(self, query, **kwargs):
-        cursor = self.connection.cursor()
-        with self.connection:
+        with self.connection, self.connection.cursor() as cursor:
             cursor.execute(query)
 
             for row in cursor.fetchall():

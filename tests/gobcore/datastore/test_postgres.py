@@ -1,56 +1,12 @@
 import types
 
 from unittest import TestCase
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, patch, ANY
 
-from psycopg2 import OperationalError, Error
+import psycopg2
+from psycopg2._psycopg import connection as psycopg2_connection
 
 from gobcore.datastore.postgres import PostgresDatastore, GOBException
-
-
-class MockConnection:
-
-    class Cursor:
-
-        arraysize = 1
-
-        def __init__(self, expected_result):
-            self.expected_result = expected_result
-            self.fetchmany_expected = self.expected_result.copy()
-
-        def fetchmany(self):
-            iter_ = self.fetchmany_expected
-            while res := [iter_.pop(0) for idx, _ in enumerate(iter_) if idx < self.arraysize]:
-                return res
-
-        def execute(self, query):
-            return
-
-        def copy_from_stdin(self, query, data):
-            return
-
-        def close(self):
-            return
-
-        def __enter__(self):
-            return self
-
-        def __exit__(self, *args):
-            pass
-
-        def __iter__(self):
-            return iter(self.expected_result)
-
-    commit_obj = MagicMock()
-
-    def __init__(self, expected_result):
-        self.cursor_obj = self.Cursor(expected_result)
-
-    def cursor(self, **kwargs):
-        return self.cursor_obj
-
-    def commit(self):
-        return self.commit_obj
 
 
 @patch("gobcore.datastore.postgres.SqlDatastore", MagicMock)
@@ -58,7 +14,7 @@ class TestPostgresDatastore(TestCase):
 
     def test_init(self):
         store = PostgresDatastore({'connection': 'config'}, {})
-        self.assertEqual(store.connection_config['drivername'], 'postgresql')
+        assert store.connection_config['drivername'] == 'postgresql'
 
     @patch("gobcore.datastore.postgres.psycopg2.connect")
     def test_connect(self, mock_connect):
@@ -93,108 +49,113 @@ class TestPostgresDatastore(TestCase):
             store.connect()
 
         config['password'] = 'pw'
-        mock_connect.side_effect = OperationalError
+        mock_connect.side_effect = psycopg2.OperationalError
 
         with self.assertRaises(GOBException):
             store.connect()
 
     def test_disconnect(self):
         store = PostgresDatastore({})
-        connection = MagicMock()
-        store.connection = connection
+        mock_conn = MagicMock(spec=psycopg2_connection)
+        store.connection = mock_conn
+
         store.disconnect()
-        connection.close.assert_called_once()
-        self.assertFalse(hasattr(store, 'connection'))
+
+        mock_conn.close.assert_called_once()
+        assert store.connection is None
+
+        # second call should not fail
         store.disconnect()
+        assert store.connection is None
 
     def test_query(self):
-        expected_result = [i for i in range(10)]
-        connection = MockConnection(expected_result)
-        connection.cursor_obj.execute = MagicMock(return_value=expected_result)
-        connection.cursor_obj.close = MagicMock()
-        query = "SELECT something FROM something WHERE something=true"
-
         store = PostgresDatastore({})
-        store.connection = connection
+        store.connection = MagicMock(spec=psycopg2_connection)
+        mock_cursor = store.connection.cursor.return_value.__enter__.return_value
+        mock_cursor.fetchmany.side_effect = [[1, 2, 3], []]
+
+        query = "SELECT something FROM something WHERE something IS TRUE"
+
         result = store.query(query, arraysize=2)
-        self.assertTrue(isinstance(result, types.GeneratorType))
-        self.assertEqual(expected_result, list(result))
 
-        connection.cursor_obj.execute.assert_called_with(query)
+        assert isinstance(result, types.GeneratorType)
+        assert [1, 2, 3] == list(result)
+        assert mock_cursor.arraysize == 2
+        assert mock_cursor.fetchmany.call_count == 2
+        mock_cursor.execute.assert_called_with(query)
 
-        connection = MockConnection([i for i in range(10)])
-        connection.cursor = MagicMock(side_effect=Error)
-        store.connection = connection
-
-        with self.assertRaises(GOBException):
+        mock_cursor.execute.side_effect = psycopg2.Error("FATAL")
+        with self.assertRaisesRegex(GOBException, "Error executing query: some query. Error: FATAL"):
             list(store.query("some query"))
 
     @patch("gobcore.datastore.postgres.execute_values")
     def test_write_rows(self, mock_execute_values):
-        rows = [
-            ['a', 'b', 'c'],
-            ['d', 'e', 'f']
-        ]
+        rows = [["a", "b", "c"], ["d", "e", "f"]]
 
         store = PostgresDatastore({})
-        store.connection = MockConnection(['expected'])
-        store.connection.commit = MagicMock()
-        store.write_rows('some table', rows)
+        store.connection = MagicMock(spec=psycopg2_connection)
+        result = store.write_rows("some table", rows)
 
+        assert result == 2
         mock_execute_values.assert_called_with(
-            store.connection.cursor(),
+            store.connection.cursor.return_value.__enter__.return_value,
             "INSERT INTO some table VALUES %s",
             rows
         )
-        store.connection.commit.assert_called_once()
+        store.connection.__exit__.assert_called_with(None, None, None)  # commits
 
-        mock_execute_values.side_effect = Error
-
+        # exception case
+        mock_execute_values.side_effect = psycopg2.Error
         with self.assertRaises(GOBException):
-            store.write_rows('some table', rows)
+            store.write_rows("some table", rows)
+
+        store.connection.__exit__.assert_called_with(GOBException, ANY, ANY)
 
     def test_execute(self):
         store = PostgresDatastore({})
-        store.connection = MagicMock()
-        mocked_cursor = store.connection.cursor.return_value.__enter__.return_value
+        store.connection = MagicMock(spec=psycopg2_connection)
+        mock_cursor = store.connection.cursor.return_value.__enter__.return_value
 
-        store.execute('some query')
-        mocked_cursor.execute.assert_called_with('some query')
-        store.connection.commit.assert_called_once()
+        store.execute("some query")
+        mock_cursor.execute.assert_called_with("some query")
+        store.connection.__exit__.assert_called_with(None, None, None)  # commits
 
-        mocked_cursor.execute.side_effect = Error
-
+        mock_cursor.execute.side_effect = psycopg2.Error
         with self.assertRaises(GOBException):
-            store.execute('some query')
+            store.execute("some query")
+
+        store.connection.__exit__.assert_called_with(GOBException, ANY, ANY)
 
     def test_copy_from_stdin(self):
         store = PostgresDatastore({})
-        store.connection = MagicMock()
-        mocked_cursor = store.connection.cursor.return_value.__enter__.return_value
+        store.connection = MagicMock(spec=psycopg2_connection)
+        mock_cursor = store.connection.cursor.return_value.__enter__.return_value
 
-        store.copy_from_stdin('some query', 'some data')
-        mocked_cursor.copy_expert.assert_called_with('some query', 'some data')
-        store.connection.commit.assert_called_once()
+        store.copy_from_stdin("some query", "some data")
+        mock_cursor.copy_expert.assert_called_with("some query", "some data")
 
-        mocked_cursor.copy_expert.side_effect = Error
+        store.connection.__exit__.assert_called_with(None, None, None)  # commits
 
+        mock_cursor.copy_expert.side_effect = psycopg2.Error
         with self.assertRaises(GOBException):
-            store.copy_from_stdin('some query','some data')
+            store.copy_from_stdin("some query", "some data")
+
+        store.connection.__exit__.assert_called_with(GOBException, ANY, ANY)
 
     def test_list_tables_for_schema(self):
         store = PostgresDatastore({})
-        store.query = MagicMock(return_value=[{'table_name': 'table A'}, {'table_name': 'table B'}])
-        result = store.list_tables_for_schema('some schema')
+        store.query = MagicMock(return_value=[{"table_name": "table A"}, {"table_name": "table B"}])
+        result = store.list_tables_for_schema("some schema")
 
         qry = "SELECT table_name FROM information_schema.tables WHERE table_schema='some schema'"
 
         store.query.assert_called_with(qry, name=None)
-        self.assertEqual(['table A', 'table B'], result)
+        assert ["table A", "table B"] == result
 
     def test_rename_schema(self):
         store = PostgresDatastore({})
         store.execute = MagicMock()
-        store.rename_schema('old schema', 'new schema')
+        store.rename_schema("old schema", "new schema")
         store.execute.assert_called_with('ALTER SCHEMA "old schema" RENAME TO "new schema"')
 
     def test_is_extension_enabled(self):
