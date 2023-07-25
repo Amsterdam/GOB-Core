@@ -1,4 +1,5 @@
-from typing import Iterator, Any
+from collections.abc import Iterator
+from typing import Any
 
 import psycopg2
 from psycopg2.extras import DictCursor, execute_values

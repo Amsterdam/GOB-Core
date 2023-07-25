@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from typing import List
 
 from gobcore.datastore.datastore import Datastore
 
@@ -20,7 +19,7 @@ class SqlDatastore(Datastore, ABC):
             self.connection = None
 
     @abstractmethod
-    def write_rows(self, table: str, rows: List[list]) -> None:
+    def write_rows(self, table: str, rows: list[list]) -> None:
         pass
 
     @abstractmethod
@@ -28,7 +27,7 @@ class SqlDatastore(Datastore, ABC):
         pass
 
     @abstractmethod
-    def list_tables_for_schema(self, schema: str) -> List[str]:
+    def list_tables_for_schema(self, schema: str) -> list[str]:
         pass
 
     @abstractmethod
@@ -53,7 +52,7 @@ class SqlDatastore(Datastore, ABC):
         query = f"CREATE SCHEMA IF NOT EXISTS {schema}"
         self.execute(query)
 
-    def drop_table(self, table: str, cascade=True) -> None:
+    def drop_table(self, table: str, cascade: bool = True) -> None:
         """Drops table
 
         :param cascade:

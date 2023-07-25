@@ -1,6 +1,6 @@
 from pathlib import Path
-
-from typing import List, Iterator, Callable, Optional, Any
+from collections.abc import Iterator, Callable
+from typing import Optional, Any
 
 import os
 import oracledb
@@ -93,7 +93,7 @@ class OracleDatastore(SqlDatastore):
             cur.rowfactory = self._dict_cursor(cur)  # execute query before setting rowfactory
             yield from result
 
-    def write_rows(self, table: str, rows: List[list]) -> None:
+    def write_rows(self, table: str, rows: list[list]) -> None:
         raise NotImplementedError("Please implement write_rows for OracleDatastore")
 
     def execute(self, query: str) -> None:
@@ -102,7 +102,7 @@ class OracleDatastore(SqlDatastore):
             cur.execute(query)
             self.connection.commit()
 
-    def list_tables_for_schema(self, schema: str) -> List[str]:
+    def list_tables_for_schema(self, schema: str) -> list[str]:
         raise NotImplementedError("Please implement list_tables_for_schema for OracleDatastore")
 
     def rename_schema(self, schema: str, new_name: str) -> None:
