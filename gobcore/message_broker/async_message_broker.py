@@ -13,6 +13,8 @@ import threading
 import traceback
 
 import pika
+from pika.channel import Channel
+from pika.connection import Connection
 
 from gobcore.message_broker.offline_contents import offload_message, end_message
 from gobcore.message_broker.utils import to_json, get_message_from_body
@@ -63,8 +65,8 @@ class AsyncConnection(object):
             self._params = {**self._params, **params}
 
         # The Connection and Channel objects
-        self._connection = None
-        self._channel = None
+        self._connection: Connection | None = None
+        self._channel: Channel | None = None
 
         # The RabbitMQ eventloop thread
         self._eventloop = None
@@ -74,7 +76,7 @@ class AsyncConnection(object):
         self._on_connect_callback = None
 
         # Threaded message handler
-        self._message_handler_thread = None
+        self._message_handler_thread: threading.Thread | None = None
 
     def __enter__(self):
         self.connect()
@@ -132,7 +134,7 @@ class AsyncConnection(object):
             self._lock.release()
 
         # Create a Channel, on_open_channel is called on success
-        self._channel = connection.channel(on_open_callback=on_open_channel)
+        self._channel: Channel = connection.channel(on_open_callback=on_open_channel)
 
         # Register a function to handle the closure of the channel
         self._channel.add_on_close_callback(callback=on_close_channel)
@@ -313,7 +315,10 @@ class AsyncConnection(object):
                 # Wait for any not yet terminated thread
                 self._message_handler_thread.join()
             # Start a new thread to handle the message
-            self._message_handler_thread = threading.Thread(target=run_message_handler, name="MessageHandler")
+            # daemonize to force exit if main program exits, may leave leftover resources
+            self._message_handler_thread = threading.Thread(
+                target=run_message_handler, name="MessageHandler", daemon=True
+            )
             self._message_handler_thread.start()
 
         return handle_message
