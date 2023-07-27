@@ -3576,7 +3576,7 @@
           "bevat_kadastraalobject": {
             "type": "GOB.ManyReference",
             "description": "Relatie naar kadastraal object",
-            "ref": "brk:kadastraleobjecten"
+            "ref": "brk2:kadastraleobjecten"
           },
           "bestaat_uit_wozdeelobjecten": {
             "type": "GOB.ManyReference",
