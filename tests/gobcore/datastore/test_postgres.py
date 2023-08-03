@@ -1,10 +1,11 @@
 import types
 
 from unittest import TestCase
-from unittest.mock import MagicMock, patch, ANY
+from unittest.mock import MagicMock, patch
 
 import psycopg2
-from psycopg2._psycopg import connection as psycopg2_connection
+from psycopg2.extensions import connection as psycopg2_connection
+from psycopg2.extensions import cursor as psycopg2_cursor
 
 from gobcore.datastore.postgres import PostgresDatastore, GOBException
 
@@ -68,10 +69,28 @@ class TestPostgresDatastore(TestCase):
         store.disconnect()
         assert store.connection is None
 
+    def test_transaction_cursor(self):
+        store = PostgresDatastore({})
+        store.connection = MagicMock(spec=psycopg2_connection)
+        mock_cursor = MagicMock(spec=psycopg2_cursor)
+        store.connection.cursor.return_value.__enter__.return_value = mock_cursor
+
+        with store.transaction_cursor() as cur:
+            cur.execute("select * from table;")
+
+        store.connection.commit.assert_called()
+
+        with self.assertRaisesRegex(GOBException, "Error executing query: FATAL"):
+            with store.transaction_cursor():
+                raise psycopg2.Error("FATAL")
+
+        store.connection.rollback.assert_called()
+
     def test_query(self):
         store = PostgresDatastore({})
         store.connection = MagicMock(spec=psycopg2_connection)
-        mock_cursor = store.connection.cursor.return_value.__enter__.return_value
+        mock_cursor = MagicMock(spec=psycopg2_cursor)
+        store.connection.cursor.return_value.__enter__.return_value = mock_cursor
         mock_cursor.fetchmany.side_effect = [[1, 2, 3], []]
 
         query = "SELECT something FROM something WHERE something IS TRUE"
@@ -83,10 +102,7 @@ class TestPostgresDatastore(TestCase):
         assert mock_cursor.arraysize == 2
         assert mock_cursor.fetchmany.call_count == 2
         mock_cursor.execute.assert_called_with(query)
-
-        mock_cursor.execute.side_effect = psycopg2.Error("FATAL")
-        with self.assertRaisesRegex(GOBException, "Error executing query: some query. Error: FATAL"):
-            list(store.query("some query"))
+        store.connection.commit.assert_called()
 
     @patch("gobcore.datastore.postgres.execute_values")
     def test_write_rows(self, mock_execute_values):
@@ -102,14 +118,7 @@ class TestPostgresDatastore(TestCase):
             "INSERT INTO some table VALUES %s",
             rows
         )
-        store.connection.__exit__.assert_called_with(None, None, None)  # commits
-
-        # exception case
-        mock_execute_values.side_effect = psycopg2.Error
-        with self.assertRaises(GOBException):
-            store.write_rows("some table", rows)
-
-        store.connection.__exit__.assert_called_with(GOBException, ANY, ANY)
+        store.connection.commit.assert_called()
 
     def test_execute(self):
         store = PostgresDatastore({})
@@ -118,13 +127,7 @@ class TestPostgresDatastore(TestCase):
 
         store.execute("some query")
         mock_cursor.execute.assert_called_with("some query")
-        store.connection.__exit__.assert_called_with(None, None, None)  # commits
-
-        mock_cursor.execute.side_effect = psycopg2.Error
-        with self.assertRaises(GOBException):
-            store.execute("some query")
-
-        store.connection.__exit__.assert_called_with(GOBException, ANY, ANY)
+        store.connection.commit.assert_called()
 
     def test_copy_from_stdin(self):
         store = PostgresDatastore({})
@@ -133,14 +136,7 @@ class TestPostgresDatastore(TestCase):
 
         store.copy_from_stdin("some query", "some data")
         mock_cursor.copy_expert.assert_called_with("some query", "some data")
-
-        store.connection.__exit__.assert_called_with(None, None, None)  # commits
-
-        mock_cursor.copy_expert.side_effect = psycopg2.Error
-        with self.assertRaises(GOBException):
-            store.copy_from_stdin("some query", "some data")
-
-        store.connection.__exit__.assert_called_with(GOBException, ANY, ANY)
+        store.connection.commit.assert_called()
 
     def test_list_tables_for_schema(self):
         store = PostgresDatastore({})

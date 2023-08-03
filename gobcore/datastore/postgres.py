@@ -1,8 +1,10 @@
+from contextlib import contextmanager
 from collections.abc import Iterator
 from typing import Any
 
 import psycopg2
 from psycopg2.extras import DictCursor, execute_values
+from psycopg2.extensions import cursor
 
 from gobcore.datastore.sql import SqlDatastore
 from gobcore.exceptions import GOBException
@@ -35,7 +37,22 @@ class PostgresDatastore(SqlDatastore):
         except KeyError as e:
             raise GOBException(f'Missing configuration for source {self.connection_config["name"]}. Error: {e}')
 
-    def query(self, query, **kwargs) -> Iterator[dict[str, Any]]:
+    @contextmanager
+    def transaction_cursor(self, **kwargs) -> cursor:
+        """
+        Wraps cursor in a transaction. Rollback on any exception, otherwise commit.
+
+        psycopg2 >= 2.9 disallows nested use of connection contextmanager.
+        """
+        try:
+            with self.connection.cursor(**kwargs) as cur:
+                yield cur
+            self.connection.commit()
+        except psycopg2.Error as e:
+            self.connection.rollback()
+            raise GOBException(f"Error executing query: {e}")
+
+    def query(self, query: str, **kwargs) -> Iterator[dict[str, Any]]:
         """Query Postgres
 
         :param query:
@@ -43,15 +60,11 @@ class PostgresDatastore(SqlDatastore):
         """
         arraysize = kwargs.pop('arraysize', None)
 
-        with self.connection, self.connection.cursor(cursor_factory=DictCursor, **kwargs) as cur:
+        with self.transaction_cursor(cursor_factory=DictCursor, **kwargs) as cur:
             if arraysize:
                 cur.arraysize = arraysize
 
-            try:
-                cur.execute(query)
-            except psycopg2.Error as e:
-                raise GOBException(f'Error executing query: {query[:80]}. Error: {e}')
-
+            cur.execute(query)
             while results := cur.fetchmany():
                 yield from results
 
@@ -64,11 +77,8 @@ class PostgresDatastore(SqlDatastore):
         :param rows:
         :return:
         """
-        with self.connection, self.connection.cursor() as cur:
-            try:
-                execute_values(cur, f"INSERT INTO {table} VALUES %s", rows)
-            except psycopg2.Error as e:
-                raise GOBException(f'Error writing rows to table {table}. Error: {e}')
+        with self.transaction_cursor() as cur:
+            execute_values(cur, f"INSERT INTO {table} VALUES %s", rows)
 
         return len(rows)
 
@@ -78,11 +88,8 @@ class PostgresDatastore(SqlDatastore):
         :param query:
         :return:
         """
-        with self.connection, self.connection.cursor() as cur:
-            try:
-                cur.execute(query)
-            except psycopg2.Error as e:
-                raise GOBException(f'Error executing query: {query[:80]}. Error: {e}')
+        with self.transaction_cursor() as cur:
+            cur.execute(query)
 
     def copy_from_stdin(self, query: str, data: str) -> None:
         """Executes Postgres copy from stdin
@@ -90,11 +97,8 @@ class PostgresDatastore(SqlDatastore):
         :params query, data
         :return:
         """
-        with self.connection, self.connection.cursor() as cur:
-            try:
-                cur.copy_expert(query, data)
-            except psycopg2.Error as e:
-                raise GOBException(f'Error executing query: COPY FROM STDIN. Error: {e}')
+        with self.transaction_cursor() as cur:
+            cur.copy_expert(query, data)
 
     def list_tables_for_schema(self, schema: str) -> list[str]:
         query = f"SELECT table_name FROM information_schema.tables WHERE table_schema='{schema}'"
