@@ -3527,122 +3527,25 @@
     }
   },
   "woz": {
-    "version": "0.1",
+    "version": "0.2",
     "description": "De Basisregistratie WOZ is een registratie van alle, voor onroerende zaken in het kader van de Wet waardering onroerende zaken (Wet WOZ),  vastgestelde waarden.",
     "abbreviation": "WOZ",
     "collections": {
-      "wozobjecten": {
-        "version": "0.2",
+      "objecten": {
         "abbreviation": "WOT",
-        "entity_id": "wozobjectnummer",
-        "has_states": true,
-        "attributes": {
-          "wozobjectnummer": {
-            "type": "GOB.String",
-            "description": "De unieke identificatie van een WOZ-object"
-          },
-          "gebruik": {
-            "type": "GOB.JSON",
-            "description": "Nadere aanduiding van het feitelijk gebruik van een WOZ-object zoals dat ten grondslag heeft gelegen aan de waardebepaling en voor zover relevant voor de afnemers, uitgedrukt in een code",
-            "attributes": {
-              "code": {
-                "type": "GOB.Integer"
-              },
-              "omschrijving": {
-                "type": "GOB.String"
-              }
-            }
-          },
-          "soortobject": {
-            "type": "GOB.JSON",
-            "description": "Aanduiding van het soort object ten behoeve van een correcte bepaling van de waarde.",
-            "attributes": {
-              "code": {
-                "type": "GOB.String"
-              },
-              "omschrijving": {
-                "type": "GOB.String"
-              }
-            }
-          },
-          "begin_geldigheid": {
-            "type": "GOB.Date",
-            "description": "De begindatum van een periode waarin één of meer gegevens die worden bijgehouden over een WOZ-object, een wijziging hebben ondergaan"
-          },
-          "eind_geldigheid": {
-            "type": "GOB.Date",
-            "description": "De einddatum van een periode waarin één of meer gegevens die worden bijgehouden over een WOZ-object, een wijziging hebben ondergaan"
-          },
-          "bevat_kadastraalobject": {
-            "type": "GOB.ManyReference",
-            "description": "Relatie naar kadastraal object",
-            "ref": "brk2:kadastraleobjecten"
-          },
-          "bestaat_uit_wozdeelobjecten": {
-            "type": "GOB.ManyReference",
-            "description": "Relatie naar de deelobjecten",
-            "ref": "woz:wozdeelobjecten"
-          }
+        "schema": {
+          "datasetId": "woz",
+          "tableId": "objecten",
+          "version": "2.0.0"
         }
       },
-      "wozdeelobjecten": {
+      "deelobjecten": {
         "version": "0.2",
         "abbreviation": "WDT",
-        "entity_id": "wozdeelobjectnummer",
-        "has_states": true,
-        "attributes": {
-          "wozdeelobjectnummer": {
-            "type": "GOB.String",
-            "description": "De unieke identificatie van een WOZ-deelobject"
-          },
-          "deelnummer": {
-            "type": "GOB.String",
-            "description": "Unieke identificatie WOZ-deelobject binnen het WOZ-object"
-          },
-          "wozobjectnummer": {
-            "type": "GOB.String",
-            "description": "Van welk WOZ-object is dit WOZ-deelobject een onderdeel"
-          },
-          "soortobject": {
-            "type": "GOB.JSON",
-            "description": "Nadere aanduiding van het feitelijk gebruik  (SOC) van een WOZ-object zoals dat ten grondslag heeft gelegen aan de waardebepaling en voor zover relevant voor de afnemers, uitgedrukt in een code",
-            "attributes": {
-              "code": {
-                "type": "GOB.Integer"
-              },
-              "omschrijving": {
-                "type": "GOB.String"
-              }
-            }
-          },
-          "begin_geldigheid": {
-            "type": "GOB.Date",
-            "description": "Een aanduiding op welk tijdstip het object is ontstaan"
-          },
-          "eind_geldigheid": {
-            "type": "GOB.Date",
-            "description": "Een aanduiding op welk tijdstip het object is beëindigd"
-          },
-          "is_verbonden_met_verblijfsobject": {
-            "type": "GOB.Reference",
-            "description": "Aan welk verblijfsobject heeft het WOZ-deelobject een relatie",
-            "ref": "bag:verblijfsobjecten"
-          },
-          "is_verbonden_met_ligplaats": {
-            "type": "GOB.Reference",
-            "description": "Aan welk ligplaats heeft het WOZ-deelobject een relatie",
-            "ref": "bag:ligplaatsen"
-          },
-          "is_verbonden_met_standplaats": {
-            "type": "GOB.Reference",
-            "description": "Aan welk standplaats heeft het WOZ-deelobject een relatie",
-            "ref": "bag:standplaatsen"
-          },
-          "heeft_pand": {
-            "type": "GOB.Reference",
-            "description": "Geeft aan of het WOZ-deelobject een (deel van een) pand is uit de BAG.",
-            "ref": "bag:panden"
-          }
+        "schema": {
+          "datasetId": "woz",
+          "tableId": "deelobjecten",
+          "version": "2.0.0"
         }
       }
     }

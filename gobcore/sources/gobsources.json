@@ -1112,35 +1112,35 @@
       }
     },
     "woz": {
-      "wozobjecten": {
-        "bestaat_uit_wozdeelobjecten": {
+      "objecten": {
+        "bestaat_uit_woz_deelobjecten": {
           "method": "equals",
           "source_attribute": "wozobjectnummer",
           "destination_attribute": "wozobjectnummer",
           "multiple_allowed": true
         },
-        "bevat_kadastraalobject": {
+        "bevat_brk_kadastraalobject": {
           "method": "equals",
           "destination_attribute": "identificatie"
         }
       },
-      "wozdeelobjecten": {
-        "is_verbonden_met_verblijfsobject": {
+      "deelobjecten": {
+        "is_verbonden_met_bag_verblijfsobject": {
           "method": "equals",
           "destination_attribute": "identificatie",
           "none_allowed": true
         },
-        "is_verbonden_met_ligplaats": {
+        "is_verbonden_met_bag_ligplaats": {
           "method": "equals",
           "destination_attribute": "identificatie",
           "none_allowed": true
         },
-        "is_verbonden_met_standplaats": {
+        "is_verbonden_met_bag_standplaats": {
           "method": "equals",
           "destination_attribute": "identificatie",
           "none_allowed": true
         },
-        "heeft_pand": {
+        "heeft_bag_pand": {
           "method": "equals",
           "destination_attribute": "identificatie",
           "none_allowed": true

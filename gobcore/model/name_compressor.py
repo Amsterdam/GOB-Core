@@ -26,6 +26,7 @@ _CONVERSIONS = {
     "is_ontstaan_uit_brk_kadastraalobject": "is_ontstaan_uit_brk_kot",
     "_angdd_dr__brk_kadastralegemeentecode": "angdd_dr__brk_kce",
     "_angdd_dr__brk_kadastralegemeente": "angdd_dr__brk_kge",
+    "is_verbonden_met_bag_verblijfsobject": "is_vrbdn_met_bag_vbo"
 }
 
 
