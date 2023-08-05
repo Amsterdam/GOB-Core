@@ -90,8 +90,6 @@ class TestOracleDatastore(TestCase):
         query = "SELECT this FROM that WHERE this=that;"
         result = list(self.store.query(query, arraysize=5))
 
-        mock_conn.__enter__.assert_called_once()
-        mock_conn.__exit__.assert_called_with(None, None, None)
         assert 5 == mock_cursor.arraysize
         assert [{"id": 1}, {"id": 2}] == result
         mock_cursor.execute.assert_called_with(query[:-1])
@@ -104,10 +102,13 @@ class TestOracleDatastore(TestCase):
 
         self.store.execute("SELECT 1")
 
-        mock_conn.__enter__.assert_called_once()
-        mock_conn.__exit__.assert_called_with(None, None, None)
         mock_cursor.execute.assert_called_with("SELECT 1")
         mock_conn.commit.assert_called_once()
+
+        mock_cursor.execute.side_effect = oracledb.Error("FATAL")
+        with self.assertRaisesRegex(GOBException, "FATAL"):
+            self.store.execute("SELECT 1")
+        mock_conn.rollback.assert_called_once()
 
     def test_not_implemented_methods(self):
         methods = [
