@@ -1146,6 +1146,142 @@
           "none_allowed": true
         }
       }
+    },
+    "handelsregister": {
+      "maatschappelijkeactiviteiten": {
+        "heeft_hoofdvestiging": {
+          "method": "equals",
+          "destination_attribute": "vestigingsnummer",
+          "none_allowed": true
+        },
+        "heeft_als_eigenaar_np": {
+          "method": "equals",
+          "destination_attribute": "identificatie",
+          "none_allowed": true
+        },
+        "heeft_als_eigenaar_nnp": {
+          "method": "equals",
+          "destination_attribute": "rsin",
+          "none_allowed": true
+        },
+        "wordt_uitgeoefend_in_niet_commerciele_vestiging": {
+          "method": "equals",
+          "destination_attribute": "vestigingsnummer",
+          "multiple_allowed": true,
+          "none_allowed": true
+        },
+        "wordt_uitgeoefend_in_commerciele_vestiging": {
+          "method": "equals",
+          "destination_attribute": "vestigingsnummer",
+          "multiple_allowed": true,
+          "none_allowed": true
+        },
+        "heeft_nummeraanduiding": {
+          "method": "equals",
+          "destination_attribute": "identificatie",
+          "none_allowed": true
+        },
+        "heeft_verblijfsobject": {
+          "method": "equals",
+          "destination_attribute": "identificatie",
+          "none_allowed": true
+        },
+        "heeft_ligplaats": {
+          "method": "equals",
+          "destination_attribute": "identificatie",
+          "none_allowed": true
+        },
+        "heeft_standplaats": {
+          "method": "equals",
+          "destination_attribute": "identificatie",
+          "none_allowed": true
+        }
+      },
+      "vestigingen": {
+        "is_samengevoegd_met_vestiging": {
+          "method": "equals",
+          "destination_attribute": "vestigingsnummer",
+          "multiple_allowed": true,
+          "none_allowed": true
+        },
+        "is_een_uitoefening_van": {
+          "method": "equals",
+          "destination_attribute": "kvknummer",
+          "none_allowed": true
+        },
+        "bezoek_heeft_nummeraanduiding": {
+          "method": "equals",
+          "destination_attribute": "identificatie",
+          "none_allowed": true
+        },
+        "bezoek_heeft_verblijfsobject": {
+          "method": "equals",
+          "destination_attribute": "identificatie",
+          "none_allowed": true
+        },
+        "bezoek_heeft_ligplaats": {
+          "method": "equals",
+          "destination_attribute": "identificatie",
+          "none_allowed": true
+        },
+        "bezoek_heeft_standplaats": {
+          "method": "equals",
+          "destination_attribute": "identificatie",
+          "none_allowed": true
+        },
+        "post_heeft_nummeraanduiding": {
+          "method": "equals",
+          "destination_attribute": "identificatie",
+          "none_allowed": true
+        },
+        "post_heeft_verblijfsobject": {
+          "method": "equals",
+          "destination_attribute": "identificatie",
+          "none_allowed": true
+        },
+        "post_heeft_ligplaats": {
+          "method": "equals",
+          "destination_attribute": "identificatie",
+          "none_allowed": true
+        },
+        "post_heeft_standplaats": {
+          "method": "equals",
+          "destination_attribute": "identificatie",
+          "none_allowed": true
+        }
+      },
+      "functievervulling": {
+        "heeft_hr_vestiging": {
+          "method": "equals",
+          "destination_attribute": "vestigingsnummer",
+          "multiple_allowed": true,
+          "none_allowed": true
+        }
+      },
+      "natuurlijkpersoon": {
+        "heeft_functie_vervulling": {
+          "method": "equals",
+          "destination_attribute": "identificatie",
+          "none_allowed": true
+        },
+        "is_functie_vervulling": {
+          "method": "equals",
+          "destination_attribute": "identificatie",
+          "none_allowed": true
+        }
+      },
+      "nietnatuurlijkpersoon": {
+        "heeft_functie_vervulling": {
+          "method": "equals",
+          "destination_attribute": "identificatie",
+          "none_allowed": true
+        },
+        "is_functie_vervulling": {
+          "method": "equals",
+          "destination_attribute": "identificatie",
+          "none_allowed": true
+        }
+      }
     }
   },
   "BAGExtract": {
@@ -1335,90 +1471,6 @@
         "heeft_dossier": {
           "method": "equals",
           "destination_attribute": "dossier"
-        }
-      }
-    }
-  },
-  "KvkDataService": {
-    "hr": {
-      "maatschappelijkeactiviteiten": {
-        "heeft_bezoekadres": {
-          "method": "equals",
-          "destination_attribute": "identificatie"
-        },
-        "heeft_postadres": {
-          "method": "equals",
-          "destination_attribute": "identificatie"
-        },
-        "heeft_hoofdvestiging": {
-          "method": "equals",
-          "destination_attribute": "vestigingsnummer"
-        },
-        "heeft_sbi_activiteiten_voor_maatschappelijke_activiteit": {
-          "method": "equals",
-          "destination_attribute": "sbi_activiteit_nummer"
-        },
-        "heeft_sbi_activiteiten_voor_onderneming": {
-          "method": "equals",
-          "destination_attribute": "sbi_activiteit_nummer"
-        },
-        "wordt_uitgeoefend_in_commerciele_vestiging": {
-          "method": "equals",
-          "destination_attribute": "vestigingsnummer"
-        },
-        "wordt_uitgeoefend_in_niet_commerciele_vestiging": {
-          "method": "equals",
-          "destination_attribute": "vestigingsnummer"
-        }
-      },
-      "vestigingen": {
-        "heeft_als_postadres": {
-          "method": "equals",
-          "destination_attribute": "identificatie"
-        },
-        "heeft_als_bezoekadres": {
-          "method": "equals",
-          "destination_attribute": "identificatie"
-        },
-        "heeft_sbi_activiteiten": {
-          "method": "equals",
-          "destination_attribute": "sbi_activiteit_nummer"
-        },
-        "is_overgegaan_in_vestiging": {
-          "method": "equals",
-          "destination_attribute": "vestigingsnummer"
-        },
-        "is_een_uitoefening_van": {
-          "method": "equals",
-          "destination_attribute": "kvknummer"
-        }
-      },
-      "locaties": {
-        "heeft_nummeraanduiding": {
-          "method": "equals",
-          "destination_attribute": "identificatie"
-        },
-        "heeft_verblijfsobject": {
-          "method": "equals",
-          "destination_attribute": "identificatie"
-        },
-        "heeft_ligplaats": {
-          "method": "equals",
-          "destination_attribute": "identificatie"
-        },
-        "heeft_standplaats": {
-          "method": "equals",
-          "destination_attribute": "identificatie"
-        }
-      },
-      "sbiactiviteiten": {
-        "heeft_als_maatschappelijkactiviteit": {
-          "method": "equals",
-          "destination_attribute": "kvknummer"
-        },
-        "heeft_als_vestiging": {
-          "method": "equals",
-          "destination_attribute": "vestigingsnummer"
         }
       }
     }
