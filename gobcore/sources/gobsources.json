@@ -1147,7 +1147,7 @@
         }
       }
     },
-    "handelsregister": {
+    "hr": {
       "maatschappelijkeactiviteiten": {
         "heeft_hoofdvestiging": {
           "method": "equals",

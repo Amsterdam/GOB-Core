@@ -3558,41 +3558,41 @@
       "maatschappelijkeactiviteiten": {
         "abbreviation": "MAC",
         "schema": {
-          "datasetId": "handelsregister",
+          "datasetId": "hr",
           "tableId": "maatschappelijkeactiviteiten",
-          "version": "2.4.0"
+          "version": "2.5.0"
         }
       },
       "vestigingen": {
         "abbreviation": "VES",
         "schema": {
-          "datasetId": "handelsregister",
+          "datasetId": "hr",
           "tableId": "vestigingen",
-          "version": "2.3.0"
+          "version": "2.4.0"
         }
       },
       "functievervulling": {
         "abbreviation": "FVV",
         "schema": {
-          "datasetId": "handelsregister",
+          "datasetId": "hr",
           "tableId": "functievervulling",
-          "version": "1.2.1"
+          "version": "1.3.0"
         }
       },
       "natuurlijkpersoon": {
         "abbreviation": "NPS",
         "schema": {
-          "datasetId": "handelsregister",
+          "datasetId": "hr",
           "tableId": "natuurlijkpersoon",
-          "version": "1.3.0"
+          "version": "1.4.0"
         }
       },
       "nietnatuurlijkpersoon": {
         "abbreviation": "NNP",
         "schema": {
-          "datasetId": "handelsregister",
+          "datasetId": "hr",
           "tableId": "nietnatuurlijkpersoon",
-          "version": "1.2.0"
+          "version": "1.3.0"
         }
       }
     }
