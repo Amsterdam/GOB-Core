@@ -1161,7 +1161,7 @@
         },
         "heeft_als_eigenaar_nnp": {
           "method": "equals",
-          "destination_attribute": "rsin",
+          "destination_attribute": "identificatie",
           "none_allowed": true
         },
         "wordt_uitgeoefend_in_niet_commerciele_vestiging": {
