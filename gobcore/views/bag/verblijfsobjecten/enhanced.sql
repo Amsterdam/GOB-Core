@@ -43,7 +43,7 @@
       vot.eigendomsverhouding,
       vot.redenopvoer,
       vot.redenafvoer,
-      wdt.soortobject,
+      wdt.soort_object,
       pnd_0._mref_ligt_in_panden_bag_pnd,
       json_build_object(
         'identificatie', bbk_0.identificatie,
@@ -189,7 +189,7 @@
     ) ozk ON vot._id = ozk.src_id AND vot.volgnummer = ozk.src_volgnummer
     -- SELECT wdt.soortobject (inv)
     LEFT JOIN (
-        SELECT dst_id, dst_volgnummer, jsonb_agg(distinct wdt.soort_object) soortobject
+        SELECT dst_id, dst_volgnummer, jsonb_agg(distinct wdt.soort_object) AS soort_object
         FROM legacy.mv_woz_wdt_bag_vot__is_vrbdn_met_bag_vbo_ rel
         LEFT JOIN legacy.woz_deelobjecten wdt
             ON rel.src_id = wdt._id AND rel.src_volgnummer = wdt.volgnummer
