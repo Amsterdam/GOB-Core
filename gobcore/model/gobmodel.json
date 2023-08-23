@@ -3560,7 +3560,7 @@
         "schema": {
           "datasetId": "hr",
           "tableId": "maatschappelijkeactiviteiten",
-          "version": "2.6.0"
+          "version": "2.7.0"
         }
       },
       "vestigingen": {
@@ -3571,28 +3571,28 @@
           "version": "2.4.0"
         }
       },
-      "functievervulling": {
+      "functievervullingen": {
         "abbreviation": "FVV",
         "schema": {
           "datasetId": "hr",
-          "tableId": "functievervulling",
-          "version": "1.3.0"
+          "tableId": "functievervullingen",
+          "version": "1.4.0"
         }
       },
-      "natuurlijkpersoon": {
+      "natuurlijkepersonen": {
         "abbreviation": "NPS",
         "schema": {
           "datasetId": "hr",
-          "tableId": "natuurlijkpersoon",
-          "version": "1.4.0"
+          "tableId": "natuurlijkepersonen",
+          "version": "1.5.0"
         }
       },
-      "nietnatuurlijkpersoon": {
+      "nietnatuurlijkepersonen": {
         "abbreviation": "NNP",
         "schema": {
           "datasetId": "hr",
-          "tableId": "nietnatuurlijkpersoon",
-          "version": "1.4.0"
+          "tableId": "nietnatuurlijkepersonen",
+          "version": "1.5.0"
         }
       }
     }

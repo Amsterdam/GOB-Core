@@ -1164,13 +1164,13 @@
           "destination_attribute": "identificatie",
           "none_allowed": true
         },
-        "wordt_uitgeoefend_in_niet_commerciele_vestiging": {
+        "wordt_uitgeoefend_in_niet_commerciele_vestigingen": {
           "method": "equals",
           "destination_attribute": "vestigingsnummer",
           "multiple_allowed": true,
           "none_allowed": true
         },
-        "wordt_uitgeoefend_in_commerciele_vestiging": {
+        "wordt_uitgeoefend_in_commerciele_vestigingen": {
           "method": "equals",
           "destination_attribute": "vestigingsnummer",
           "multiple_allowed": true,
@@ -1198,7 +1198,7 @@
         }
       },
       "vestigingen": {
-        "is_samengevoegd_met_vestiging": {
+        "is_samengevoegd_met_vestigingen": {
           "method": "equals",
           "destination_attribute": "vestigingsnummer",
           "multiple_allowed": true,
@@ -1250,33 +1250,33 @@
           "none_allowed": true
         }
       },
-      "functievervulling": {
-        "heeft_hr_vestiging": {
+      "functievervullingen": {
+        "heeft_hr_vestigingen": {
           "method": "equals",
           "destination_attribute": "vestigingsnummer",
           "multiple_allowed": true,
           "none_allowed": true
         }
       },
-      "natuurlijkpersoon": {
-        "heeft_functie_vervulling": {
+      "natuurlijkepersonen": {
+        "heeft_functie_vervullingen": {
           "method": "equals",
           "destination_attribute": "identificatie",
           "none_allowed": true
         },
-        "is_functie_vervulling": {
+        "is_functie_vervullingen": {
           "method": "equals",
           "destination_attribute": "identificatie",
           "none_allowed": true
         }
       },
-      "nietnatuurlijkpersoon": {
-        "heeft_functie_vervulling": {
+      "nietnatuurlijkepersonen": {
+        "heeft_functie_vervullingen": {
           "method": "equals",
           "destination_attribute": "identificatie",
           "none_allowed": true
         },
-        "is_functie_vervulling": {
+        "is_functie_vervullingen": {
           "method": "equals",
           "destination_attribute": "identificatie",
           "none_allowed": true
