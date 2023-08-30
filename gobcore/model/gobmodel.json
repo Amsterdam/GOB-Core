@@ -3596,5 +3596,44 @@
         }
       }
     }
+  },
+  "monumenten": {
+    "version": "0.1",
+    "abbreviation": "MON",
+    "description": "De kernregistratie monumenten bevat alle rijksmonumenten en gemeentelijke monumenten in Amsterdam",
+    "collections": {
+      "monumenten": {
+        "abbreviation": "MON",
+        "schema": {
+          "datasetId": "monumenten",
+          "tableId": "monumenten",
+          "version": "1.4.0"
+        }
+      },
+      "situeringen": {
+        "abbreviation": "SIT",
+        "schema": {
+          "datasetId": "monumenten",
+          "tableId": "situeringen",
+          "version": "2.0.0"
+        }
+      },
+      "complexen": {
+        "abbreviation": "CPX",
+        "schema": {
+          "datasetId": "monumenten",
+          "tableId": "complexen",
+          "version": "2.1.0"
+        }
+      },
+      "unesco": {
+        "abbreviation": "UNE",
+        "schema": {
+          "datasetId": "monumenten",
+          "tableId": "unesco",
+          "version": "1.0.0"
+        }
+      }
+    }
   }
 }

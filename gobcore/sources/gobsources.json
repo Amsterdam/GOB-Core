@@ -1282,6 +1282,43 @@
           "none_allowed": true
         }
       }
+    },
+    "monumenten": {
+      "monumenten": {
+        "betreft_bag_pand": {
+          "method": "equals",
+          "destination_attribute": "identificatie",
+          "none_allowed": true
+        },
+        "ligt_in_monumenten_complex": {
+          "method": "equals",
+          "destination_attribute": "identificatie",
+          "none_allowed": true
+        },
+        "heeft_monumenten_situeringen": {
+          "method": "equals",
+          "destination_attribute": "identificatie",
+          "none_allowed": true,
+          "multiple_allowed": true
+        }
+      },
+      "complexen": {
+        "bestaat_uit_monumenten_monumenten": {
+          "method": "equals",
+          "destination_attribute": "identificatie",
+          "multiple_allowed": true
+        }
+      },
+      "situeringen": {
+        "hoort_bij_monumenten_monument": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "betreft_bag_nummeraanduiding": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        }
+      }
     }
   },
   "BAGExtract": {

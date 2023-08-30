@@ -10,6 +10,8 @@ from gobcore.model import GOBModel, NoSuchCollectionException, NoSuchCatalogExce
 from tests.gobcore.fixtures import random_string
 
 
+CATALOG_COUNT = 14
+
 
 class TestUserDict(TestCase):
     """GOBModel UserDict tests."""
@@ -24,10 +26,11 @@ class TestUserDict(TestCase):
     def test_model_catalogs(self):
         """GOBModel catalog checks."""
         # Catalog count.
-        self.assertEqual(len(self.gob_model), 13, msg="catalog count has changed")
+        self.assertEqual(len(self.gob_model), CATALOG_COUNT, msg="catalog count has changed")
         # Catalog 'doesnotexist" should not exist.
         self.assertIsNone(
-            self.gob_model.get('doesnotexist'), msg="Catalog 'doesnotexist' should not exist!")
+            self.gob_model.get('doesnotexist'), msg="Catalog 'doesnotexist' should not exist!"
+        )
 
     def test_model_iter(self):
         """GOBModel catalog and collection iteration checks."""
