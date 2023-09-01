@@ -3607,7 +3607,7 @@
         "schema": {
           "datasetId": "monumenten",
           "tableId": "monumenten",
-          "version": "1.4.0"
+          "version": "1.5.0"
         }
       },
       "situeringen": {
@@ -3623,7 +3623,7 @@
         "schema": {
           "datasetId": "monumenten",
           "tableId": "complexen",
-          "version": "2.1.0"
+          "version": "2.1.1"
         }
       },
       "unesco": {
