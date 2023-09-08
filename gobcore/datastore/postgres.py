@@ -1,10 +1,10 @@
-from contextlib import contextmanager
 from collections.abc import Iterator
+from contextlib import contextmanager
 from typing import Any
 
 import psycopg2
-from psycopg2.extras import DictCursor, execute_values
 from psycopg2.extensions import cursor
+from psycopg2.extras import DictCursor, execute_values
 
 from gobcore.datastore.sql import SqlDatastore
 from gobcore.exceptions import GOBException
@@ -116,3 +116,17 @@ class PostgresDatastore(SqlDatastore):
 
     def get_version(self) -> str:
         return next(self.query("SHOW server_version"))[0]
+
+    def table_count(self, table: str, column: str = "*") -> int:
+        """Count the number of rows (in which column is not NULL) in a table.
+
+        :param table: (schema qualified) table name
+        :return: number of rows (for this particular column) in the table
+        """
+        with self.connection.cursor(cursor_factory=DictCursor) as cur:
+            try:
+                cur.execute(f"SELECT COUNT({column}) FROM {table}")
+            except psycopg2.ProgrammingError as e:
+                raise GOBException(f"Row count failed for {table}.{column}: {e}")
+            result = cur.fetchone()
+        return result["count"]

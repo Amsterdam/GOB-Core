@@ -1,5 +1,4 @@
 import types
-
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
@@ -7,7 +6,7 @@ import psycopg2
 from psycopg2.extensions import connection as psycopg2_connection
 from psycopg2.extensions import cursor as psycopg2_cursor
 
-from gobcore.datastore.postgres import PostgresDatastore, GOBException
+from gobcore.datastore.postgres import GOBException, PostgresDatastore
 
 
 @patch("gobcore.datastore.postgres.SqlDatastore", MagicMock)
@@ -170,3 +169,18 @@ class TestPostgresDatastore(TestCase):
 
         self.assertEqual("12.4.2", store.get_version())
         store.query.assert_called_with("SHOW server_version")
+
+    def test_table_count(self):
+        store = PostgresDatastore({})
+        store.connection = MagicMock(spec_set=psycopg2_connection)
+        mock_cursor = store.connection.cursor.return_value.__enter__.return_value
+
+        store.table_count("some_table")
+        mock_cursor.execute.assert_called_with("SELECT COUNT(*) FROM some_table")
+
+        store.table_count("other_table", "column")
+        mock_cursor.execute.assert_called_with("SELECT COUNT(column) FROM other_table")
+
+        mock_cursor.execute.side_effect = psycopg2.errors.UndefinedColumn
+        with self.assertRaises(GOBException):
+            store.table_count("other_table", "no_column")
