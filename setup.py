@@ -1,30 +1,23 @@
+"""Setup script for building the GOB-Core distribution."""
+
 import os
-from setuptools import setup, find_packages
+from setuptools import setup
 
 
 def replace_env(line: str) -> str:
-    if '==' not in line:
+    """Honor environment variables (${LIBGDAL_VERSION}) in package versions."""
+    if "==" not in line:
         return line
 
-    package, version = line.split('==')
-    if version[:2] == '${' and version[-1] == '}':
+    package, version = line.split("==")
+    if version[:2] == "${" and version[-1] == "}":
         version = os.environ[version[2:-1]]
 
-    return f'{package}=={version}'
+    return f"{package}=={version}"
 
 
-with open('requirements.txt', mode='r') as reqs:
+with open("requirements.txt", mode="r", encoding="utf-8") as reqs:
     install_requires = [replace_env(req.strip()) for req in reqs.readlines()]
 
 
-setup(
-    name='gobcore',
-    version='0.1',
-    description='GOB Core Components',
-    url='https://github.com/Amsterdam/GOB-Core',
-    author='Datapunt',
-    author_email='',
-    license='MPL-2.0',
-    install_requires=install_requires,
-    packages=find_packages(exclude=['tests*'])
-)
+setup(install_requires=install_requires)

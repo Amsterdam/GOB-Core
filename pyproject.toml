@@ -1,3 +1,36 @@
+[project]
+name = "gobcore"
+description = "GOB Core Components"
+keywords = ["GOB", "Core", "Components", "Amsterdam"]
+readme = "README.md"
+requires-python = ">=3.9, <3.10"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+]
+authors = [{name = "BenK devs"}]
+license = {text = 'MPL 2.0'}
+version = "2.20.2"
+
+[project.urls]
+Homepage = "https://github.com/Amsterdam/GOB-Core"
+Repository = "https://github.com/Amsterdam/GOB-Core"
+
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+license-files = ["LICENSE"]
+
+[tool.setuptools.packages.find]
+include = ["gobcore*"]
+
+[tool.setuptools.package-data]
+gobcore = ["**/*.json", "**/*.sql"]
+
 [tool.black]
 line-length = 120
 color = true
