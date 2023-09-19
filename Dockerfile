@@ -2,7 +2,27 @@
 FROM amsterdam/gob_wheelhouse:3.9-bullseye as wheelhouse
 
 # Application stage.
-FROM amsterdam/gob_baseimage:3.9-bullseye as application
+FROM python:3.9-slim-bullseye as application
+MAINTAINER datapunt@amsterdam.nl
+
+# Add user datapunt
+RUN useradd --user-group --system datapunt
+
+# Install GDAL development files + build-essential.
+RUN apt-get update && apt-get install -y libgdal-dev build-essential
+
+# Update C env vars so compiler can find GDAL development files.
+ENV CPLUS_INCLUDE_PATH=/usr/include/gdal
+ENV C_INCLUDE_PATH=/usr/include/gdal
+
+ENV PYTHONUNBUFFERED=1
+
+# Work around (setuptools<58) for GDAL 3.2.2 (error in GDAL setup command: use_2to3 is invalid).
+RUN pip install --no-cache-dir "setuptools<58"
+
+# Recent pip and wheel.
+RUN pip install --upgrade --no-cache-dir pip wheel
+
 
 # Fill the wheelhouse.
 COPY --from=wheelhouse /opt/wheelhouse /opt/wheelhouse
