@@ -8,3 +8,10 @@ services:
       dockerfile: Dockerfile
     command: >
       bash -c "./test.sh"
+  python_310:
+    container_name: gobcore_py310
+    build:
+      context: .
+      dockerfile: Dockerfile.3.10-slim-bullseye
+    command: >
+      bash -c "./test.sh"

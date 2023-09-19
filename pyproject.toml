@@ -3,16 +3,17 @@ name = "gobcore"
 description = "GOB Core Components"
 keywords = ["GOB", "Core", "Components", "Amsterdam"]
 readme = "README.md"
-requires-python = ">=3.9, <3.10"
+requires-python = ">=3.9, <3.11"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
 ]
 authors = [{name = "BenK devs"}]
 license = {text = 'MPL 2.0'}
-version = "2.20.2"
+version = "2.20.3"
 
 [project.urls]
 Homepage = "https://github.com/Amsterdam/GOB-Core"

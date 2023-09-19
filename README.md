@@ -5,7 +5,7 @@ GOB shared logic.
 Include in a GOB project using:
 
 ```bash
-pip install -e git+git://github.com/Amsterdam/GOB-Core.git@vX.Y.Z#egg=gobcore
+pip install gobcore@git+https://github.com/Amsterdam/GOB-Core.git@vX.Y.Z
 ```
 
 If you need to test with a local version of GOB-Core change the include line in `requirements.txt` with:
@@ -23,9 +23,18 @@ If you need to test with a local version of GOB-Core change the include line in 
 
 ## Tests
 
+### Python 3.9
+
 ```bash
 docker compose build
-docker compose up
+docker compose run --rm test
+```
+
+### Python 3.10
+
+```bash
+docker compose build
+docker compose run --rm python_310
 ```
 
 # Local
