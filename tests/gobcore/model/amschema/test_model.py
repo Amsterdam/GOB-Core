@@ -47,7 +47,7 @@ class TestPubilsher(TestCase):
 
     def test_parse(self):
         dataset = get_dataset("dataset_publisher.json")
-        assert dataset.publisher.ref == "publishers/BENK"
+        assert dataset.publisher.ref == "/publishers/BENK"
 
         dataset = get_dataset()
         assert dataset.publisher == "Datateam Basis- en Kernregistraties"

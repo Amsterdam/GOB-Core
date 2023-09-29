@@ -212,7 +212,8 @@ class TableListItem(BaseModel):
 
 
 class Publisher(BaseModel):
-    ref: str = Field(alias="$ref", regex="^publishers/[A-Z]+$")
+    # $ref (uri-reference) should begin with "/" but "brk2" has "publishers/BENK".
+    ref: str = Field(alias="$ref", regex=r"^[/]?publishers/[A-Z]+$")
 
 
 class Dataset(BaseModel):

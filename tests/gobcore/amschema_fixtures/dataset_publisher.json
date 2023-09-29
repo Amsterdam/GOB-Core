@@ -8,7 +8,7 @@
   "owner": "Basisinformatie",
   "creator": "Kadaster en Rijkswaterstaat",
   "publisher": {
-    "$ref": "publishers/BENK"
+    "$ref": "/publishers/BENK"
   },
   "auth": "OPENBAAR",
   "authorizationGrantor": "gebruik.basisinformatie@amsterdam.nl",
