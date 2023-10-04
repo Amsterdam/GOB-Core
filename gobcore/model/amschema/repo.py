@@ -42,9 +42,7 @@ class AMSchemaRepository:
         return Table.parse_obj(schema)
 
     def _dataset_uri(self, base_uri: str, dataset_id: str):
-        # Temporary Azure dataset ID’s.
-        dataset = snake_case(dataset_id) if dataset_id.endswith("Azure") else dataset_id
-        return f"{base_uri}/datasets/{dataset}/dataset.json"
+        return f"{base_uri}/datasets/{dataset_id}/dataset.json"
 
     def get_schema(self, schema: Schema) -> (Table, Dataset):
         dataset_uri = self._dataset_uri(REPO_BASE or schema.base_uri, schema.datasetId)
