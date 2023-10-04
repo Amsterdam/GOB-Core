@@ -423,11 +423,9 @@
     "abbreviation": "MBN",
     "collections": {
       "meetbouten": {
-        "version": "0.1",
         "abbreviation": "MBT",
-        "entity_id": "identificatie",
         "schema": {
-          "datasetId": "meetboutenAzure",
+          "datasetId": "meetbouten",
           "tableId": "meetbouten",
           "version": "2.1.0"
         },
@@ -525,11 +523,9 @@
         }
       },
       "metingen": {
-        "version": "0.1",
         "abbreviation": "MTG",
-        "entity_id": "identificatie",
         "schema": {
-          "datasetId": "meetboutenAzure",
+          "datasetId": "meetbouten",
           "tableId": "metingen",
           "version": "2.0.1"
         },
@@ -612,11 +608,9 @@
         }
       },
       "referentiepunten": {
-        "version": "0.1",
         "abbreviation": "RPT",
-        "entity_id": "identificatie",
         "schema": {
-          "datasetId": "meetboutenAzure",
+          "datasetId": "meetbouten",
           "tableId": "referentiepunten",
           "version": "2.1.1"
         },
@@ -727,11 +721,9 @@
         }
       },
       "rollagen": {
-        "version": "0.1",
         "abbreviation": "RLG",
-        "entity_id": "identificatie",
         "schema": {
-          "datasetId": "meetboutenAzure",
+          "datasetId": "meetbouten",
           "tableId": "rollagen",
           "version": "2.0.0"
         },
@@ -755,11 +747,9 @@
     "abbreviation": "NAP",
     "collections": {
       "peilmerken": {
-        "version": "0.1",
         "abbreviation": "PMK",
-        "entity_id": "identificatie",
         "schema": {
-          "datasetId": "napAzure",
+          "datasetId": "nap",
           "tableId": "peilmerken",
           "version": "2.1.1"
         },
@@ -857,15 +847,11 @@
     "abbreviation": "GBD",
     "collections": {
       "bouwblokken": {
-        "version": "0.2",
         "abbreviation": "BBK",
-        "entity_id": "identificatie",
-        "has_states": true,
         "schema": {
-          "datasetId": "gebiedenAzure",
+          "datasetId": "gebieden",
           "tableId": "bouwblokken",
-          "version": "2.0.0",
-          "entity_id": "identificatie"
+          "version": "2.0.0"
         },
         "legacy_attributes": {
           "identificatie": {
@@ -901,15 +887,11 @@
         }
       },
       "buurten": {
-        "version": "0.3",
         "abbreviation": "BRT",
-        "entity_id": "identificatie",
-        "has_states": true,
         "schema": {
-          "datasetId": "gebiedenAzure",
+          "datasetId": "gebieden",
           "tableId": "buurten",
-          "version": "2.0.0",
-          "entity_id": "identificatie"
+          "version": "2.0.0"
         },
         "legacy_attributes": {
           "identificatie": {
@@ -971,15 +953,11 @@
         }
       },
       "wijken": {
-        "version": "0.3",
         "abbreviation": "WIJK",
-        "entity_id": "identificatie",
-        "has_states": true,
         "schema": {
-          "datasetId": "gebiedenAzure",
+          "datasetId": "gebieden",
           "tableId": "wijken",
-          "version": "2.0.0",
-          "entity_id": "identificatie"
+          "version": "2.0.0"
         },
         "legacy_attributes": {
           "identificatie": {
@@ -1036,15 +1014,11 @@
         }
       },
       "ggwgebieden": {
-        "version": "0.2",
         "abbreviation": "GGW",
-        "entity_id": "identificatie",
-        "has_states": true,
         "schema": {
-          "datasetId": "gebiedenAzure",
+          "datasetId": "gebieden",
           "tableId": "ggwgebieden",
-          "version": "2.0.0",
-          "entity_id": "identificatie"
+          "version": "2.0.0"
         },
         "legacy_attributes": {
           "identificatie": {
@@ -1098,15 +1072,11 @@
         }
       },
       "ggpgebieden": {
-        "version": "0.2",
         "abbreviation": "GGP",
-        "entity_id": "identificatie",
-        "has_states": true,
         "schema": {
-          "datasetId": "gebiedenAzure",
+          "datasetId": "gebieden",
           "tableId": "ggpgebieden",
-          "version": "2.0.0",
-          "entity_id": "identificatie"
+          "version": "2.0.0"
         },
         "legacy_attributes": {
           "identificatie": {
@@ -1160,15 +1130,11 @@
         }
       },
       "stadsdelen": {
-        "version": "0.1",
         "abbreviation": "SDL",
-        "entity_id": "identificatie",
-        "has_states": true,
         "schema": {
-          "datasetId": "gebiedenAzure",
+          "datasetId": "gebieden",
           "tableId": "stadsdelen",
-          "version": "2.0.0",
-          "entity_id": "identificatie"
+          "version": "2.0.0"
         },
         "legacy_attributes": {
           "identificatie": {
