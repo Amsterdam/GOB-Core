@@ -192,13 +192,16 @@
       },
       {
         "name": "collection",
-        "required": true,
+        "required": false,
         "description": "The name of the data collection (example: \"metingen\")"
       },
       {
         "name": "mode",
         "description": "The produce mode: update (regular) or full (initial load)",
-        "default": "update"
+        "named": true,
+        "required": false,
+        "default": "update",
+        "choices": ["update", "full"]
       }
     ]
   }
