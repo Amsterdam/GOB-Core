@@ -3526,7 +3526,7 @@
         "schema": {
           "datasetId": "hr",
           "tableId": "maatschappelijkeactiviteiten",
-          "version": "2.7.0"
+          "version": "2.7.1"
         }
       },
       "vestigingen": {
@@ -3534,7 +3534,7 @@
         "schema": {
           "datasetId": "hr",
           "tableId": "vestigingen",
-          "version": "2.4.0"
+          "version": "2.4.1"
         }
       },
       "functievervullingen": {
