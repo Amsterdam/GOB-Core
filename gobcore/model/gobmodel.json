@@ -851,7 +851,7 @@
         "schema": {
           "datasetId": "gebieden",
           "tableId": "bouwblokken",
-          "version": "2.0.0"
+          "version": "2.1.0"
         },
         "legacy_attributes": {
           "identificatie": {
@@ -878,7 +878,7 @@
           "ligt_in_gemeente": {
             "type": "GOB.Reference",
             "description": "De gemeente waar het bouwblok in ligt.",
-            "ref": "brk:gemeentes"
+            "ref": "brk2:gemeentes"
           },
           "geometrie": {
             "type": "GOB.Geo.Geometry",
@@ -891,7 +891,7 @@
         "schema": {
           "datasetId": "gebieden",
           "tableId": "buurten",
-          "version": "2.0.0"
+          "version": "2.1.0"
         },
         "legacy_attributes": {
           "identificatie": {
@@ -948,7 +948,7 @@
           "ligt_in_gemeente": {
             "type": "GOB.Reference",
             "description": "De gemeente waar de buurt in ligt.",
-            "ref": "brk:gemeentes"
+            "ref": "brk2:gemeentes"
           }
         }
       },
@@ -957,7 +957,7 @@
         "schema": {
           "datasetId": "gebieden",
           "tableId": "wijken",
-          "version": "2.0.0"
+          "version": "2.1.0"
         },
         "legacy_attributes": {
           "identificatie": {
@@ -1009,7 +1009,7 @@
           "ligt_in_gemeente": {
             "type": "GOB.Reference",
             "description": "De gemeente waar de wijk in ligt.",
-            "ref": "brk:gemeentes"
+            "ref": "brk2:gemeentes"
           }
         }
       },
@@ -1018,7 +1018,7 @@
         "schema": {
           "datasetId": "gebieden",
           "tableId": "ggwgebieden",
-          "version": "2.0.0"
+          "version": "2.1.0"
         },
         "legacy_attributes": {
           "identificatie": {
@@ -1067,7 +1067,7 @@
           "ligt_in_gemeente": {
             "type": "GOB.Reference",
             "description": "De gemeente waar het ggwgebied in ligt.",
-            "ref": "brk:gemeentes"
+            "ref": "brk2:gemeentes"
           }
         }
       },
@@ -1076,7 +1076,7 @@
         "schema": {
           "datasetId": "gebieden",
           "tableId": "ggpgebieden",
-          "version": "2.0.0"
+          "version": "2.1.0"
         },
         "legacy_attributes": {
           "identificatie": {
@@ -1125,7 +1125,7 @@
           "ligt_in_gemeente": {
             "type": "GOB.Reference",
             "description": "De gemeente waar het ggwgebied in ligt.",
-            "ref": "brk:gemeentes"
+            "ref": "brk2:gemeentes"
           }
         }
       },
@@ -1134,7 +1134,7 @@
         "schema": {
           "datasetId": "gebieden",
           "tableId": "stadsdelen",
-          "version": "2.0.0"
+          "version": "2.1.0"
         },
         "legacy_attributes": {
           "identificatie": {
@@ -1168,7 +1168,7 @@
           "ligt_in_gemeente": {
             "type": "GOB.Reference",
             "description": "De gemeente waar het stadsdeel in ligt.",
-            "ref": "brk:gemeentes"
+            "ref": "brk2:gemeentes"
           },
           "geometrie": {
             "type": "GOB.Geo.Polygon",
@@ -1348,7 +1348,7 @@
           },
           "ligt_in_gemeente": {
             "type": "GOB.Reference",
-            "ref": "brk:gemeentes",
+            "ref": "brk2:gemeentes",
             "description": "De gemeente waarin de standplaats ligt."
           }
         }
@@ -1443,7 +1443,7 @@
           },
           "ligt_in_gemeente": {
             "type": "GOB.Reference",
-            "ref": "brk:gemeentes",
+            "ref": "brk2:gemeentes",
             "description": "De gemeente waarin de ligplaats ligt."
           }
         }
@@ -1890,7 +1890,7 @@
           },
           "ligt_in_gemeente": {
             "type": "GOB.Reference",
-            "ref": "brk:gemeentes",
+            "ref": "brk2:gemeentes",
             "description": "De gemeente waarin het verblijfsobject ligt."
           }
         }
