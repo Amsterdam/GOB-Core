@@ -13,7 +13,10 @@ classifiers = [
 ]
 authors = [{name = "BenK devs"}]
 license = {text = 'MPL 2.0'}
-version = "2.25.1"
+# let setup,py handle dependencies, required for setuptools >= v69
+dynamic = ["dependencies"]
+version = "2.26.0"
+
 
 [project.urls]
 Homepage = "https://github.com/Amsterdam/GOB-Core"
