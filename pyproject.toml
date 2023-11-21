@@ -13,7 +13,7 @@ classifiers = [
 ]
 authors = [{name = "BenK devs"}]
 license = {text = 'MPL 2.0'}
-version = "2.23.0"
+version = "2.25.1"
 
 [project.urls]
 Homepage = "https://github.com/Amsterdam/GOB-Core"

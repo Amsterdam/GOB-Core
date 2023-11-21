@@ -851,7 +851,7 @@
         "schema": {
           "datasetId": "gebieden",
           "tableId": "bouwblokken",
-          "version": "2.1.0"
+          "version": "2.1.1"
         },
         "legacy_attributes": {
           "identificatie": {
@@ -891,7 +891,7 @@
         "schema": {
           "datasetId": "gebieden",
           "tableId": "buurten",
-          "version": "2.1.0"
+          "version": "2.1.1"
         },
         "legacy_attributes": {
           "identificatie": {
@@ -957,7 +957,7 @@
         "schema": {
           "datasetId": "gebieden",
           "tableId": "wijken",
-          "version": "2.1.0"
+          "version": "2.1.1"
         },
         "legacy_attributes": {
           "identificatie": {
@@ -1018,7 +1018,7 @@
         "schema": {
           "datasetId": "gebieden",
           "tableId": "ggwgebieden",
-          "version": "2.1.0"
+          "version": "2.1.1"
         },
         "legacy_attributes": {
           "identificatie": {
@@ -1134,7 +1134,7 @@
         "schema": {
           "datasetId": "gebieden",
           "tableId": "stadsdelen",
-          "version": "2.1.0"
+          "version": "2.1.1"
         },
         "legacy_attributes": {
           "identificatie": {
