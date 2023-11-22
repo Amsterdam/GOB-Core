@@ -93,9 +93,9 @@
     LEFT JOIN legacy.bag_woonplaatsen wps_0
         ON rel_2.dst_id = wps_0._id AND rel_2.dst_volgnummer = wps_0.volgnummer AND (wps_0._expiration_date IS NULL OR wps_0._expiration_date > NOW())
     -- SELECT ligt_in_gemeente (direct relation)
-    LEFT JOIN legacy.mv_bag_vot_brk_gme_ligt_in_gemeente rel_3
+    LEFT JOIN legacy.mv_bag_vot_brk2_gme_ligt_in_gemeente rel_3
         ON rel_3.src_id = vot._id AND rel_3.src_volgnummer = vot.volgnummer
-    LEFT JOIN legacy.brk_gemeentes gme_0
+    LEFT JOIN legacy.brk2_gemeentes gme_0
         ON rel_3.dst_id = gme_0._id AND rel_3.dst_volgnummer = gme_0.volgnummer AND (gme_0._expiration_date IS NULL OR gme_0._expiration_date > NOW())
     -- SELECT heeft_nevenadres
     LEFT JOIN (
