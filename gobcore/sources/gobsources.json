@@ -379,8 +379,9 @@
     "nap": {
       "peilmerken": {
         "ligt_in_gebieden_bouwblok": {
-          "method": "equals",
-          "destination_attribute": "code"
+          "method": "lies_in",
+          "source_attribute": "geometrie",
+          "destination_attribute": "geometrie"
         }
       }
     }
