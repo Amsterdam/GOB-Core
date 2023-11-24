@@ -476,3 +476,11 @@ class TestLegacyModel(TestCase):
         with self.assertRaisesRegex(
                 Exception, "Tried to initialise model with different legacy setting"):
             GOBModel()
+
+    @patch("gobcore.model.logger")
+    def test_reinit_legacy(self, mock_logger):
+        reinit_model = GOBModel(False, True)
+        self.assertIsNot(self.model, reinit_model)
+        mock_logger.warning.assert_called_once()
+
+        GOBModel(True, True)  # Reset again

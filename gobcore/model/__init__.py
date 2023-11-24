@@ -11,6 +11,7 @@ from gobcore.model.pydantic import Schema
 from gobcore.model.relations import get_relations, get_inverse_relations
 from gobcore.model.quality import QUALITY_CATALOG, get_quality_assurances
 from gobcore.model.schema import load_schema
+from gobcore.logging.logger import logger
 
 
 class NotInModelException(Exception):
@@ -34,13 +35,16 @@ class GOBModel(UserDict):
         **FIXED_FIELDS
     }
 
-    def __new__(cls, legacy=False):
+    def __new__(cls, legacy=False, reinit=False):
         """GOBModel (instance) singleton."""
-        if cls._initialised:
+        if cls._initialised and not reinit:
             if cls.legacy_mode is not legacy:
                 raise Exception("Tried to initialise model with different legacy setting")
             # Model is already initialised
         else:
+            if reinit:
+                logger.warning(f"Your are reinitialising the model again with legacy={legacy}. Only use this for "
+                               f"debugging purposes. Never use this in production.")
             # GOBModel singleton initialisation.
             singleton = super().__new__(cls)
             cls.legacy_mode = legacy
@@ -73,7 +77,7 @@ class GOBModel(UserDict):
 
     # Match __new__ parameters.
     @classmethod
-    def __init__(cls, legacy=False):
+    def __init__(cls, legacy=False, reinit=False):
         pass
 
     @classmethod
