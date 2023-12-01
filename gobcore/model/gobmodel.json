@@ -3573,7 +3573,7 @@
         "schema": {
           "datasetId": "monumenten",
           "tableId": "monumenten",
-          "version": "1.5.0"
+          "version": "2.0.0"
         }
       },
       "situeringen": {
@@ -3581,7 +3581,7 @@
         "schema": {
           "datasetId": "monumenten",
           "tableId": "situeringen",
-          "version": "2.0.0"
+          "version": "3.0.0"
         }
       },
       "complexen": {
@@ -3589,7 +3589,7 @@
         "schema": {
           "datasetId": "monumenten",
           "tableId": "complexen",
-          "version": "2.1.1"
+          "version": "3.0.0"
         }
       },
       "unesco": {
@@ -3597,7 +3597,7 @@
         "schema": {
           "datasetId": "monumenten",
           "tableId": "unesco",
-          "version": "1.0.0"
+          "version": "2.0.0"
         }
       }
     }
