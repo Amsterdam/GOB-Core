@@ -174,21 +174,22 @@ class MODIFY(ImportEvent):
     name = "MODIFY"
     timestamp_field = "_date_modified"
 
+    skip = {"_entity_source_id", "_source_id", "_tid", "_date_deleted"}
+
     def apply_to(self, entity):
         # Set the hash
         entity._hash = self._data[hash_key]
 
         # Extract modifications from the data, before applying the event to the entity.
         modifications = self._data.pop(modifications_key)
-        attribute_set = self._extract_modifications(entity, modifications)
+        attribute_set = self._extract_modifications(modifications)
         self._data = {**self._data, **attribute_set}
 
         super().apply_to(entity)
 
-    def _extract_modifications(self, entity, modifications):
+    def _extract_modifications(self, modifications):
         """Extracts attributes to modify, and checks if old values are indeed present on entity.
 
-        :param entity: the instance to be modified -- unused argument!
         :param modifications: a collection of mutations of attributes to be interpretated
 
         :return: a dict with extracted and verified mutations
@@ -213,6 +214,19 @@ class MODIFY(ImportEvent):
         }
 
         return super().create_event(_tid, mods, version)
+
+    def get_attribute_dict(self):
+        fields = self._model['all_fields']
+
+        def get_value(key, value):
+            type_info = fields[key]
+            gob_type = get_gob_type_from_info(type_info)
+            return gob_type.from_value(value, **get_kwargs_from_type_info(type_info)).to_db
+
+        return {
+            self.timestamp_field: self._metadata.timestamp,
+            **{k: v if v is None else get_value(k, v) for k, v in self._data.items() if k not in self.skip}
+        }
 
 
 class DELETE(ImportEvent):
@@ -252,7 +266,7 @@ class CONFIRM(ImportEvent):
     @classmethod
     def create_event(cls, _tid, data, version):
         #  CONFIRM has no data, except reference to entity age
-        return super().create_event(_tid, cls.last_event(data), version)
+        return super().create_event(_tid, cls.last_event(data) | {"_gobid": data["_gobid"]}, version)
 
 
 class BULKCONFIRM(ImportEvent):
