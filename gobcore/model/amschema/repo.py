@@ -2,8 +2,9 @@
 
 import os
 
-import requests
-from pydash import snake_case
+from requests import Session
+from requests.adapters import HTTPAdapter
+from urllib3.util import Retry
 
 from gobcore.model import Schema
 from gobcore.model.amschema.model import Dataset, Table
@@ -25,8 +26,17 @@ class AMSchemaRepository:
             return self._load_file(location)
 
     def _download_file(self, location: str):
-        r = requests.get(location, timeout=5)
-        r.raise_for_status()
+        retries = Retry(
+            total=6,
+            backoff_factor=1,  # 1 x 2^0 until 1 x 2^6
+            status_forcelist=[502, 503, 504],
+            allowed_methods={"GET"},
+        )
+
+        with Session() as session:
+            session.mount("https://", HTTPAdapter(max_retries=retries))
+            r = session.get(location, timeout=10)
+            r.raise_for_status()
 
         return r.json()
 

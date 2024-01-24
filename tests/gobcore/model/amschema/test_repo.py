@@ -57,12 +57,16 @@ class TestAMSchemaRepository(TestCase):
             instance.get_schema(schema)
             instance._download_dataset.assert_called_with("https://test.repo/datasets/nap/dataset.json")
 
-    @patch("gobcore.model.amschema.repo.requests")
-    def test_download_dataset(self, mock_requests):
+    @patch("gobcore.model.amschema.repo.HTTPAdapter")
+    @patch("gobcore.model.amschema.repo.Retry")
+    @patch("gobcore.model.amschema.repo.Session")
+    def test_download_dataset(self, mock_session, mock_retry, mock_http):
         """Test remote (HTTP) AMS schema dataset."""
+        mock_session_cm = mock_session.return_value.__enter__.return_value
+
         with open(Path(__file__).parent.parent.parent.joinpath('amschema_fixtures/dataset.json')) as f:
             filecontents = f.read()
-            mock_requests.get.return_value.json = lambda: json.loads(filecontents)
+            mock_session_cm.get.return_value.json = lambda: json.loads(filecontents)
 
         instance = AMSchemaRepository()
         dataset = get_dataset()
@@ -71,7 +75,16 @@ class TestAMSchemaRepository(TestCase):
         result = instance._download_dataset(download_url)
         self.assertEqual(result, dataset)
 
-        mock_requests.get.assert_called_with(download_url, timeout=5)
+        mock_retry.assert_called_with(
+            total=6,
+            backoff_factor=1,
+            status_forcelist=[502, 503, 504],
+            allowed_methods={"GET"}
+        )
+        mock_http.assert_called_with(max_retries=mock_retry.return_value)
+        mock_session_cm.get.assert_called_with(download_url, timeout=10)
+        mock_session_cm.get.return_value.raise_for_status.assert_called_once()
+        mock_session_cm.mount.assert_called_with("https://", mock_http.return_value)
 
     @patch("gobcore.model.amschema.repo.json_to_cached_dict")
     def test_local_table(self, mock_cached_dict):
