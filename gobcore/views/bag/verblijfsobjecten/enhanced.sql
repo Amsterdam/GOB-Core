@@ -74,7 +74,8 @@
         'code', ggp_0.code,
         'naam', ggp_0.naam
       ) AS _ref_ligt_in_ggpgebied_gbd_ggp,
-      vot.geometrie
+      vot.geometrie,
+      vot.bagproces
     FROM
       bag_verblijfsobjecten AS vot
     -- SELECT heeft_hoofdadres

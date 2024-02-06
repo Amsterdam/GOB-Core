@@ -29,7 +29,8 @@
       ) AS _ref_adresseert_ligplaats_bag_lps,
       json_build_object(
         'identificatie', adresseert_standplaats.identificatie
-      ) AS _ref_adresseert_standplaats_bag_sps
+      ) AS _ref_adresseert_standplaats_bag_sps,
+      nag.bagproces
     FROM
       bag_nummeraanduidingen AS nag
     -- SELECT ligt_aan_openbareruimte

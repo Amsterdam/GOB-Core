@@ -51,7 +51,8 @@ SELECT
     'code', ggp_0.code,
     'naam', ggp_0.naam
   ) AS _ref_ligt_in_ggpgebied_gbd_ggp,
-  pnd.geometrie
+  pnd.geometrie,
+  pnd.bagproces
 FROM
   legacy.bag_panden AS pnd
 -- SELECT ligt_in_bouwblok
