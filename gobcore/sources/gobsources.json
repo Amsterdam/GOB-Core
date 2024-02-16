@@ -1320,6 +1320,195 @@
           "destination_attribute": "identificatie"
         }
       }
+    },
+    "bag": {
+      "woonplaatsen": {
+        "heeft_onderzoeken": {
+          "method": "equals",
+          "source_attribute": "identificatie",
+          "destination_attribute": "object_identificatie",
+          "multiple_allowed": true,
+          "none_allowed": true
+        },
+        "heeft_dossier": {
+          "method": "equals",
+          "destination_attribute": "dossier"
+        },
+        "ligt_in_gemeente": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        }
+      },
+      "standplaatsen": {
+        "heeft_onderzoeken": {
+          "method": "equals",
+          "source_attribute": "identificatie",
+          "destination_attribute": "object_identificatie",
+          "multiple_allowed": true,
+          "none_allowed": true
+        },
+        "heeft_hoofdadres": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "heeft_nevenadres": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "ligt_in_buurt": {
+          "method": "lies_in",
+          "source_attribute": "geometrie",
+          "destination_attribute": "geometrie"
+        },
+        "heeft_dossier": {
+          "method": "equals",
+          "destination_attribute": "dossier"
+        },
+        "ligt_in_gemeente": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        }
+      },
+      "ligplaatsen": {
+        "heeft_onderzoeken": {
+          "method": "equals",
+          "source_attribute": "identificatie",
+          "destination_attribute": "object_identificatie",
+          "multiple_allowed": true,
+          "none_allowed": true
+        },
+        "heeft_hoofdadres": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "heeft_nevenadres": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "ligt_in_buurt": {
+          "method": "lies_in",
+          "source_attribute": "geometrie",
+          "destination_attribute": "geometrie"
+        },
+        "heeft_dossier": {
+          "method": "equals",
+          "destination_attribute": "dossier"
+        },
+        "ligt_in_gemeente": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        }
+      },
+      "openbareruimtes": {
+        "heeft_onderzoeken": {
+          "method": "equals",
+          "source_attribute": "identificatie",
+          "destination_attribute": "object_identificatie",
+          "multiple_allowed": true,
+          "none_allowed": true
+        },
+        "ligt_in_woonplaats": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "heeft_dossier": {
+          "method": "equals",
+          "destination_attribute": "dossier"
+        }
+      },
+      "nummeraanduidingen": {
+        "heeft_onderzoeken": {
+          "method": "equals",
+          "source_attribute": "identificatie",
+          "destination_attribute": "object_identificatie",
+          "multiple_allowed": true,
+          "none_allowed": true
+        },
+        "ligt_aan_openbareruimte": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "adresseert_verblijfsobject": {
+          "method": "equals",
+          "destination_attribute": "identificatie",
+          "none_allowed": true
+        },
+        "adresseert_ligplaats": {
+          "method": "equals",
+          "destination_attribute": "identificatie",
+          "none_allowed": true
+        },
+        "adresseert_standplaats": {
+          "method": "equals",
+          "destination_attribute": "identificatie",
+          "none_allowed": true
+        },
+        "ligt_in_woonplaats": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "heeft_dossier": {
+          "method": "equals",
+          "destination_attribute": "dossier"
+        }
+      },
+      "verblijfsobjecten": {
+        "heeft_onderzoeken": {
+          "method": "equals",
+          "source_attribute": "identificatie",
+          "destination_attribute": "object_identificatie",
+          "multiple_allowed": true,
+          "none_allowed": true
+        },
+        "heeft_hoofdadres": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "heeft_nevenadres": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "ligt_in_panden": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        },
+        "ligt_in_buurt": {
+          "method": "lies_in",
+          "source_attribute": "geometrie",
+          "destination_attribute": "geometrie"
+        },
+        "heeft_dossier": {
+          "method": "equals",
+          "destination_attribute": "dossier"
+        },
+        "ligt_in_gemeente": {
+          "method": "equals",
+          "destination_attribute": "identificatie"
+        }
+      },
+      "panden": {
+        "heeft_onderzoeken": {
+          "method": "equals",
+          "source_attribute": "identificatie",
+          "destination_attribute": "object_identificatie",
+          "multiple_allowed": true,
+          "none_allowed": true
+        },
+        "ligt_in_bouwblok": {
+          "method": "lies_in",
+          "source_attribute": "geometrie",
+          "destination_attribute": "geometrie"
+        },
+        "ligt_in_buurt": {
+          "method": "lies_in",
+          "source_attribute": "geometrie",
+          "destination_attribute": "geometrie"
+        },
+        "heeft_dossier": {
+          "method": "equals",
+          "destination_attribute": "dossier"
+        }
+      }
     }
   },
   "BAGExtract": {
