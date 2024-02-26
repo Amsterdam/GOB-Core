@@ -2113,6 +2113,14 @@
             "description": "Het tijdstip waarop de registratie van het onderzoek is beëindigd bij de bronhouder."
           }
         }
+      },
+      "votopafvoerlegacy": {
+        "abbreviation": "VOY",
+        "schema": {
+          "datasetId": "bag",
+          "tableId": "votopafvoerlegacy",
+          "version": "1.0.0"
+        }
       }
     }
   },
