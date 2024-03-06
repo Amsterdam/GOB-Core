@@ -1,6 +1,6 @@
 from pathlib import Path
 from collections.abc import Iterator, Callable
-from typing import Optional, Any
+from typing import Any
 
 import os
 import oracledb
@@ -27,6 +27,10 @@ SQLNET.ENCRYPTION_CLIENT = required
 SQLNET.ENCRYPTION_TYPES_CLIENT = (AES256)
 """
 os.environ["NLS_LANG"] = ".UTF8"
+
+# returns strings or bytes instead of a locator
+# https://python-oracledb.readthedocs.io/en/latest/user_guide/lob_data.html#fetching-lobs-as-strings-and-bytes
+oracledb.defaults.fetch_lobs = False
 
 
 class OracleDatastore(SqlDatastore):
@@ -73,15 +77,12 @@ class OracleDatastore(SqlDatastore):
         dsn = self._build_connection_string(**self.connection_config, params=dict(params))
 
         try:
-            connection = oracledb.connect(dsn)
+            self.connection = oracledb.connect(dsn)
         except oracledb.OperationalError as e:
             raise GOBException(
                 f"Database connection for source {self.connection_config['name']} {self.user} failed: {e}"
             )
-
-        connection.outputtypehandler = self._output_type_handler
-        self.connection = connection
-        return connection
+        return self.connection
 
     def query(self, query: str, **kwargs) -> Iterator[dict[str, Any]]:
         """Return query result iterator from the database formatted as dictionary."""
@@ -100,7 +101,7 @@ class OracleDatastore(SqlDatastore):
         """Executes a SQL statement on the database and commits the changes."""
         with self.connection.cursor() as cur:
             cur.execute(query)
-            self.connection.commit()
+        self.connection.commit()
 
     def list_tables_for_schema(self, schema: str) -> list[str]:
         raise NotImplementedError("Please implement list_tables_for_schema for OracleDatastore")
@@ -125,10 +126,3 @@ class OracleDatastore(SqlDatastore):
         """Convert query tuple a dictionary with column names as keys."""
         cols = [d[0].lower() for d in cursor.description]
         return lambda *args: dict(zip(cols, args))
-
-    @staticmethod
-    def _output_type_handler(
-            cursor: oracledb.Cursor, name: str, default_type, size, precision, scale
-    ) -> Optional[oracledb.Var]:
-        if default_type == oracledb.CLOB:
-            return cursor.var(oracledb.LONG_STRING, arraysize=cursor.arraysize)

@@ -38,6 +38,8 @@ class TestOracleDatastore(TestCase):
         OracleDatastore(self.config)
         mock_init_client.assert_not_called()
 
+        assert oracledb.defaults.fetch_lobs is False
+
     def test_init_missing_keys(self):
         with self.assertRaisesRegex(GOBException, "database,password,port,username"):
             OracleDatastore({"name": "my config", "host": "my_host"})
@@ -50,7 +52,6 @@ class TestOracleDatastore(TestCase):
             "username/password@tcp://host1:1234,host2:1234/SID?"
             "retry_count=3&connection_timeout=3&failover=on&load_balance=off"
         )
-        assert self.store.connection.outputtypehandler == self.store._output_type_handler
         assert self.store.connection == conn == mock_connect.return_value
 
         # single host
@@ -68,15 +69,6 @@ class TestOracleDatastore(TestCase):
     @patch("oracledb.Cursor", autospec=True, spec_set=True, description=(("a",), ("B",), ("c",)))
     def test_makedict(self, mock_cursor):
         assert {"a": 1, "b": 2, "c": 3} == self.store._dict_cursor(mock_cursor)(*(1, 2, 3, 4))
-
-    @patch("oracledb.Cursor", autospec=True, spec_set=True, arraysize=5)
-    def test_output_type_handler(self, mock_cursor):
-        self.store._output_type_handler(mock_cursor, "name", oracledb.CLOB, 0, 0, 0)
-        mock_cursor.var.assert_called_with(oracledb.LONG_STRING, arraysize=5)
-
-        # some other type
-        result = self.store._output_type_handler(mock_cursor, "name", oracledb.NUMBER, 0, 0, 0)
-        assert result is None
 
     @patch("oracledb.Cursor", autospec=True, spec_set=True, arraysize=5, description=(("id",),))
     @patch("oracledb.Connection", autospec=True, spec_set=True)
